@@ -9,10 +9,10 @@
 #Richard:
 #Laptop/desktop:
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 
 # App location:
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 library(shiny)
 library(ncdf4)
