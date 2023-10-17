@@ -9,9 +9,9 @@
 #Richard:
 #Laptop/desktop:
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 
-# Ther is always evil laughter ggg
+# Ther is always evil laughter ggg Well I figure then...
 
 # App location:
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
