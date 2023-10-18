@@ -9,7 +9,7 @@
 #Richard:
 #Laptop/desktop:
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 
 # I'm the shiny angel!
 
