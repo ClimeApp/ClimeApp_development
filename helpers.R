@@ -6,17 +6,20 @@ addResourcePath(prefix = 'pics', directoryPath = "www")
 # Choosing theme and making colouring changes
 my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")
 
-
 # Load data 
-temp_nc   <- nc_open("data/ModE_RA_temperature_ensmean_1421_2000.nc")
-prec_nc   <- nc_open("data/ModE_RA_precipitation_ensmean_1421_2000.nc")
-SLP_nc    <- nc_open("data/ModE_RA_slp_ensmean_1421_2000.nc")
-Z500_nc   <- nc_open("data/ModE_RA_500hPaGPH_ensmean_1421_2000.nc")
+temp_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmax_temp2_abs_1420-2009_mon.nc")
+prec_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmax_totprec_abs_1420-2009_mon.nc")
+SLP_nc    <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmax_slp_abs_1420-2009_mon.nc")
+Z500_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_geopoth_50000_abs_1420-2009_mon.nc")
+
+# Data from the NetcDF file
+data_start_year = 1422 
+data_time_step = 1 # in months, so for annual data would = 12
 
 ## Extract variables, units time, lat and lon
-temp_data = ncvar_get(temp_nc,varid="air_temperature")-273.15
-prec_data = ncvar_get(prec_nc,varid="total_precipitation")
-SLP_data  = ncvar_get(SLP_nc,varid="air_pressure_at_sea_level")/100
+temp_data = ncvar_get(temp_nc,varid="temp2")-273.15
+prec_data = ncvar_get(prec_nc,varid="totprec")
+SLP_data  = ncvar_get(SLP_nc,varid="slp")/100
 Z500_data = ncvar_get(Z500_nc,varid="geopotential_height")/100
 
 time <- temp_nc$dim[[1]]$vals # Units = months since 1421-01-15 00:00:00
@@ -34,12 +37,28 @@ nc_close(prec_nc)
 nc_close(SLP_nc)
 nc_close(Z500_nc)
 
+new_nc = nc_open("data/ModE-CLIM/Monthly/ModE-RAclim_ensmean_totprec_abs_1420-2009.nc")
+new_var = ncvar_get(new_nc,varid="totprec")
+nc_close(new_nc)
+
 ## Load pre-processed yearly data
-annual_nc = nc_open("data/ModE_RA_annual.nc")
-DJF_nc = nc_open("data/ModE_RA_DJF.nc")
-MAM_nc = nc_open("data/ModE_RA_MAM.nc")
-JJA_nc = nc_open("data/ModE_RA_JJA.nc")
-SON_nc = nc_open("data/ModE_RA_SON.nc")
+annual_temp_nc = nc_open("data/ModE-RA/Annual/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_year.nc")
+DJF_temp_nc = nc_open("data/ModE-RA/DJF/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_djf.nc")
+MAM_temp_nc = nc_open("data/ModE-RA/MAM/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_mam.nc")
+JJA_temp_nc = nc_open("data/ModE-RA/JJA/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_jja.nc")
+SON_temp_nc = nc_open("data/ModE-RA/SON/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_son.nc")
+
+annual_prec_nc = nc_open("data/ModE-RA/Annual/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_year.nc")
+DJF_prec_nc = nc_open("data/ModE-RA/DJF/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_djf.nc")
+MAM_prec_nc = nc_open("data/ModE-RA/MAM/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_mam.nc")
+JJA_prec_nc = nc_open("data/ModE-RA/JJA/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_jja.nc")
+SON_prec_nc = nc_open("data/ModE-RA/SON/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_son.nc")
+
+annual_slp_nc = nc_open("data/ModE-RA/Annual/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_year.nc")
+DJF_slp_nc = nc_open("data/ModE-RA/DJF/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_djf.nc")
+MAM_slp_nc = nc_open("data/ModE-RA/MAM/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_mam.nc")
+JJA_slp_nc = nc_open("data/ModE-RA/JJA/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_jja.nc")
+SON_slp_nc = nc_open("data/ModE-RA/SON/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_son.nc")
 
 ## Create dataframe of preprocessed yearly variables
 ## - pp_data[[season]][[variable]] where
@@ -48,37 +67,50 @@ SON_nc = nc_open("data/ModE_RA_SON.nc")
 
 pp_data = list(vector("list", 4),vector("list", 4),vector("list", 4),vector("list", 4),vector("list", 4))
 
-pp_data[[5]][[1]] = ncvar_get(annual_nc,varid="air_temperature")
-pp_data[[5]][[2]] = ncvar_get(annual_nc,varid="total_precipitation")
-pp_data[[5]][[3]] = ncvar_get(annual_nc,varid="air_pressure_at_sea_level")
-pp_data[[5]][[4]] = ncvar_get(annual_nc,varid="geopotential_height")
+pp_data[[5]][[1]] = ncvar_get(annual_temp_nc,varid="temp2")-273.15
+pp_data[[5]][[2]] = ncvar_get(annual_prec_nc,varid="totprec")
+pp_data[[5]][[3]] = ncvar_get(annual_slp_nc,varid="slp")/100
+#pp_data[[5]][[4]] = ncvar_get(annual_nc,varid="geopotential_height")
 
-pp_data[[1]][[1]] = ncvar_get(DJF_nc,varid="air_temperature")
-pp_data[[1]][[2]] = ncvar_get(DJF_nc,varid="total_precipitation")
-pp_data[[1]][[3]] = ncvar_get(DJF_nc,varid="air_pressure_at_sea_level")
-pp_data[[1]][[4]] = ncvar_get(DJF_nc,varid="geopotential_height")
+pp_data[[1]][[1]] = ncvar_get(DJF_temp_nc,varid="temp2")-273.15
+pp_data[[1]][[2]] = ncvar_get(DJF_prec_nc,varid="totprec")
+pp_data[[1]][[3]] = ncvar_get(DJF_slp_nc,varid="slp")/100
+#pp_data[[1]][[4]] = ncvar_get(DJF_nc,varid="geopotential_height")
 
-pp_data[[2]][[1]] = ncvar_get(MAM_nc,varid="air_temperature")
-pp_data[[2]][[2]] = ncvar_get(MAM_nc,varid="total_precipitation")
-pp_data[[2]][[3]] = ncvar_get(MAM_nc,varid="air_pressure_at_sea_level")
-pp_data[[2]][[4]] = ncvar_get(MAM_nc,varid="geopotential_height")
+pp_data[[2]][[1]] = ncvar_get(MAM_temp_nc,varid="temp2")-273.15
+pp_data[[2]][[2]] = ncvar_get(MAM_prec_nc,varid="totprec")
+pp_data[[2]][[3]] = ncvar_get(MAM_slp_nc,varid="slp")/100
+#pp_data[[2]][[4]] = ncvar_get(MAM_nc,varid="geopotential_height")
 
-pp_data[[3]][[1]] = ncvar_get(JJA_nc,varid="air_temperature")
-pp_data[[3]][[2]] = ncvar_get(JJA_nc,varid="total_precipitation")
-pp_data[[3]][[3]] = ncvar_get(JJA_nc,varid="air_pressure_at_sea_level")
-pp_data[[3]][[4]] = ncvar_get(JJA_nc,varid="geopotential_height")
+pp_data[[3]][[1]] = ncvar_get(JJA_temp_nc,varid="temp2")-273.15
+pp_data[[3]][[2]] = ncvar_get(JJA_prec_nc,varid="totprec")
+pp_data[[3]][[3]] = ncvar_get(JJA_slp_nc,varid="slp")/100
+#pp_data[[3]][[4]] = ncvar_get(JJA_nc,varid="geopotential_height")
 
-pp_data[[4]][[1]] = ncvar_get(SON_nc,varid="air_temperature")
-pp_data[[4]][[2]] = ncvar_get(SON_nc,varid="total_precipitation")
-pp_data[[4]][[3]] = ncvar_get(SON_nc,varid="air_pressure_at_sea_level")
-pp_data[[4]][[4]] = ncvar_get(SON_nc,varid="geopotential_height")
+pp_data[[4]][[1]] = ncvar_get(SON_temp_nc,varid="temp2")-273.15
+pp_data[[4]][[2]] = ncvar_get(SON_prec_nc,varid="totprec")
+pp_data[[4]][[3]] = ncvar_get(SON_slp_nc,varid="slp")/100
+#pp_data[[4]][[4]] = ncvar_get(SON_nc,varid="geopotential_height")
 
 ## Close pre-processed netCDF files
-nc_close(annual_nc)
-nc_close(DJF_nc)
-nc_close(MAM_nc)
-nc_close(JJA_nc)
-nc_close(SON_nc)
+nc_close(annual_temp_nc)
+nc_close(DJF_temp_nc)
+nc_close(MAM_temp_nc)
+nc_close(JJA_temp_nc)
+nc_close(SON_temp_nc)
+
+nc_close(annual_prec_nc)
+nc_close(DJF_prec_nc)
+nc_close(MAM_prec_nc)
+nc_close(JJA_prec_nc)
+nc_close(SON_prec_nc)
+
+nc_close(annual_slp_nc)
+nc_close(DJF_slp_nc)
+nc_close(MAM_slp_nc)
+nc_close(JJA_slp_nc)
+nc_close(SON_slp_nc)
+
 
 ## Create dataframe of continent lon/lats and Set initial latlon values
 Europe = c(-30,40,30,75) 
@@ -252,41 +284,112 @@ generate_map_dimensions = function(subset_lon_IDs,subset_lat_IDs,output_width,
 ## (General) GENERATE PREPROCESSED DATA ID
 ##           Creates a vector with the reference numbers for preprocessed data:
 ##           c(season number,variable number) or c(NA,NA) if there is no pp data 
+##           data_set = "ModE-RA","ModE-Sim","ModE-Clim"
 
-generate_pp_data_ID = function(variable,month_range){
-  # generate season reference
-  if (identical(month_range,c(1,12))){
-    season_ref = 5
-  } else if (identical(month_range,c(0,2))){
-    season_ref = 1
-  } else if (identical(month_range,c(3,5))){
-    season_ref = 2
-  } else if (identical(month_range,c(6,8))){
-    season_ref = 3
-  } else if (identical(month_range,c(9,11))){
-    season_ref = 4
-  } else {
-    season_ref = NA
+generate_pp_data_ID = function(dataset,variable,month_range){
+  
+  if (dataset == "ModE-RA" & variable != "Z500"){
+    # generate season reference
+    if (identical(month_range,c(1,12))){
+      season_ref = 5
+    } else if (identical(month_range,c(0,2))){
+      season_ref = 1
+    } else if (identical(month_range,c(3,5))){
+      season_ref = 2
+    } else if (identical(month_range,c(6,8))){
+      season_ref = 3
+    } else if (identical(month_range,c(9,11))){
+      season_ref = 4
+    } else {
+      season_ref = NA
+    }
+    
+    # generate variable reference
+    if (is.na(season_ref)){
+      variable_ref = NA
+    } else if (variable == "Temperature"){
+      variable_ref = 1      
+    } else if (variable == "Precipitation"){
+      variable_ref = 2
+    } else if (variable == "SLP"){
+      variable_ref = 3
+    } else {
+      variable_ref = 4
+    }
+    
+    pp_ref = c(season_ref,variable_ref)
+  }
+  else {
+    pp_ref = c(NA,NA)
   }
   
-  # generate variable reference
-  if (is.na(season_ref)){
-    variable_ref = NA
-  } else if (variable == "Temperature"){
-    variable_ref = 1      
-  } else if (variable == "Precipitation"){
-    variable_ref = 2
-  } else if (variable == "SLP"){
-    variable_ref = 3
-  } else {
-    variable_ref = 4
-  }
-  
-  pp_ref = c(season_ref,variable_ref)
   
   return (pp_ref)
 }        
 
+
+## (General) LOAD CORRECT ModE DATA - load ModE-RA/sim/clim data for a chosen variable
+##           and data source
+##           dataset = "ModE-RA","ModE-Sim","ModE-Clim"
+
+load_ModE_data = function(dataset,variable){
+  # Mod E-RA
+  if (dataset == "ModE-RA"){
+      data_output <-   switch(variable,
+                         "Temperature"   = temp_data,
+                         "Precipitation" = prec_data,
+                         "SLP"           = SLP_data,
+                         "Z500"          = Z500_data)
+  } 
+  # ModE-SIM
+  else if (dataset == "ModE-Sim"){
+    # get variable name and open file
+    vname =  switch(variable,
+                    "Temperature"   = "temp2",
+                    "Precipitation" = "totprec",
+                    "SLP"           = "slp",
+                    "Z500"          = "geopoth_50000")
+    data_nc = nc_open(paste0("data/ModE-SIM/Monthly/ModE-Sim_ensmean_",vname,"_abs_1420-2009.nc"))
+    
+    # extract data and convert units if necessary                  
+    if (variable == "Temperature"){
+      data_output = ncvar_get(data_nc,varid="temp2")-273.15 
+    } else if (variable == "Precipitation"){
+      data_output = ncvar_get(data_nc,varid="totprec") 
+    } else if (variable == "SLP"){
+      data_output = ncvar_get(data_nc,varid="slp")/100 
+    } else {
+      data_output = ncvar_get(data_nc,varid="geopoth")/100
+    }
+    
+    nc_close(data_nc)
+  }
+  # ModE-CLIM
+  else if (dataset == "ModE-Clim"){
+    # get variable name and open file
+    vname =  switch(variable,
+                    "Temperature"   = "temp2",
+                    "Precipitation" = "totprec",
+                    "SLP"           = "slp",
+                    "Z500"          = "geopoth_50000")
+    data_nc = nc_open(paste0("data/ModE-CLIM/Monthly/ModE-RAclim_ensmean_",vname,"_abs_1420-2009.nc"))
+
+    # extract data and convert units if necessary                  
+    if (variable == "Temperature"){
+      data_output = ncvar_get(data_nc,varid="temp2")-273.15 
+    } else if (variable == "Precipitation"){
+      data_output = ncvar_get(data_nc,varid="totprec") 
+    } else if (variable == "SLP"){
+      data_output = ncvar_get(data_nc,varid="slp")/100 
+    } else {
+      data_output = ncvar_get(data_nc,varid="geopotential_height")/100
+    }
+    
+    nc_close(data_nc)
+  }
+  
+  return(data_output)
+}
 
 ## (General) CREATE GEOGRAPHIC SUBSET - returns a new dataset with a reduced geographic area
 ##           data_input = any ModE-RA variable (temp_data/prec_data/SlP_data etc.)  
@@ -310,7 +413,7 @@ create_latlon_subset = function(data_input,pp_data_ID,subset_lon_IDs,subset_lat_
 create_yearly_subset = function(data_input,pp_data_ID,year_range,month_range){
   # Check for preprocessed subset
   if (!is.na(pp_data_ID[1])){
-    year_IDs = (year_range[1]-1421):(year_range[2]-1421) 
+    year_IDs = (year_range[1]-1420):(year_range[2]-1420) 
     data_subset = data_input[,,year_IDs]
   } 
   # Calculate subset from scratch
@@ -381,6 +484,7 @@ convert_subset_to_anomalies = function(data_input,ref_data,pp_data_ID,month_rang
 ##                                           map_title2, ts_title, ts_axis,file_title,
 ##                                           netcdf_title
 ##           tab = "general" or "composites"
+##           dataset = "ModE-RA","ModE-Sim","ModE-Clim"
 ##           mode = "Absolute" or "Anomaly" for general tab
 ##                  "Absolute", "Fixed anomaly" or ""Anomaly compared to X years prior"
 ##                   for composites tab
@@ -389,7 +493,7 @@ convert_subset_to_anomalies = function(data_input,ref_data,pp_data_ID,month_rang
 ##                = set to NA if not relevant for selected tab
 ##           map/ts_custom_title1/2 = user entered titles
 
-generate_titles = function(tab,variable,mode,map_title_mode,ts_title_mode,month_range,
+generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mode,month_range,
                            year_range,baseline_range,baseline_years_before,lon_range,
                            lat_range,map_custom_title1,map_custom_title2,ts_custom_title){
   
@@ -400,10 +504,10 @@ generate_titles = function(tab,variable,mode,map_title_mode,ts_title_mode,month_
   # Averages and Anomalies titles
   if (tab=="general"){
     if (mode == "Absolute"){
-      map_title1 = paste(title_months," ",variable," ",year_range[1],"-",year_range[2], sep = "")
+      map_title1 = paste(dataset," ",title_months," ",variable," ",year_range[1],"-",year_range[2], sep = "")
       map_title2 = ""
     } else {
-      map_title1 = paste(title_months," ",variable," Anomaly ",year_range[1],"-",year_range[2], sep = "")
+      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly ",year_range[1],"-",year_range[2], sep = "")
       map_title2 = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
     } 
   }
@@ -411,13 +515,13 @@ generate_titles = function(tab,variable,mode,map_title_mode,ts_title_mode,month_
   # Composites titles
   else if (tab=="composites"){
     if (mode == "Absolute"){
-      map_title1 = paste(title_months," ",variable," (Composite)", sep = "")
+      map_title1 = paste(dataset," ",title_months," ",variable," (Composite)", sep = "")
       map_title2 = ""
     } else if (mode == "Fixed anomaly") {
-      map_title1 = paste(title_months," ",variable," Anomaly (Composite)", sep = "")
+      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite)", sep = "")
       map_title2 = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
     } else {
-      map_title1 = paste(title_months," ",variable," Anomaly (Composite)", sep = "")
+      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite)", sep = "")
       map_title2 = paste("Ref. = ",baseline_years_before," yrs prior", sep = "") 
     }
   }
@@ -952,7 +1056,7 @@ plot_modera_sources = function(year,season,lon_range,lat_range){
 ##           year_range = year_range for general tab or year_set for composites 
 ##           baseline_range,baseline_years_before = NA if not used
 
-generate_custom_netcdf = function(data_input,tab,ncdf_ID,variable,user_nc_variables,
+generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_nc_variables,
                                   mode,subset_lon_IDs,subset_lat_IDs,month_range,
                                   year_range,baseline_range,baseline_years_before){
   
@@ -968,14 +1072,10 @@ generate_custom_netcdf = function(data_input,tab,ncdf_ID,variable,user_nc_variab
     } else {
       
       # Generate pp_data_ID for new variable
-      pp_ref = generate_pp_data_ID(i,month_range)
+      pp_ref = generate_pp_data_ID(dataset,i,month_range)
       
       # Access variable base data
-      data1 = switch(i,
-                     "Temperature"   = temp_data,
-                     "Precipitation" = prec_data,
-                     "SLP"           = SLP_data,
-                     "Z500"          = Z500_data)
+      data1 = load_ModE_data(dataset,i)
       # Generate latlon subset data
       data2 =  create_latlon_subset(data1, pp_ref, subset_lon_IDs, subset_lat_IDs)
       # Generate yearly subset data
@@ -1666,7 +1766,7 @@ read_composite_data = function(data_input_manual,data_input_filepath,year_input_
   }
   
   # Cut years outside the range of ModE-RA
-  year_set = subset(year_set,year_set>=1422 & year_set<=2000)
+  year_set = subset(year_set,year_set>=1422 & year_set<=2008)
   
   return(year_set)
 }
@@ -1780,8 +1880,8 @@ read_regcomp_data = function(data_input_filepath){
 extract_year_range = function(variable1_source,variable2_source,variable1_data_filepath,variable2_data_filepath){
   
   # Set initial values of V1_min/max and V2_min/max to ModE-RA defaults
-  V1_min = 1422 ; V1_max = 2000
-  V2_min = 1422 ; V2_max = 2000
+  V1_min = 1422 ; V1_max = 2008
+  V2_min = 1422 ; V2_max = 2008
   
   # Set V1_min/max from user data
   if (variable1_source == "User Data" & !is.null(variable1_data_filepath)){
@@ -1918,6 +2018,7 @@ plot_user_timeseries = function(data_input,color){
 ##             method = "pearson" or "spearman" ("pearson" by default)
 
 generate_correlation_titles = function(variable1_source,variable2_source,
+                                       variable1_dataset,variable2_dataset,
                                        variable1,variable2,
                                        variable1_type,variable2_type,
                                        variable1_mode,variable2_mode,
@@ -1970,13 +2071,13 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     
     # Generate titles
     V1_axis_label = paste(title_months1,variable1,variable1_mode,V1_unit)
-    V1_TS_title = paste(title_months1,variable1,variable1_mode,V1_lonlat)
+    V1_TS_title = paste(variable1_dataset,title_months1,variable1,variable1_mode,V1_lonlat)
     if (variable1_type == "Time series"){
-      V1_Map_title = paste(title_months1,variable1,variable1_mode,V1_lonlat)
+      V1_Map_title = paste(variable1_dataset,title_months1,variable1,variable1_mode,V1_lonlat)
     } else {
-      V1_Map_title = paste(title_months1,variable1,variable1_mode)
+      V1_Map_title = paste(variable1_dataset,title_months1,variable1,variable1_mode)
     }
-    V1_Download_title = paste(title_months1,variable1,variable1_mode)
+    V1_Download_title = paste(variable1_dataset,title_months1,variable1,variable1_mode)
   }
   
   # Set values for variable 2:
@@ -2021,13 +2122,13 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     
     # Generate titles
     V2_axis_label = paste(title_months2,variable2,variable2_mode,V2_unit)
-    V2_TS_title = paste(title_months2,variable2,variable2_mode,V2_lonlat)
+    V2_TS_title = paste(variable2_dataset,title_months2,variable2,variable2_mode,V2_lonlat)
     if (variable2_type == "Time series"){
-      V2_Map_title = paste(title_months2,variable2,variable2_mode,V2_lonlat)
+      V2_Map_title = paste(variable2_dataset,title_months2,variable2,variable2_mode,V2_lonlat)
     } else {
-      V2_Map_title = paste(title_months2,variable2,variable2_mode)
+      V2_Map_title = paste(variable2_dataset,title_months2,variable2,variable2_mode)
     }
-    V2_Download_title = paste(title_months2,variable2,variable2_mode)
+    V2_Download_title = paste(variable2_dataset,title_months2,variable2,variable2_mode)
   }
   
   # Edit colors and titles if v1 and v2 are the same
@@ -2298,7 +2399,7 @@ generate_correlation_map_datatable = function(data_input){
 ##              Note: Uses the GENERAL functions to create data
 ##              variables = name/names of the modE-RA variable 
 
-create_ME_timeseries_data = function(variables,subset_lon_IDs,subset_lat_IDs,
+create_ME_timeseries_data = function(dataset,variables,subset_lon_IDs,subset_lat_IDs,
                                      mode,month_range,year_range,baseline_range){
   
   # Create year column
@@ -2313,14 +2414,10 @@ create_ME_timeseries_data = function(variables,subset_lon_IDs,subset_lat_IDs,
   for (i in variables){
       
     # Generate pp_data_ID for new variable
-    pp_ref = generate_pp_data_ID(i,month_range)
+    pp_ref = generate_pp_data_ID(dataset,i,month_range)
       
     # Access variable base data
-    data1 = switch(i,
-                    "Temperature"   = temp_data,
-                    "Precipitation" = prec_data,
-                    "SLP"           = SLP_data,
-                    "Z500"          = Z500_data)
+    data1 = load_ModE_data(dataset,i)
     
     # Generate latlon subset data
     data2 =  create_latlon_subset(data1, pp_ref, subset_lon_IDs, subset_lat_IDs)
@@ -2369,7 +2466,8 @@ create_ME_timeseries_data = function(variables,subset_lon_IDs,subset_lat_IDs,
 ##              subset_lon/lat_IDs = subset_lon/lat_IDs for dependent variable
 ##              month_range_i/d = ind/dep ModE-RA month range
 
-generate_regression_titles = function(independent_source,dependent_source,modERA_dependent_variable,
+generate_regression_titles = function(independent_source,dependent_source,
+                                      dataset_i,dataset_d,modERA_dependent_variable,
                                       mode_i,mode_d,month_range_i,month_range_d,
                                       lon_range_i,lon_range_d,lat_range_i,lat_range_d,
                                       year_range){
@@ -2381,7 +2479,7 @@ generate_regression_titles = function(independent_source,dependent_source,modERA
     title_lonlat_i = ""
   } else {
     # Generate title months
-    title_months_i = paste(generate_title_months(month_range_i)," ",sep = "")
+    title_months_i = paste(dataset_i,generate_title_months(month_range_i)," ",sep = "")
     
     # Generate title mode addition
     if (mode_i == "Absolute"){
@@ -2415,7 +2513,7 @@ generate_regression_titles = function(independent_source,dependent_source,modERA
     unit_d = ""
   } else {
     # Generate title months
-    title_months_d = paste(generate_title_months(month_range_d)," ",sep = "")
+    title_months_d = paste(dataset_d,generate_title_months(month_range_d)," ",sep = "")
     
     # Generate title mode addition
     if (mode_d == "Absolute"){
@@ -2446,7 +2544,7 @@ generate_regression_titles = function(independent_source,dependent_source,modERA
       color_d = "turquoise4" ; unit_d = "[mm]"
     } else if (modERA_dependent_variable == "SLP"){
       color_d = "purple4" ; unit_d = "[hPa]"
-    } else if (modERA_dependent_variablee == "Z500"){
+    } else if (modERA_dependent_variable == "Z500"){
       color_d = "green4" ; unit_d = "[hPa]"
     }
   }
@@ -2573,8 +2671,8 @@ plot_regression_coefficients = function(data_input,independent_variables,indepen
   
   # Generate title
   title_main = paste("Regression: ",regression_titles$title_months_i,
-                     independent_variables[independent_variable_number],
-                     regression_titles$title_mode_i," -> ",
+                     independent_variables[independent_variable_number]," ",
+                     regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
                      regression_titles$title_months_d,dependent_variable,
                      regression_titles$title_mode_d,". ",regression_titles$title_year_range,
                      sep = "")
@@ -2628,7 +2726,7 @@ plot_regression_pvalues = function(data_input,independent_variables,independent_
   
   # Generate title
   title_main = paste("Regression: ",regression_titles$title_months_i,
-                     independent_variables[independent_variable_number],
+                     independent_variables[independent_variable_number]," ",
                      regression_titles$title_mode_i," -> ",
                      regression_titles$title_months_d,dependent_variable,
                      regression_titles$title_mode_d,". ",regression_titles$title_year_range,
@@ -2677,7 +2775,7 @@ plot_regression_residuals = function(data_input,year_selected,year_range,
   
   # Generate title & axis label
   title_variables_i = paste(independent_variables,collapse = " ; ")
-  title_main = paste("Regression: ",regression_titles$title_months_i,title_variables_i,
+  title_main = paste("Regression: ",regression_titles$title_months_i,title_variables_i," ",
                      regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
                      regression_titles$title_months_d,dependent_variable,
                      regression_titles$title_mode_d,". ",year_selected, sep = "")
