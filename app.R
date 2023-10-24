@@ -1,43 +1,19 @@
 ### ClimeApp_beta ###
 
-# WD and Packages ----
-
-#Nik:
-#Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
-
-#Richard:
-#Laptop/desktop:
-#setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
-
+# WDs for Project ----
 
 #Noémie
-#setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/nw22d367/OneDrive - Universitaet Bern/ClimeApp_development")
 
+#Nik
+#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_GitHub/ClimeApp_development")
 
-# App location:
-#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+#Richard
 
-library(shiny)
-library(ncdf4)
-library(maps)
-library(shinyWidgets)
-library(RColorBrewer)
-library(shinyjs)
-library(bslib)
-library(readxl)
-library(xlsx)
-library(DT)
-library(zoo)
-library(colourpicker)
-library(tmaptools)
-library(ggplot2)
-library(sf)
-library(shinylogs)
 
 # Source for helpers ----
 source("helpers.R")
+
 
 # Define UI ----
 
@@ -2671,12 +2647,6 @@ tabPanel("Regression", id = "tab4",
                             selected = "ModE-RA" ,
                             inline = TRUE),
                
-               #Choose one of three datasets (Select)                
-               selectInput(inputId  = "dataset_selected_iv",
-                           label    = "Choose a dataset:",
-                           choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
-                           selected = "ModE-RA"),
-               
                # Upload user data
                shinyjs::hidden(
                  div(id = "upload_forcings_iv",   
@@ -2702,15 +2672,21 @@ tabPanel("Regression", id = "tab4",
                                  multiple = TRUE),
                  )),
                
-               #Choose a variable (Mod-ERA) 
+               #Choose one of three datasets (Select) 
                shinyjs::hidden(
-                 div(id = "hidden_me_variable_iv",
-                     pickerInput(inputId  = "ME_variable_iv",
-                                 label    = "Choose a variable:",
-                                 choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
-                                 selected = "Temperature",
-                                 multiple = TRUE),
-                 )),
+               div(id = "hidden_me_variable_dataset_iv",
+               selectInput(inputId  = "dataset_selected_iv",
+                           label    = "Choose a dataset:",
+                           choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                           selected = "ModE-RA"),
+               
+               #Choose a variable (Mod-ERA) 
+               pickerInput(inputId  = "ME_variable_iv",
+                           label    = "Choose one or multiple variables:",
+                           choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
+                           selected = "Temperature",
+                           multiple = TRUE),
+               )),
                
                shinyjs::hidden(
                  div(id = "hidden_modera_variable_iv",
@@ -2870,13 +2846,7 @@ tabPanel("Regression", id = "tab4",
                             choices  = c("ModE-RA", "User Data"),
                             selected = "ModE-RA" ,
                             inline = TRUE),
-               
-               #Choose one of three datasets (Select)                
-               selectInput(inputId  = "dataset_selected_dv",
-                           label    = "Choose a dataset:",
-                           choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
-                           selected = "ModE-RA"),
-               
+
                # Upload user data
                shinyjs::hidden(
                  div(id = "upload_forcings_dv", 
@@ -2901,13 +2871,21 @@ tabPanel("Regression", id = "tab4",
                                  selected = NULL),
                  )),
                
-               #Choose a variable (Mod-ERA) 
+
                shinyjs::hidden(
-                 div(id = "hidden_me_variable_dv",
-                     selectInput(inputId  = "ME_variable_dv",
-                                 label    = "Choose a variable:",
-                                 choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
-                                 selected = "Temperature"),
+               div(id = "hidden_me_variable_dataset_dv",
+                     
+                 #Choose one of three datasets (Select)                
+                 selectInput(inputId  = "dataset_selected_dv",
+                             label    = "Choose a dataset:",
+                             choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                             selected = "ModE-RA"),
+                 
+                 #Choose a variable (Mod-ERA) 
+                 selectInput(inputId  = "ME_variable_dv",
+                             label    = "Choose a variable:",
+                             choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
+                             selected = "Temperature"),
                  )),
                
                shinyjs::hidden(
@@ -3267,6 +3245,7 @@ tabPanel("Regression", id = "tab4",
 )
 
 
+     
 # Define server logic ----
 server <- function(input, output, session) {
   #Preparations in the Server ----
@@ -3991,7 +3970,7 @@ server <- function(input, output, session) {
                     condition = input$source_iv == "User Data",
                     asis = FALSE)
     
-    shinyjs::toggle(id = "hidden_me_variable_iv",
+    shinyjs::toggle(id = "hidden_me_variable_dataset_iv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
@@ -4057,7 +4036,7 @@ server <- function(input, output, session) {
                     condition = input$source_dv == "User Data",
                     asis = FALSE)
     
-    shinyjs::toggle(id = "hidden_me_variable_dv",
+    shinyjs::toggle(id = "hidden_me_variable_dataset_dv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,

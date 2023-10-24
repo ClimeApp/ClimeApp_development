@@ -1,4 +1,33 @@
 #### Preparation ####
+#WD and Packages
+library(shiny)
+library(ncdf4)
+library(maps)
+library(shinyWidgets)
+library(RColorBrewer)
+library(shinyjs)
+library(bslib)
+library(readxl)
+library(xlsx)
+library(DT)
+library(zoo)
+library(colourpicker)
+library(tmaptools)
+library(ggplot2)
+library(sf)
+library(shinylogs)
+
+#Nik:
+#Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
+#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+
+#Richard:
+#Laptop/desktop:
+#setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+
+#Noémie
+#setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
