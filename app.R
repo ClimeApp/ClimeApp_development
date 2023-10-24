@@ -4,7 +4,7 @@
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
 
 #Richard:
 #Laptop/desktop:
@@ -41,7 +41,6 @@ ui <- navbarPage(id = "nav1",
           title = div(style = "display: inline;",
                       img(src = 'pics/Logo_ClimeApp_V2_210623.png', id = "ClimeApp", height = "75px", width = "75px", style = "margin-right: -10px"),
                       img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v2.0)",
-
                       ),
           footer = div(class = "navbar-footer",
                        style = "display: inline;",
@@ -1679,12 +1678,6 @@ ui <- navbarPage(id = "nav1",
                                 selected = "ModE-RA" ,
                                 inline = TRUE),
                   
-                   #Choose one of three datasets (Select)                
-                   selectInput(inputId  = "dataset_selected_v1",
-                               label    = "Choose a dataset:",
-                               choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
-                               selected = "ModE-RA"),
-                   
                    # Upload user data
                    shinyjs::hidden(
                    div(id = "upload_forcings_v1",   
@@ -1709,9 +1702,15 @@ ui <- navbarPage(id = "nav1",
                                selected = NULL),
                    )),
                    
-                   #Choose a variable (Mod-ERA) 
+                   #Choose one of three datasets (Select)
                    shinyjs::hidden(
-                   div(id = "hidden_me_variable_v1",
+                   div(id = "hidden_me_dataset_variable_v1",
+                   selectInput(inputId  = "dataset_selected_v1",
+                               label    = "Choose a dataset:",
+                               choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                               selected = "ModE-RA"),
+
+                   #Choose a variable (Mod-ERA) 
                    selectInput(inputId  = "ME_variable_v1",
                                label    = "Choose a variable:",
                                choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
@@ -1722,7 +1721,7 @@ ui <- navbarPage(id = "nav1",
                    div(id = "hidden_modera_variable_v1",
                    #Choose how to use ME data: As a time series or field  
                    radioButtons(inputId  = "type_v1",
-                                label    = "Choose how to use the ModE-RA data:",
+                                label    = "Choose how to use ModE-RA data:",
                                 choices  = c( "Field", "Time series"),
                                 selected = "Time series" ,
                                 inline = TRUE),
@@ -1883,12 +1882,6 @@ ui <- navbarPage(id = "nav1",
                                   selected = "ModE-RA" ,
                                   inline = TRUE),
                      
-                     #Choose one of three datasets (Select)                
-                     selectInput(inputId  = "dataset_selected_v2",
-                                 label    = "Choose a dataset:",
-                                 choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
-                                 selected = "ModE-RA"),
-                     
                      # Upload user data
                      shinyjs::hidden(
                      div(id = "upload_forcings_v2", 
@@ -1913,14 +1906,20 @@ ui <- navbarPage(id = "nav1",
                                        selected = NULL),
                        )),
                      
-                     #Choose a variable (Mod-ERA) 
+                     #Choose one of three datasets (Select)
                      shinyjs::hidden(
-                       div(id = "hidden_me_variable_v2",
-                           selectInput(inputId  = "ME_variable_v2",
-                                       label    = "Choose a variable:",
-                                       choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
-                                       selected = "Temperature"),
-                       )),
+                     div(id = "hidden_me_dataset_variable_v2",
+                     selectInput(inputId  = "dataset_selected_v2",
+                                 label    = "Choose a dataset:",
+                                 choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                                 selected = "ModE-RA"),
+
+                     #Choose a variable (Mod-ERA) 
+                     selectInput(inputId  = "ME_variable_v2",
+                                 label    = "Choose a variable:",
+                                 choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
+                                 selected = "Temperature"),
+                     )),
                      
                      shinyjs::hidden(
                      div(id = "hidden_modera_variable_v2",
@@ -3819,7 +3818,7 @@ server <- function(input, output, session) {
                     condition = input$source_v1 == "User Data",
                     asis = FALSE)
     
-    shinyjs::toggle(id = "hidden_me_variable_v1",
+    shinyjs::toggle(id = "hidden_me_dataset_variable_v1",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
@@ -3832,7 +3831,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_v1 == "ModE-RA",
+                    condition = input$source_v2 == "ModE-RA",
                     asis = FALSE)
     
     shinyjs::toggle(id = "season_v1",
@@ -3885,14 +3884,14 @@ server <- function(input, output, session) {
                     condition = input$source_v2 == "User Data",
                     asis = FALSE)
     
-    shinyjs::toggle(id = "hidden_me_variable_v2",
+    shinyjs::toggle(id = "hidden_me_dataset_variable_v2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v2 == "ModE-RA",
                     asis = FALSE)
-    
+
     shinyjs::toggle(id = "hidden_modera_variable_v2",
                     anim = TRUE,
                     animType = "slide",
