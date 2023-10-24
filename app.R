@@ -4,7 +4,7 @@
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
 
 #Richard:
 #Laptop/desktop:
@@ -13,11 +13,7 @@ setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/
 
 
 #Noémie
-setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp")
-
-
-# Ther is always evil laughter ggg Well I figure then...
-
+#setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp")
 
 
 # App location:
