@@ -482,12 +482,17 @@ convert_subset_to_anomalies = function(data_input,ref_data,pp_data_ID,month_rang
       dim(data_input) = c(dim(data_input),1)
     }
     # calculate baseline from reference data
-    year_IDs = (baseline_range[1]-1421):(baseline_range[2]-1421)
+    year_IDs = (baseline_range[1]-1421):(baseline_range[length(baseline_range)]-1421)
     baseline_data = ref_data[,,year_IDs]
   } 
   # calculate reference data
   else {
-    years = baseline_range[1]:baseline_range[2]
+    if(length(baseline_range) == 2) {
+      years = baseline_range[1]:baseline_range[2]
+    }
+    else {
+      years = baseline_range
+    }
     
     baseline_data = array(NA,dim=c(dim_data[1],dim_data[2], length(years)))
     
@@ -550,9 +555,13 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
     } else if (mode == "Fixed anomaly") {
       map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite)", sep = "")
       map_title2 = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
-    } else {
+    } else if (mode == "Anomaly compared to X years prior") {
       map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite)", sep = "")
-      map_title2 = paste("Ref. = ",baseline_years_before," yrs prior", sep = "") 
+      map_title2 = paste("Ref. = ",baseline_years_before," yrs prior", sep = "")
+      else {
+      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite)", sep = "")
+      map_title2 = paste("Ref. = Custom anomaly years")  
+      }
     }
   }
   
