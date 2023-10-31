@@ -760,12 +760,6 @@ ui <- navbarPage(id = "nav1",
                                                value  = 11,
                                                min    = 3,
                                                max    = 30),
-                                  
-                                  radioButtons(inputId   = "year_position_ts",
-                                               label     = "Position for each year:"  ,
-                                               choices   = c("before", "on", "after"),
-                                               selected  = "on",
-                                               inline    = TRUE)
                               )),
                                  
                                   checkboxInput(inputId = "custom_percentile_ts",
@@ -2283,13 +2277,7 @@ ui <- navbarPage(id = "nav1",
                                                       label  = "Year moving average, centred:",
                                                       value  = 11,
                                                       min    = 3,
-                                                      max    = 30),
-                                         
-                                         radioButtons(inputId   = "year_position_ts3",
-                                                      label     = "Position for each year:"  ,
-                                                      choices   = c("before", "on", "after"),
-                                                      selected  = "on",
-                                                      inline    = TRUE)
+                                                      max    = 30), 
                                      )),
                                    
                                )),
@@ -6422,13 +6410,8 @@ server <- function(input, output, session) {
     
     ts_data1 <- create_timeseries_datatable(data_output3(), input$range_years, "range", subset_lons(), subset_lats())
     
-    MA_alignment = switch(input$year_position_ts,
-                          "before" = "left",
-                          "on" = "center",
-                          "after" = "right")
-    
     ts_data2 = add_stats_to_TS_datatable(ts_data1,input$custom_average_ts,input$year_moving_ts,
-                                         MA_alignment,input$custom_percentile_ts,input$percentile_ts,input$moving_percentile_ts)
+                                         "center",input$custom_percentile_ts,input$percentile_ts,input$moving_percentile_ts)
     
     return(ts_data2)
   })
@@ -7332,14 +7315,8 @@ server <- function(input, output, session) {
         tsd_v1 = user_subset_v1()
       }
       
-      # Add moving averages (if chosen)
-      MA_alignment = switch(input$year_position_ts3,
-                            "before" = "left",
-                            "on" = "center",
-                            "after" = "right")
-      
       tsds_v1 = add_stats_to_TS_datatable(tsd_v1,input$custom_average_ts3,input$year_moving_ts3,
-                                          MA_alignment,FALSE,NA,FALSE)
+                                          "center",FALSE,NA,FALSE)
       
       return(tsds_v1)
     })
@@ -7351,14 +7328,8 @@ server <- function(input, output, session) {
         tsd_v2 = user_subset_v2()
       } 
       
-      # Add moving averages (if chosen)
-      MA_alignment = switch(input$year_position_ts3,
-                            "before" = "left",
-                            "on" = "center",
-                            "after" = "right")
-      
       tsds_v2 = add_stats_to_TS_datatable(tsd_v2,input$custom_average_ts3,input$year_moving_ts3,
-                                          MA_alignment,FALSE,NA,FALSE)
+                                          "center",FALSE,NA,FALSE)
       
       return(tsds_v2)
     })
@@ -8431,6 +8402,7 @@ server <- function(input, output, session) {
                                                               }})
 
 }
+
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
