@@ -1810,7 +1810,7 @@ create_yearly_subset_composite = function(data_input,pp_data_ID,year_set,month_r
   
   # Check for preprocessed subset
   if (!is.na(pp_data_ID[1])){
-    year_IDs = year_set-1421 
+    year_IDs = year_set-1420 
     data_subset = data_input[,,year_IDs]
   } 
   # or calculate from data_input
