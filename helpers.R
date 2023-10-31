@@ -558,7 +558,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
     } else if (mode == "Anomaly compared to X years prior") {
       map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite)", sep = "")
       map_title2 = paste("Ref. = ",baseline_years_before," yrs prior", sep = "")
-      else {
+    } else {
       map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite)", sep = "")
       map_title2 = paste("Ref. = Custom anomaly years")  
       }
