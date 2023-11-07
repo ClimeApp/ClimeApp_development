@@ -545,7 +545,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
       map_title1 = paste(dataset," ",title_months," ",variable," Anomaly ",year_range[1],"-",year_range[2], sep = "")
       map_title2 = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
     } 
-  }
+  
   
   # Composites titles
   else if (tab=="composites"){
@@ -561,9 +561,9 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
     } else {
       map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite)", sep = "")
       map_title2 = paste("Ref. = Custom anomaly years")  
-      }
     }
   }
+    }
   
   # Create Timeseries title 
   ts_title = paste(substr(map_title1, 1, nchar(map_title1) - 10),
