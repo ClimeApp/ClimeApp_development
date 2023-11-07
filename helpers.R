@@ -562,12 +562,9 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
       map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite)", sep = "")
       map_title2 = paste("Ref. = Custom anomaly years")  
     }
-<<<<<<< HEAD
   }
 
-=======
-  
->>>>>>> a15269d37de9444e137fe7b937db98ae88cafd35
+
   
   # Create Timeseries title 
   ts_title = paste(substr(map_title1, 1, nchar(map_title1) - 10),
