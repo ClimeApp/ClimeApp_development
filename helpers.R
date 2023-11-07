@@ -20,7 +20,7 @@ library(Cairo)
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
 
 #Richard:
 #Laptop/desktop:
@@ -563,7 +563,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
       map_title2 = paste("Ref. = Custom anomaly years")  
       }
     }
-  }
+  
   
   # Create Timeseries title 
   ts_title = paste(substr(map_title1, 1, nchar(map_title1) - 10),
@@ -979,6 +979,7 @@ plot_default_timeseries = function(data_input,tab,variable, titles, title_mode){
     plot(x, y, type = "p", col = v_col, xaxs="i",
          xlab = "Year", ylab = titles$ts_axis)
   }
+
   
   # Add titles
   title(titles$ts_title,adj = 0, line = 0.5)
