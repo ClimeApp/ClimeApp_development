@@ -20,7 +20,7 @@ library(Cairo)
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
 
 #Richard:
 #Laptop/desktop:
@@ -545,7 +545,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
       map_title1 = paste(dataset," ",title_months," ",variable," Anomaly ",year_range[1],"-",year_range[2], sep = "")
       map_title2 = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
     } 
-  
+  }
   
   # Composites titles
   else if (tab=="composites"){
@@ -563,7 +563,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
       map_title2 = paste("Ref. = Custom anomaly years")  
     }
   }
-    }
+
   
   # Create Timeseries title 
   ts_title = paste(substr(map_title1, 1, nchar(map_title1) - 10),
@@ -1043,7 +1043,7 @@ rewrite_tstable = function(tstable,variable){
 ##           year = a single user selected or default year
 ##           season = "summer" or "winter"
 
-plot_modera_sources = function(year,season,lon_range,lat_range){
+plot_modera_sources = function(year,season,lon_range,lat_range,labs){
   
   # Load data
   feedback_data = read.csv(paste0("data/feedback_archive/",season,year,".csv"))
@@ -1072,6 +1072,7 @@ plot_modera_sources = function(year,season,lon_range,lat_range){
   named_shapes = setNames(shape_list,variable_list)
   
   # Plot
+  if(labs == TRUE) {
   ggplot() + geom_polygon(data=world, aes(x=long, y=lat, group=group), fill="grey", color = "darkgrey") + 
     geom_sf() + coord_sf(xlim = lon_range, ylim = lat_range, crs = st_crs(4326)) +
     geom_point(data=feedback_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
@@ -1081,7 +1082,17 @@ plot_modera_sources = function(year,season,lon_range,lat_range){
     scale_colour_manual(values = named_colors) +
     guides() + 
     theme_classic()+
-    theme(panel.border = element_rect(colour = "black", fill=NA))  
+    theme(panel.border = element_rect(colour = "black", fill=NA))  }
+  else {
+  ggplot() + geom_polygon(data=world, aes(x=long, y=lat, group=group), fill="grey", color = "darkgrey") + 
+    geom_sf() + coord_sf(xlim = lon_range, ylim = lat_range, crs = st_crs(4326)) +
+    geom_point(data=feedback_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
+    labs(x = "", y = "") +
+    scale_shape_manual(values = named_shapes) +
+    scale_colour_manual(values = named_colors) +
+    guides(shape = FALSE, color = FALSE) +
+    theme_classic()+
+    theme(panel.border = element_rect(colour = "black", fill=NA))  }
 }
 
 

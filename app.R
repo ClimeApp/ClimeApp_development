@@ -760,6 +760,12 @@ ui <- navbarPage(id = "nav1",
                                                value  = 11,
                                                min    = 3,
                                                max    = 30),
+                                  
+                                  radioButtons(inputId   = "year_position_ts",
+                                               label     = "Position for each year:"  ,
+                                               choices   = c("before", "on", "after"),
+                                               selected  = "on",
+                                               inline    = TRUE)
                               )),
                                  
                                   checkboxInput(inputId = "custom_percentile_ts",
@@ -804,38 +810,28 @@ ui <- navbarPage(id = "nav1",
                                         value = 1422,
                                         min = 1422,
                                         max = 2008)),
-                               
-                               #column(width=4,
-                              #        pickerInput(inputId  = "fad_type",
-                              #                    label    = "Type:",
-                              #                    choices  = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                    selected = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                    multiple = TRUE)),
-                               
-                               #column(width=4,
-                              #        pickerInput(inputId  = "fad_variable",
-                              #                    label    = "Variable:",
-                              #                    choices  = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                    selected = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                    multiple = TRUE)),
+                               h4(helpText("Draw a box on the left map to use zoom function")),
                              ),
                              
                              div(id = "fad_map_a",
-                             splitLayout(plotOutput("fad_winter_map_a"), plotOutput("fad_summer_map_a"))),
+                             splitLayout(
+                                         plotOutput("fad_winter_map_a",
+                                                     brush = brushOpts(
+                                                       id = "brush_fad1a",
+                                                       resetOnNew = TRUE
+                                                     )),
 
-                             fluidRow(
-                               
-                               column(width=4,
-                                      numericInput(
-                                        inputId  = "fad_year_b",
-                                        label   =  "Year",
-                                        value = 2008,
-                                        min = 1422,
-                                        max = 2008)),
-                             ),
-                             
+                                         plotOutput("fad_zoom_winter_a")
+                                         )),
+
                              div(id = "fad_map_b",
-                             splitLayout(plotOutput("fad_winter_map_b"), plotOutput("fad_summer_map_b"))),
+                             splitLayout(plotOutput("fad_summer_map_a",
+                                                    brush = brushOpts(
+                                                      id = "brush_fad1b",
+                                                      resetOnNew = TRUE
+                                                    )),
+                                         plotOutput("fad_zoom_summer_a")
+                                         )),
                     ),
                     
                     
@@ -927,7 +923,7 @@ ui <- navbarPage(id = "nav1",
                                          fileInput(inputId = "upload_file2",
                                                    label = "Upload a list of years in .csv or .xlsx format:",
                                                    multiple = FALSE,
-                                                   accept = c(".csv", ".xlsx"),
+                                                   accept = c(".csv", ".xlsx", ".xls"),
                                                    width = NULL,
                                                    buttonLabel = "Browse your folders",
                                                    placeholder = "No file selected"),
@@ -959,7 +955,7 @@ ui <- navbarPage(id = "nav1",
                        div(id = "optional2a",
                            numericRangeInput(inputId = "ref_period2",
                                              label      = "Reference period:",
-                                             value      = c(1812,1814),
+                                             value      = c(1961,1990),
                                              separator  = " to ",
                                              min        = 1422,
                                              max        = 2008))),
@@ -982,14 +978,14 @@ ui <- navbarPage(id = "nav1",
                      shinyjs::hidden(div(id = "optional2g",
                                          textInput(inputId    = "range_years2a",
                                                    label     = "Enter your list of years, separated by commas:",
-                                                   value     = "1815, 1816",
-                                                   placeholder = "1815"))),
+                                                   value     = "1641, 1642",
+                                                   placeholder = "1641"))),
                      
                      shinyjs::hidden(div(id = "optional2h",
                                          fileInput(inputId = "upload_file2a",
                                                    label = "Upload a list of years in .csv or .xlsx format:",
                                                    multiple = FALSE,
-                                                   accept = c(".csv", ".xlsx"),
+                                                   accept = c(".csv", ".xlsx", ".xls"),
                                                    width = NULL,
                                                    buttonLabel = "Browse your folders",
                                                    placeholder = "No file selected"),
@@ -1098,6 +1094,10 @@ ui <- navbarPage(id = "nav1",
                      tabPanel("Map", br(),
                               h4(textOutput("text_years2")),
                               textOutput("years2"),
+                     shinyjs::hidden(div(id = "custom_anomaly_years2",
+                              h4(textOutput("text_custom_years2")),
+                              textOutput("custom_years2")
+                     )),
                               plotOutput("map2",height = "auto", dblclick = "map_dblclick2", brush = brushOpts(id = "map_brush2",resetOnNew = TRUE)),
                               
                       #### Customization panels START ----       
@@ -1311,6 +1311,10 @@ ui <- navbarPage(id = "nav1",
                    tabPanel("Time series", br(),
                             h4(textOutput("text_years2b")),
                             textOutput("years2b"),
+                            shinyjs::hidden(div(id = "custom_anomaly_years2b",
+                                                h4(textOutput("text_custom_years2b")),
+                                                textOutput("custom_years2b")
+                            )),
                             plotOutput("timeseries2", click = "ts_click2", dblclick = "ts_dblclick2", brush = brushOpts(id = "ts_brush2",resetOnNew = TRUE)),
                       
                       #### Customization panels START ----       
@@ -1659,7 +1663,7 @@ ui <- navbarPage(id = "nav1",
                    fileInput(inputId = "user_file_v1",
                              label = "Upload time series data in .csv or .xlsx format:",
                              multiple = FALSE,
-                             accept = c(".csv", ".xlsx"),
+                             accept = c(".csv", ".xlsx", ".xls"),
                              width = NULL,
                              buttonLabel = "Browse your folders",
                              placeholder = "No file selected"),
@@ -1863,7 +1867,7 @@ ui <- navbarPage(id = "nav1",
                      fileInput(inputId = "user_file_v2",
                                label = "Upload time series data in .csv or .xlsx format:",
                                multiple = FALSE,
-                               accept = c(".csv", ".xlsx"),
+                               accept = c(".csv", ".xlsx", ".xls"),
                                width = NULL,
                                buttonLabel = "Browse your folders",
                                placeholder = "No file selected"),
@@ -2277,7 +2281,13 @@ ui <- navbarPage(id = "nav1",
                                                       label  = "Year moving average, centred:",
                                                       value  = 11,
                                                       min    = 3,
-                                                      max    = 30), 
+                                                      max    = 30),
+                                         
+                                         radioButtons(inputId   = "year_position_ts3",
+                                                      label     = "Position for each year:"  ,
+                                                      choices   = c("before", "on", "after"),
+                                                      selected  = "on",
+                                                      inline    = TRUE)
                                      )),
                                    
                                )),
@@ -2641,7 +2651,7 @@ tabPanel("Regression", id = "tab4",
                      fileInput(inputId = "user_file_iv",
                                label = "Upload time series data in .csv or .xlsx format:",
                                multiple = FALSE,
-                               accept = c(".csv", ".xlsx"),
+                               accept = c(".csv", ".xlsx", ".xls"),
                                width = NULL,
                                buttonLabel = "Browse your folders",
                                placeholder = "No file selected"),
@@ -2841,7 +2851,7 @@ tabPanel("Regression", id = "tab4",
                      fileInput(inputId = "user_file_dv",
                                label = "Upload time series data in .csv or .xlsx format:",
                                multiple = FALSE,
-                               accept = c(".csv", ".xlsx"),
+                               accept = c(".csv", ".xlsx", ".xls"),
                                width = NULL,
                                buttonLabel = "Browse your folders",
                                placeholder = "No file selected"),
@@ -3564,6 +3574,14 @@ server <- function(input, output, session) {
                     condition = input$custom_statistic2 == "% sign match",
                     asis = FALSE)
     
+    shinyjs::toggle(id = "custom_anomaly_years2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$mode_selected2 == "List of custom anomaly years",
+                    asis = FALSE)
+    
     ## Composites TS
     
     shinyjs::toggle(id = "hidden_custom_ts2",
@@ -3636,6 +3654,14 @@ server <- function(input, output, session) {
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts2 == "Line",
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "custom_anomaly_years2b",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$mode_selected2 == "List of custom anomaly years",
                     asis = FALSE)
     
     ## Correlation Maps
@@ -5830,6 +5856,7 @@ server <- function(input, output, session) {
     })
     
   ## REGRESSION observe, update & interactive controls ----
+    
     ### Input updaters ----
     
     # Update variable selection
@@ -6301,7 +6328,7 @@ server <- function(input, output, session) {
       }
     })
     
-  # ----
+  #Processing and Plotting ----
   ## GENERAL data processing and plotting ----  
   #Preparation
   
@@ -6410,8 +6437,13 @@ server <- function(input, output, session) {
     
     ts_data1 <- create_timeseries_datatable(data_output3(), input$range_years, "range", subset_lons(), subset_lats())
     
+    MA_alignment = switch(input$year_position_ts,
+                          "before" = "left",
+                          "on" = "center",
+                          "after" = "right")
+    
     ts_data2 = add_stats_to_TS_datatable(ts_data1,input$custom_average_ts,input$year_moving_ts,
-                                         "center",input$custom_percentile_ts,input$percentile_ts,input$moving_percentile_ts)
+                                         MA_alignment,input$custom_percentile_ts,input$percentile_ts,input$moving_percentile_ts)
     
     return(ts_data2)
   })
@@ -6450,19 +6482,86 @@ server <- function(input, output, session) {
     ### ModE-RA sources ----
     #ModE-RA sources
     
-    fad_wa <- function() {plot_modera_sources(input$fad_year_a, "winter", lonlat_vals()[1:2], lonlat_vals()[3:4])}
-    fad_sa <- function() {plot_modera_sources(input$fad_year_a, "summer", lonlat_vals()[1:2], lonlat_vals()[3:4])}
+    ranges  <- reactiveValues(x = NULL, y = NULL)
+#    ranges2 <- reactiveValues(x = NULL, y = NULL)
+  
+    fad_wa <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a, "winter", lonlat_vals()[1:2], lonlat_vals()[3:4], labs)}
+    fad_sa <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a, "summer", lonlat_vals()[1:2], lonlat_vals()[3:4], labs)}
     
-    # Left map  
+    # Upper map (Original)
     output$fad_winter_map_a <- renderPlot({
       if ((month_range()[1] >= 4) && (month_range()[2] <= 9)) {
-        fad_sa()
+        plot_data <- fad_sa(labs = TRUE)
       } else {
-        fad_wa()
+        plot_data <- fad_wa(labs = TRUE)
       }
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
     })
     
-    # Right map
+    # Upper map (Zoom)
+    output$fad_zoom_winter_a <- renderPlot({
+      if ((month_range()[1] >= 4) && (month_range()[2] <= 9)) {
+        plot_data <- fad_sa(labs = FALSE)
+      } else {
+        plot_data <- fad_wa(labs = FALSE)
+      }
+      
+      # Calculate the aspect ratio of the original map
+      original_x_range <- lonlat_vals()[1:2]
+      original_y_range <- lonlat_vals()[3:4]
+      original_x_length <- diff(original_x_range)
+      original_y_length <- diff(original_y_range)
+      original_aspect_ratio <- original_x_length / original_y_length
+      
+      # Check if ranges$x and ranges$y are defined
+      if (!is.null(ranges$x) && !is.null(ranges$y)) {
+        x_range <- range(ranges$x)
+        y_range <- range(ranges$y)
+      } else {
+        x_range <- original_x_range
+        y_range <- original_y_range
+      }
+      
+      # Calculate the aspect ratio of the selected brush or the original map
+      x_length <- diff(x_range)
+      y_length <- diff(y_range)
+      aspect_ratio <- x_length / y_length
+      
+      # Determine whether the original plot is in landscape or portrait format
+      original_format_landscape <- original_x_length >= original_y_length
+      
+      # Calculate the desired aspect ratio based on the original plot
+      desired_aspect_ratio <- if (original_format_landscape) {
+        original_aspect_ratio
+      } else {
+        1 / original_aspect_ratio
+      }
+      
+      # Adjust the x and y limits while maintaining the desired aspect ratio
+      if (aspect_ratio > desired_aspect_ratio) {
+        y_center <- sum(y_range) / 2
+        new_y_length <- x_length / desired_aspect_ratio
+        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+      } else {
+        x_center <- sum(x_range) / 2
+        new_x_length <- y_length * desired_aspect_ratio
+        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+      }
+      
+      # Apply coord_cartesian to the entire map with adjusted limits
+      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      
+      plot_data
+    })
+    
+    
+    # Lower map Original
     output$fad_summer_map_a <- renderPlot({
       if ((month_range()[1] >= 4 && month_range()[2] <= 9) | (month_range()[2] <= 3)) {
         NULL
@@ -6471,28 +6570,26 @@ server <- function(input, output, session) {
       } 
     })
     
-    fad_wb <- function() {plot_modera_sources(input$fad_year_b, "winter", lonlat_vals()[1:2], lonlat_vals()[3:4])}
-    fad_sb <- function() {plot_modera_sources(input$fad_year_b, "summer", lonlat_vals()[1:2], lonlat_vals()[3:4])}
-    
-    # Left map  
-    output$fad_winter_map_b <- renderPlot({
-      if ((month_range()[1] >= 4) && (month_range()[2] <= 9)) {
-        fad_sb()
-      } else {
-        fad_wb()
-      }
-    })
-    
-    # Right map
-    output$fad_summer_map_b <- renderPlot({
-      if ((month_range()[1] >= 4 && month_range()[2] <= 9) | (month_range()[2] <= 3)) {
+    # Lower map Zoom
+    output$fad_zoom_summer_a <- renderPlot({
+      if ((month_range()[1] >= 4 && month_range()[2] <= 9) || (month_range()[2] <= 3)) {
         NULL
       } else {
-        fad_sb()  
+        plot_data <- fad_sa()
       }
+      
+      # Apply coord_cartesian to the entire map
+      plot_data <- plot_data + coord_cartesian(xlim = lonlat_vals()[1:2], ylim = lonlat_vals()[3:4], expand = FALSE)
+      
+      # Check if ranges2$x and ranges2$y are defined, then use coord_cartesian again
+      if (!is.null(ranges2$x) && !is.null(ranges2$y)) {
+        plot_data <- plot_data + coord_cartesian(xlim = ranges2$x, ylim = ranges2$y, expand = FALSE)
+      }
+      
+      plot_data
     })
     
-    #Update Modera source year input
+    #Update Modera source year input and Brushes when Double Click happens
     
     observeEvent(input$range_years[1], {
       updateNumericInput(
@@ -6501,13 +6598,29 @@ server <- function(input, output, session) {
         value = input$range_years[1])
     })
     
-    observeEvent(input$range_years[2], {
-      updateNumericInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "fad_year_b",
-        value = input$range_years[2])
+    observe({
+      brush <- input$brush_fad1a
+      if (!is.null(brush)) {
+        ranges$x <- c(brush$xmin, brush$xmax)
+        ranges$y <- c(brush$ymin, brush$ymax)
+
+      } else {
+        ranges$x <- lonlat_vals()[1:2]
+        ranges$y <- lonlat_vals()[3:4]
+      }
     })
     
+    # observe({
+    #   brush <- input$brush_fad1b
+    #   if (!is.null(brush)) {
+    #     ranges2$x <- c(brush$xmin, brush$xmax)
+    #     ranges2$y <- c(brush$ymin, brush$ymax)
+    #     
+    #   } else {
+    #     ranges2$x <- NULL
+    #     ranges2$y <- NULL
+    #   }
+    # })
     
     ### Downloads ----
     #Downloading General data
@@ -6573,15 +6686,15 @@ server <- function(input, output, session) {
                                                             mmd = generate_map_dimensions(subset_lons(), subset_lats(), session$clientData$output_fad_winter_map_a_width, input$dimension[2], FALSE)
                                                             if (input$file_type_modera_source_b == "png"){
                                                               png(file, width = mmd[3] , height = mmd[4], res = 400)  
-                                                              print(fad_sa())
+                                                              print(fad_sa(labs = TRUE))
                                                               dev.off()
                                                             } else if (input$file_type_modera_source_b == "jpeg"){
                                                               jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
-                                                              print(fad_sa()) 
+                                                              print(fad_sa(labs = TRUE)) 
                                                               dev.off()
                                                             } else {
                                                               pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
-                                                              print(fad_sa())
+                                                              print(fad_sa(labs = TRUE))
                                                               dev.off()
                                                             }})
 
@@ -6592,15 +6705,15 @@ server <- function(input, output, session) {
                                                             
                                                             if (input$file_type_modera_source_a == "png"){
                                                               png(file, width = mmd[3] , height = mmd[4], res = 400)  
-                                                              print(fad_wa())
+                                                              print(fad_wa(labs = TRUE))
                                                               dev.off()
                                                             } else if (input$file_type_modera_source_a == "jpeg"){
                                                               jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
-                                                              print(fad_wa()) 
+                                                              print(fad_wa(labs = TRUE)) 
                                                               dev.off()
                                                             } else {
                                                               pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
-                                                              print(fad_wa())
+                                                              print(fad_wa(labs = TRUE))
                                                               dev.off()
                                                             }})
     
@@ -6690,6 +6803,16 @@ server <- function(input, output, session) {
     return(ysc)
   })
   
+  #List of custom anomaly years (from read Composite) as reference data
+  
+  year_set_comp_ref <- reactive({
+    
+    yscr = read_composite_data(input$range_years2a, input$upload_file2a$datapath, input$enter_upload2a)
+      
+    return(yscr)  
+    
+  })
+  
   #Geographic Subset
   data_output1_2 <- reactive({
     
@@ -6711,7 +6834,7 @@ server <- function(input, output, session) {
     return(processed_data2_2)  
   })
   
-  #Converting Composite to anomalies either fixed period or X years prior
+  #Converting Composite to anomalies either fixed period or X years prior or list of years
   data_output3_2 <- reactive({
     
     #Calculate two ways of anomalies (if selected)
@@ -6719,10 +6842,12 @@ server <- function(input, output, session) {
       processed_data3_2 <- data_output2_2()
     } else if (input$mode_selected2 == "Fixed anomaly"){
       processed_data3_2 <- convert_subset_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), month_range_2(), input$ref_period2)
-    } else {
+    } else if (input$mode_selected2 == "Anomaly compared to X years prior"){
       processed_data3_2 <- convert_composite_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), year_set_comp(), month_range_2(), input$prior_years2)
-    }
-    
+    } else {
+      processed_data3_2 <- convert_subset_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), month_range_2(), year_set_comp_ref())
+      }
+
     return(processed_data3_2)
   })
   
@@ -6813,6 +6938,11 @@ server <- function(input, output, session) {
   output$text_years2b <- renderText("List of chosen composite years:")
   output$years2b <- renderText({year_set_comp()})
   
+  output$text_custom_years2  <- renderText("List of custom anomaly years:")
+  output$custom_years2       <- renderText({year_set_comp_ref()})
+  output$text_custom_years2b <- renderText("List of custom anomaly years:")
+  output$custom_years2b      <- renderText({year_set_comp_ref()})
+
     ### ModE-RA sources ----
     
     fad_wa2 <- function() {plot_modera_sources(input$fad_year_a2, "winter", lonlat_vals2()[1:2], lonlat_vals2()[3:4])}
@@ -7315,8 +7445,14 @@ server <- function(input, output, session) {
         tsd_v1 = user_subset_v1()
       }
       
+      # Add moving averages (if chosen)
+      MA_alignment = switch(input$year_position_ts3,
+                            "before" = "left",
+                            "on" = "center",
+                            "after" = "right")
+      
       tsds_v1 = add_stats_to_TS_datatable(tsd_v1,input$custom_average_ts3,input$year_moving_ts3,
-                                          "center",FALSE,NA,FALSE)
+                                          MA_alignment,FALSE,NA,FALSE)
       
       return(tsds_v1)
     })
@@ -7328,8 +7464,14 @@ server <- function(input, output, session) {
         tsd_v2 = user_subset_v2()
       } 
       
+      # Add moving averages (if chosen)
+      MA_alignment = switch(input$year_position_ts3,
+                            "before" = "left",
+                            "on" = "center",
+                            "after" = "right")
+      
       tsds_v2 = add_stats_to_TS_datatable(tsd_v2,input$custom_average_ts3,input$year_moving_ts3,
-                                          "center",FALSE,NA,FALSE)
+                                          MA_alignment,FALSE,NA,FALSE)
       
       return(tsds_v2)
     })
@@ -8403,9 +8545,8 @@ server <- function(input, output, session) {
 
 }
 
-
 # Run the app ----
 shinyApp(ui = ui, server = server)
-
+  
 
 
