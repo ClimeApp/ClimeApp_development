@@ -6530,11 +6530,11 @@ server <- function(input, output, session) {
     output$download_timeseries      <- downloadHandler(filename = function(){paste(plot_titles()$file_title,"-ts.",input$file_type_timeseries, sep = "")},
                                                        content  = function(file) {
                                                          if (input$file_type_timeseries == "png"){
-                                                           png(file, width = 3000, height = 1800, res = 200) 
+                                                           png(file, width = 3000, height = 1285, res = 200) 
                                                            timeseries_plot() 
                                                            dev.off()
                                                          } else if (input$file_type_timeseries == "jpeg"){
-                                                           jpeg(file, width = 3000, height = 1800, res = 200) 
+                                                           jpeg(file, width = 3000, height = 1285, res = 200) 
                                                            timeseries_plot() 
                                                            dev.off()
                                                          } else {
@@ -6908,11 +6908,11 @@ server <- function(input, output, session) {
     output$download_timeseries2      <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title,"-ts.",input$file_type_timeseries2, sep = "")},
                                                         content  = function(file) {
                                                           if (input$file_type_timeseries2 == "png"){
-                                                            png(file, width = 3000, height = 1800, res = 200) 
+                                                            png(file, width = 3000, height = 1285, res = 200) 
                                                             timeseries_plot_2() 
                                                             dev.off()
                                                           } else if (input$file_type_timeseries2 == "jpeg"){
-                                                            jpeg(file, width = 3000, height = 1800, res = 200) 
+                                                            jpeg(file, width = 3000, height = 1285, res = 200) 
                                                             timeseries_plot_2() 
                                                             dev.off()
                                                           } else {
@@ -7548,11 +7548,11 @@ server <- function(input, output, session) {
       output$download_timeseries3      <- downloadHandler(filename = function(){paste(plot_titles_cor()$Download_title,"-ts.",input$file_type_timeseries3, sep = "")},
                                                           content  = function(file) {
                                                             if (input$file_type_timeseries3 == "png"){
-                                                              png(file, width = 3000, height = 1800, res = 200) 
+                                                              png(file, width = 3000, height = 1285, res = 200) 
                                                               corr_ts1()  
                                                               dev.off()
                                                             } else if (input$file_type_timeseries3 == "jpeg"){
-                                                              jpeg(file, width = 3000, height = 1800, res = 200) 
+                                                              jpeg(file, width = 3000, height = 1285, res = 200) 
                                                               corr_ts1()
                                                               dev.off()
                                                             } else {
@@ -8184,11 +8184,11 @@ server <- function(input, output, session) {
     output$download_reg_ts_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-ts.",input$reg_ts_plot_type, sep = "")},
                                                         content  = function(file) {
                                                           if (input$reg_ts_plot_type == "png"){
-                                                            png(file, width = 3000, height = 1800, res = 200) 
+                                                            png(file, width = 3000, height = 1285, res = 200) 
                                                             reg_ts1a()  
                                                             dev.off()
                                                           } else if (input$reg_ts_plot_type == "jpeg"){
-                                                            jpeg(file, width = 3000, height = 1800, res = 200) 
+                                                            jpeg(file, width = 3000, height = 1285, res = 200) 
                                                             reg_ts1a()
                                                             dev.off()
                                                           } else {
@@ -8200,11 +8200,11 @@ server <- function(input, output, session) {
     output$download_reg_ts2_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title,"-ts.",input$reg_ts2_plot_type, sep = "")},
                                                          content  = function(file) {
                                                            if (input$reg_ts2_plot_type == "png"){
-                                                             png(file, width = 3000, height = 1800, res = 200) 
+                                                             png(file, width = 3000, height = 1285, res = 200) 
                                                              reg_ts1b()  
                                                              dev.off()
                                                            } else if (input$reg_ts2_plot_type == "jpeg"){
-                                                             jpeg(file, width = 3000, height = 1800, res = 200) 
+                                                             jpeg(file, width = 3000, height = 1285, res = 200) 
                                                              reg_ts1b()
                                                              dev.off()
                                                            } else {
