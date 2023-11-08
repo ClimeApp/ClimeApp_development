@@ -48,7 +48,7 @@ data_time_step = 1 # in months, so for annual data would = 12
 
 ## Extract variables, units time, lat and lon
 temp_data = ncvar_get(temp_nc,varid="temp2")-273.15
-prec_data = ncvar_get(prec_nc,varid="totprec")
+prec_data = ncvar_get(prec_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month
 SLP_data  = ncvar_get(SLP_nc,varid="slp")/100
 Z500_data = ncvar_get(Z500_nc,varid="geopotential_height")/100
 
@@ -94,27 +94,27 @@ SON_slp_nc = nc_open("data/ModE-RA/SON/ModE-RA_lowres_20mem_Set_1420-3_1850-1_en
 pp_data = list(vector("list", 4),vector("list", 4),vector("list", 4),vector("list", 4),vector("list", 4))
 
 pp_data[[5]][[1]] = ncvar_get(annual_temp_nc,varid="temp2")-273.15
-pp_data[[5]][[2]] = ncvar_get(annual_prec_nc,varid="totprec")
+pp_data[[5]][[2]] = ncvar_get(annual_prec_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month
 pp_data[[5]][[3]] = ncvar_get(annual_slp_nc,varid="slp")/100
 #pp_data[[5]][[4]] = ncvar_get(annual_nc,varid="geopotential_height")
 
 pp_data[[1]][[1]] = ncvar_get(DJF_temp_nc,varid="temp2")-273.15
-pp_data[[1]][[2]] = ncvar_get(DJF_prec_nc,varid="totprec")
+pp_data[[1]][[2]] = ncvar_get(DJF_prec_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month
 pp_data[[1]][[3]] = ncvar_get(DJF_slp_nc,varid="slp")/100
 #pp_data[[1]][[4]] = ncvar_get(DJF_nc,varid="geopotential_height")
 
 pp_data[[2]][[1]] = ncvar_get(MAM_temp_nc,varid="temp2")-273.15
-pp_data[[2]][[2]] = ncvar_get(MAM_prec_nc,varid="totprec")
+pp_data[[2]][[2]] = ncvar_get(MAM_prec_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month
 pp_data[[2]][[3]] = ncvar_get(MAM_slp_nc,varid="slp")/100
 #pp_data[[2]][[4]] = ncvar_get(MAM_nc,varid="geopotential_height")
 
 pp_data[[3]][[1]] = ncvar_get(JJA_temp_nc,varid="temp2")-273.15
-pp_data[[3]][[2]] = ncvar_get(JJA_prec_nc,varid="totprec")
+pp_data[[3]][[2]] = ncvar_get(JJA_prec_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month
 pp_data[[3]][[3]] = ncvar_get(JJA_slp_nc,varid="slp")/100
 #pp_data[[3]][[4]] = ncvar_get(JJA_nc,varid="geopotential_height")
 
 pp_data[[4]][[1]] = ncvar_get(SON_temp_nc,varid="temp2")-273.15
-pp_data[[4]][[2]] = ncvar_get(SON_prec_nc,varid="totprec")
+pp_data[[4]][[2]] = ncvar_get(SON_prec_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month
 pp_data[[4]][[3]] = ncvar_get(SON_slp_nc,varid="slp")/100
 #pp_data[[4]][[4]] = ncvar_get(SON_nc,varid="geopotential_height")
 
@@ -381,7 +381,7 @@ load_ModE_data = function(dataset,variable){
     if (variable == "Temperature"){
       data_output = ncvar_get(data_nc,varid="temp2")-273.15 
     } else if (variable == "Precipitation"){
-      data_output = ncvar_get(data_nc,varid="totprec") 
+      data_output = ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
     } else if (variable == "SLP"){
       data_output = ncvar_get(data_nc,varid="slp")/100 
     } else {
@@ -404,7 +404,7 @@ load_ModE_data = function(dataset,variable){
     if (variable == "Temperature"){
       data_output = ncvar_get(data_nc,varid="temp2") 
     } else if (variable == "Precipitation"){
-      data_output = ncvar_get(data_nc,varid="totprec") 
+      data_output = ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
     } else if (variable == "SLP"){
       data_output = ncvar_get(data_nc,varid="slp")/100 
     } else {
