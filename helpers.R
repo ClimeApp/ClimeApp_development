@@ -402,11 +402,11 @@ load_ModE_data = function(dataset,variable){
                     "Precipitation" = "totprec",
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
-    data_nc = nc_open(paste0("data/ModE-CLIM/Monthly/ModE-RAclim_ensmean_",vname,"_abs_1420-2009.nc"))
+    data_nc = nc_open(paste0("data/ModE-CLIM/Monthly/ModE-RAclim_ensmean_",vname,"_anom_1420-2009.nc"))
 
     # extract data and convert units if necessary                  
     if (variable == "Temperature"){
-      data_output = ncvar_get(data_nc,varid="temp2")-273.15 
+      data_output = ncvar_get(data_nc,varid="temp2") 
     } else if (variable == "Precipitation"){
       data_output = ncvar_get(data_nc,varid="totprec") 
     } else if (variable == "SLP"){
