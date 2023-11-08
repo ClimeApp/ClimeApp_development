@@ -1089,7 +1089,8 @@ plot_modera_sources = function(year,season,lon_range,lat_range,labs){
   ggplot() + geom_polygon(data=world, aes(x=long, y=lat, group=group), fill="grey", color = "darkgrey") + 
     geom_sf() + coord_sf(xlim = lon_range, ylim = lat_range, crs = st_crs(4326)) +
     geom_point(data=feedback_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
-    labs(x = "", y = "") +
+    labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
+         subtitle = paste0("Zoomed Subplot"), x = "", y = "") +
     scale_shape_manual(values = named_shapes) +
     scale_colour_manual(values = named_colors) +
     guides(shape = FALSE, color = FALSE) +
