@@ -9,7 +9,7 @@
 #Richard:
 #Laptop/desktop:
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 
 # App location:
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
@@ -4319,20 +4319,20 @@ server <- function(input, output, session) {
       lonlat_vals(c(input$range_longitude,input$range_latitude))        
     })
     
-    # Year range limiter for ModE-Clim
+    # Remove Absolute option for ModE-Clim
     observe({
       if(input$dataset_selected == "ModE-Clim"){
-        if (input$range_years[1] >2000 & input$range_years[2] >2000){
-          updateNumericRangeInput(
-            session = getDefaultReactiveDomain(),
-            inputId = "range_years",
-            value = c(2000,2000))
-        } else if (input$range_years[2] >2000){
-          updateNumericRangeInput(
-            session = getDefaultReactiveDomain(),
-            inputId = "range_years",
-            value = c(input$range_years[1],2000))
-        }
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId  = "mode_selected",
+          choices  = c("Anomaly"),
+          inline = TRUE)
+      } else {
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId  = "mode_selected",
+          choices  = c("Anomaly","Absolute"),
+          selected = "Anomaly" , inline = TRUE)
       }
     })
       
@@ -4798,6 +4798,23 @@ server <- function(input, output, session) {
     
     observeEvent(input$button_coord2, {
       lonlat_vals2(c(input$range_longitude2,input$range_latitude2))        
+    })
+    
+    # Remove Absolute option for ModE-Clim
+    observe({
+      if(input$dataset_selected2 == "ModE-Clim"){
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId  = "mode_selected2",
+          choices  = c("Fixed anomaly", "Anomaly compared to X years prior", "List of custom anomaly years"),
+          selected = "Fixed anomaly" , inline = TRUE)
+      } else {
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId  = "mode_selected2",
+          choices  = c("Fixed anomaly", "Anomaly compared to X years prior", "List of custom anomaly years", "Absolute"),
+          selected = "Fixed anomaly" , inline = TRUE)
+      }
     })
     
     #Month Range Updater
@@ -5298,6 +5315,39 @@ server <- function(input, output, session) {
           inputId = "range_months_v2",
           label = NULL,
           selected = c("September", "November"))
+      }
+    })
+    
+    # Remove Absolute option for ModE-Clim
+    observe({
+      if(input$dataset_selected_v1 == "ModE-Clim"){
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId  = "mode_selected_v1",
+          choices  = c("Anomaly"),
+          inline = TRUE)
+      } else {
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId  = "mode_selected_v1",
+          choices  = c("Anomaly","Absolute"),
+          selected = "Anomaly" , inline = TRUE)
+      }
+    })
+    
+    observe({
+      if(input$dataset_selected_dv == "ModE-Clim"){
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId  = "mode_selected_dv",
+          choices  = c("Anomaly"),
+          inline = TRUE)
+      } else {
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId  = "mode_selected_dv",
+          choices  = c("Anomaly","Absolute"),
+          selected = "Anomaly" , inline = TRUE)
       }
     })
     
@@ -6011,6 +6061,39 @@ server <- function(input, output, session) {
           inputId = "range_months_dv",
           label = NULL,
           selected = c("September", "November"))
+      }
+    })
+    
+    # Remove Absolute option for ModE-Clim
+    observe({
+      if(input$dataset_selected_iv == "ModE-Clim"){
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId  = "mode_selected_iv",
+          choices  = c("Anomaly"),
+          inline = TRUE)
+      } else {
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId  = "mode_selected_iv",
+          choices  = c("Anomaly","Absolute"),
+          selected = "Anomaly" , inline = TRUE)
+      }
+    })
+    
+    observe({
+      if(input$dataset_selected_v2 == "ModE-Clim"){
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId  = "mode_selected_v2",
+          choices  = c("Anomaly"),
+          inline = TRUE)
+      } else {
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId  = "mode_selected_v2",
+          choices  = c("Anomaly","Absolute"),
+          selected = "Anomaly" , inline = TRUE)
       }
     })
     

@@ -7,9 +7,9 @@ addResourcePath(prefix = 'pics', directoryPath = "www")
 my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")
 
 # Load data 
-temp_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmax_temp2_abs_1420-2009_mon.nc")
-prec_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmax_totprec_abs_1420-2009_mon.nc")
-SLP_nc    <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmax_slp_abs_1420-2009_mon.nc")
+temp_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_mon.nc")
+prec_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_mon.nc")
+SLP_nc    <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_mon.nc")
 Z500_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_geopoth_50000_abs_1420-2009_mon.nc")
 
 # Data from the NetcDF file
@@ -372,11 +372,11 @@ load_ModE_data = function(dataset,variable){
                     "Precipitation" = "totprec",
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
-    data_nc = nc_open(paste0("data/ModE-CLIM/Monthly/ModE-RAclim_ensmean_",vname,"_abs_1420-2009.nc"))
+    data_nc = nc_open(paste0("data/ModE-CLIM/Monthly/ModE-RAclim_ensmean_",vname,"_anom_1420-2009.nc"))
 
     # extract data and convert units if necessary                  
     if (variable == "Temperature"){
-      data_output = ncvar_get(data_nc,varid="temp2")-273.15 
+      data_output = ncvar_get(data_nc,varid="temp2") 
     } else if (variable == "Precipitation"){
       data_output = ncvar_get(data_nc,varid="totprec") 
     } else if (variable == "SLP"){
