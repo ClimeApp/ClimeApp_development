@@ -1,38 +1,26 @@
 ### ClimeApp_beta ###
 
-# WD and Packages ----
+# WDs for Project ----
 
-#Nik:
-#Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+#Noémie
+#setwd("C:/Users/nw22d367/OneDrive - Universitaet Bern/ClimeApp_development")
 
+<<<<<<< HEAD
 #Richard:
 #Laptop/desktop:
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
 setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+=======
+#Nik
+setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_GitHub/ClimeApp_development")
+>>>>>>> 3eb8d9a509859d2379c96f5ece748f07556b49c6
 
-# App location:
-#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+#Richard
 
-library(shiny)
-library(ncdf4)
-library(maps)
-library(shinyWidgets)
-library(RColorBrewer)
-library(shinyjs)
-library(bslib)
-library(readxl)
-library(xlsx)
-library(DT)
-library(zoo)
-library(colourpicker)
-library(tmaptools)
-library(ggplot2)
-library(sf)
-library(shinylogs)
 
 # Source for helpers ----
 source("helpers.R")
+
 
 # Define UI ----
 
@@ -40,8 +28,7 @@ ui <- navbarPage(id = "nav1",
           ## Configs for navbarPage: theme, images (Header and Footer) ----
           title = div(style = "display: inline;",
                       img(src = 'pics/Logo_ClimeApp_V2_210623.png', id = "ClimeApp", height = "75px", width = "75px", style = "margin-right: -10px"),
-                      img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta)",
-
+                      img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v2.0)",
                       ),
           footer = div(class = "navbar-footer",
                        style = "display: inline;",
@@ -67,6 +54,12 @@ ui <- navbarPage(id = "nav1",
                               Shiny.onInputChange("dimension", dimension);
                           });
                       ')),
+                       # No Red Error messages
+                       tags$style(type="text/css",
+                                  ".shiny-output-error { visibility: hidden; }",
+                                  ".shiny-output-error:before { visibility: hidden; }"
+                       )
+                       
                        ),
           theme = my_theme,
           position = c("fixed-top"),
@@ -830,38 +823,28 @@ ui <- navbarPage(id = "nav1",
                                         value = 1422,
                                         min = 1422,
                                         max = 2008)),
-                               
-                               #column(width=4,
-                              #        pickerInput(inputId  = "fad_type",
-                              #                    label    = "Type:",
-                              #                    choices  = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                    selected = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                    multiple = TRUE)),
-                               
-                               #column(width=4,
-                              #        pickerInput(inputId  = "fad_variable",
-                              #                    label    = "Variable:",
-                              #                    choices  = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                    selected = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                    multiple = TRUE)),
+                               h4(helpText("Draw a box on the left map to use zoom function")),
                              ),
                              
                              div(id = "fad_map_a",
-                             splitLayout(plotOutput("fad_winter_map_a"), plotOutput("fad_summer_map_a"))),
+                             splitLayout(
+                                         plotOutput("fad_winter_map_a",
+                                                     brush = brushOpts(
+                                                       id = "brush_fad1a",
+                                                       resetOnNew = TRUE
+                                                     )),
 
-                             fluidRow(
-                               
-                               column(width=4,
-                                      numericInput(
-                                        inputId  = "fad_year_b",
-                                        label   =  "Year",
-                                        value = 2008,
-                                        min = 1422,
-                                        max = 2008)),
-                             ),
-                             
+                                         plotOutput("fad_zoom_winter_a")
+                                         )),
+
                              div(id = "fad_map_b",
-                             splitLayout(plotOutput("fad_winter_map_b"), plotOutput("fad_summer_map_b"))),
+                             splitLayout(plotOutput("fad_summer_map_a",
+                                                    brush = brushOpts(
+                                                      id = "brush_fad1b",
+                                                      resetOnNew = TRUE
+                                                    )),
+                                         plotOutput("fad_zoom_summer_a")
+                                         )),
                     ),
                     
                     
@@ -888,12 +871,6 @@ ui <- navbarPage(id = "nav1",
                             column(width = 3,
                                    radioButtons(inputId = "file_type_modera_source_b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
                                    downloadButton(outputId = "download_fad_sa", label = "Download Apr. - Sept. Y1")),
-                            column(width = 3,
-                                   radioButtons(inputId = "file_type_modera_source_c", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                   downloadButton(outputId = "download_fad_wb", label = "Download Oct. - Mar. Y2")),
-                            column(width = 3,
-                                   radioButtons(inputId = "file_type_modera_source_d", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                   downloadButton(outputId = "download_fad_sb", label = "Download Apr. - Sept. Y2"))
                           ),
                           br(),
                           h3(helpText("NetCDF download")),
@@ -953,7 +930,7 @@ ui <- navbarPage(id = "nav1",
                                          fileInput(inputId = "upload_file2",
                                                    label = "Upload a list of years in .csv or .xlsx format:",
                                                    multiple = FALSE,
-                                                   accept = c(".csv", ".xlsx"),
+                                                   accept = c(".csv", ".xlsx", ".xls"),
                                                    width = NULL,
                                                    buttonLabel = "Browse your folders",
                                                    placeholder = "No file selected"),
@@ -985,7 +962,7 @@ ui <- navbarPage(id = "nav1",
                        div(id = "optional2a",
                            numericRangeInput(inputId = "ref_period2",
                                              label      = "Reference period:",
-                                             value      = c(1812,1814),
+                                             value      = c(1961,1990),
                                              separator  = " to ",
                                              min        = 1422,
                                              max        = 2008))),
@@ -1008,14 +985,14 @@ ui <- navbarPage(id = "nav1",
                      shinyjs::hidden(div(id = "optional2g",
                                          textInput(inputId    = "range_years2a",
                                                    label     = "Enter your list of years, separated by commas:",
-                                                   value     = "1815, 1816",
-                                                   placeholder = "1815"))),
+                                                   value     = "1641, 1642",
+                                                   placeholder = "1641"))),
                      
                      shinyjs::hidden(div(id = "optional2h",
                                          fileInput(inputId = "upload_file2a",
                                                    label = "Upload a list of years in .csv or .xlsx format:",
                                                    multiple = FALSE,
-                                                   accept = c(".csv", ".xlsx"),
+                                                   accept = c(".csv", ".xlsx", ".xls"),
                                                    width = NULL,
                                                    buttonLabel = "Browse your folders",
                                                    placeholder = "No file selected"),
@@ -1124,6 +1101,10 @@ ui <- navbarPage(id = "nav1",
                      tabPanel("Map", br(),
                               h4(textOutput("text_years2")),
                               textOutput("years2"),
+                     shinyjs::hidden(div(id = "custom_anomaly_years2",
+                              h4(textOutput("text_custom_years2")),
+                              textOutput("custom_years2")
+                     )),
                               plotOutput("map2",height = "auto", dblclick = "map_dblclick2", brush = brushOpts(id = "map_brush2",resetOnNew = TRUE)),
                               
                       #### Customization panels START ----       
@@ -1337,6 +1318,10 @@ ui <- navbarPage(id = "nav1",
                    tabPanel("Time series", br(),
                             h4(textOutput("text_years2b")),
                             textOutput("years2b"),
+                            shinyjs::hidden(div(id = "custom_anomaly_years2b",
+                                                h4(textOutput("text_custom_years2b")),
+                                                textOutput("custom_years2b")
+                            )),
                             plotOutput("timeseries2", click = "ts_click2", dblclick = "ts_dblclick2", brush = brushOpts(id = "ts_brush2",resetOnNew = TRUE)),
                       
                       #### Customization panels START ----       
@@ -1590,36 +1575,28 @@ ui <- navbarPage(id = "nav1",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              
-                              #column(width=4,
-                              #       pickerInput(inputId  = "fad_type2",
-                              #                  label    = "Type:",
-                              #                   choices  = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                   selected = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                   multiple = TRUE)),
-                              
-                              #column(width=4,
-                              #       pickerInput(inputId  = "fad_variable2",
-                              #                   label    = "Variable:",
-                              #                   choices  = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                   selected = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                   multiple = TRUE)),
+                              h4(helpText("Draw a box on the left map to use zoom function")),
                             ),
                             
-                            splitLayout(plotOutput("fad_winter_map_a2"), plotOutput("fad_summer_map_a2")),
+                            div(id = "fad_map_a2",
+                                splitLayout(
+                                  plotOutput("fad_winter_map_a2",
+                                             brush = brushOpts(
+                                               id = "brush_fad1a2",
+                                               resetOnNew = TRUE
+                                             )),
+                                  
+                                  plotOutput("fad_zoom_winter_a2")
+                                )),
                             
-                            fluidRow(
-                              
-                              column(width=4,
-                                     numericInput(
-                                       inputId  = "fad_year_b2",
-                                       label   =  "Year",
-                                       value = 2008,
-                                       min = 1422,
-                                       max = 2008)),
-                            ),
-                            
-                            splitLayout(plotOutput("fad_winter_map_b2"), plotOutput("fad_summer_map_b2")),
+                            div(id = "fad_map_b2",
+                                splitLayout(plotOutput("fad_summer_map_a2",
+                                                       brush = brushOpts(
+                                                         id = "brush_fad1b2",
+                                                         resetOnNew = TRUE
+                                                       )),
+                                            plotOutput("fad_zoom_summer_a2")
+                                )),
                    ),
                    
                     ### Downloads ----
@@ -1645,12 +1622,6 @@ ui <- navbarPage(id = "nav1",
                                       column(width = 3,
                                              radioButtons(inputId = "file_type_modera_source_b2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
                                              downloadButton(outputId = "download_fad_sa2", label = "Download Apr. - Sept. Y1")),
-                                      column(width = 3,
-                                             radioButtons(inputId = "file_type_modera_source_c2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                             downloadButton(outputId = "download_fad_wb2", label = "Download Oct. - Mar. Y2")),
-                                      column(width = 3,
-                                             radioButtons(inputId = "file_type_modera_source_d2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                             downloadButton(outputId = "download_fad_sb2", label = "Download Apr. - Sept. Y2"))
                                     ),
                    ),
                    
@@ -1679,19 +1650,13 @@ ui <- navbarPage(id = "nav1",
                                 selected = "ModE-RA" ,
                                 inline = TRUE),
                   
-                   #Choose one of three datasets (Select)                
-                   selectInput(inputId  = "dataset_selected_v1",
-                               label    = "Choose a dataset:",
-                               choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
-                               selected = "ModE-RA"),
-                   
                    # Upload user data
                    shinyjs::hidden(
                    div(id = "upload_forcings_v1",   
                    fileInput(inputId = "user_file_v1",
                              label = "Upload time series data in .csv or .xlsx format:",
                              multiple = FALSE,
-                             accept = c(".csv", ".xlsx"),
+                             accept = c(".csv", ".xlsx", ".xls"),
                              width = NULL,
                              buttonLabel = "Browse your folders",
                              placeholder = "No file selected"),
@@ -1709,9 +1674,15 @@ ui <- navbarPage(id = "nav1",
                                selected = NULL),
                    )),
                    
-                   #Choose a variable (Mod-ERA) 
+                   #Choose one of three datasets (Select)
                    shinyjs::hidden(
-                   div(id = "hidden_me_variable_v1",
+                   div(id = "hidden_me_dataset_variable_v1",
+                   selectInput(inputId  = "dataset_selected_v1",
+                               label    = "Choose a dataset:",
+                               choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                               selected = "ModE-RA"),
+
+                   #Choose a variable (Mod-ERA) 
                    selectInput(inputId  = "ME_variable_v1",
                                label    = "Choose a variable:",
                                choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
@@ -1722,7 +1693,7 @@ ui <- navbarPage(id = "nav1",
                    div(id = "hidden_modera_variable_v1",
                    #Choose how to use ME data: As a time series or field  
                    radioButtons(inputId  = "type_v1",
-                                label    = "Choose how to use the ModE-RA data:",
+                                label    = "Choose how to use ModE-RA data:",
                                 choices  = c( "Field", "Time series"),
                                 selected = "Time series" ,
                                 inline = TRUE),
@@ -1883,19 +1854,13 @@ ui <- navbarPage(id = "nav1",
                                   selected = "ModE-RA" ,
                                   inline = TRUE),
                      
-                     #Choose one of three datasets (Select)                
-                     selectInput(inputId  = "dataset_selected_v2",
-                                 label    = "Choose a dataset:",
-                                 choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
-                                 selected = "ModE-RA"),
-                     
                      # Upload user data
                      shinyjs::hidden(
                      div(id = "upload_forcings_v2", 
                      fileInput(inputId = "user_file_v2",
                                label = "Upload time series data in .csv or .xlsx format:",
                                multiple = FALSE,
-                               accept = c(".csv", ".xlsx"),
+                               accept = c(".csv", ".xlsx", ".xls"),
                                width = NULL,
                                buttonLabel = "Browse your folders",
                                placeholder = "No file selected"),
@@ -1913,14 +1878,20 @@ ui <- navbarPage(id = "nav1",
                                        selected = NULL),
                        )),
                      
-                     #Choose a variable (Mod-ERA) 
+                     #Choose one of three datasets (Select)
                      shinyjs::hidden(
-                       div(id = "hidden_me_variable_v2",
-                           selectInput(inputId  = "ME_variable_v2",
-                                       label    = "Choose a variable:",
-                                       choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
-                                       selected = "Temperature"),
-                       )),
+                     div(id = "hidden_me_dataset_variable_v2",
+                     selectInput(inputId  = "dataset_selected_v2",
+                                 label    = "Choose a dataset:",
+                                 choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                                 selected = "ModE-RA"),
+
+                     #Choose a variable (Mod-ERA) 
+                     selectInput(inputId  = "ME_variable_v2",
+                                 label    = "Choose a variable:",
+                                 choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
+                                 selected = "Temperature"),
+                     )),
                      
                      shinyjs::hidden(
                      div(id = "hidden_modera_variable_v2",
@@ -2548,24 +2519,29 @@ ui <- navbarPage(id = "nav1",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              
-                              #column(width=4,
-                              #       pickerInput(inputId  = "fad_type3a",
-                              #                   label    = "Type:",
-                              #                   choices  = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                   selected = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                   multiple = TRUE)),
-                              
-                              #column(width=4,
-                              #       pickerInput(inputId  = "fad_variable3a",
-                              #                   label    = "Variable:",
-                              #                   choices  = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                   selected = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                   multiple = TRUE)),
+                              h4(helpText("Draw a box on the left map to use zoom function")),
                             ),
                             
-                            splitLayout(plotOutput("fad_winter_map_a3a"), plotOutput("fad_summer_map_a3a")),
+                            div(id = "fad_map_a3a",
+                                splitLayout(
+                                  plotOutput("fad_winter_map_a3a",
+                                             brush = brushOpts(
+                                               id = "brush_fad1a3a",
+                                               resetOnNew = TRUE
+                                             )),
+                                  
+                                  plotOutput("fad_zoom_winter_a3a")
+                                )),
                             
+                            div(id = "fad_map_b3a",
+                                splitLayout(plotOutput("fad_summer_map_a3a",
+                                                       brush = brushOpts(
+                                                         id = "brush_fad1b3a",
+                                                         resetOnNew = TRUE
+                                                       )),
+                                            plotOutput("fad_zoom_summer_a3a")
+                                )),
+
                             )),
                             
                             br(),
@@ -2580,24 +2556,29 @@ ui <- navbarPage(id = "nav1",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              
-                              #column(width=4,
-                              #       pickerInput(inputId  = "fad_type3b",
-                              #                   label    = "Type:",
-                              #                   choices  = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                   selected = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                   multiple = TRUE)),
-                              
-                              #column(width=4,
-                              #       pickerInput(inputId  = "fad_variable3b",
-                              #                   label    = "Variable:",
-                              #                   choices  = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                   selected = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                   multiple = TRUE)),
+                              h4(helpText("Draw a box on the left map to use zoom function")),
                             ),
                             
-                            splitLayout(plotOutput("fad_winter_map_a3b"), plotOutput("fad_summer_map_a3b")),
+                            div(id = "fad_map_a3b",
+                                splitLayout(
+                                  plotOutput("fad_winter_map_a3b",
+                                             brush = brushOpts(
+                                               id = "brush_fad1a3b",
+                                               resetOnNew = TRUE
+                                             )),
+                                  
+                                  plotOutput("fad_zoom_winter_a3b")
+                                )),
                             
+                            div(id = "fad_map_b3b",
+                                splitLayout(plotOutput("fad_summer_map_a3b",
+                                                       brush = brushOpts(
+                                                         id = "brush_fad1b3b",
+                                                         resetOnNew = TRUE
+                                                       )),
+                                            plotOutput("fad_zoom_summer_a3b")
+                                )),
+
                             )),
                    ),
              
@@ -2667,19 +2648,13 @@ tabPanel("Regression", id = "tab4",
                             selected = "ModE-RA" ,
                             inline = TRUE),
                
-               #Choose one of three datasets (Select)                
-               selectInput(inputId  = "dataset_selected_iv",
-                           label    = "Choose a dataset:",
-                           choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
-                           selected = "ModE-RA"),
-               
                # Upload user data
                shinyjs::hidden(
                  div(id = "upload_forcings_iv",   
                      fileInput(inputId = "user_file_iv",
                                label = "Upload time series data in .csv or .xlsx format:",
                                multiple = FALSE,
-                               accept = c(".csv", ".xlsx"),
+                               accept = c(".csv", ".xlsx", ".xls"),
                                width = NULL,
                                buttonLabel = "Browse your folders",
                                placeholder = "No file selected"),
@@ -2698,15 +2673,21 @@ tabPanel("Regression", id = "tab4",
                                  multiple = TRUE),
                  )),
                
-               #Choose a variable (Mod-ERA) 
+               #Choose one of three datasets (Select) 
                shinyjs::hidden(
-                 div(id = "hidden_me_variable_iv",
-                     pickerInput(inputId  = "ME_variable_iv",
-                                 label    = "Choose a variable:",
-                                 choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
-                                 selected = "Temperature",
-                                 multiple = TRUE),
-                 )),
+               div(id = "hidden_me_variable_dataset_iv",
+               selectInput(inputId  = "dataset_selected_iv",
+                           label    = "Choose a dataset:",
+                           choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                           selected = "ModE-RA"),
+               
+               #Choose a variable (Mod-ERA) 
+               pickerInput(inputId  = "ME_variable_iv",
+                           label    = "Choose one or multiple variables:",
+                           choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
+                           selected = "Temperature",
+                           multiple = TRUE),
+               )),
                
                shinyjs::hidden(
                  div(id = "hidden_modera_variable_iv",
@@ -2866,20 +2847,14 @@ tabPanel("Regression", id = "tab4",
                             choices  = c("ModE-RA", "User Data"),
                             selected = "ModE-RA" ,
                             inline = TRUE),
-               
-               #Choose one of three datasets (Select)                
-               selectInput(inputId  = "dataset_selected_dv",
-                           label    = "Choose a dataset:",
-                           choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
-                           selected = "ModE-RA"),
-               
+
                # Upload user data
                shinyjs::hidden(
                  div(id = "upload_forcings_dv", 
                      fileInput(inputId = "user_file_dv",
                                label = "Upload time series data in .csv or .xlsx format:",
                                multiple = FALSE,
-                               accept = c(".csv", ".xlsx"),
+                               accept = c(".csv", ".xlsx", ".xls"),
                                width = NULL,
                                buttonLabel = "Browse your folders",
                                placeholder = "No file selected"),
@@ -2897,13 +2872,21 @@ tabPanel("Regression", id = "tab4",
                                  selected = NULL),
                  )),
                
-               #Choose a variable (Mod-ERA) 
+
                shinyjs::hidden(
-                 div(id = "hidden_me_variable_dv",
-                     selectInput(inputId  = "ME_variable_dv",
-                                 label    = "Choose a variable:",
-                                 choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
-                                 selected = "Temperature"),
+               div(id = "hidden_me_variable_dataset_dv",
+                     
+                 #Choose one of three datasets (Select)                
+                 selectInput(inputId  = "dataset_selected_dv",
+                             label    = "Choose a dataset:",
+                             choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                             selected = "ModE-RA"),
+                 
+                 #Choose a variable (Mod-ERA) 
+                 selectInput(inputId  = "ME_variable_dv",
+                             label    = "Choose a variable:",
+                             choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
+                             selected = "Temperature"),
                  )),
                
                shinyjs::hidden(
@@ -3111,24 +3094,28 @@ tabPanel("Regression", id = "tab4",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              
-                              #column(width=4,
-                              #       pickerInput(inputId  = "fad_type4a",
-                              #                   label    = "Type:",
-                              #                   choices  = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                   selected = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                   multiple = TRUE)),
-                              
-                              #column(width=4,
-                              #       pickerInput(inputId  = "fad_variable4a",
-                              #                   label    = "Variable:",
-                              #                   choices  = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                   selected = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                   multiple = TRUE)),
+                              h4(helpText("Draw a box on the left map to use zoom function")),
                             ),
                             
-                            splitLayout(plotOutput("fad_winter_map_a4a"), plotOutput("fad_summer_map_a4a")),
-
+                            div(id = "fad_map_a4a",
+                                splitLayout(
+                                  plotOutput("fad_winter_map_a4a",
+                                             brush = brushOpts(
+                                               id = "brush_fad1a4a",
+                                               resetOnNew = TRUE
+                                             )),
+                                  
+                                  plotOutput("fad_zoom_winter_a4a")
+                                )),
+                            
+                            div(id = "fad_map_b4a",
+                                splitLayout(plotOutput("fad_summer_map_a4a",
+                                                       brush = brushOpts(
+                                                         id = "brush_fad1b4a",
+                                                         resetOnNew = TRUE
+                                                       )),
+                                            plotOutput("fad_zoom_summer_a4a")
+                                )),
                         )),
                       
                       br(),
@@ -3143,23 +3130,28 @@ tabPanel("Regression", id = "tab4",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              
-                              #column(width=4,
-                              #       pickerInput(inputId  = "fad_type4b",
-                              #                   label    = "Type:",
-                              #                   choices  = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                   selected = c("bivalve proxy", "coral proxy", "documentary", "glacier ice proxy", "ice proxy", "instrumental", "lake sediment proxy", "speleothem proxy", "tree proxy", "other proxy"),
-                              #                   multiple = TRUE)),
-                              
-                              #column(width=4,
-                              #       pickerInput(inputId  = "fad_variable4b",
-                              #                   label    = "Variable:",
-                              #                   choices  = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                   selected = c("docu", "Grape_Flowering_Date", "mslp", "nr", "p", "proxy", "rr", "slp", "ta"),
-                              #                   multiple = TRUE)),
+                              h4(helpText("Draw a box on the left map to use zoom function")),
                             ),
                             
-                            splitLayout(plotOutput("fad_winter_map_a4b"), plotOutput("fad_summer_map_a4b")),
+                            div(id = "fad_map_a4b",
+                                splitLayout(
+                                  plotOutput("fad_winter_map_a4b",
+                                             brush = brushOpts(
+                                               id = "brush_fad1a4b",
+                                               resetOnNew = TRUE
+                                             )),
+                                  
+                                  plotOutput("fad_zoom_winter_a4b")
+                                )),
+                            
+                            div(id = "fad_map_b4b",
+                                splitLayout(plotOutput("fad_summer_map_a4b",
+                                                       brush = brushOpts(
+                                                         id = "brush_fad1b4b",
+                                                         resetOnNew = TRUE
+                                                       )),
+                                            plotOutput("fad_zoom_summer_a4b")
+                                )),
 
                         )),
              ),
@@ -3263,6 +3255,7 @@ tabPanel("Regression", id = "tab4",
 )
 
 
+     
 # Define server logic ----
 server <- function(input, output, session) {
   #Preparations in the Server ----
@@ -3593,6 +3586,14 @@ server <- function(input, output, session) {
                     condition = input$custom_statistic2 == "% sign match",
                     asis = FALSE)
     
+    shinyjs::toggle(id = "custom_anomaly_years2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$mode_selected2 == "List of custom anomaly years",
+                    asis = FALSE)
+    
     ## Composites TS
     
     shinyjs::toggle(id = "hidden_custom_ts2",
@@ -3665,6 +3666,14 @@ server <- function(input, output, session) {
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts2 == "Line",
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "custom_anomaly_years2b",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$mode_selected2 == "List of custom anomaly years",
                     asis = FALSE)
     
     ## Correlation Maps
@@ -3819,7 +3828,7 @@ server <- function(input, output, session) {
                     condition = input$source_v1 == "User Data",
                     asis = FALSE)
     
-    shinyjs::toggle(id = "hidden_me_variable_v1",
+    shinyjs::toggle(id = "hidden_me_dataset_variable_v1",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
@@ -3885,14 +3894,14 @@ server <- function(input, output, session) {
                     condition = input$source_v2 == "User Data",
                     asis = FALSE)
     
-    shinyjs::toggle(id = "hidden_me_variable_v2",
+    shinyjs::toggle(id = "hidden_me_dataset_variable_v2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v2 == "ModE-RA",
                     asis = FALSE)
-    
+
     shinyjs::toggle(id = "hidden_modera_variable_v2",
                     anim = TRUE,
                     animType = "slide",
@@ -3987,7 +3996,7 @@ server <- function(input, output, session) {
                     condition = input$source_iv == "User Data",
                     asis = FALSE)
     
-    shinyjs::toggle(id = "hidden_me_variable_iv",
+    shinyjs::toggle(id = "hidden_me_variable_dataset_iv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
@@ -4053,7 +4062,7 @@ server <- function(input, output, session) {
                     condition = input$source_dv == "User Data",
                     asis = FALSE)
     
-    shinyjs::toggle(id = "hidden_me_variable_dv",
+    shinyjs::toggle(id = "hidden_me_variable_dataset_dv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
@@ -5909,6 +5918,7 @@ server <- function(input, output, session) {
     })
     
   ## REGRESSION observe, update & interactive controls ----
+    
     ### Input updaters ----
     
     # Update variable selection
@@ -6413,7 +6423,7 @@ server <- function(input, output, session) {
       }
     })
     
-  # ----
+  #Processing and Plotting ----
   ## GENERAL data processing and plotting ----  
   #Preparation
   
@@ -6567,49 +6577,154 @@ server <- function(input, output, session) {
     ### ModE-RA sources ----
     #ModE-RA sources
     
-    fad_wa <- function() {plot_modera_sources(input$fad_year_a, "winter", lonlat_vals()[1:2], lonlat_vals()[3:4])}
-    fad_sa <- function() {plot_modera_sources(input$fad_year_a, "summer", lonlat_vals()[1:2], lonlat_vals()[3:4])}
+    ranges  <- reactiveValues(x = NULL, y = NULL)
+    ranges2 <- reactiveValues(x = NULL, y = NULL)
+  
+    fad_wa <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a, "winter", lonlat_vals()[1:2], lonlat_vals()[3:4], labs)}
+    fad_sa <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a, "summer", lonlat_vals()[1:2], lonlat_vals()[3:4], labs)}
     
-    # Left map  
+    # Upper map (Original)
     output$fad_winter_map_a <- renderPlot({
       if ((month_range()[1] >= 4) && (month_range()[2] <= 9)) {
-        fad_sa()
+        plot_data <- fad_sa(labs = TRUE)
       } else {
-        fad_wa()
+        plot_data <- fad_wa(labs = TRUE)
       }
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
     })
     
-    # Right map
+    # Upper map (Zoom)
+    output$fad_zoom_winter_a <- renderPlot({
+      if ((month_range()[1] >= 4) && (month_range()[2] <= 9)) {
+        plot_data <- fad_sa(labs = FALSE)
+      } else {
+        plot_data <- fad_wa(labs = FALSE)
+      }
+      
+      # Calculate the aspect ratio of the original map
+      original_x_range <- lonlat_vals()[1:2]
+      original_y_range <- lonlat_vals()[3:4]
+      original_x_length <- diff(original_x_range)
+      original_y_length <- diff(original_y_range)
+      original_aspect_ratio <- original_x_length / original_y_length
+      
+      # Check if ranges$x and ranges$y are defined
+      if (!is.null(ranges$x) && !is.null(ranges$y)) {
+        x_range <- range(ranges$x)
+        y_range <- range(ranges$y)
+      } else {
+        x_range <- original_x_range
+        y_range <- original_y_range
+      }
+      
+      # Calculate the aspect ratio of the selected brush or the original map
+      x_length <- diff(x_range)
+      y_length <- diff(y_range)
+      aspect_ratio <- x_length / y_length
+      
+      # Determine whether the original plot is in landscape or portrait format
+      original_format_landscape <- original_x_length >= original_y_length
+      
+      # Calculate the desired aspect ratio based on the original plot
+      desired_aspect_ratio <- if (original_format_landscape) {
+        original_aspect_ratio
+      } else {
+        1 / original_aspect_ratio
+      }
+      
+      # Adjust the x and y limits while maintaining the desired aspect ratio
+      if (aspect_ratio > desired_aspect_ratio) {
+        y_center <- sum(y_range) / 2
+        new_y_length <- x_length / desired_aspect_ratio
+        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+      } else {
+        x_center <- sum(x_range) / 2
+        new_x_length <- y_length * desired_aspect_ratio
+        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+      }
+      
+      # Apply coord_cartesian to the entire map with adjusted limits
+      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      
+      plot_data
+    })
+    
+    # Lower map (Original)
     output$fad_summer_map_a <- renderPlot({
       if ((month_range()[1] >= 4 && month_range()[2] <= 9) | (month_range()[2] <= 3)) {
         NULL
       } else {
-        fad_sa()  
+        plot_data <- fad_sa(labs = TRUE)  
       } 
+    
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
     })
     
-    fad_wb <- function() {plot_modera_sources(input$fad_year_b, "winter", lonlat_vals()[1:2], lonlat_vals()[3:4])}
-    fad_sb <- function() {plot_modera_sources(input$fad_year_b, "summer", lonlat_vals()[1:2], lonlat_vals()[3:4])}
-    
-    # Left map  
-    output$fad_winter_map_b <- renderPlot({
-      if ((month_range()[1] >= 4) && (month_range()[2] <= 9)) {
-        fad_sb()
-      } else {
-        fad_wb()
-      }
-    })
-    
-    # Right map
-    output$fad_summer_map_b <- renderPlot({
-      if ((month_range()[1] >= 4 && month_range()[2] <= 9) | (month_range()[2] <= 3)) {
+    # Lower map (Zoom)
+    output$fad_zoom_summer_a <- renderPlot({
+      if ((month_range()[1] >= 4 && month_range()[2] <= 9) || (month_range()[2] <= 3)) {
         NULL
       } else {
-        fad_sb()  
+        plot_data <- fad_sa(labs = FALSE)
       }
+      
+      # Calculate the aspect ratio of the original map
+      original_x_range <- lonlat_vals()[1:2]
+      original_y_range <- lonlat_vals()[3:4]
+      original_x_length <- diff(original_x_range)
+      original_y_length <- diff(original_y_range)
+      original_aspect_ratio <- original_x_length / original_y_length
+      
+      # Check if ranges2$x and ranges2$y are defined
+      if (!is.null(ranges2$x) && !is.null(ranges2$y)) {
+        x_range <- range(ranges2$x)
+        y_range <- range(ranges2$y)
+      } else {
+        x_range <- original_x_range
+        y_range <- original_y_range
+      }
+      
+      # Calculate the aspect ratio of the selected brush or the original map
+      x_length <- diff(x_range)
+      y_length <- diff(y_range)
+      aspect_ratio <- x_length / y_length
+      
+      # Determine whether the original plot is in landscape or portrait format
+      original_format_landscape <- original_x_length >= original_y_length
+      
+      # Calculate the desired aspect ratio based on the original plot
+      desired_aspect_ratio <- if (original_format_landscape) {
+        original_aspect_ratio
+      } else {
+        1 / original_aspect_ratio
+      }
+      
+      # Adjust the x and y limits while maintaining the desired aspect ratio
+      if (aspect_ratio > desired_aspect_ratio) {
+        y_center <- sum(y_range) / 2
+        new_y_length <- x_length / desired_aspect_ratio
+        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+      } else {
+        x_center <- sum(x_range) / 2
+        new_x_length <- y_length * desired_aspect_ratio
+        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+      }
+      
+      # Apply coord_cartesian to the entire map with adjusted limits
+      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      
+      plot_data
     })
     
-    #Update Modera source year input
+
+    #Update Modera source year input and Brushes when Double Click happens
     
     observeEvent(input$range_years[1], {
       updateNumericInput(
@@ -6618,13 +6733,29 @@ server <- function(input, output, session) {
         value = input$range_years[1])
     })
     
-    observeEvent(input$range_years[2], {
-      updateNumericInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "fad_year_b",
-        value = input$range_years[2])
+    observe({
+      brush <- input$brush_fad1a
+      if (!is.null(brush)) {
+        ranges$x <- c(brush$xmin, brush$xmax)
+        ranges$y <- c(brush$ymin, brush$ymax)
+
+      } else {
+        ranges$x <- lonlat_vals()[1:2]
+        ranges$y <- lonlat_vals()[3:4]
+      }
     })
     
+    observe({
+      brush_b <- input$brush_fad1b
+      if (!is.null(brush_b)) {
+        ranges2$x <- c(brush_b$xmin, brush_b$xmax)
+        ranges2$y <- c(brush_b$ymin, brush_b$ymax)
+
+      } else {
+        ranges2$x <- lonlat_vals()[1:2]
+        ranges2$y <- lonlat_vals()[3:4]
+      }
+    })
     
     ### Downloads ----
     #Downloading General data
@@ -6647,11 +6778,11 @@ server <- function(input, output, session) {
     output$download_timeseries      <- downloadHandler(filename = function(){paste(plot_titles()$file_title,"-ts.",input$file_type_timeseries, sep = "")},
                                                        content  = function(file) {
                                                          if (input$file_type_timeseries == "png"){
-                                                           png(file, width = 3000, height = 1800, res = 200) 
+                                                           png(file, width = 3000, height = 1285, res = 200) 
                                                            timeseries_plot() 
                                                            dev.off()
                                                          } else if (input$file_type_timeseries == "jpeg"){
-                                                           jpeg(file, width = 3000, height = 1800, res = 200) 
+                                                           jpeg(file, width = 3000, height = 1285, res = 200) 
                                                            timeseries_plot() 
                                                            dev.off()
                                                          } else {
@@ -6690,15 +6821,15 @@ server <- function(input, output, session) {
                                                             mmd = generate_map_dimensions(subset_lons(), subset_lats(), session$clientData$output_fad_winter_map_a_width, input$dimension[2], FALSE)
                                                             if (input$file_type_modera_source_b == "png"){
                                                               png(file, width = mmd[3] , height = mmd[4], res = 400)  
-                                                              print(fad_sa())
+                                                              print(fad_sa(labs = TRUE))
                                                               dev.off()
                                                             } else if (input$file_type_modera_source_b == "jpeg"){
                                                               jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
-                                                              print(fad_sa()) 
+                                                              print(fad_sa(labs = TRUE)) 
                                                               dev.off()
                                                             } else {
                                                               pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
-                                                              print(fad_sa())
+                                                              print(fad_sa(labs = TRUE))
                                                               dev.off()
                                                             }})
 
@@ -6709,53 +6840,15 @@ server <- function(input, output, session) {
                                                             
                                                             if (input$file_type_modera_source_a == "png"){
                                                               png(file, width = mmd[3] , height = mmd[4], res = 400)  
-                                                              print(fad_wa())
+                                                              print(fad_wa(labs = TRUE))
                                                               dev.off()
                                                             } else if (input$file_type_modera_source_a == "jpeg"){
                                                               jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
-                                                              print(fad_wa()) 
+                                                              print(fad_wa(labs = TRUE)) 
                                                               dev.off()
                                                             } else {
                                                               pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
-                                                              print(fad_wa())
-                                                              dev.off()
-                                                            }})
-    
-    output$download_fad_sb             <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_b, "-modera_source.",input$file_type_modera_source_d, sep = "")},
-                                                          content  = function(file) {
-                                                            
-                                                            mmd = generate_map_dimensions(subset_lons(), subset_lats(), session$clientData$output_fad_winter_map_a_width, input$dimension[2], FALSE)
-                                                            
-                                                            if (input$file_type_modera_source_d == "png"){
-                                                              png(file, width = mmd[3] , height = mmd()[4], res = 400)  
-                                                              print(fad_sb())
-                                                              dev.off()
-                                                            } else if (input$file_type_modera_source_d == "jpeg"){
-                                                              jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
-                                                              print(fad_sb()) 
-                                                              dev.off()
-                                                            } else {
-                                                              pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
-                                                              print(fad_sb())
-                                                              dev.off()
-                                                            }})
-    
-    output$download_fad_wb             <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_b, "-modera_source.",input$file_type_modera_source_c, sep = "")},
-                                                          content  = function(file) {
-                                                            
-                                                            mmd = generate_map_dimensions(subset_lons(), subset_lats(), session$clientData$output_fad_winter_map_a_width, input$dimension[2], FALSE)
-                                                            
-                                                            if (input$file_type_modera_source_c == "png"){
-                                                              png(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 400)  
-                                                              print(fad_wb())
-                                                              dev.off()
-                                                            } else if (input$file_type_modera_source_c == "jpeg"){
-                                                              jpeg(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 400) 
-                                                              print(fad_wb()) 
-                                                              dev.off()
-                                                            } else {
-                                                              pdf(file, width = map_dimensions()[3]/400 , height = map_dimensions()[4]/400) 
-                                                              print(fad_wb())
+                                                              print(fad_wa(labs = TRUE))
                                                               dev.off()
                                                             }})
     
@@ -6807,6 +6900,16 @@ server <- function(input, output, session) {
     return(ysc)
   })
   
+  #List of custom anomaly years (from read Composite) as reference data
+  
+  year_set_comp_ref <- reactive({
+    
+    yscr = read_composite_data(input$range_years2a, input$upload_file2a$datapath, input$enter_upload2a)
+      
+    return(yscr)  
+    
+  })
+  
   #Geographic Subset
   data_output1_2 <- reactive({
     
@@ -6828,7 +6931,7 @@ server <- function(input, output, session) {
     return(processed_data2_2)  
   })
   
-  #Converting Composite to anomalies either fixed period or X years prior
+  #Converting Composite to anomalies either fixed period or X years prior or list of years
   data_output3_2 <- reactive({
     
     #Calculate two ways of anomalies (if selected)
@@ -6836,10 +6939,12 @@ server <- function(input, output, session) {
       processed_data3_2 <- data_output2_2()
     } else if (input$mode_selected2 == "Fixed anomaly"){
       processed_data3_2 <- convert_subset_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), month_range_2(), input$ref_period2)
-    } else {
+    } else if (input$mode_selected2 == "Anomaly compared to X years prior"){
       processed_data3_2 <- convert_composite_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), year_set_comp(), month_range_2(), input$prior_years2)
-    }
-    
+    } else {
+      processed_data3_2 <- convert_subset_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), month_range_2(), year_set_comp_ref())
+      }
+
     return(processed_data3_2)
   })
   
@@ -6930,52 +7035,160 @@ server <- function(input, output, session) {
   output$text_years2b <- renderText("List of chosen composite years:")
   output$years2b <- renderText({year_set_comp()})
   
+  output$text_custom_years2  <- renderText("List of custom anomaly years:")
+  output$custom_years2       <- renderText({year_set_comp_ref()})
+  output$text_custom_years2b <- renderText("List of custom anomaly years:")
+  output$custom_years2b      <- renderText({year_set_comp_ref()})
+
     ### ModE-RA sources ----
     
-    fad_wa2 <- function() {plot_modera_sources(input$fad_year_a2, "winter", lonlat_vals2()[1:2], lonlat_vals2()[3:4])}
-    fad_sa2 <- function() {plot_modera_sources(input$fad_year_a2, "summer", lonlat_vals2()[1:2], lonlat_vals2()[3:4])}
+  ranges_2  <- reactiveValues(x = NULL, y = NULL)
+  ranges2_2 <- reactiveValues(x = NULL, y = NULL)
+  
+  fad_wa2 <- function(labs) {
+    labs = labs
+    plot_modera_sources(input$fad_year_a2, "winter", lonlat_vals2()[1:2], lonlat_vals2()[3:4], labs)}
+  fad_sa2 <- function(labs) {
+    labs = labs
+    plot_modera_sources(input$fad_year_a2, "summer", lonlat_vals2()[1:2], lonlat_vals2()[3:4], labs)}
+  
+  # Upper map (Original)
+  output$fad_winter_map_a2 <- renderPlot({
+    if ((month_range_2()[1] >= 4) && (month_range_2()[2] <= 9)) {
+      plot_data <- fad_sa2(labs = TRUE)
+    } else {
+      plot_data <- fad_wa2(labs = TRUE)
+    }
     
-    # Left map  
-    output$fad_winter_map_a2 <- renderPlot({
-      if ((month_range_2()[1] >= 4) && (month_range_2()[2] <= 9)) {
-        fad_sa2()
-      } else {
-        fad_wa2()
-      }
-    })
+    # Render the "Original Map" with no fixed aspect ratio
+    plot_data
+  })
+  
+  # Upper map (Zoom)
+  output$fad_zoom_winter_a2 <- renderPlot({
+    if ((month_range_2()[1] >= 4) && (month_range_2()[2] <= 9)) {
+      plot_data <- fad_sa2(labs = FALSE)
+    } else {
+      plot_data <- fad_wa2(labs = FALSE)
+    }
     
+    # Calculate the aspect ratio of the original map
+    original_x_range <- lonlat_vals2()[1:2]
+    original_y_range <- lonlat_vals2()[3:4]
+    original_x_length <- diff(original_x_range)
+    original_y_length <- diff(original_y_range)
+    original_aspect_ratio <- original_x_length / original_y_length
     
-    # Right map
-    output$fad_summer_map_a2 <- renderPlot({
-      if ((month_range_2()[1] >= 4 && month_range_2()[2] <= 9) | (month_range_2()[2] <= 3)) {
-        NULL
-      } else {
-        fad_sa2()  
-      }
-    })
+    # Check if ranges_2$x and ranges_2$y are defined
+    if (!is.null(ranges_2$x) && !is.null(ranges_2$y)) {
+      x_range <- range(ranges_2$x)
+      y_range <- range(ranges_2$y)
+    } else {
+      x_range <- original_x_range
+      y_range <- original_y_range
+    }
     
-    fad_wb2 <- function() {plot_modera_sources(input$fad_year_b2, "winter", lonlat_vals2()[1:2], lonlat_vals2()[3:4])}
-    fad_sb2 <- function() {plot_modera_sources(input$fad_year_b2, "summer", lonlat_vals2()[1:2], lonlat_vals2()[3:4])}
+    # Calculate the aspect ratio of the selected brush or the original map
+    x_length <- diff(x_range)
+    y_length <- diff(y_range)
+    aspect_ratio <- x_length / y_length
     
-    # Left map  
-    output$fad_winter_map_b2 <- renderPlot({
-      if ((month_range_2()[1] >= 4) && (month_range_2()[2] <= 9)) {
-        fad_sb2()
-      } else {
-        fad_wb2()
-      }
-    })
+    # Determine whether the original plot is in landscape or portrait format
+    original_format_landscape <- original_x_length >= original_y_length
     
-    # Right map
-    output$fad_summer_map_b2 <- renderPlot({
-      if ((month_range_2()[1] >= 4 && month_range_2()[2] <= 9) | (month_range_2()[2] <= 3)) {
-        NULL
-      } else {
-        fad_sb2()  
-      }
-    })
+    # Calculate the desired aspect ratio based on the original plot
+    desired_aspect_ratio <- if (original_format_landscape) {
+      original_aspect_ratio
+    } else {
+      1 / original_aspect_ratio
+    }
     
-    #Update Modera source year input
+    # Adjust the x and y limits while maintaining the desired aspect ratio
+    if (aspect_ratio > desired_aspect_ratio) {
+      y_center <- sum(y_range) / 2
+      new_y_length <- x_length / desired_aspect_ratio
+      y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+    } else {
+      x_center <- sum(x_range) / 2
+      new_x_length <- y_length * desired_aspect_ratio
+      x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+    }
+    
+    # Apply coord_cartesian to the entire map with adjusted limits
+    plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+    
+    plot_data
+  })
+  
+  # Lower map (Original)
+  output$fad_summer_map_a2 <- renderPlot({
+    if ((month_range_2()[1] >= 4 && month_range_2()[2] <= 9) | (month_range_2()[2] <= 3)) {
+      NULL
+    } else {
+      plot_data <- fad_sa2(labs = TRUE)  
+    } 
+    
+    # Render the "Original Map" with no fixed aspect ratio
+    plot_data
+  })
+  
+  # Lower map (Zoom)
+  output$fad_zoom_summer_a2 <- renderPlot({
+    if ((month_range_2()[1] >= 4 && month_range_2()[2] <= 9) || (month_range_2()[2] <= 3)) {
+      NULL
+    } else {
+      plot_data <- fad_sa2(labs = FALSE)
+    }
+    
+    # Calculate the aspect ratio of the original map
+    original_x_range <- lonlat_vals2()[1:2]
+    original_y_range <- lonlat_vals2()[3:4]
+    original_x_length <- diff(original_x_range)
+    original_y_length <- diff(original_y_range)
+    original_aspect_ratio <- original_x_length / original_y_length
+    
+    # Check if ranges2_2$x and ranges2_2$y are defined
+    if (!is.null(ranges2_2$x) && !is.null(ranges2_2$y)) {
+      x_range <- range(ranges2_2$x)
+      y_range <- range(ranges2_2$y)
+    } else {
+      x_range <- original_x_range
+      y_range <- original_y_range
+    }
+    
+    # Calculate the aspect ratio of the selected brush or the original map
+    x_length <- diff(x_range)
+    y_length <- diff(y_range)
+    aspect_ratio <- x_length / y_length
+    
+    # Determine whether the original plot is in landscape or portrait format
+    original_format_landscape <- original_x_length >= original_y_length
+    
+    # Calculate the desired aspect ratio based on the original plot
+    desired_aspect_ratio <- if (original_format_landscape) {
+      original_aspect_ratio
+    } else {
+      1 / original_aspect_ratio
+    }
+    
+    # Adjust the x and y limits while maintaining the desired aspect ratio
+    if (aspect_ratio > desired_aspect_ratio) {
+      y_center <- sum(y_range) / 2
+      new_y_length <- x_length / desired_aspect_ratio
+      y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+    } else {
+      x_center <- sum(x_range) / 2
+      new_x_length <- y_length * desired_aspect_ratio
+      x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+    }
+    
+    # Apply coord_cartesian to the entire map with adjusted limits
+    plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+    
+    plot_data
+  })
+  
+    #Update Modera source year input and Update Brush Input
     
     first_value <- reactive({
       fv <- head(year_set_comp(), n = 1)
@@ -7003,6 +7216,30 @@ server <- function(input, output, session) {
       )
     })
     
+    observe({
+      brush2 <- input$brush_fad1a2
+      if (!is.null(brush2)) {
+        ranges_2$x <- c(brush2$xmin, brush2$xmax)
+        ranges_2$y <- c(brush2$ymin, brush2$ymax)
+        
+      } else {
+        ranges_2$x <- lonlat_vals2()[1:2]
+        ranges_2$y <- lonlat_vals2()[3:4]
+      }
+    })
+    
+    observe({
+      brush_b2 <- input$brush_fad1b2
+      if (!is.null(brush_b2)) {
+        ranges2_2$x <- c(brush_b2$xmin, brush_b2$xmax)
+        ranges2_2$y <- c(brush_b2$ymin, brush_b2$ymax)
+        
+      } else {
+        ranges2_2$x <- lonlat_vals2()[1:2]
+        ranges2_2$y <- lonlat_vals2()[3:4]
+      }
+    })
+    
 
     ### Downloads ----
     #Downloading General data
@@ -7025,11 +7262,11 @@ server <- function(input, output, session) {
     output$download_timeseries2      <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title,"-ts.",input$file_type_timeseries2, sep = "")},
                                                         content  = function(file) {
                                                           if (input$file_type_timeseries2 == "png"){
-                                                            png(file, width = 3000, height = 1800, res = 200) 
+                                                            png(file, width = 3000, height = 1285, res = 200) 
                                                             timeseries_plot_2() 
                                                             dev.off()
                                                           } else if (input$file_type_timeseries2 == "jpeg"){
-                                                            jpeg(file, width = 3000, height = 1800, res = 200) 
+                                                            jpeg(file, width = 3000, height = 1285, res = 200) 
                                                             timeseries_plot_2() 
                                                             dev.off()
                                                           } else {
@@ -7069,15 +7306,15 @@ server <- function(input, output, session) {
                                                              
                                                              if (input$file_type_modera_source_b2 == "png"){
                                                                png(file, width = mmd2[3] , height = mmd2[4], res = 400)  
-                                                               print(fad_sa2())
+                                                               print(fad_sa2(labs = TRUE))
                                                                dev.off()
                                                              } else if (input$file_type_modera_source_b2 == "jpeg"){
                                                                jpeg(file, width = mmd2[3] , height = mmd2[4], res = 400) 
-                                                               print(fad_sa2()) 
+                                                               print(fad_sa2(labs = TRUE)) 
                                                                dev.off()
                                                              } else {
                                                                pdf(file, width = mmd2[3]/400 , height = mmd2[4]/400) 
-                                                               print(fad_sa2())
+                                                               print(fad_sa2(labs = TRUE))
                                                                dev.off()
                                                              }})
     
@@ -7088,53 +7325,15 @@ server <- function(input, output, session) {
                                                              
                                                              if (input$file_type_modera_source_a2 == "png"){
                                                                png(file, width = mmd2[3] , height = mmd2[4], res = 400)  
-                                                               print(fad_wa2())
+                                                               print(fad_wa2(labs = TRUE))
                                                                dev.off()
                                                              } else if (input$file_type_modera_source_a2 == "jpeg"){
                                                                jpeg(file, width = mmd2[3] , height = mmd2[4], res = 400) 
-                                                               print(fad_wa2()) 
+                                                               print(fad_wa2(labs = TRUE)) 
                                                                dev.off()
                                                              } else {
                                                                pdf(file, width = mmd2[3]/400 , height = mmd2[4]/400) 
-                                                               print(fad_wa2())
-                                                               dev.off()
-                                                             }})
-    
-    output$download_fad_sb2             <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_b2, "-modera_source.",input$file_type_modera_source_d2, sep = "")},
-                                                           content  = function(file) {
-                                                             
-                                                             mmd2 = generate_map_dimensions(subset_lons_2(), subset_lats_2(), session$clientData$output_fad_winter_map_a2_width, input$dimension[2], FALSE)
-                                                             
-                                                             if (input$file_type_modera_source_d2 == "png"){
-                                                               png(file, width = mmd2[3] , height = mmd2[4], res = 400)  
-                                                               print(fad_sb2())
-                                                               dev.off()
-                                                             } else if (input$file_type_modera_source_d2 == "jpeg"){
-                                                               jpeg(file, width = mmd2[3] , height = mmd2[4], res = 400) 
-                                                               print(fad_sb2()) 
-                                                               dev.off()
-                                                             } else {
-                                                               pdf(file, width = mmd2[3]/400 , height = mmd2[4]/400) 
-                                                               print(fad_sb2())
-                                                               dev.off()
-                                                             }})
-    
-    output$download_fad_wb2             <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_b2, "-modera_source.",input$file_type_modera_source_c2, sep = "")},
-                                                           content  = function(file) {
-                                                             
-                                                             mmd2 = generate_map_dimensions(subset_lons_2(), subset_lats_2(), session$clientData$output_fad_winter_map_a2_width, input$dimension[2], FALSE)
-                                                             
-                                                             if (input$file_type_modera_source_c2 == "png"){
-                                                               png(file, width = mmd2[3] , height = mmd2[4], res = 400)  
-                                                               print(fad_wb2())
-                                                               dev.off()
-                                                             } else if (input$file_type_modera_source_c2 == "jpeg"){
-                                                               jpeg(file, width = mmd2[3] , height = mmd2[4], res = 400) 
-                                                               print(fad_wb2()) 
-                                                               dev.off()
-                                                             } else {
-                                                               pdf(file, width = mmd2[3]/400 , height = mmd2[4]/400) 
-                                                               print(fad_wb2())
+                                                               print(fad_wa2(labs = TRUE))
                                                                dev.off()
                                                              }})
     
@@ -7601,59 +7800,301 @@ server <- function(input, output, session) {
     ### ModE-RA sources ----
       #ModE-RA sources Variable 1
       
-      fad_wa3a <- function() {plot_modera_sources(input$fad_year_a3a, "winter", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4])}
-      fad_sa3a <- function() {plot_modera_sources(input$fad_year_a3a, "summer", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4])}
+      ranges_3a  <- reactiveValues(x = NULL, y = NULL)
+      ranges2_3a <- reactiveValues(x = NULL, y = NULL)
       
-      # Left map  
+      fad_wa3a <- function(labs) {
+        labs = labs
+        plot_modera_sources(input$fad_year_a3a, "winter", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4], labs)}
+      fad_sa3a <- function(labs) {
+        labs = labs
+        plot_modera_sources(input$fad_year_a3a, "summer", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4], labs)}
+
+      # Upper map (Original)
       output$fad_winter_map_a3a <- renderPlot({
-        if (input$source_v1 == "ModE-RA"){
-          if ((month_range_v1()[1] >= 4) && (month_range_v1()[2] <= 9)) {
-            fad_sa3a()
-          } else {
-            fad_wa3a()
-          }
+        if ((month_range_v1()[1] >= 4) && (month_range_v1()[2] <= 9)) {
+          plot_data <- fad_sa3a(labs = TRUE)
+        } else {
+          plot_data <- fad_wa3a(labs = TRUE)
         }
+        
+        # Render the "Original Map" with no fixed aspect ratio
+        plot_data
       })
       
-      # Right map
+      # Upper map (Zoom)
+      output$fad_zoom_winter_a3a <- renderPlot({
+        if ((month_range_v1()[1] >= 4) && (month_range_v1()[2] <= 9)) {
+          plot_data <- fad_sa3a(labs = FALSE)
+        } else {
+          plot_data <- fad_wa3a(labs = FALSE)
+        }
+        
+        # Calculate the aspect ratio of the original map
+        original_x_range <- lonlat_vals_v1()[1:2]
+        original_y_range <- lonlat_vals_v1()[3:4]
+        original_x_length <- diff(original_x_range)
+        original_y_length <- diff(original_y_range)
+        original_aspect_ratio <- original_x_length / original_y_length
+        
+        # Check if ranges_3a$x and ranges_3a$y are defined
+        if (!is.null(ranges_3a$x) && !is.null(ranges_3a$y)) {
+          x_range <- range(ranges_3a$x)
+          y_range <- range(ranges_3a$y)
+        } else {
+          x_range <- original_x_range
+          y_range <- original_y_range
+        }
+        
+        # Calculate the aspect ratio of the selected brush or the original map
+        x_length <- diff(x_range)
+        y_length <- diff(y_range)
+        aspect_ratio <- x_length / y_length
+        
+        # Determine whether the original plot is in landscape or portrait format
+        original_format_landscape <- original_x_length >= original_y_length
+        
+        # Calculate the desired aspect ratio based on the original plot
+        desired_aspect_ratio <- if (original_format_landscape) {
+          original_aspect_ratio
+        } else {
+          1 / original_aspect_ratio
+        }
+        
+        # Adjust the x and y limits while maintaining the desired aspect ratio
+        if (aspect_ratio > desired_aspect_ratio) {
+          y_center <- sum(y_range) / 2
+          new_y_length <- x_length / desired_aspect_ratio
+          y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+        } else {
+          x_center <- sum(x_range) / 2
+          new_x_length <- y_length * desired_aspect_ratio
+          x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+        }
+        
+        # Apply coord_cartesian to the entire map with adjusted limits
+        plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+        
+        plot_data
+      })
+      
+      # Lower map (Original)
       output$fad_summer_map_a3a <- renderPlot({
-        if (input$source_v1 == "ModE-RA"){
-          if ((month_range_v1()[1] >= 4 && month_range_v1()[2] <= 9) | (month_range_v1()[2] <= 3)) {
-            NULL
-          } else {
-            fad_sa3a()  
-          }
-        }
+        if ((month_range_v1()[1] >= 4 && month_range_v1()[2] <= 9) | (month_range_v1()[2] <= 3)) {
+          NULL
+        } else {
+          plot_data <- fad_sa3a(labs = TRUE)  
+        } 
+        
+        # Render the "Original Map" with no fixed aspect ratio
+        plot_data
       })
       
+      # Lower map (Zoom)
+      output$fad_zoom_summer_a3a <- renderPlot({
+        if ((month_range_v1()[1] >= 4 && month_range_v1()[2] <= 9) || (month_range_v1()[2] <= 3)) {
+          NULL
+        } else {
+          plot_data <- fad_sa3a(labs = FALSE)
+        }
+        
+        # Calculate the aspect ratio of the original map
+        original_x_range <- lonlat_vals_v1()[1:2]
+        original_y_range <- lonlat_vals_v1()[3:4]
+        original_x_length <- diff(original_x_range)
+        original_y_length <- diff(original_y_range)
+        original_aspect_ratio <- original_x_length / original_y_length
+        
+        # Check if ranges2_3a$x and ranges2_3a$y are defined
+        if (!is.null(ranges2_3a$x) && !is.null(ranges2_3a$y)) {
+          x_range <- range(ranges2_3a$x)
+          y_range <- range(ranges2_3a$y)
+        } else {
+          x_range <- original_x_range
+          y_range <- original_y_range
+        }
+        
+        # Calculate the aspect ratio of the selected brush or the original map
+        x_length <- diff(x_range)
+        y_length <- diff(y_range)
+        aspect_ratio <- x_length / y_length
+        
+        # Determine whether the original plot is in landscape or portrait format
+        original_format_landscape <- original_x_length >= original_y_length
+        
+        # Calculate the desired aspect ratio based on the original plot
+        desired_aspect_ratio <- if (original_format_landscape) {
+          original_aspect_ratio
+        } else {
+          1 / original_aspect_ratio
+        }
+        
+        # Adjust the x and y limits while maintaining the desired aspect ratio
+        if (aspect_ratio > desired_aspect_ratio) {
+          y_center <- sum(y_range) / 2
+          new_y_length <- x_length / desired_aspect_ratio
+          y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+        } else {
+          x_center <- sum(x_range) / 2
+          new_x_length <- y_length * desired_aspect_ratio
+          x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+        }
+        
+        # Apply coord_cartesian to the entire map with adjusted limits
+        plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+        
+        plot_data
+      })
+
       #ModE-RA sources Variable 2
       
-      fad_wa3b <- function() {plot_modera_sources(input$fad_year_a3b, "winter", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4])}
-      fad_sa3b <- function() {plot_modera_sources(input$fad_year_a3b, "summer", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4])}
+      ranges_3b  <- reactiveValues(x = NULL, y = NULL)
+      ranges2_3b <- reactiveValues(x = NULL, y = NULL)
       
-      # Left map  
+      fad_wa3b <- function(labs) {
+        labs = labs
+        plot_modera_sources(input$fad_year_a3b, "winter", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4], labs)}
+      fad_sa3b <- function(labs) {
+        labs = labs
+        plot_modera_sources(input$fad_year_a3b, "summer", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4], labs)}
+
+      # Upper map (Original)
       output$fad_winter_map_a3b <- renderPlot({
-        if (input$source_v2 == "ModE-RA"){
-          if ((month_range_v2()[1] >= 4) && (month_range_v2()[2] <= 9)) {
-            fad_sa3b()
-          } else {
-            fad_wa3b()
-          }
+        if ((month_range_v2()[1] >= 4) && (month_range_v2()[2] <= 9)) {
+          plot_data <- fad_sa3b(labs = TRUE)
+        } else {
+          plot_data <- fad_wa3b(labs = TRUE)
         }
+        
+        # Render the "Original Map" with no fixed aspect ratio
+        plot_data
       })
       
-      # Right map
+      # Upper map (Zoom)
+      output$fad_zoom_winter_a3b <- renderPlot({
+        if ((month_range_v2()[1] >= 4) && (month_range_v2()[2] <= 9)) {
+          plot_data <- fad_sa3b(labs = FALSE)
+        } else {
+          plot_data <- fad_wa3b(labs = FALSE)
+        }
+        
+        # Calculate the aspect ratio of the original map
+        original_x_range <- lonlat_vals_v2()[1:2]
+        original_y_range <- lonlat_vals_v2()[3:4]
+        original_x_length <- diff(original_x_range)
+        original_y_length <- diff(original_y_range)
+        original_aspect_ratio <- original_x_length / original_y_length
+        
+        # Check if ranges_3b$x and ranges_3b$y are defined
+        if (!is.null(ranges_3b$x) && !is.null(ranges_3b$y)) {
+          x_range <- range(ranges_3b$x)
+          y_range <- range(ranges_3b$y)
+        } else {
+          x_range <- original_x_range
+          y_range <- original_y_range
+        }
+        
+        # Calculate the aspect ratio of the selected brush or the original map
+        x_length <- diff(x_range)
+        y_length <- diff(y_range)
+        aspect_ratio <- x_length / y_length
+        
+        # Determine whether the original plot is in landscape or portrait format
+        original_format_landscape <- original_x_length >= original_y_length
+        
+        # Calculate the desired aspect ratio based on the original plot
+        desired_aspect_ratio <- if (original_format_landscape) {
+          original_aspect_ratio
+        } else {
+          1 / original_aspect_ratio
+        }
+        
+        # Adjust the x and y limits while maintaining the desired aspect ratio
+        if (aspect_ratio > desired_aspect_ratio) {
+          y_center <- sum(y_range) / 2
+          new_y_length <- x_length / desired_aspect_ratio
+          y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+        } else {
+          x_center <- sum(x_range) / 2
+          new_x_length <- y_length * desired_aspect_ratio
+          x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+        }
+        
+        # Apply coord_cartesian to the entire map with adjusted limits
+        plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+        
+        plot_data
+      })
+      
+      # Lower map (Original)
       output$fad_summer_map_a3b <- renderPlot({
-        if (input$source_v2 == "ModE-RA"){
-          if ((month_range_v2()[1] >= 4 && month_range_v2()[2] <= 9) | (month_range_v2()[2] <= 3)) {
-            NULL
-          } else {
-            fad_sa3b()  
-          }
-        }
+        if ((month_range_v2()[1] >= 4 && month_range_v2()[2] <= 9) | (month_range_v2()[2] <= 3)) {
+          NULL
+        } else {
+          plot_data <- fad_sa3b(labs = TRUE)  
+        } 
+        
+        # Render the "Original Map" with no fixed aspect ratio
+        plot_data
       })
       
-      #Update Modera source year input
+      # Lower map (Zoom)
+      output$fad_zoom_summer_a3b <- renderPlot({
+        if ((month_range_v2()[1] >= 4 && month_range_v2()[2] <= 9) || (month_range_v2()[2] <= 3)) {
+          NULL
+        } else {
+          plot_data <- fad_sa3b(labs = FALSE)
+        }
+        
+        # Calculate the aspect ratio of the original map
+        original_x_range <- lonlat_vals_v2()[1:2]
+        original_y_range <- lonlat_vals_v2()[3:4]
+        original_x_length <- diff(original_x_range)
+        original_y_length <- diff(original_y_range)
+        original_aspect_ratio <- original_x_length / original_y_length
+        
+        # Check if ranges2_3b$x and ranges2_3b$y are defined
+        if (!is.null(ranges2_3b$x) && !is.null(ranges2_3b$y)) {
+          x_range <- range(ranges2_3b$x)
+          y_range <- range(ranges2_3b$y)
+        } else {
+          x_range <- original_x_range
+          y_range <- original_y_range
+        }
+        
+        # Calculate the aspect ratio of the selected brush or the original map
+        x_length <- diff(x_range)
+        y_length <- diff(y_range)
+        aspect_ratio <- x_length / y_length
+        
+        # Determine whether the original plot is in landscape or portrait format
+        original_format_landscape <- original_x_length >= original_y_length
+        
+        # Calculate the desired aspect ratio based on the original plot
+        desired_aspect_ratio <- if (original_format_landscape) {
+          original_aspect_ratio
+        } else {
+          1 / original_aspect_ratio
+        }
+        
+        # Adjust the x and y limits while maintaining the desired aspect ratio
+        if (aspect_ratio > desired_aspect_ratio) {
+          y_center <- sum(y_range) / 2
+          new_y_length <- x_length / desired_aspect_ratio
+          y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+        } else {
+          x_center <- sum(x_range) / 2
+          new_x_length <- y_length * desired_aspect_ratio
+          x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+        }
+        
+        # Apply coord_cartesian to the entire map with adjusted limits
+        plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+        
+        plot_data
+      })
+                  
+      #Update Modera source year input and update brushes
       
       observeEvent(input$range_years3[1], {
         updateNumericInput(
@@ -7669,19 +8110,65 @@ server <- function(input, output, session) {
           value = input$range_years3[1])
       })
       
-
+      observe({
+        brush_v1a <- input$brush_fad1a3a
+        if (!is.null(brush_v1a)) {
+          ranges_3a$x <- c(brush_v1a$xmin, brush_v1a$xmax)
+          ranges_3a$y <- c(brush_v1a$ymin, brush_v1a$ymax)
+          
+        } else {
+          ranges_3a$x <- lonlat_vals_v1()[1:2]
+          ranges_3a$y <- lonlat_vals_v1()[3:4]
+        }
+      })
       
+      observe({
+        brush_v1a2 <- input$brush_fad1b3a
+        if (!is.null(brush_v1a2)) {
+          ranges2_3a$x <- c(brush_v1a2$xmin, brush_v1a2$xmax)
+          ranges2_3a$y <- c(brush_v1a2$ymin, brush_v1a2$ymax)
+          
+        } else {
+          ranges2_3a$x <- lonlat_vals_v1()[1:2]
+          ranges2_3a$y <- lonlat_vals_v1()[3:4]
+        }
+      })
+      
+      observe({
+        brush_v2a <- input$brush_fad1a3b
+        if (!is.null(brush_v2a)) {
+          ranges_3b$x <- c(brush_v2a$xmin, brush_v2a$xmax)
+          ranges_3b$y <- c(brush_v2a$ymin, brush_v2a$ymax)
+          
+        } else {
+          ranges_3b$x <- lonlat_vals_v2()[1:2]
+          ranges_3b$y <- lonlat_vals_v2()[3:4]
+        }
+      })
+      
+      observe({
+        brush_v2a2 <- input$brush_fad1b3b
+        if (!is.null(brush_v2a2)) {
+          ranges2_3b$x <- c(brush_v2a2$xmin, brush_v2a2$xmax)
+          ranges2_3b$y <- c(brush_v2a2$ymin, brush_v2a2$ymax)
+          
+        } else {
+          ranges2_3b$x <- lonlat_vals_v2()[1:2]
+          ranges2_3b$y <- lonlat_vals_v2()[3:4]
+        }
+      })
+
     ### Downloads ----
       # Downloads
       
       output$download_timeseries3      <- downloadHandler(filename = function(){paste(plot_titles_cor()$Download_title,"-ts.",input$file_type_timeseries3, sep = "")},
                                                           content  = function(file) {
                                                             if (input$file_type_timeseries3 == "png"){
-                                                              png(file, width = 3000, height = 1800, res = 200) 
+                                                              png(file, width = 3000, height = 1285, res = 200) 
                                                               corr_ts1()  
                                                               dev.off()
                                                             } else if (input$file_type_timeseries3 == "jpeg"){
-                                                              jpeg(file, width = 3000, height = 1800, res = 200) 
+                                                              jpeg(file, width = 3000, height = 1285, res = 200) 
                                                               corr_ts1()
                                                               dev.off()
                                                             } else {
@@ -7739,15 +8226,15 @@ server <- function(input, output, session) {
                                                                 
                                                                 if (input$file_type_modera_source_b3a == "png"){
                                                                   png(file, width = mmd3a[3] , height = mmd3a[4], res = 400)  
-                                                                  print(fad_sa3a())
+                                                                  print(fad_sa3a(labs = TRUE))
                                                                   dev.off()
                                                                 } else if (input$file_type_modera_source_b3a == "jpeg"){
                                                                   jpeg(file, width = mmd3a[3] , height = mmd3a[4], res = 400) 
-                                                                  print(fad_sa3a()) 
+                                                                  print(fad_sa3a(labs = TRUE)) 
                                                                   dev.off()
                                                                 } else {
                                                                   pdf(file, width = mmd3a[3]/400 , height = mmd3a[4]/400) 
-                                                                  print(fad_sa3a())
+                                                                  print(fad_sa3a(labs = TRUE))
                                                                   dev.off()
                                                                 }})
       
@@ -7758,15 +8245,15 @@ server <- function(input, output, session) {
                                                                 
                                                                 if (input$file_type_modera_source_a3a == "png"){
                                                                   png(file, width = mmd3a[3] , height = mmd3a[4], res = 400)  
-                                                                  print(fad_wa3a())
+                                                                  print(fad_wa3a(labs = TRUE))
                                                                   dev.off()
                                                                 } else if (input$file_type_modera_source_a3a == "jpeg"){
                                                                   jpeg(file, width = mmd3a[3] , height = mmd3a[4], res = 400) 
-                                                                  print(fad_wa3a()) 
+                                                                  print(fad_wa3a(labs = TRUE)) 
                                                                   dev.off()
                                                                 } else {
                                                                   pdf(file, width = mmd3a[3]/400 , height = mmd3a[4]/400) 
-                                                                  print(fad_wa3a())
+                                                                  print(fad_wa3a(labs = TRUE))
                                                                   dev.off()
                                                                 }})
       
@@ -7779,15 +8266,15 @@ server <- function(input, output, session) {
                                                                 
                                                                 if (input$file_type_modera_source_b3b == "png"){
                                                                   png(file, width = mmd3b[3] , height = mmd3b[4], res = 400)  
-                                                                  print(fad_sa3b())
+                                                                  print(fad_sa3b(labs = TRUE))
                                                                   dev.off()
                                                                 } else if (input$file_type_modera_source_b3b == "jpeg"){
                                                                   jpeg(file, width = mmd3b[3] , height = mmd3b[4], res = 400) 
-                                                                  print(fad_sa3b()) 
+                                                                  print(fad_sa3b(labs = TRUE)) 
                                                                   dev.off()
                                                                 } else {
                                                                   pdf(file, width = mmd3b[3]/400 , height = mmd3b[4]/400) 
-                                                                  print(fad_sa3b())
+                                                                  print(fad_sa3b(labs = TRUE))
                                                                   dev.off()
                                                                 }})
       
@@ -7798,15 +8285,15 @@ server <- function(input, output, session) {
                                                                 
                                                                 if (input$file_type_modera_source_a3b == "png"){
                                                                   png(file, width = mmd3b[3] , height = mmd3b[4], res = 400)  
-                                                                  print(fad_wa3b())
+                                                                  print(fad_wa3b(labs = TRUE))
                                                                   dev.off()
                                                                 } else if (input$file_type_modera_source_a3b == "jpeg"){
                                                                   jpeg(file, width = mmd3b[3] , height = mmd3b[4], res = 400) 
-                                                                  print(fad_wa3b()) 
+                                                                  print(fad_wa3b(labs = TRUE)) 
                                                                   dev.off()
                                                                 } else {
                                                                   pdf(file, width = mmd3b[3]/400 , height = mmd3b[4]/400) 
-                                                                  print(fad_wa3b())
+                                                                  print(fad_wa3b(labs = TRUE))
                                                                   dev.off()
                                                                 }})
 
@@ -8238,86 +8725,376 @@ server <- function(input, output, session) {
       
     ### ModE-RA sources ----
     #ModE-RA sources independent variable
+
+    ranges_4a  <- reactiveValues(x = NULL, y = NULL)
+    ranges2_4a <- reactiveValues(x = NULL, y = NULL)
     
-    fad_wa4a <- function() {plot_modera_sources(input$fad_year_a4a, "winter", lonlat_vals_iv()[1:2], lonlat_vals_iv()[3:4])}
-    fad_sa4a <- function() {plot_modera_sources(input$fad_year_a4a, "summer", lonlat_vals_iv()[1:2], lonlat_vals_iv()[3:4])}
+    fad_wa4a <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a4a, "winter", lonlat_vals_iv()[1:2], lonlat_vals_iv()[3:4], labs)}
+    fad_sa4a <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a4a, "summer", lonlat_vals_iv()[1:2], lonlat_vals_iv()[3:4], labs)}
     
-    # Left map  
+    # Upper map (Original)
     output$fad_winter_map_a4a <- renderPlot({
-      if (input$source_iv == "ModE-RA"){
-        if ((month_range_iv()[1] >= 4) && (month_range_iv()[2] <= 9)) {
-          fad_sa4a()
-        } else {
-          fad_wa4a()
-        }
+      if ((month_range_iv()[1] >= 4) && (month_range_iv()[2] <= 9)) {
+        plot_data <- fad_sa4a(labs = TRUE)
+      } else {
+        plot_data <- fad_wa4a(labs = TRUE)
       }
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
     })
     
-    # Right map
+    # Upper map (Zoom)
+    output$fad_zoom_winter_a4a <- renderPlot({
+      if ((month_range_iv()[1] >= 4) && (month_range_iv()[2] <= 9)) {
+        plot_data <- fad_sa4a(labs = FALSE)
+      } else {
+        plot_data <- fad_wa4a(labs = FALSE)
+      }
+      
+      # Calculate the aspect ratio of the original map
+      original_x_range <- lonlat_vals_iv()[1:2]
+      original_y_range <- lonlat_vals_iv()[3:4]
+      original_x_length <- diff(original_x_range)
+      original_y_length <- diff(original_y_range)
+      original_aspect_ratio <- original_x_length / original_y_length
+      
+      # Check if ranges_4a$x and ranges_4a$y are defined
+      if (!is.null(ranges_4a$x) && !is.null(ranges_4a$y)) {
+        x_range <- range(ranges_4a$x)
+        y_range <- range(ranges_4a$y)
+      } else {
+        x_range <- original_x_range
+        y_range <- original_y_range
+      }
+      
+      # Calculate the aspect ratio of the selected brush or the original map
+      x_length <- diff(x_range)
+      y_length <- diff(y_range)
+      aspect_ratio <- x_length / y_length
+      
+      # Determine whether the original plot is in landscape or portrait format
+      original_format_landscape <- original_x_length >= original_y_length
+      
+      # Calculate the desired aspect ratio based on the original plot
+      desired_aspect_ratio <- if (original_format_landscape) {
+        original_aspect_ratio
+      } else {
+        1 / original_aspect_ratio
+      }
+      
+      # Adjust the x and y limits while maintaining the desired aspect ratio
+      if (aspect_ratio > desired_aspect_ratio) {
+        y_center <- sum(y_range) / 2
+        new_y_length <- x_length / desired_aspect_ratio
+        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+      } else {
+        x_center <- sum(x_range) / 2
+        new_x_length <- y_length * desired_aspect_ratio
+        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+      }
+      
+      # Apply coord_cartesian to the entire map with adjusted limits
+      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      
+      plot_data
+    })
+    
+    # Lower map (Original)
     output$fad_summer_map_a4a <- renderPlot({
-      if (input$source_iv == "ModE-RA"){
-        if ((month_range_iv()[1] >= 4 && month_range_iv()[2] <= 9) | (month_range_iv()[2] <= 3)) {
-          NULL
-        } else {
-          fad_sa4a()  
-        }
-      }
+      if ((month_range_iv()[1] >= 4 && month_range_iv()[2] <= 9) | (month_range_iv()[2] <= 3)) {
+        NULL
+      } else {
+        plot_data <- fad_sa4a(labs = TRUE)  
+      } 
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
     })
     
-    #ModE-RA sources  dependent variable
+    # Lower map (Zoom)
+    output$fad_zoom_summer_a4a <- renderPlot({
+      if ((month_range_iv()[1] >= 4 && month_range_iv()[2] <= 9) || (month_range_iv()[2] <= 3)) {
+        NULL
+      } else {
+        plot_data <- fad_sa4a(labs = FALSE)
+      }
+      
+      # Calculate the aspect ratio of the original map
+      original_x_range <- lonlat_vals_iv()[1:2]
+      original_y_range <- lonlat_vals_iv()[3:4]
+      original_x_length <- diff(original_x_range)
+      original_y_length <- diff(original_y_range)
+      original_aspect_ratio <- original_x_length / original_y_length
+      
+      # Check if ranges2_4a$x and ranges2_4a$y are defined
+      if (!is.null(ranges2_4a$x) && !is.null(ranges2_4a$y)) {
+        x_range <- range(ranges2_4a$x)
+        y_range <- range(ranges2_4a$y)
+      } else {
+        x_range <- original_x_range
+        y_range <- original_y_range
+      }
+      
+      # Calculate the aspect ratio of the selected brush or the original map
+      x_length <- diff(x_range)
+      y_length <- diff(y_range)
+      aspect_ratio <- x_length / y_length
+      
+      # Determine whether the original plot is in landscape or portrait format
+      original_format_landscape <- original_x_length >= original_y_length
+      
+      # Calculate the desired aspect ratio based on the original plot
+      desired_aspect_ratio <- if (original_format_landscape) {
+        original_aspect_ratio
+      } else {
+        1 / original_aspect_ratio
+      }
+      
+      # Adjust the x and y limits while maintaining the desired aspect ratio
+      if (aspect_ratio > desired_aspect_ratio) {
+        y_center <- sum(y_range) / 2
+        new_y_length <- x_length / desired_aspect_ratio
+        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+      } else {
+        x_center <- sum(x_range) / 2
+        new_x_length <- y_length * desired_aspect_ratio
+        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+      }
+      
+      # Apply coord_cartesian to the entire map with adjusted limits
+      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      
+      plot_data
+    })
     
-    fad_wa4b <- function() {plot_modera_sources(input$fad_year_a4b, "winter", lonlat_vals_dv()[1:2], lonlat_vals_dv()[3:4])}
-    fad_sa4b <- function() {plot_modera_sources(input$fad_year_a4b, "summer", lonlat_vals_dv()[1:2], lonlat_vals_dv()[3:4])}
+    #ModE-RA sources dependent variable
     
-    # Left map  
+    ranges_4b  <- reactiveValues(x = NULL, y = NULL)
+    ranges2_4b <- reactiveValues(x = NULL, y = NULL)
+    
+    fad_wa4b <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a4b, "winter", lonlat_vals_dv()[1:2], lonlat_vals_dv()[3:4], labs)}
+    fad_sa4b <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a4b, "summer", lonlat_vals_dv()[1:2], lonlat_vals_dv()[3:4], labs)}
+    
+    # Upper map (Original)
     output$fad_winter_map_a4b <- renderPlot({
-      if (input$source_dv == "ModE-RA"){
-        if ((month_range_dv()[1] >= 4) && (month_range_dv()[2] <= 9)) {
-          fad_sa4b()
-        } else {
-          fad_wa4b()
-        }
+      if ((month_range_dv()[1] >= 4) && (month_range_dv()[2] <= 9)) {
+        plot_data <- fad_sa4b(labs = TRUE)
+      } else {
+        plot_data <- fad_wa4b(labs = TRUE)
       }
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
     })
     
-    # Right map
+    # Upper map (Zoom)
+    output$fad_zoom_winter_a4b <- renderPlot({
+      if ((month_range_dv()[1] >= 4) && (month_range_dv()[2] <= 9)) {
+        plot_data <- fad_sa4b(labs = FALSE)
+      } else {
+        plot_data <- fad_wa4b(labs = FALSE)
+      }
+      
+      # Calculate the aspect ratio of the original map
+      original_x_range <- lonlat_vals_dv()[1:2]
+      original_y_range <- lonlat_vals_dv()[3:4]
+      original_x_length <- diff(original_x_range)
+      original_y_length <- diff(original_y_range)
+      original_aspect_ratio <- original_x_length / original_y_length
+      
+      # Check if ranges_4b$x and ranges_4b$y are defined
+      if (!is.null(ranges_4b$x) && !is.null(ranges_4b$y)) {
+        x_range <- range(ranges_4b$x)
+        y_range <- range(ranges_4b$y)
+      } else {
+        x_range <- original_x_range
+        y_range <- original_y_range
+      }
+      
+      # Calculate the aspect ratio of the selected brush or the original map
+      x_length <- diff(x_range)
+      y_length <- diff(y_range)
+      aspect_ratio <- x_length / y_length
+      
+      # Determine whether the original plot is in landscape or portrait format
+      original_format_landscape <- original_x_length >= original_y_length
+      
+      # Calculate the desired aspect ratio based on the original plot
+      desired_aspect_ratio <- if (original_format_landscape) {
+        original_aspect_ratio
+      } else {
+        1 / original_aspect_ratio
+      }
+      
+      # Adjust the x and y limits while maintaining the desired aspect ratio
+      if (aspect_ratio > desired_aspect_ratio) {
+        y_center <- sum(y_range) / 2
+        new_y_length <- x_length / desired_aspect_ratio
+        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+      } else {
+        x_center <- sum(x_range) / 2
+        new_x_length <- y_length * desired_aspect_ratio
+        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+      }
+      
+      # Apply coord_cartesian to the entire map with adjusted limits
+      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      
+      plot_data
+    })
+    
+    # Lower map (Original)
     output$fad_summer_map_a4b <- renderPlot({
-      if (input$source_dv == "ModE-RA"){
-        if ((month_range_dv()[1] >= 4 && month_range_dv()[2] <= 9) | (month_range_dv()[2] <= 3)) {
-          NULL
-        } else {
-          fad_sa4b()  
-        }
-      }
+      if ((month_range_dv()[1] >= 4 && month_range_dv()[2] <= 9) | (month_range_dv()[2] <= 3)) {
+        NULL
+      } else {
+        plot_data <- fad_sa4b(labs = TRUE)  
+      } 
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
     })
     
-    #Update Modera source year input
+    # Lower map (Zoom)
+    output$fad_zoom_summer_a4b <- renderPlot({
+      if ((month_range_dv()[1] >= 4 && month_range_dv()[2] <= 9) || (month_range_dv()[2] <= 3)) {
+        NULL
+      } else {
+        plot_data <- fad_sa4b(labs = FALSE)
+      }
+      
+      # Calculate the aspect ratio of the original map
+      original_x_range <- lonlat_vals_dv()[1:2]
+      original_y_range <- lonlat_vals_dv()[3:4]
+      original_x_length <- diff(original_x_range)
+      original_y_length <- diff(original_y_range)
+      original_aspect_ratio <- original_x_length / original_y_length
+      
+      # Check if ranges2_4b$x and ranges2_4b$y are defined
+      if (!is.null(ranges2_4b$x) && !is.null(ranges2_4b$y)) {
+        x_range <- range(ranges2_4b$x)
+        y_range <- range(ranges2_4b$y)
+      } else {
+        x_range <- original_x_range
+        y_range <- original_y_range
+      }
+      
+      # Calculate the aspect ratio of the selected brush or the original map
+      x_length <- diff(x_range)
+      y_length <- diff(y_range)
+      aspect_ratio <- x_length / y_length
+      
+      # Determine whether the original plot is in landscape or portrait format
+      original_format_landscape <- original_x_length >= original_y_length
+      
+      # Calculate the desired aspect ratio based on the original plot
+      desired_aspect_ratio <- if (original_format_landscape) {
+        original_aspect_ratio
+      } else {
+        1 / original_aspect_ratio
+      }
+      
+      # Adjust the x and y limits while maintaining the desired aspect ratio
+      if (aspect_ratio > desired_aspect_ratio) {
+        y_center <- sum(y_range) / 2
+        new_y_length <- x_length / desired_aspect_ratio
+        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
+      } else {
+        x_center <- sum(x_range) / 2
+        new_x_length <- y_length * desired_aspect_ratio
+        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
+      }
+      
+      # Apply coord_cartesian to the entire map with adjusted limits
+      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      
+      plot_data
+    })
     
-    observeEvent(input$range_years4[1], {
+    #Update Modera source year input and update brushes
+    
+    observeEvent(input$range_years3[1], {
       updateNumericInput(
         session = getDefaultReactiveDomain(),
         inputId = "fad_year_a4a",
-        value = input$range_years4[1])
+        value = input$range_years3[1])
     })
     
-    observeEvent(input$range_years4[1], {
+    observeEvent(input$range_years3[1], {
       updateNumericInput(
         session = getDefaultReactiveDomain(),
         inputId = "fad_year_a4b",
-        value = input$range_years4[1])
+        value = input$range_years3[1])
     })
-
+    
+    observe({
+      brush_iva <- input$brush_fad1a4a
+      if (!is.null(brush_iva)) {
+        ranges_4a$x <- c(brush_iva$xmin, brush_iva$xmax)
+        ranges_4a$y <- c(brush_iva$ymin, brush_iva$ymax)
+        
+      } else {
+        ranges_4a$x <- lonlat_vals_iv()[1:2]
+        ranges_4a$y <- lonlat_vals_iv()[3:4]
+      }
+    })
+    
+    observe({
+      brush_iva2 <- input$brush_fad1b4a
+      if (!is.null(brush_iva2)) {
+        ranges2_4a$x <- c(brush_iva2$xmin, brush_iva2$xmax)
+        ranges2_4a$y <- c(brush_iva2$ymin, brush_iva2$ymax)
+        
+      } else {
+        ranges2_4a$x <- lonlat_vals_iv()[1:2]
+        ranges2_4a$y <- lonlat_vals_iv()[3:4]
+      }
+    })
+    
+    observe({
+      brush_dva <- input$brush_fad1a4b
+      if (!is.null(brush_dva)) {
+        ranges_4b$x <- c(brush_dva$xmin, brush_dva$xmax)
+        ranges_4b$y <- c(brush_dva$ymin, brush_dva$ymax)
+        
+      } else {
+        ranges_4b$x <- lonlat_vals_dv()[1:2]
+        ranges_4b$y <- lonlat_vals_dv()[3:4]
+      }
+    })
+    
+    observe({
+      brush_dva2 <- input$brush_fad1b4b
+      if (!is.null(brush_dva2)) {
+        ranges2_4b$x <- c(brush_dva2$xmin, brush_dva2$xmax)
+        ranges2_4b$y <- c(brush_dva2$ymin, brush_dva2$ymax)
+        
+      } else {
+        ranges2_4b$x <- lonlat_vals_dv()[1:2]
+        ranges2_4b$y <- lonlat_vals_dv()[3:4]
+      }
+    })
+    
     ### Downloads ----
     #Downloads
     
     output$download_reg_ts_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-ts.",input$reg_ts_plot_type, sep = "")},
                                                         content  = function(file) {
                                                           if (input$reg_ts_plot_type == "png"){
-                                                            png(file, width = 3000, height = 1800, res = 200) 
+                                                            png(file, width = 3000, height = 1285, res = 200) 
                                                             reg_ts1a()  
                                                             dev.off()
                                                           } else if (input$reg_ts_plot_type == "jpeg"){
-                                                            jpeg(file, width = 3000, height = 1800, res = 200) 
+                                                            jpeg(file, width = 3000, height = 1285, res = 200) 
                                                             reg_ts1a()
                                                             dev.off()
                                                           } else {
@@ -8329,11 +9106,11 @@ server <- function(input, output, session) {
     output$download_reg_ts2_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title,"-ts.",input$reg_ts2_plot_type, sep = "")},
                                                          content  = function(file) {
                                                            if (input$reg_ts2_plot_type == "png"){
-                                                             png(file, width = 3000, height = 1800, res = 200) 
+                                                             png(file, width = 3000, height = 1285, res = 200) 
                                                              reg_ts1b()  
                                                              dev.off()
                                                            } else if (input$reg_ts2_plot_type == "jpeg"){
-                                                             jpeg(file, width = 3000, height = 1800, res = 200) 
+                                                             jpeg(file, width = 3000, height = 1285, res = 200) 
                                                              reg_ts1b()
                                                              dev.off()
                                                            } else {
@@ -8459,15 +9236,15 @@ server <- function(input, output, session) {
                                                               
                                                               if (input$file_type_modera_source_b4a == "png"){
                                                                 png(file, width = mmd4a[3] , height = mmd4a[4], res = 400)  
-                                                                print(fad_sa4a())
+                                                                print(fad_sa4a(labs = TRUE))
                                                                 dev.off()
                                                               } else if (input$file_type_modera_source_b4a == "jpeg"){
                                                                 jpeg(file, width = mmd4a[3] , height = mmd4a[4], res = 400) 
-                                                                print(fad_sa4a()) 
+                                                                print(fad_sa4a(labs = TRUE)) 
                                                                 dev.off()
                                                               } else {
                                                                 pdf(file, width = mmd4a[3]/400 , height = mmd4a[4]/400) 
-                                                                print(fad_sa4a())
+                                                                print(fad_sa4a(labs = TRUE))
                                                                 dev.off()
                                                               }})
     
@@ -8478,15 +9255,15 @@ server <- function(input, output, session) {
                                                               
                                                               if (input$file_type_modera_source_a4a == "png"){
                                                                 png(file, width = mmd4a[3] , height = mmd4a[4], res = 400)  
-                                                                print(fad_wa4a())
+                                                                print(fad_wa4a(labs = TRUE))
                                                                 dev.off()
                                                               } else if (input$file_type_modera_source_a4a == "jpeg"){
                                                                 jpeg(file, width = mmd4a[3] , height = mmd4a[4], res = 400) 
-                                                                print(fad_wa4a()) 
+                                                                print(fad_wa4a(labs = TRUE)) 
                                                                 dev.off()
                                                               } else {
                                                                 pdf(file, width = mmd4a[3]/400 , height = mmd4a[4]/400) 
-                                                                print(fad_wa4a())
+                                                                print(fad_wa4a(labs = TRUE))
                                                                 dev.off()
                                                               }})
     
@@ -8499,15 +9276,15 @@ server <- function(input, output, session) {
                                                               
                                                               if (input$file_type_modera_source_b4b == "png"){
                                                                 png(file, width = mmd4b[3] , height = mmd4b[4], res = 400)  
-                                                                print(fad_sa4b())
+                                                                print(fad_sa4b(labs = TRUE))
                                                                 dev.off()
                                                               } else if (input$file_type_modera_source_b4b == "jpeg"){
                                                                 jpeg(file, width = mmd4b[3] , height = mmd4b[4], res = 400) 
-                                                                print(fad_sa4b()) 
+                                                                print(fad_sa4b(labs = TRUE)) 
                                                                 dev.off()
                                                               } else {
                                                                 pdf(file, width = mmd4b[3]/400 , height = mmd4b[4]/400) 
-                                                                print(fad_sa4b())
+                                                                print(fad_sa4b(labs = TRUE))
                                                                 dev.off()
                                                               }})
     
@@ -8518,15 +9295,15 @@ server <- function(input, output, session) {
                                                               
                                                               if (input$file_type_modera_source_a4b == "png"){
                                                                 png(file, width = mmd4b[3] , height = mmd4b[4], res = 400)  
-                                                                print(fad_wa4b())
+                                                                print(fad_wa4b(labs = TRUE))
                                                                 dev.off()
                                                               } else if (input$file_type_modera_source_a4b == "jpeg"){
                                                                 jpeg(file, width = mmd4b[3] , height = mmd4b[4], res = 400) 
-                                                                print(fad_wa4b()) 
+                                                                print(fad_wa4b(labs = TRUE)) 
                                                                 dev.off()
                                                               } else {
                                                                 pdf(file, width = mmd4b[3]/400 , height = mmd4b[4]/400) 
-                                                                print(fad_wa4b())
+                                                                print(fad_wa4b(labs = TRUE))
                                                                 dev.off()
                                                               }})
 
@@ -8534,6 +9311,6 @@ server <- function(input, output, session) {
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
-
+  
 
 
