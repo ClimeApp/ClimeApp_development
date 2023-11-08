@@ -5,10 +5,15 @@
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive - Universitaet Bern/ClimeApp_development")
 
+
 #Nik
 #setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_GitHub/ClimeApp_development")
 
-#Richard
+#Richard:
+#Laptop/desktop:
+#setwd("C:/Users/Richard/OneDrive/ModE-RA Mapping/ClimeApp_development")
+#setwd("C:/Users/rw22z389/OneDrive/ModE-RA Mapping/ClimeApp_development")
+
 
 
 # Source for helpers ----
@@ -2820,7 +2825,7 @@ tabPanel("Regression", id = "tab4",
                #Choose your year of interest        
                numericRangeInput(inputId    = "range_years4",
                                  label     = "Select the range of years (1422-2008):",
-                                 value     = c(1900,2008),
+                                 value     = c(1900,2000),
                                  separator = " to ",
                                  min       = 1422,
                                  max       = 2008),
@@ -8118,11 +8123,11 @@ server <- function(input, output, session) {
       output$download_map_data3        <- downloadHandler(filename = function(){paste(plot_titles_cor()$Download_title, "-mapdata.",input$file_type_map_data3, sep = "")},
                                                           content  = function(file) {
                                                             if (input$file_type_map_data3 == "csv"){
-                                                              write.csv(correlation_map_datatable(), file,
+                                                              write.csv(rewrite_maptable(correlation_map_datatable(),NA,NA), file,
                                                                         row.names = FALSE,
                                                                         col.names = FALSE)
                                                             } else {
-                                                              write.xlsx(correlation_map_datatable(), file,
+                                                              write.xlsx(rewrite_maptable(correlation_map_datatable(),NA,NA), file,
                                                                          row.names = FALSE,
                                                                          col.names = FALSE)
                                                             }})
@@ -8368,7 +8373,7 @@ server <- function(input, output, session) {
       # Generate timeseries data & plotting function for iv
       ME_ts_data_iv <- reactive({
         me_tsd_iv = create_ME_timeseries_data(input$dataset_selected_dv,input$ME_variable_iv,subset_lons_iv(),subset_lats_iv(),
-                                  input$mode_selected_iv,month_range_iv(),year_range_reg(),
+                                  input$mode_selected_iv,month_range_iv(),input$range_years4,
                                   input$ref_period_iv)
         return(me_tsd_iv)
       })

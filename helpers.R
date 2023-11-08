@@ -67,10 +67,6 @@ nc_close(prec_nc)
 nc_close(SLP_nc)
 nc_close(Z500_nc)
 
-new_nc = nc_open("data/ModE-CLIM/Monthly/ModE-RAclim_ensmean_totprec_abs_1420-2009.nc")
-new_var = ncvar_get(new_nc,varid="totprec")
-nc_close(new_nc)
-
 ## Load pre-processed yearly data
 annual_temp_nc = nc_open("data/ModE-RA/Annual/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_year.nc")
 DJF_temp_nc = nc_open("data/ModE-RA/DJF/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_djf.nc")
@@ -402,7 +398,7 @@ load_ModE_data = function(dataset,variable){
                     "Precipitation" = "totprec",
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
-    data_nc = nc_open(paste0("data/ModE-CLIM/Monthly/ModE-RAclim_ensmean_",vname,"_anom_1420-2009.nc"))
+    data_nc = nc_open(paste0("data/ModE-CLIM/Monthly/ModE-RAclim_ensmean_",vname,"_anom_1421-2008_mon.nc"))
 
     # extract data and convert units if necessary                  
     if (variable == "Temperature"){
@@ -1919,9 +1915,10 @@ read_regcomp_data = function(data_input_filepath){
     user_data = read_excel(data_input_filepath)
   }
   
+  user_data = replace(user_data,user_data == -999.9,NA)
+  
   return(user_data)
 }
-
 
 ## (Regression/Correlation) EXTRACT SHARED YEAR RANGE from user/modE-RA data,which can 
 ##                          be used to set min,max and value of year_range input
