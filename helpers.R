@@ -25,7 +25,7 @@ library(Cairo)
 #Richard:
 #Laptop/desktop:
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
