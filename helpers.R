@@ -25,7 +25,7 @@ library(Cairo)
 #Richard:
 #Laptop/desktop:
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
@@ -514,10 +514,10 @@ convert_subset_to_anomalies = function(data_input,ref_data,pp_data_ID,month_rang
 ## (General) GENERATE MAP,TS & FILE TITLES - creates a dataframe of map_title1,
 ##                                           map_title2, ts_title, ts_axis,file_title,
 ##                                           netcdf_title
-##           tab = "general" or "composites"
+##           tab = "general" or "composites" or "reference"
 ##           dataset = "ModE-RA","ModE-Sim","ModE-Clim"
 ##           mode = "Absolute" or "Anomaly" for general tab
-##                  "Absolute", "Fixed anomaly" or ""Anomaly compared to X years prior"
+##                  "Absolute", "Fixed reference" or ""Compared to X years prior"
 ##                   for composites tab
 ##           map/ts_title_mode = "Default" or "Custom"
 ##           year_range,baseline_range,baseline_years_before 
@@ -546,18 +546,24 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
   # Composites titles
   else if (tab=="composites"){
     if (mode == "Absolute"){
-      map_title1 = paste(dataset," ",title_months," ",variable," (Composite)", sep = "")
+      map_title1 = paste(dataset," ",title_months," ",variable," (Composite years)", sep = "")
       map_title2 = ""
-    } else if (mode == "Fixed anomaly") {
-      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite)", sep = "")
+    } else if (mode == "Fixed reference") {
+      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite years)", sep = "")
       map_title2 = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
-    } else if (mode == "Anomaly compared to X years prior") {
-      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite)", sep = "")
+    } else if (mode == "Compared to X years prior") {
+      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite years)", sep = "")
       map_title2 = paste("Ref. = ",baseline_years_before," yrs prior", sep = "")
     } else {
-      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite)", sep = "")
-      map_title2 = paste("Ref. = Custom anomaly years")  
+      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite years)", sep = "")
+      map_title2 = paste("Ref. = Reference years")  
     }
+  }
+  
+  # Reference period titles
+  else if (tab=="reference"){
+      map_title1 = paste(dataset," ",title_months," ",variable," (Reference years)", sep = "")
+      map_title2 = ""
   }
 
 

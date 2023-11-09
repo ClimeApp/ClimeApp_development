@@ -12,7 +12,7 @@
 #Richard:
 #Laptop/desktop:
 #setwd("C:/Users/Richard/OneDrive/ModE-RA Mapping/ClimeApp_development")
-#setwd("C:/Users/rw22z389/OneDrive/ModE-RA Mapping/ClimeApp_development")
+setwd("C:/Users/rw22z389/OneDrive/ModE-RA Mapping/ClimeApp_development")
 
 
 
@@ -168,7 +168,7 @@ ui <- navbarPage(id = "nav1",
 # Welcome END ----  
        )),
 # Average & anomaly START ----                             
-      tabPanel("Average & anomaly", id = "tab1",
+      tabPanel("Anomalies", id = "tab1",
                 shinyjs::useShinyjs(),
                 sidebarLayout(
       
@@ -179,7 +179,7 @@ ui <- navbarPage(id = "nav1",
                     sidebarPanel(fluidRow(
           
                     #Short description of the General Panel        
-                    h4(helpText("Creating absolute mean or anomaly values")),
+                    h4(helpText("Plot average anomalies for a selected time period")),
                     
                     #Choose one of three datasets (Select)                
                     selectInput(inputId  = "dataset_selected",
@@ -192,12 +192,6 @@ ui <- navbarPage(id = "nav1",
                                 label    = "Choose a variable to plot:",
                                 choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
                                 selected = "Temperature"),
-    
-                    #Choose a Mode: Absolute or Anomaly 
-                    radioButtons(inputId  = "mode_selected",
-                                 label    = "Choose a mode:",
-                                 choices  = c("Anomaly","Absolute"),
-                                 selected = "Anomaly" , inline = TRUE),
             
                     #Choose your year of interest        
                     numericRangeInput(inputId    = "range_years",
@@ -223,16 +217,13 @@ ui <- navbarPage(id = "nav1",
                                               selected = c("January", "December")),
                     )),      
                             
-                    #Choose reference period if Anomaly values are chosen (Hidden object)      
-                    shinyjs::hidden(
-                    div(id = "optional",
-                        numericRangeInput(inputId = "ref_period",
-                                          label      = "Reference period:",
-                                          value      = c(1961,1990),
-                                          separator  = " to ",
-                                          min        = 1422,
-                                          max        = 2008)
-                    )),
+                    #Choose reference period  
+                    numericRangeInput(inputId = "ref_period",
+                                      label      = "Select the reference period:",
+                                      value      = c(1961,1990),
+                                      separator  = " to ",
+                                      min        = 1422,
+                                       max        = 2008)
     
                     ), width = 12), br(),
             
@@ -240,8 +231,8 @@ ui <- navbarPage(id = "nav1",
                     sidebarPanel(fluidRow(
               
                     #Short description of the Coord. Sidebar        
-                    h4(helpText("Chose a map, enter coordinates manually or draw a box on the plot")),
-                    
+                    h4(helpText("Set geographical area")),
+                    h5(helpText("Select a continent, enter coordinates manually or draw a box on the plot")),
                     
                      column(width = 12, fluidRow(      
                      #Global Button
@@ -300,7 +291,7 @@ ui <- navbarPage(id = "nav1",
                       
                     #Choose Longitude and Latitude Range          
                     numericRangeInput(inputId = "range_longitude",
-                                      label = "Longitude range (-180/180):",
+                                      label = "Longitude range (-180 to 180):",
                                       value = initial_lon_values,
                                       separator = " to ",
                                       min = -180,
@@ -309,7 +300,7 @@ ui <- navbarPage(id = "nav1",
                         
                     #Choose Longitude and Latitude Range          
                     numericRangeInput(inputId = "range_latitude",
-                                      label = "Latitude range (-90/90):",
+                                      label = "Latitude range (-90 to 90):",
                                       value = initial_lat_values,
                                       separator = " to ",
                                       min = -90,
@@ -539,6 +530,16 @@ ui <- navbarPage(id = "nav1",
                     
                       #### Customization panels END ----
                       ),
+                      #### Abs/Ref Map plot START ----
+                      h4(helpText("Reference map")), 
+                      
+                      radioButtons(inputId  = "ref_map_mode",
+                                   label    = NULL,
+                                   choices  = c("None", "Absolute Values","Reference Period"),
+                                   selected = "None" , inline = TRUE),
+                      
+                      plotOutput("ref_map", height = "auto")
+                      
                     ### Map plot END ----
                     ),
             
@@ -892,7 +893,7 @@ ui <- navbarPage(id = "nav1",
                     sidebarPanel(fluidRow( 
                      
                      #Short description of the Panel Composites        
-                     h4(helpText("Creating composite mean or anomaly values")),
+                     h4(helpText("Plot composite anomalies for a set of years")),
                      
                      #Choose one of three datasets (Select)                
                      selectInput(inputId  = "dataset_selected2",
@@ -906,15 +907,9 @@ ui <- navbarPage(id = "nav1",
                                  choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
                                  selected = "Temperature"),
                      
-                     #Choose a Mode: Absolute, Fixed Anomaly or Anomalies compared to X years prior
-                     radioButtons(inputId  = "mode_selected2",
-                                  label    = "Choose a mode:",
-                                  choices  = c("Fixed anomaly", "Anomaly compared to X years prior", "List of custom anomaly years", "Absolute"),
-                                  selected = "Fixed anomaly" , inline = TRUE),
-                     
                      #Type in your year of interest OR upload a file
                      radioButtons(inputId  = "enter_upload2",
-                                  label    = "Enter or upload a list of years:",
+                                  label    = "Choose how to enter composite years:",
                                   choices  = c("Manual", "Upload"),
                                   selected = "Manual" , inline = TRUE),
                      
@@ -954,6 +949,12 @@ ui <- navbarPage(id = "nav1",
                                            #Initially selected = 1 year (annual mean)
                                            selected = c("January", "December")),
                        )),      
+                     
+                     #Choose a Mode: Absolute, Fixed Anomaly or Anomalies compared to X years prior
+                     radioButtons(inputId  = "mode_selected2",
+                                  label    = "Select anomaly method:",
+                                  choices  = c("Fixed reference","Custom reference", "Compared to X years prior"),
+                                  selected = "Fixed reference" , inline = TRUE),
 
                      #Choose reference period for either Fixed Anomaly or enter X years (1-50) for Anomalies compared to X years prior (Hidden objects)      
                      shinyjs::hidden(
@@ -968,7 +969,7 @@ ui <- navbarPage(id = "nav1",
                      shinyjs::hidden(
                        div(id = "optional2b",
                            numericInput(inputId = "prior_years2",
-                                        label      = "Number of years prior to composite years (max. 50):",
+                                        label      = "X (number of years prior to composite years - max 50):",
                                         value      = 10,
                                         min        = 1,
                                         max        = 50))),
@@ -976,7 +977,7 @@ ui <- navbarPage(id = "nav1",
                      #Reference period as list of years (manual or upload)
                      shinyjs::hidden(div(id = "optional2f",
                                          radioButtons(inputId  = "enter_upload2a",
-                                                      label    = "Enter or upload a list of years:",
+                                                      label    = "Choose how to enter reference years:",
                                                       choices  = c("Manual", "Upload"),
                                                       selected = "Manual" , inline = TRUE),
                      
@@ -1009,7 +1010,8 @@ ui <- navbarPage(id = "nav1",
                      sidebarPanel(fluidRow(
                      
                      #Short description of the Coord. Sidebar        
-                     h4(helpText("Chose a map, enter coordinates manually or draw a box on the plot")),
+                     h4(helpText("Set geographical area")),
+                     h5(helpText("Select a continent, enter coordinates manually or draw a box on the plot")),
                      
                      column(width = 12, fluidRow(      
                        #Global Button
@@ -1068,7 +1070,7 @@ ui <- navbarPage(id = "nav1",
                      
                      #Choose Longitude and Latitude Range          
                      numericRangeInput(inputId = "range_longitude2",
-                                       label = "Longitude range (-180/180):",
+                                       label = "Longitude range (-180 to 180):",
                                        value = initial_lon_values,
                                        separator = " to ",
                                        min = -180,
@@ -1076,7 +1078,7 @@ ui <- navbarPage(id = "nav1",
                      
                      #Choose Longitude and Latitude Range          
                      numericRangeInput(inputId = "range_latitude2",
-                                       label = "Latitude range (-90/90):",
+                                       label = "Latitude range (-90 to 90):",
                                        value = initial_lat_values,
                                        separator = " to ",
                                        min = -90,
@@ -1309,6 +1311,15 @@ ui <- navbarPage(id = "nav1",
                       ),
                       #### Customization panels END ----
                       ),
+                     #### Abs/Ref Map plot START ----
+                     h4(helpText("Reference map")), 
+                     
+                     radioButtons(inputId  = "ref_map_mode2",
+                                  label    = NULL,
+                                  choices  = c("None", "Absolute Values","Reference Period"),
+                                  selected = "None" , inline = TRUE),
+                     
+                     plotOutput("ref_map2", height = "auto") 
                     ### Map plot END ----  
                       ),
              
@@ -1799,7 +1810,7 @@ ui <- navbarPage(id = "nav1",
                    
                    #Choose Longitude and Latitude Range          
                    numericRangeInput(inputId = "range_longitude_v1",
-                                     label = "Longitude range (-180/180):",
+                                     label = "Longitude range (-180 to 180):",
                                      value = c(4,12),
                                      separator = " to ",
                                      min = -180,
@@ -1807,7 +1818,7 @@ ui <- navbarPage(id = "nav1",
             
                    #Choose Longitude and Latitude Range          
                    numericRangeInput(inputId = "range_latitude_v1",
-                                     label = "Latitude range (-90/90):",
+                                     label = "Latitude range (-90 to 90):",
                                      value = c(43,50),
                                      separator = " to ",
                                      min = -90,
@@ -2002,7 +2013,7 @@ ui <- navbarPage(id = "nav1",
                      
                      #Choose Longitude and Latitude Range          
                      numericRangeInput(inputId = "range_longitude_v2",
-                                       label = "Longitude range (-180/180):",
+                                       label = "Longitude range (-180 to 180):",
                                        value = initial_lon_values,
                                        separator = " to ",
                                        min = -180,
@@ -2010,7 +2021,7 @@ ui <- navbarPage(id = "nav1",
                      
                      #Choose Longitude and Latitude Range          
                      numericRangeInput(inputId = "range_latitude_v2",
-                                       label = "Latitude range (-90/90):",
+                                       label = "Latitude range (-90 to 90):",
                                        value = initial_lat_values,
                                        separator = " to ",
                                        min = -90,
@@ -2793,7 +2804,7 @@ tabPanel("Regression", id = "tab4",
                      
                      #Choose Longitude and Latitude Range          
                      numericRangeInput(inputId = "range_longitude_iv",
-                                       label = "Longitude range (-180/180):",
+                                       label = "Longitude range (-180 to 180):",
                                        value = c(4,12),
                                        separator = " to ",
                                        min = -180,
@@ -2801,7 +2812,7 @@ tabPanel("Regression", id = "tab4",
                      
                      #Choose Longitude and Latitude Range          
                      numericRangeInput(inputId = "range_latitude_iv",
-                                       label = "Latitude range (-90/90):",
+                                       label = "Latitude range (-90 to 90):",
                                        value = c(43,50),
                                        separator = " to ",
                                        min = -90,
@@ -2992,7 +3003,7 @@ tabPanel("Regression", id = "tab4",
                      
                      #Choose Longitude and Latitude Range          
                      numericRangeInput(inputId = "range_longitude_dv",
-                                       label = "Longitude range (-180/180):",
+                                       label = "Longitude range (-180 to 180):",
                                        value = initial_lon_values,
                                        separator = " to ",
                                        min = -180,
@@ -3000,7 +3011,7 @@ tabPanel("Regression", id = "tab4",
                      
                      #Choose Longitude and Latitude Range          
                      numericRangeInput(inputId = "range_latitude_dv",
-                                       label = "Latitude range (-90/90):",
+                                       label = "Latitude range (-90 to 90):",
                                        value = initial_lat_values,
                                        separator = " to ",
                                        min = -90,
@@ -3263,20 +3274,12 @@ server <- function(input, output, session) {
 
     #Sidebars General and Composite
     
-    shinyjs::toggle(id = "optional",
-                    anim = TRUE,
-                    animType = "slide",
-                    time = 0.5,
-                    selector = NULL,
-                    condition = input$mode_selected == "Anomaly",
-                    asis = FALSE)
-    
     shinyjs::toggle(id = "optional2a",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$mode_selected2 == "Fixed anomaly",
+                    condition = input$mode_selected2 == "Fixed reference",
                     asis = FALSE)
     
     shinyjs::toggle(id = "optional2b",
@@ -3284,7 +3287,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$mode_selected2 == "Anomaly compared to X years prior",
+                    condition = input$mode_selected2 == "Compared to X years prior",
                     asis = FALSE)
     
     shinyjs::toggle(id = "optional2c",
@@ -3332,7 +3335,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$mode_selected2 == "List of custom anomaly years",
+                    condition = input$mode_selected2 == "Custom reference",
                     asis = FALSE)
     
     shinyjs::toggle(id = "optional2g",
@@ -3589,7 +3592,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$mode_selected2 == "List of custom anomaly years",
+                    condition = input$mode_selected2 == "Custom reference",
                     asis = FALSE)
     
     ## Composites TS
@@ -3671,7 +3674,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$mode_selected2 == "List of custom anomaly years",
+                    condition = input$mode_selected2 == "Custom reference",
                     asis = FALSE)
     
     ## Correlation Maps
@@ -4411,7 +4414,7 @@ server <- function(input, output, session) {
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "axis_input",
-          value = set_axis_values(map_data(), input$mode_selected))
+          value = set_axis_values(map_data(), "Anomaly"))
       }
     })
     
@@ -6396,20 +6399,24 @@ server <- function(input, output, session) {
   #Converting absolutes to anomalies
   data_output3 <- reactive({
     
-    #Calculate anomalies (if selected)
-    if (input$mode_selected == "Absolute"){
-      processed_data3 <- data_output2()
-    } else {
-      processed_data3 <- convert_subset_to_anomalies(data_output2(), data_output1(), pp_id(), month_range(), input$ref_period)
-    }
+    processed_data3 <- convert_subset_to_anomalies(data_output2(), data_output1(), pp_id(), month_range(), input$ref_period)
+  
     return(processed_data3)
   })
   
-  #Map customizatoin (statistics and map titles)
+  # Calculating Ref data for plotting
+  data_output4 <- reactive({
+    
+    processed_data4 <- data_output2()-data_output3()
+    
+    return(processed_data4)
+  })
+  
+  #Map customization (statistics and map titles)
   
   plot_titles <- reactive({
     
-    my_title <- generate_titles("general",input$dataset_selected, input$variable_selected, input$mode_selected, input$title_mode,input$title_mode_ts,
+    my_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Anomaly", input$title_mode,input$title_mode_ts,
                                  month_range(), input$range_years, input$ref_period, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
                                  input$title1_input, input$title2_input,input$title1_input_ts)
     
@@ -6437,10 +6444,41 @@ server <- function(input, output, session) {
     return(m_d)  
   })
   
-  map_plot <- function(){plot_default_map(map_data(), input$variable_selected, input$mode_selected, plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics())}
+  map_plot <- function(){plot_default_map(map_data(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics())}
   
   output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
   # code line below sets height as a function of the ratio of lat/lon 
+  
+  
+  #Ref/Absolute Map
+  ref_map_data <- function(){
+    if (input$ref_map_mode == "Absolute Values"){
+      create_map_datatable(data_output2(), subset_lons(), subset_lats())
+    } else if (input$ref_map_mode == "Reference Period"){
+      create_map_datatable(data_output4(), subset_lons(), subset_lats())
+    } 
+  }    
+  
+  ref_map_titles = reactive({
+    if (input$ref_map_mode == "Absolute Values"){
+      rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
+                                  month_range(), input$range_years, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
+                                  input$title1_input, input$title2_input,input$title1_input_ts)
+    } else if (input$ref_map_mode == "Reference Period"){
+      rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
+                                  month_range(), input$ref_period, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
+                                  input$title1_input, input$title2_input,input$title1_input_ts)
+    }
+  })  
+  
+  ref_map_plot <- function(){
+    if (input$ref_map_mode != "None"){
+      plot_default_map(ref_map_data(), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame())
+    }
+  }
+  
+  output$ref_map <- renderPlot({ref_map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
+  
   
   #Plotting the data (time series)
   timeseries_data <- reactive({
@@ -6770,7 +6808,7 @@ server <- function(input, output, session) {
     output$download_netcdf             <- downloadHandler(filename = function() {paste(plot_titles()$netcdf_title, ".nc", sep = "")},
                                                           content  = function(file) {
                                                             netcdf_ID = sample(1:1000000,1)
-                                                            generate_custom_netcdf (data_output3(), "general",input$dataset_selected,netcdf_ID, input$variable_selected, input$netcdf_variables, input$mode_selected, subset_lons(), subset_lats(), month_range(), input$range_years, input$ref_period, NA)
+                                                            generate_custom_netcdf (data_output3(), "general",input$dataset_selected,netcdf_ID, input$variable_selected, input$netcdf_variables, "Anomaly", subset_lons(), subset_lats(), month_range(), input$range_years, input$ref_period, NA)
                                                             file.copy(paste("user_ncdf/netcdf_",netcdf_ID,".nc", sep=""),file)
                                                             file.remove(paste("user_ncdf/netcdf_",netcdf_ID,".nc", sep=""))
                                                           })
@@ -6850,11 +6888,9 @@ server <- function(input, output, session) {
   data_output3_2 <- reactive({
     
     #Calculate two ways of anomalies (if selected)
-    if (input$mode_selected2 == "Absolute"){
-      processed_data3_2 <- data_output2_2()
-    } else if (input$mode_selected2 == "Fixed anomaly"){
+    if (input$mode_selected2 == "Fixed reference"){
       processed_data3_2 <- convert_subset_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), month_range_2(), input$ref_period2)
-    } else if (input$mode_selected2 == "Anomaly compared to X years prior"){
+    } else if (input$mode_selected2 == "Compared to X years prior"){
       processed_data3_2 <- convert_composite_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), year_set_comp(), month_range_2(), input$prior_years2)
     } else {
       processed_data3_2 <- convert_subset_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), month_range_2(), year_set_comp_ref())
@@ -6862,8 +6898,16 @@ server <- function(input, output, session) {
 
     return(processed_data3_2)
   })
-  
-  #Map customizatoin (statistics and map titles)
+
+  # Calculating Ref data for plotting
+  data_output4_2 <- reactive({
+    
+    processed_data4_2 <- data_output2_2()-data_output3_2()
+    
+    return(processed_data4_2)
+  })
+    
+  #Map customization (statistics and map titles)
   
   plot_titles_2 <- reactive({
     
@@ -6901,6 +6945,36 @@ server <- function(input, output, session) {
   
   output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
   # code line below sets height as a function of the ratio of lat/lon 
+  
+  
+  #Ref/Absolute Map
+  ref_map_data_2 <- function(){
+    if (input$ref_map_mode2 == "Absolute Values"){
+      create_map_datatable(data_output2_2(), subset_lons_2(), subset_lats_2())
+    } else if (input$ref_map_mode2 == "Reference Period"){
+      create_map_datatable(data_output4_2(), subset_lons_2(), subset_lats_2())
+    } 
+  }    
+  
+  ref_map_titles_2 = reactive({
+    if (input$ref_map_mode2 == "Absolute Values"){
+      rm_title2 <- generate_titles("composites",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
+                                  month_range_2(), year_set_comp(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
+                                  input$title1_input2, input$title2_input2,input$title1_input_ts2)
+    } else if (input$ref_map_mode2 == "Reference Period"){
+      rm_title2 <- generate_titles("reference",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
+                                  month_range_2(), year_set_comp_ref(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
+                                  input$title1_input2, input$title2_input2,input$title1_input_ts2)
+    }
+  })  
+  
+  ref_map_plot_2 <- function(){
+    if (input$ref_map_mode2 != "None"){
+      plot_default_map(ref_map_data_2(), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame())
+    }
+  }
+  
+  output$ref_map2 <- renderPlot({ref_map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
   
   
   #Plotting the data (time series)
@@ -6945,14 +7019,14 @@ server <- function(input, output, session) {
   output$timeseries2 <- renderPlot({timeseries_plot_2()}, height = 400)
   
   #List of chosen composite years (upload or manual) to plot
-  output$text_years2 <- renderText("List of chosen composite years:")
+  output$text_years2 <- renderText("Chosen composite years:")
   output$years2 <- renderText({year_set_comp()})
-  output$text_years2b <- renderText("List of chosen composite years:")
+  output$text_years2b <- renderText("Chosen composite years:")
   output$years2b <- renderText({year_set_comp()})
   
-  output$text_custom_years2  <- renderText("List of custom anomaly years:")
+  output$text_custom_years2  <- renderText("Chosen reference years:")
   output$custom_years2       <- renderText({year_set_comp_ref()})
-  output$text_custom_years2b <- renderText("List of custom anomaly years:")
+  output$text_custom_years2b <- renderText("Chosen reference years:")
   output$custom_years2b      <- renderText({year_set_comp_ref()})
 
     ### ModE-RA sources ----
