@@ -16,7 +16,7 @@ library(tmaptools)
 library(ggplot2)
 library(sf)
 library(shinylogs)
-library(Cairo)
+
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
@@ -1046,6 +1046,7 @@ rewrite_tstable = function(tstable,variable){
 ##           a given year and season
 ##           year = a single user selected or default year
 ##           season = "summer" or "winter"
+##           labs = TRUE or FALSE (TRUE = non-zoomed plot)
 
 plot_modera_sources = function(year,season,lon_range,lat_range,labs){
   
