@@ -15,7 +15,6 @@
 #setwd("C:/Users/rw22z389/OneDrive/ModE-RA Mapping/ClimeApp_development")
 
 
-
 # Source for helpers ----
 source("helpers.R")
 
