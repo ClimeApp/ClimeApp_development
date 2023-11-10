@@ -849,9 +849,19 @@ ui <- navbarPage(id = "nav1",
                     ### Downloads ----
                     tabPanel("Downloads",
                     verticalLayout(br(),
-                          h3(helpText("Map download")),
-                             radioButtons(inputId = "file_type_map", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                             downloadButton(outputId = "download_map", label = "Download"), br(),
+                          fluidRow(
+                            column(width = 3,
+                                   h3(helpText("Primary map download")),
+                                   radioButtons(inputId = "file_type_map", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
+                                   downloadButton(outputId = "download_map", label = "Download")),
+                            shinyjs::hidden(div(id ="hidden_sec_map_download",
+                            column(width = 3,
+                                   h3(helpText("Secondary map download")),
+                                   radioButtons(inputId = "file_type_map_sec", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
+                                   downloadButton(outputId = "download_map_sec", label = "Download")),
+                            )),
+                            ),
+                            br(),
                           h3(helpText("Time series download")),
                              radioButtons(inputId = "file_type_timeseries", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
                              downloadButton(outputId = "download_timeseries", label = "Download"), br(),
@@ -1610,9 +1620,19 @@ ui <- navbarPage(id = "nav1",
                     ### Downloads ----
                     tabPanel("Downloads",
                             verticalLayout(br(),
-                                    h3(helpText("Map download")),
-                                           radioButtons(inputId = "file_type_map2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                           downloadButton(outputId = "download_map2", label = "Download"), br(),
+                                   fluidRow(
+                                     column(width = 3,
+                                            h3(helpText("Primary map download")),
+                                            radioButtons(inputId = "file_type_map2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
+                                            downloadButton(outputId = "download_map2", label = "Download")),
+                                            shinyjs::hidden(div(id = "hidden_sec_map_download2",
+                                            column(width = 3,
+                                                   h3(helpText("Secondary map download")),
+                                                   radioButtons(inputId = "file_type_map_sec2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
+                                                   downloadButton(outputId = "download_map_sec2", label = "Download")),
+                                            )),
+                                            ),
+                                            br(),
                                     h3(helpText("Time series download")),
                                            radioButtons(inputId = "file_type_timeseries2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
                                            downloadButton(outputId = "download_timeseries2", label = "Download"), br(),
@@ -3361,8 +3381,22 @@ server <- function(input, output, session) {
                     condition = is.null(input$upload_file2a),
                     asis = FALSE)
     
+    shinyjs::toggle(id = "hidden_sec_map_download",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_map_mode != "None",
+                    asis = FALSE)
     
-    
+    shinyjs::toggle(id = "hidden_sec_map_download2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_map_mode2 != "None",
+                    asis = FALSE)
+   
     #Customization
     ##General Maps
     
@@ -3800,9 +3834,9 @@ server <- function(input, output, session) {
                     condition = input$feature_ts3 == "Line",
                     asis = FALSE)
     
-    ## Correlation
+    # Correlation
     
-    #Sidebar V1
+    ##Sidebar V1
     
     shinyjs::toggle(id = "upload_forcings_v1",
                     anim = TRUE,
@@ -3868,7 +3902,7 @@ server <- function(input, output, session) {
                     condition = input$coordinates_type_v1 == "Continents",
                     asis = FALSE)
     
-    #Sidebar V2
+    ##Sidebar V2
     
     shinyjs::toggle(id = "upload_forcings_v2",
                     anim = TRUE,
@@ -3968,9 +4002,9 @@ server <- function(input, output, session) {
                     condition = input$source_v2 == "ModE-RA",
                     asis = FALSE)
     
-    ## Regression
+    # Regression
     
-    #Sidebar IV
+    ##Sidebar IV
     
     shinyjs::toggle(id = "upload_forcings_iv",
                     anim = TRUE,
@@ -4036,7 +4070,7 @@ server <- function(input, output, session) {
                     condition = input$coordinates_type_iv == "Continents",
                     asis = FALSE)
     
-    #Sidebar DV
+    ##Sidebar DV
     
     shinyjs::toggle(id = "upload_forcings_dv",
                     anim = TRUE,
@@ -4102,7 +4136,7 @@ server <- function(input, output, session) {
                     condition = input$coordinates_type_dv == "Continents",
                     asis = FALSE)
     
-    #Regression (Main Panel)
+    ##Regression (Main Panel)
     
     shinyjs::toggle(id = "hidden_iv_fad_download",
                     anim = TRUE,
@@ -4427,6 +4461,23 @@ server <- function(input, output, session) {
         choices = choices,
         selected = input$variable_selected
       )
+    })
+    
+    #Update Reference Map
+    observe({
+      if (input$dataset_selected == "ModE-Clim"){
+        updateRadioButtons(
+          inputId = "ref_map_mode",
+          label    = NULL,
+          choices  = c("None", "Reference Period"),
+          selected = "None" , inline = TRUE)
+      } else {
+        updateRadioButtons(
+          inputId = "ref_map_mode",
+          label    = NULL,
+          choices  = c("None", "Absolute Values","Reference Period"),
+          selected = "None" , inline = TRUE)
+      }
     })
     
     
@@ -4876,6 +4927,23 @@ server <- function(input, output, session) {
           session = getDefaultReactiveDomain(),
           inputId = "axis_input2",
           value = set_axis_values(map_data_2(), input$mode_selected2))
+      }
+    })
+    
+    #Update Reference Map
+    observe({
+      if (input$dataset_selected2 == "ModE-Clim"){
+        updateRadioButtons(
+          inputId = "ref_map_mode2",
+          label    = NULL,
+          choices  = c("None", "Reference Period"),
+          selected = "None" , inline = TRUE)
+      } else {
+        updateRadioButtons(
+          inputId = "ref_map_mode2",
+          label    = NULL,
+          choices  = c("None", "Absolute Values","Reference Period"),
+          selected = "None" , inline = TRUE)
       }
     })
     
@@ -6601,8 +6669,8 @@ server <- function(input, output, session) {
         x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
       }
       
-      # Apply coord_cartesian to the entire map with adjusted limits
-      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
       
       plot_data
     })
@@ -6669,8 +6737,8 @@ server <- function(input, output, session) {
         x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
       }
       
-      # Apply coord_cartesian to the entire map with adjusted limits
-      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
       
       plot_data
     })
@@ -6724,6 +6792,22 @@ server <- function(input, output, session) {
                                                          } else {
                                                            pdf(file, width = map_dimensions()[3]/200 , height = map_dimensions()[4]/200) 
                                                            map_plot()
+                                                           dev.off()
+                                                         }})
+    
+    output$download_map_sec         <- downloadHandler(filename = function(){paste(plot_titles()$file_title,"-sec_map.",input$file_type_map, sep = "")},
+                                                       content  = function(file) {
+                                                         if (input$file_type_map == "png"){
+                                                           png(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200)  
+                                                           ref_map_plot() 
+                                                           dev.off()
+                                                         } else if (input$file_type_map == "jpeg"){
+                                                           jpeg(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200) 
+                                                           ref_map_plot() 
+                                                           dev.off()
+                                                         } else {
+                                                           pdf(file, width = map_dimensions()[3]/200 , height = map_dimensions()[4]/200) 
+                                                           ref_map_plot()
                                                            dev.off()
                                                          }})
     
@@ -7102,8 +7186,8 @@ server <- function(input, output, session) {
       x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
     }
     
-    # Apply coord_cartesian to the entire map with adjusted limits
-    plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+    # Apply coord_sf to the entire map with adjusted limits
+    plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
     
     plot_data
   })
@@ -7170,8 +7254,8 @@ server <- function(input, output, session) {
       x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
     }
     
-    # Apply coord_cartesian to the entire map with adjusted limits
-    plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+    # Apply coord_sf to the entire map with adjusted limits
+    plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
     
     plot_data
   })
@@ -7246,6 +7330,22 @@ server <- function(input, output, session) {
                                                             map_plot_2()
                                                             dev.off()
                                                           }})
+    
+    output$download_map_sec2         <- downloadHandler(filename = function(){paste(plot_titles()$file_title,"-sec_map.",input$file_type_map, sep = "")},
+                                                       content  = function(file) {
+                                                         if (input$file_type_map == "png"){
+                                                           png(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200)  
+                                                           ref_map_plot_2() 
+                                                           dev.off()
+                                                         } else if (input$file_type_map == "jpeg"){
+                                                           jpeg(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200) 
+                                                           ref_map_plot_2() 
+                                                           dev.off()
+                                                         } else {
+                                                           pdf(file, width = map_dimensions()[3]/200 , height = map_dimensions()[4]/200) 
+                                                           ref_map_plot_2()
+                                                           dev.off()
+                                                         }})
     
     output$download_timeseries2      <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title,"-ts.",input$file_type_timeseries2, sep = "")},
                                                         content  = function(file) {
@@ -7860,8 +7960,8 @@ server <- function(input, output, session) {
           x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
         }
         
-        # Apply coord_cartesian to the entire map with adjusted limits
-        plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+        # Apply coord_sf to the entire map with adjusted limits
+        plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
         
         plot_data
       })
@@ -7928,8 +8028,8 @@ server <- function(input, output, session) {
           x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
         }
         
-        # Apply coord_cartesian to the entire map with adjusted limits
-        plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+        # Apply coord_sf to the entire map with adjusted limits
+        plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
         
         plot_data
       })
@@ -8008,8 +8108,8 @@ server <- function(input, output, session) {
           x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
         }
         
-        # Apply coord_cartesian to the entire map with adjusted limits
-        plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+        # Apply coord_sf to the entire map with adjusted limits
+        plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
         
         plot_data
       })
@@ -8076,8 +8176,8 @@ server <- function(input, output, session) {
           x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
         }
         
-        # Apply coord_cartesian to the entire map with adjusted limits
-        plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+        # Apply coord_sf to the entire map with adjusted limits
+        plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
         
         plot_data
       })
@@ -8786,8 +8886,8 @@ server <- function(input, output, session) {
         x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
       }
       
-      # Apply coord_cartesian to the entire map with adjusted limits
-      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
       
       plot_data
     })
@@ -8854,8 +8954,8 @@ server <- function(input, output, session) {
         x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
       }
       
-      # Apply coord_cartesian to the entire map with adjusted limits
-      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
       
       plot_data
     })
@@ -8934,8 +9034,8 @@ server <- function(input, output, session) {
         x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
       }
       
-      # Apply coord_cartesian to the entire map with adjusted limits
-      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
       
       plot_data
     })
@@ -9002,8 +9102,8 @@ server <- function(input, output, session) {
         x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
       }
       
-      # Apply coord_cartesian to the entire map with adjusted limits
-      plot_data <- plot_data + coord_cartesian(xlim = x_range, ylim = y_range, expand = FALSE)
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
       
       plot_data
     })
