@@ -546,7 +546,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
   # Composites titles
   else if (tab=="composites"){
     if (mode == "Absolute"){
-      map_title1 = paste(dataset," ",title_months," ",variable," (Composite years)", sep = "")
+      map_title1 = paste(dataset," ",title_months," ",variable," Absolute values (Composite years)", sep = "")
       map_title2 = ""
     } else if (mode == "Fixed reference") {
       map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite years)", sep = "")
@@ -562,7 +562,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
   
   # Reference period titles
   else if (tab=="reference"){
-      map_title1 = paste(dataset," ",title_months," ",variable," (Reference years)", sep = "")
+      map_title1 = paste(dataset," ",title_months," ",variable," Absolute values (Reference years)", sep = "")
       map_title2 = ""
   }
 
