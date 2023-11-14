@@ -585,6 +585,10 @@ ui <- navbarPage(id = "nav1",
                                               choiceValues = c("topleft", "topright","bottomleft","bottomright"),
                                               selected = "topright" ,
                                               inline = TRUE))),
+                                 
+                                 checkboxInput(inputId = "show_ref_ts",
+                                               label   = "Show reference",
+                                               value   = FALSE),
                               )),    
                        ),
 
@@ -1383,6 +1387,10 @@ ui <- navbarPage(id = "nav1",
                                                       choiceValues = c("topleft", "topright","bottomleft","bottomright"),
                                                       selected = "topright" ,
                                                       inline = TRUE))),
+                                   
+                                   checkboxInput(inputId = "show_ref_ts2",
+                                                 label   = "Show reference",
+                                                 value   = FALSE),
                                )),    
                       ),
                       
@@ -7202,7 +7210,14 @@ server <- function(input, output, session) {
   
   #Plotting the time series
   timeseries_plot <- function(){
-    plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts)
+    # Generate NA or reference mean
+    if(input$show_ref_ts == TRUE){
+      ref_ts = signif(mean(data_output4()),3)
+    } else {
+      ref_ts = NA
+    }
+    
+    plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
     add_highlighted_areas(ts_highlights_data())
     add_percentiles(timeseries_data())
     add_custom_lines(ts_lines_data())
@@ -7709,7 +7724,14 @@ server <- function(input, output, session) {
   
   #Plotting the time series
   timeseries_plot_2 <- function(){
-    plot_default_timeseries(timeseries_data_2(),"composites",input$variable_selected2,plot_titles_2(),input$title_mode_ts2)
+    # Generate NA or reference mean
+    if(input$show_ref_ts2 == TRUE){
+      ref_ts2 = signif(mean(data_output4_2()),3)
+    } else {
+      ref_ts2 = NA
+    }
+
+    plot_default_timeseries(timeseries_data_2(),"composites",input$variable_selected2,plot_titles_2(),input$title_mode_ts2,ref_ts2)
     add_highlighted_areas(ts_highlights_data2())
     add_percentiles(timeseries_data_2())
     add_custom_lines(ts_lines_data2())
@@ -8190,7 +8212,7 @@ server <- function(input, output, session) {
       return(ts_data1_v1)
     })
     
-    ME_timeseries_plot_v1 = function(){plot_default_timeseries(timeseries_data_v1(),"general",input$ME_variable_v1,plot_titles_v1(),"Default")}
+    ME_timeseries_plot_v1 = function(){plot_default_timeseries(timeseries_data_v1(),"general",input$ME_variable_v1,plot_titles_v1(),"Default",NA)}
     
     
     # for Variable 2:
@@ -8261,7 +8283,7 @@ server <- function(input, output, session) {
       return(ts_data1_v2)
     })
     
-    ME_timeseries_plot_v2 = function(){plot_default_timeseries(timeseries_data_v2(),"general",input$ME_variable_v2,plot_titles_v2(),"Default")}
+    ME_timeseries_plot_v2 = function(){plot_default_timeseries(timeseries_data_v2(),"general",input$ME_variable_v2,plot_titles_v2(),"Default",NA)}
     
     
     ### Plot v1/v2 plots
@@ -9175,7 +9197,7 @@ server <- function(input, output, session) {
       })
       
       
-      ME_timeseries_plot_iv = function(){plot_default_timeseries(ME_ts_data_iv(),"general",input$ME_variable_iv[1],plot_titles_iv(),"Default")}
+      ME_timeseries_plot_iv = function(){plot_default_timeseries(ME_ts_data_iv(),"general",input$ME_variable_iv[1],plot_titles_iv(),"Default",NA)}
       
       # Generate time series data for dv
       timeseries_data_dv <- reactive({

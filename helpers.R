@@ -951,10 +951,10 @@ add_stats_to_TS_datatable = function(data_input, add_moving_average,
 ##                                          values in white)
 ##           tab = "general" or "composites"
 ##           data_input = timeseries_datatable
-##           mode = "Absolute" or "Anomalies"
 ##           title_mode = "Default" or "Custom"
+##           ref = NA or the mean of the reference data
 
-plot_default_timeseries = function(data_input,tab,variable, titles, title_mode){
+plot_default_timeseries = function(data_input,tab,variable, titles, title_mode, ref){
   
   # Set up variables for plotting
   x = data_input$Year
@@ -991,6 +991,13 @@ plot_default_timeseries = function(data_input,tab,variable, titles, title_mode){
     title(paste("Mean = ",signif(y_mean,3),v_unit,"  Range = ", signif(y_range[1],3), v_unit,":", signif(y_range[2],3),
                 v_unit, "   SD = ",signif(y_sd,3),v_unit,sep=""),
           cex.main = 1,   font.main= 1, adj=1, line = 0.5)
+  }
+  
+  # Add reference line
+  if (!is.na(ref)){
+    text_x = min(x) + ((range(x)[2]-range(x)[1])/25.5) 
+    abline(h = 0, lwd = 1)
+    text(text_x,0,labels = paste0(ref,v_unit),pos=3)
   }
 }
 
