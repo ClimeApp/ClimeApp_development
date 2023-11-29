@@ -540,7 +540,7 @@ convert_subset_to_anomalies = function(data_input,ref_data,pp_data_ID,month_rang
 ## (General) GENERATE MAP,TS & FILE TITLES - creates a dataframe of map_title1,
 ##                                           map_title2, ts_title, ts_axis,file_title,
 ##                                           netcdf_title
-##           tab = "general" or "composites" or "reference"
+##           tab = "general" or "composites", "reference", or "sdratio"
 ##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim"
 ##           mode = "Absolute" or "Anomaly" for general tab
 ##                  "Absolute", "Fixed reference" or ""Compared to X years prior"
@@ -591,9 +591,18 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
       map_title1 = paste(dataset," ",title_months," ",variable," Absolute values (Reference years)", sep = "")
       map_title2 = ""
   }
-
-
   
+  # SD ratio titles
+  else if (tab=="sdratio"){
+    if (is.na(year_range[1])){
+      map_title1 = paste(dataset," ",title_months," SD Ratio (Composite years)", sep = "")
+      map_title2 = ""
+    } else{
+      map_title1 = paste(dataset," ",title_months," SD Ratio ",year_range[1],"-",year_range[2], sep = "")
+      map_title2 = "" 
+    }
+  }
+
   # Create Timeseries title 
   ts_title = paste(substr(map_title1, 1, nchar(map_title1) - 10),
                    " [",lon_range[1],":",lon_range[2],"\u00B0E, ",lat_range[1],":",lat_range[2],"\u00B0N]", sep = "")
@@ -659,6 +668,7 @@ set_axis_values = function(data_input,mode){
 
 ## (General) DEFAULT MAP PLOTTING FUNCTION - including taking average of dataset
 ##           data_input = map_datatable
+##           variable = modE variable OR "SD Ratio"
 ##           mode = "Absolute" or ">any other text<" <- code will assume it's anomalies
 ##           axis_range = as created by "set_axis_values" function
 ##           hide_axis = TRUE or FALSE
@@ -688,6 +698,9 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
   }
   else if (variable == "SLP"|variable == "Z500"){
     v_col = colorRampPalette(rev(brewer.pal(11,"PRGn"))) ; v_unit = "hPa"
+  } 
+  else if (variable == "SD Ratio"){
+    v_col = colorRampPalette(rev(brewer.pal(9,"Greens"))) ; v_unit = ""
   }
   
   ## Plot with axis
@@ -1286,45 +1299,82 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
 
 
 ## (Plot Features) CREATE STATISTICAL HIGHLIGHTS DATA - creates a dataframe for
-##                 adding dots to an anomaly map to mark points where over x 
-##                 percent of the timeseries match a chosen criteria
+##                 adding dots to an anomaly map to mark points which match a certain
+##                 criteria
 ##                 data_input = any subset_to_anomaly ModE-RA data
+##                 tab = "general" or "composites"
 ##                 add_stat_highlight = TRUE or FALSE
-##                 criteria = "% sign match"  
+##                 criteria = "% sign match" or "SD ratio" 
+##                 sdratio = any numeric value from 0 to 1
 ##                 percent = any numeric value from 1 to 100
 
-create_stat_highlights_data = function(data_input,add_stat_highlight,criteria,percent,subset_lon_IDs,subset_lat_IDs){
+create_stat_highlights_data = function(data_input,tab,add_stat_highlight,criteria,sdratio,
+                                       percent,variable,subset_lon_IDs,subset_lat_IDs,
+                                       month_range,year_range){
   if (add_stat_highlight == TRUE){
-    # Create sign_check function
-    matching_sign_check = function(anom_data,chosen_p){
-      pos = sum(anom_data>0)
-      neg = sum(anom_data<0)
-      if (pos>neg){
-        sign.percent = (pos/(pos+neg))*100
-      } else {
-        sign.percent = (neg/(pos+neg))*100
+    if (criteria == "% sign match"){
+      # Create sign_check function
+      matching_sign_check = function(anom_data,chosen_p){
+        pos = sum(anom_data>0)
+        neg = sum(anom_data<0)
+        if (pos>neg){
+          sign.percent = (pos/(pos+neg))*100
+        } else {
+          sign.percent = (neg/(pos+neg))*100
+        }
+        if (sign.percent>chosen_p){
+          criteria.match = 1 # set to preferred point size
+        } else {
+          criteria.match = 0
+        }
+        return(criteria.match)
       }
-      if (sign.percent>chosen_p){
-        criteria.match = 1 # set to preferred point size
-      } else {
-        criteria.match = 0
-      }
-      return(criteria.match)
+      
+      # Apply sign_check function across input data
+      criteria_vals = c(apply(data_input, c(1:2),matching_sign_check,percent))
     }
     
-    # Apply sign_check function across input data
-    criteria_vals = c(apply(data_input, c(1:2),matching_sign_check,percent))
+    else if (criteria == "SD ratio"){
+      # Load & process SD data
+      SD_data0 = load_ModE_data("SD Ratio",variable)
+      # Lat/lon subset:
+      SD_data1 = create_latlon_subset(SD_data0, c(NA,NA), subset_lon_IDs, subset_lat_IDs)  
+      # Yearly subset:
+      if (tab == "general"){
+        SD_data2 = create_yearly_subset(SD_data1, c(NA,NA), year_range, month_range)
+      } else {
+        SD_data2 = create_yearly_subset_composite(SD_data1, c(NA,NA), year_range, month_range)
+      }
+
+      # Mean data:
+      SD_data3 = apply(SD_data2,c(1,2),mean)
+      
+      # SD ratio check:
+      sd_ratio_check = function(sd_data,chosen_sdr){
+        if (sd_data > chosen_sdr){
+          criteria.match = 0
+        } else {
+          criteria.match = 1
+        }
+        return(criteria.match)
+      }
+      
+      # Apply ratio check function across SD ratio data
+      criteria_vals = c(apply(SD_data3,c(1,2),sd_ratio_check,sdratio))
+    }
     
-    # Create vectors of x and y values
-    x = lon[subset_lon_IDs]
-    y = rev(lat[subset_lat_IDs])
+  # Create vectors of x and y values
+  x = lon[subset_lon_IDs]
+  y = lat[subset_lat_IDs]
     
-    x_vals = c(array(rep(x,length(y)),dim = c(length(x),length(y)))) 
-    y_vals = c(t(array(y,dim = c(length(y),length(x)))))
+  x_vals = c(array(rep(x,length(y)),dim = c(length(x),length(y)))) 
+  y_vals = c(t(array(y,dim = c(length(y),length(x)))))
     
-    # Combine into dataframe
-    S_H_data = data.frame(x_vals,y_vals,criteria_vals)  
+  # Combine into dataframe
+  S_H_data = data.frame(x_vals,y_vals,criteria_vals)  
+  
   }
+  
   else {
     S_H_data = data.frame()
   }

@@ -516,16 +516,24 @@ ui <- navbarPage(id = "nav1",
                                    radioButtons(inputId      = "custom_statistic",
                                                 label        = NULL,
                                                 inline       = TRUE,
-                                                choices      = c("% sign match"))
-                               ,
+                                                choices      = c("SD ratio", "% sign match")),
                              
-                               div(id = "hidden_sign_match",  
-                                   numericInput(inputId = "percentage_sign_match",
-                                                label  = "% of years in range with matching sign:",
-                                                value  = 90,
-                                                min    = 1,
-                                                max    = 100)
-                               )),
+                                   div(id = "hidden_sign_match",  
+                                       numericInput(inputId = "percentage_sign_match",
+                                                  label  = "% of years in range with matching sign:",
+                                                  value  = 90,
+                                                  min    = 1,
+                                                  max    = 100)
+                                   ),
+                                   
+                                   div(id = "hidden_SD_ratio",  
+                                       numericInput(inputId = "sd_ratio",
+                                                    label  = "SD ratio < ",
+                                                    value  = 0.2,
+                                                    min    = 0,
+                                                    max    = 1)
+                                   ),
+                              ),
                       ),
                     
                       #### Customization panels END ----
@@ -1312,15 +1320,24 @@ ui <- navbarPage(id = "nav1",
                                  radioButtons(inputId      = "custom_statistic2",
                                               label        = NULL,
                                               inline       = TRUE,
-                                              choices      = c("% sign match")),
+                                              choices      = c("SD ratio","% sign match")),
                             
-                             div(id = "hidden_sign_match2",  
-                                 numericInput(inputId = "percentage_sign_match2",
-                                              label  = "% of years in range with matching sign:",
-                                              value  = 90,
-                                              min    = 1,
-                                              max    = 100)
-                                 ),
+                               div(id = "hidden_sign_match2",  
+                                   numericInput(inputId = "percentage_sign_match2",
+                                                label  = "% of years in range with matching sign:",
+                                                value  = 90,
+                                                min    = 1,
+                                                max    = 100)
+                                   ),
+                               
+                               div(id = "hidden_SD_ratio2",  
+                                   numericInput(inputId = "sd_ratio2",
+                                                label  = "SD ratio < ",
+                                                value  = 0.2,
+                                                min    = 0,
+                                                max    = 1)
+                               ),
+                               
                              )),
                       ),
                       #### Customization panels END ----
@@ -1330,7 +1347,7 @@ ui <- navbarPage(id = "nav1",
                      
                      radioButtons(inputId  = "ref_map_mode2",
                                   label    = NULL,
-                                  choices  = c("None", "Absolute Values","Reference Period"),
+                                  choices  = c("None", "Absolute Values","Reference Period","SD Ratio"),
                                   selected = "None" , inline = TRUE),
                      
                      plotOutput("ref_map2", height = "auto")
@@ -3945,6 +3962,14 @@ server <- function(input, output, session) {
                     condition = input$custom_statistic == "% sign match",
                     asis = FALSE)
     
+    shinyjs::toggle(id = "hidden_SD_ratio",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$custom_statistic == "SD ratio",
+                    asis = FALSE)
+    
     ## General TS
     
     shinyjs::toggle(id = "hidden_custom_ts",
@@ -4099,6 +4124,14 @@ server <- function(input, output, session) {
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_statistic2 == "% sign match",
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "hidden_SD_ratio2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$custom_statistic2 == "SD ratio",
                     asis = FALSE)
     
     shinyjs::toggle(id = "custom_anomaly_years2",
@@ -4936,11 +4969,17 @@ server <- function(input, output, session) {
           label    = NULL,
           choices  = c("None", "Reference Period"),
           selected = "None" , inline = TRUE)
-      } else {
+      } else if (input$dataset_selected == "ModE-SIM"){
         updateRadioButtons(
           inputId = "ref_map_mode",
           label    = NULL,
           choices  = c("None", "Absolute Values","Reference Period"),
+          selected = "None" , inline = TRUE)
+      } else {
+        updateRadioButtons(
+          inputId = "ref_map_mode",
+          label    = NULL,
+          choices  = c("None", "Absolute Values","Reference Period","SD Ratio"),
           selected = "None" , inline = TRUE)
       }
     })
@@ -5415,14 +5454,21 @@ server <- function(input, output, session) {
           label    = NULL,
           choices  = c("None", "Reference Period"),
           selected = "None" , inline = TRUE)
-      } else {
+      } else if (input$dataset_selected2 == "ModE-SIM"){
         updateRadioButtons(
           inputId = "ref_map_mode2",
           label    = NULL,
           choices  = c("None", "Absolute Values","Reference Period"),
           selected = "None" , inline = TRUE)
+      } else {
+        updateRadioButtons(
+          inputId = "ref_map_mode2",
+          label    = NULL,
+          choices  = c("None", "Absolute Values","Reference Period", "SD Ratio"),
+          selected = "None" , inline = TRUE)
       }
     })
+    
     
     #Show Absolute Warning
     observe({
@@ -7238,7 +7284,6 @@ server <- function(input, output, session) {
     return(slats)
   })
   
-  
   pp_id <- reactive({
     
     #Generating Pre Processed Data
@@ -7246,7 +7291,6 @@ server <- function(input, output, session) {
     
     return(ppid)
   })
-  
   
   #Geographic Subset
   data_output1 <- reactive({
@@ -7295,10 +7339,12 @@ server <- function(input, output, session) {
     return(my_title)
   })
   
-  
   map_statistics = reactive({
     
-    my_stats = create_stat_highlights_data(data_output3(),input$enable_custom_statistics,input$custom_statistic,input$percentage_sign_match,subset_lons(),subset_lats())
+    my_stats = create_stat_highlights_data(data_output3(),"general",input$enable_custom_statistics,
+                                           input$custom_statistic,input$sd_ratio,
+                                           input$percentage_sign_match,input$variable_selected,
+                                           subset_lons(),subset_lats(),month_range(),input$range_years)
     
     return(my_stats)
   })
@@ -7322,7 +7368,7 @@ server <- function(input, output, session) {
   # code line below sets height as a function of the ratio of lat/lon 
   
   
-  #Ref/Absolute Map
+  #Ref/Absolute/SD ratio Map
   ref_map_data <- function(){
     if (input$ref_map_mode == "Absolute Values"){
       create_map_datatable(data_output2(), subset_lons(), subset_lats())
@@ -7330,8 +7376,18 @@ server <- function(input, output, session) {
       create_map_datatable(data_output4(), subset_lons(), subset_lats())
     } else if (input$ref_map_mode == "SD Ratio"){
       # Generate SD data for a single year
-      SD_data = load_ModE_data("SD Ratio",input$variable_selected)
+      SD_data0 = load_ModE_data("SD Ratio",input$variable_selected)
+      
       ## SD Data is going to need to be preprocessed
+      
+      # Lat/lon subset:
+      SD_data1 = create_latlon_subset(SD_data0, c(NA,NA), subset_lons(), subset_lats())  
+      # Yearly subset:
+      SD_data2 = create_yearly_subset(SD_data1, c(NA,NA), input$range_years, month_range())
+      # Map data:
+      SD_map_data = create_map_datatable(SD_data2, subset_lons(), subset_lats())
+      
+      return(SD_map_data)
     }
   }    
   
@@ -7344,12 +7400,18 @@ server <- function(input, output, session) {
       rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
                                   month_range(), input$ref_period, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
                                   input$title1_input, input$title2_input,input$title1_input_ts)
+    } else if (input$ref_map_mode == "SD Ratio"){
+      rm_title <- generate_titles("sdratio",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
+                                  month_range(), input$range_years, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
+                                  input$title1_input, input$title2_input,input$title1_input_ts)
     }
   })  
   
   ref_map_plot <- function(){
-    if (input$ref_map_mode != "None"){
+    if (input$ref_map_mode == "Absolute Values" | input$ref_map_mode == "Reference Period" ){
       plot_default_map(ref_map_data(), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame())
+    } else if(input$ref_map_mode == "SD Ratio"){
+      plot_default_map(ref_map_data(), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame())
     }
   }
   
@@ -7737,12 +7799,13 @@ server <- function(input, output, session) {
   
   map_statistics_2 = reactive({
     
-    my_stats = create_stat_highlights_data(data_output3_2(),input$enable_custom_statistics2,input$custom_statistic2,input$percentage_sign_match2,subset_lons_2(),subset_lats_2())
+    my_stats = create_stat_highlights_data(data_output3_2(),"composites",input$enable_custom_statistics2,
+                                           input$custom_statistic2,input$sd_ratio2,
+                                           input$percentage_sign_match2,input$variable_selected2,
+                                           subset_lons_2(),subset_lats_2(),month_range_2(),year_set_comp())
     
     return(my_stats)
   })
-  
-  
   
   #Plotting the Data (Maps)
   map_data_2 <- function(){create_map_datatable(data_output3_2(), subset_lons_2(), subset_lats_2())}
@@ -7769,7 +7832,21 @@ server <- function(input, output, session) {
       create_map_datatable(data_output2_2(), subset_lons_2(), subset_lats_2())
     } else if (input$ref_map_mode2 == "Reference Period"){
       create_map_datatable(data_output4_2(), subset_lons_2(), subset_lats_2())
-    } 
+    } else if (input$ref_map_mode2 == "SD Ratio"){
+      # Generate SD data for a single year
+      SD_data0_2 = load_ModE_data("SD Ratio",input$variable_selected2)
+      
+      ## SD Data is going to need to be preprocessed
+      
+      # Lat/lon subset:
+      SD_data1_2 = create_latlon_subset(SD_data0_2, c(NA,NA), subset_lons_2(), subset_lats_2())  
+      # Yearly subset:
+      SD_data2_2 = create_yearly_subset_composite(SD_data1_2, c(NA,NA), year_set_comp(), month_range_2())
+      # Map data:
+      SD_map_data_2 = create_map_datatable(SD_data2_2, subset_lons_2(), subset_lats_2())
+      
+      return(SD_map_data_2)
+    }
   }    
   
   ref_map_titles_2 = reactive({
@@ -7781,12 +7858,18 @@ server <- function(input, output, session) {
       rm_title2 <- generate_titles("reference",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
                                   month_range_2(), year_set_comp_ref(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
                                   input$title1_input2, input$title2_input2,input$title1_input_ts2)
+    } else if (input$ref_map_mode2 == "SD Ratio"){
+      rm_title2 <- generate_titles("sdratio",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
+                                  month_range_2(), c(NA,NA), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
+                                  input$title1_input2, input$title2_input2,input$title1_input_ts2)
     }
   })  
   
   ref_map_plot_2 <- function(){
-    if (input$ref_map_mode2 != "None"){
+    if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Period" ){
       plot_default_map(ref_map_data_2(), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame())
+    } else if (input$ref_map_mode2 == "SD Ratio"){
+      plot_default_map(ref_map_data_2(), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame())
     }
   }
   
