@@ -539,7 +539,7 @@ ui <- navbarPage(id = "nav1",
                                    selected = "None" , inline = TRUE),
                       
                       plotOutput("ref_map", height = "auto")
-                      
+
                     ### Map plot END ----
                     ),
             
@@ -1333,7 +1333,8 @@ ui <- navbarPage(id = "nav1",
                                   choices  = c("None", "Absolute Values","Reference Period"),
                                   selected = "None" , inline = TRUE),
                      
-                     plotOutput("ref_map2", height = "auto") 
+                     plotOutput("ref_map2", height = "auto")
+                     
                     ### Map plot END ----  
                       ),
              
@@ -4915,7 +4916,7 @@ server <- function(input, output, session) {
       }
     })
     
-    # Set NetCDF Variable
+    #Set NetCDF Variable
     observeEvent(input$variable_selected, {
       
       choices  = c("Temperature", "Precipitation", "SLP", "Z500")
@@ -4944,7 +4945,19 @@ server <- function(input, output, session) {
       }
     })
     
-    
+    #Show Absolute Warning
+    observe({
+      if (input$ref_map_mode == "Absolute Values"){
+        showModal(
+          # Add modal dialog for warning message
+          modalDialog(
+            title = "Warning",
+            "Unrealistic values (such as negative precipitation) can occur if absolute values are used! Cf. “Usage Notes”",
+            easyClose = FALSE,
+            footer = tagList(modalButton("OK"))
+          ))}
+    })
+
     ### Interactivity ----
     
     # Input geo-coded locations
@@ -5409,6 +5422,19 @@ server <- function(input, output, session) {
           choices  = c("None", "Absolute Values","Reference Period"),
           selected = "None" , inline = TRUE)
       }
+    })
+    
+    #Show Absolute Warning
+    observe({
+      if (input$ref_map_mode2 == "Absolute Values"){
+        showModal(
+          # Add modal dialog for warning message
+          modalDialog(
+            title = "Warning",
+            "Unrealistic values (such as negative precipitation) can occur if absolute values are used! Cf. “Usage Notes”",
+            easyClose = FALSE,
+            footer = tagList(modalButton("OK"))
+          ))}
     })
     
     
