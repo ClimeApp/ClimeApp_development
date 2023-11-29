@@ -103,9 +103,7 @@ ui <- navbarPage(id = "nav1",
             ),
             column(width = 12, br(), br()),
             
-            h5(helpText("Select a tab to start plotting:")),
-            br(),
-            img(src = 'pics/welcome_tab.jpg', id = "welcome_map"),
+            h5(helpText("Select a tab at the top to start plotting."))
   
           ), width = 12),
           
