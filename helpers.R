@@ -310,7 +310,7 @@ generate_map_dimensions = function(subset_lon_IDs,subset_lat_IDs,output_width,
 ## (General) GENERATE PREPROCESSED DATA ID
 ##           Creates a vector with the reference numbers for preprocessed data:
 ##           c(season number,variable number) or c(NA,NA) if there is no pp data 
-##           data_set = "ModE-RA","ModE-Sim","ModE-Clim"
+##           data_set = "ModE-RA","ModE-Sim","ModE-RAclim"
 
 generate_pp_data_ID = function(dataset,variable,month_range){
   
@@ -354,9 +354,9 @@ generate_pp_data_ID = function(dataset,variable,month_range){
 }        
 
 
-## (General) LOAD CORRECT ModE DATA - load ModE-RA/sim/clim data for a chosen variable
+## (General) LOAD CORRECT ModE DATA - load ModE-RA/sim/clim/SDratio data for a chosen variable
 ##           and data source
-##           dataset = "ModE-RA","ModE-Sim","ModE-Clim"
+##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim","SD Ratio"
 
 load_ModE_data = function(dataset,variable){
   # Mod E-RA
@@ -390,15 +390,15 @@ load_ModE_data = function(dataset,variable){
     
     nc_close(data_nc)
   }
-  # ModE-CLIM
-  else if (dataset == "ModE-Clim"){
+  # ModE-RAclim
+  else if (dataset == "ModE-RAclim"){
     # get variable name and open file
     vname =  switch(variable,
                     "Temperature"   = "temp2",
                     "Precipitation" = "totprec",
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
-    data_nc = nc_open(paste0("data/ModE-CLIM/Monthly/ModE-RAclim_ensmean_",vname,"_anom_1421-2008_mon.nc"))
+    data_nc = nc_open(paste0("data/ModE-RAclim/Monthly/ModE-RAclim_ensmean_",vname,"_anom_1421-2008_mon.nc"))
 
     # extract data and convert units if necessary                  
     if (variable == "Temperature"){
@@ -414,8 +414,34 @@ load_ModE_data = function(dataset,variable){
     nc_close(data_nc)
   }
   
+  # SDratio
+  else if (dataset == "SD Ratio"){
+    # get variable name and open file
+    vname =  switch(variable,
+                    "Temperature"   = "temp2",
+                    "Precipitation" = "totprec",
+                    "SLP"           = "slp",
+                    "Z500"          = "geopoth_50000")
+    data_nc = nc_open(paste0("data/ModE-RA/Monthly/SDratio/ModE-RA_lowres_20mem_Set_1420-3_1850-1_sdratio_",vname,"_anom_wrt_1901-2000_1421-2008_mon.nc"))
+
+    # extract data and convert units if necessary                  
+    if (variable == "Temperature"){
+      data_output = ncvar_get(data_nc,varid="temp2") 
+    } else if (variable == "Precipitation"){
+      data_output = ncvar_get(data_nc,varid="totprec")
+    } else if (variable == "SLP"){
+      data_output = ncvar_get(data_nc,varid="slp")
+    } else {
+      data_output = ncvar_get(data_nc,varid="geopotential_height")
+    }
+    
+    nc_close(data_nc)
+  }
+  
+  
   return(data_output)
 }
+
 
 ## (General) CREATE GEOGRAPHIC SUBSET - returns a new dataset with a reduced geographic area
 ##           data_input = any ModE-RA variable (temp_data/prec_data/SlP_data etc.)  
@@ -515,7 +541,7 @@ convert_subset_to_anomalies = function(data_input,ref_data,pp_data_ID,month_rang
 ##                                           map_title2, ts_title, ts_axis,file_title,
 ##                                           netcdf_title
 ##           tab = "general" or "composites" or "reference"
-##           dataset = "ModE-RA","ModE-Sim","ModE-Clim"
+##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim"
 ##           mode = "Absolute" or "Anomaly" for general tab
 ##                  "Absolute", "Fixed reference" or ""Compared to X years prior"
 ##                   for composites tab
@@ -1230,11 +1256,11 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
   ncatt_put(ncout,"time","axis","T")
   
   # Add global attributes
-  ncatt_put(ncout,0,"data","ModE-RA") # to check
-  ncatt_put(ncout,0,"title","... grid") # to check
-  ncatt_put(ncout,0,"institution","University of Bern") # to check
-  ncatt_put(ncout,0,"source","ClimeApp") # to check
-  ncatt_put(ncout,0,"references","tbc") # to check
+  ncatt_put(ncout,0,"data","ModE-RA Project")
+  ncatt_put(ncout,0,"grid","1.875 deg_longitude, 1.865 deg_latitude")
+  ncatt_put(ncout,0,"institution","Institute of Geography,University of Bern")
+  ncatt_put(ncout,0,"source","ClimeApp") 
+  #ncatt_put(ncout,0,"references","tbc") # to be completed
   history <- paste("Created", date(), sep=", ")
   ncatt_put(ncout,0,"history",history)
   ncatt_put(ncout,0,"Conventions","CF-1.4")
@@ -1242,6 +1268,9 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
   # Export netcdf
   nc_close(ncout)
 }
+
+## (General) Load SDRATIO data
+
 
 
 #### Plot Features Functions #### 
@@ -1593,15 +1622,17 @@ add_custom_points = function(data_input){
 ##                              variable and moving average, and any lines or
 ##                              highlights selected to be included in the key
 ##                 key_position = "topleft", "topright","bottomleft" or "bottomright"
-##                 data_timeseries = output from add_stats_to_TS_datatable
 ##                 add_moving_average = TRUE or FALSE
 ##                 moving_average_range = single number (3 to 33)
 ##                 add_percentiles = TRUE of FALSE
 ##                 percentiles = a vector of percentile values c(0.9,0.95 or 0.99)
+##                 secondary variable = variable name or NA if not used
+##                 show_primary_variable = TRUE or FALSE (only false for monthly TS)
 
 add_TS_key = function(key_position,data_highlights,data_lines,variable,month_range,add_moving_average,
-                      moving_average_range,add_percentiles,percentiles,secondary_variable,secondary_month_range){
-  
+                      moving_average_range,add_percentiles,percentiles,secondary_variable,secondary_month_range,
+                      show_primary_variable){
+
   ## Generate "variable" legend parameters:
   # label
   if (month_range[1]==1 & month_range[2]==12){
@@ -1777,6 +1808,11 @@ add_TS_key = function(key_position,data_highlights,data_lines,variable,month_ran
         legend_data = rbind(legend_data,list(label,color,lwd,lty,fill,density,border,x_intersp))
       }
     }
+  }
+  
+  # Remove first line (primary variable) if required
+  if (show_primary_variable == FALSE){
+    legend_data = legend_data[-1,]
   }
   
   ## Add Key to plot:
@@ -1976,7 +2012,7 @@ extract_year_range = function(variable1_source,variable2_source,variable1_data_f
   YR_max = min(c(V1_max,V2_max))
   
   # Set default values
-  if (variable1_source == "ModE-RA" & variable2_source == "ModE-RA"){
+  if (variable1_source == "ModE-" & variable2_source == "ModE-"){
     YR1 = 1900 ; YR2 = 2000
   } else {
     YR1 = YR_min ; YR2 = YR_max
@@ -2196,7 +2232,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
   }
   
   # Edit colors and titles if v1 and v2 are the same
-  if (variable1 == variable2){
+  if (variable1 == variable2 & variable1_source !="User Data" & variable2_source !="User Data"){
     if (variable1 == "Temperature"){
       V1_color = "red4" ; V2_color = "red2"
     }
@@ -2543,7 +2579,7 @@ generate_regression_titles = function(independent_source,dependent_source,
     title_lonlat_i = ""
   } else {
     # Generate title months
-    title_months_i = paste(dataset_i,generate_title_months(month_range_i)," ",sep = "")
+    title_months_i = paste(dataset_i," ",generate_title_months(month_range_i)," ",sep = "")
     
     # Generate title mode addition
     if (mode_i == "Absolute"){
@@ -2577,7 +2613,7 @@ generate_regression_titles = function(independent_source,dependent_source,
     unit_d = ""
   } else {
     # Generate title months
-    title_months_d = paste(dataset_d,generate_title_months(month_range_d)," ",sep = "")
+    title_months_d = paste(dataset_d," ",generate_title_months(month_range_d)," ",sep = "")
     
     # Generate title mode addition
     if (mode_d == "Absolute"){
@@ -2734,7 +2770,7 @@ plot_regression_coefficients = function(data_input,independent_variables,indepen
   v_col = colorRampPalette(rev(brewer.pal(11,"Spectral")))
   
   # Generate title
-  title_main = paste("Regression: ",regression_titles$title_months_i,
+  title_main = paste(regression_titles$title_months_i,
                      independent_variables[independent_variable_number]," ",
                      regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
                      regression_titles$title_months_d,dependent_variable,
@@ -2789,7 +2825,7 @@ plot_regression_pvalues = function(data_input,independent_variables,independent_
   v_lev = c(0,0.01,0.05,0.1,0.2,1)
   
   # Generate title
-  title_main = paste("Regression: ",regression_titles$title_months_i,
+  title_main = paste(regression_titles$title_months_i,
                      independent_variables[independent_variable_number]," ",
                      regression_titles$title_mode_i," -> ",
                      regression_titles$title_months_d,dependent_variable,
@@ -2839,7 +2875,7 @@ plot_regression_residuals = function(data_input,year_selected,year_range,
   
   # Generate title & axis label
   title_variables_i = paste(independent_variables,collapse = " ; ")
-  title_main = paste("Regression: ",regression_titles$title_months_i,title_variables_i," ",
+  title_main = paste(regression_titles$title_months_i,title_variables_i," ",
                      regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
                      regression_titles$title_months_d,dependent_variable,
                      regression_titles$title_mode_d,". ",year_selected, sep = "")
@@ -2894,7 +2930,7 @@ plot_regression_timeseries = function(data_input,plot_type,regression_titles,
   
   # Generate title & axis label
   title_variables_i = paste(independent_variables,collapse = " ; ")
-  title_main = paste("Regression: ",regression_titles$title_months_i,title_variables_i,
+  title_main = paste(regression_titles$title_months_i,title_variables_i,
                      regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
                      regression_titles$title_months_d,dependent_variable,
                      regression_titles$title_mode_d,regression_titles$title_lonlat_d,
@@ -3068,11 +3104,12 @@ create_monthly_TS_data = function(data_input,variable,years,lon_range,lat_range,
 }
 
 
-## (Monthly TS) PLOT MONTHLY TS DATA - plots monthly TS data
+## (Monthly TS) PLOT MONTHLY TS DATA - plots monthly TS data or Adds lines to graph
 ##              data_input = monthly TS data dataframe
 ##              title_mode = "Default" or "Custom"
+##              plot_mode = "base" or "lines" - base plots the default plot, lines just adds lines to existing graph
 
-plot_monthly_timeseries = function(data_input,custom_title,title_mode,key_position){
+plot_monthly_timeseries = function(data_input,custom_title,title_mode,key_position,plot_mode){
   
   n_o_rows = length(data_input[,1])
   
@@ -3097,47 +3134,52 @@ plot_monthly_timeseries = function(data_input,custom_title,title_mode,key_positi
     }
     lwd_set = c(lwd_set,lwd)
   }  
+  if (plot_mode == "base"){ # plot default plot
+    # Generate y axis label
+    y_label = paste0(data_input$Variable[1]," [",data_input$Unit[1],"]")
   
-  # Generate y axis label
-  y_label = paste0(data_input$Variable[1]," [",data_input$Unit[1],"]")
+    # Generate legend labels
+    legend_labels = c()
   
-  # Generate legend labels
-  legend_labels = c()
+    for (i in 1:n_o_rows){
+      label = paste0(data_input$Years[i]," [",data_input$Coordinates[i],"]")
+      legend_labels = c(legend_labels,label)
+    }
   
-  for (i in 1:n_o_rows){
-    label = paste0(data_input$Years[i]," [",data_input$Coordinates[i],"]")
-    legend_labels = c(legend_labels,label)
+    # Find min/max values
+    y_min = min(data_input[,4:15])  
+    y_max = max(data_input[,4:15])
+    y_space = 0.02*(y_max-y_min)
+  
+    # Plot
+    plot(1:12,data_input[1,4:15],type = "l",col=color_set[1], lwd=lwd_set[1],
+         ylim = c((y_min-y_space),(y_max+y_space)),
+         xlab = "Month", ylab = y_label, xaxt = "n", xaxs="i")
+    axis(1, at = 1:12, labels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+  
+   for (i in 2:n_o_rows){
+      lines(1:12,data_input[i,4:15],col = color_set[i],lwd = lwd_set[i])
+   }
+  
+    # Add title (if custom is selected)
+    if (title_mode == "Custom"){
+      title(custom_title,adj = 0)
+    }
+  
+    # Add legend
+    legend(key_position, inset = c(0.008,0.03),
+           legend=legend_labels,
+           # Line options
+           col = color_set,
+           lwd = lwd_set,
+           # Draw box round key
+           bg = "grey90",
+           box.lty = 0
+    ) 
+  } 
+  else { # Just add lines to plot
+    lines(1:12,data_input[1,4:15],type = "l",col=color_set[1], lwd=lwd_set[1])
   }
   
-  # Find min/max values
-  y_min = min(data_input[,4:15])  
-  y_max = max(data_input[,4:15])
-  y_space = 0.02*(y_max-y_min)
-  
-  # Plot
-  plot(1:12,data_input[1,4:15],type = "l",col=color_set[1], lwd=lwd_set[1],
-       ylim = c((y_min-y_space),(y_max+y_space)),
-       xlab = "Month", ylab = y_label, xaxt = "n", xaxs="i")
-  axis(1, at = 1:12, labels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
-  
-  for (i in 2:n_o_rows){
-    lines(1:12,data_input[i,4:15],col = color_set[i],lwd = lwd_set[i])
-  }
-  
-  # Add title (if custom is selected)
-  if (title_mode == "Custom"){
-    title(custom_title,adj = 0)
-  }
-  
-  # Add legend
-  legend(key_position, inset = c(0.008,0.03),
-         legend=legend_labels,
-         # Line options
-         col = color_set,
-         lwd = lwd_set,
-         # Draw box round key
-         bg = "grey90",
-         box.lty = 0
-  ) 
 } 
 

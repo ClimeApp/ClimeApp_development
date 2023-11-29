@@ -25,7 +25,7 @@ ui <- navbarPage(id = "nav1",
           ## Configs for navbarPage: theme, images (Header and Footer) ----
           title = div(style = "display: inline;",
                       img(src = 'pics/Logo_ClimeApp_V2_210623.png', id = "ClimeApp", height = "75px", width = "75px", style = "margin-right: -10px"),
-                      img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v2.0)",
+                      img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v0.3)",
                       ),
           footer = div(class = "navbar-footer",
                        style = "display: inline;",
@@ -76,7 +76,8 @@ ui <- navbarPage(id = "nav1",
             #Short description of the General Panel        
             h1("Welcome to ClimeApp", style = "color: #094030;"),
             br(),
-            h4(em(helpText("Created by Niklaus Bartlome & Richard Warren, co-developped by No\u00E9mie Wellinger"))),
+            h4(em(helpText("Created by Niklaus Bartlome & Richard Warren."))),
+            h4(em(helpText("Co-developped by No\u00E9mie Wellinger."))),
             br(),
             h4("Data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis", style = "color: #094030;"),
             h5(helpText("Franke, J., Veronika, V., Hand, R., Samakinwa, E., Burgdorf, A.M., Lundstad, E., Brugnara, Y., H\u00F6vel, L. and Br\u00F6nnimann, 2023")),
@@ -183,7 +184,7 @@ ui <- navbarPage(id = "nav1",
                     #Choose one of three datasets (Select)                
                     selectInput(inputId  = "dataset_selected",
                                 label    = "Choose a dataset:",
-                                choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                                choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
                                 selected = "ModE-RA"),
                     
                     #Choose one of four variable (Select)                
@@ -534,7 +535,7 @@ ui <- navbarPage(id = "nav1",
                       
                       radioButtons(inputId  = "ref_map_mode",
                                    label    = NULL,
-                                   choices  = c("None", "Absolute Values","Reference Period"),
+                                   choices  = c("None", "Absolute Values","Reference Period","SD Ratio"),
                                    selected = "None" , inline = TRUE),
                       
                       plotOutput("ref_map", height = "auto")
@@ -911,7 +912,7 @@ ui <- navbarPage(id = "nav1",
                      #Choose one of three datasets (Select)                
                      selectInput(inputId  = "dataset_selected2",
                                  label    = "Choose a dataset:",
-                                 choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                                 choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
                                  selected = "ModE-RA"),
                      
                      #Choose one of four variable (Select)                
@@ -1682,8 +1683,8 @@ ui <- navbarPage(id = "nav1",
                    #Choose a data source: ME or USer 
                    radioButtons(inputId  = "source_v1",
                                 label    = "Choose a data source:",
-                                choices  = c("ModE-RA", "User Data"),
-                                selected = "ModE-RA" ,
+                                choices  = c("ModE-", "User Data"),
+                                selected = "ModE-" ,
                                 inline = TRUE),
                   
                    # Upload user data
@@ -1715,7 +1716,7 @@ ui <- navbarPage(id = "nav1",
                    div(id = "hidden_me_dataset_variable_v1",
                    selectInput(inputId  = "dataset_selected_v1",
                                label    = "Choose a dataset:",
-                               choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                               choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
                                selected = "ModE-RA"),
 
                    #Choose a variable (Mod-ERA) 
@@ -1886,8 +1887,8 @@ ui <- navbarPage(id = "nav1",
                      #Choose a data source: ME or USer 
                      radioButtons(inputId  = "source_v2",
                                   label    = "Choose a data source:",
-                                  choices  = c("ModE-RA", "User Data"),
-                                  selected = "ModE-RA" ,
+                                  choices  = c("ModE-", "User Data"),
+                                  selected = "ModE-" ,
                                   inline = TRUE),
                      
                      # Upload user data
@@ -1919,7 +1920,7 @@ ui <- navbarPage(id = "nav1",
                      div(id = "hidden_me_dataset_variable_v2",
                      selectInput(inputId  = "dataset_selected_v2",
                                  label    = "Choose a dataset:",
-                                 choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                                 choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
                                  selected = "ModE-RA"),
 
                      #Choose a variable (Mod-ERA) 
@@ -2680,8 +2681,8 @@ tabPanel("Regression", id = "tab4",
                #Choose a data source: ME or USer 
                radioButtons(inputId  = "source_iv",
                             label    = "Choose a data source:",
-                            choices  = c("ModE-RA", "User Data"),
-                            selected = "ModE-RA" ,
+                            choices  = c("ModE-", "User Data"),
+                            selected = "ModE-" ,
                             inline = TRUE),
                
                # Upload user data
@@ -2714,7 +2715,7 @@ tabPanel("Regression", id = "tab4",
                div(id = "hidden_me_variable_dataset_iv",
                selectInput(inputId  = "dataset_selected_iv",
                            label    = "Choose a dataset:",
-                           choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                           choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
                            selected = "ModE-RA"),
                
                #Choose a variable (Mod-ERA) 
@@ -2880,8 +2881,8 @@ tabPanel("Regression", id = "tab4",
                #Choose a data source: ME or USer 
                radioButtons(inputId  = "source_dv",
                             label    = "Choose a data source:",
-                            choices  = c("ModE-RA", "User Data"),
-                            selected = "ModE-RA" ,
+                            choices  = c("ModE-", "User Data"),
+                            selected = "ModE-" ,
                             inline = TRUE),
 
                # Upload user data
@@ -2915,7 +2916,7 @@ tabPanel("Regression", id = "tab4",
                  #Choose one of three datasets (Select)                
                  selectInput(inputId  = "dataset_selected_dv",
                              label    = "Choose a dataset:",
-                             choices  = c("ModE-RA", "ModE-Sim","ModE-Clim"),
+                             choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
                              selected = "ModE-RA"),
                  
                  #Choose a variable (Mod-ERA) 
@@ -3502,16 +3503,13 @@ tabPanel("Monthly Timeseries", id = "tab5",
                         #### Add Custom features (points, highlights, lines) ----                        
                         column(width = 4,
                                h4(helpText("Custom features")),
-                               shinyjs::hidden(
-                                 div(id = "hidden_custom_features_TEMPORARY",
-                                  checkboxInput(inputId = "custom_features_ts5",
+
+                               checkboxInput(inputId = "custom_features_ts5",
                                              label   = "Enable custom features",
                                              value   = FALSE),
-                                 )),
-                                  
                                   
                                shinyjs::hidden(
-                                 div(id = "hidden_custom_features_ts",
+                                 div(id = "hidden_custom_features_ts5",
                                      radioButtons(inputId      = "feature_ts5",
                                                   label        = "Select a feature type:",
                                                   inline       = TRUE,
@@ -3614,7 +3612,6 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                                                label = "Remove last highlight"),
                                                   actionButton(inputId = "remove_all_highlights_ts5",
                                                                label = "Remove all highlights")),
-                                           
                                        )),
                                      
                                      #Custom lines
@@ -3665,7 +3662,7 @@ tabPanel("Monthly Timeseries", id = "tab5",
                         
                         #### Custom statistics ----
                         column(width = 4,
-                               h4(helpText("Custom statistics")),
+                               # h4(helpText("Custom statistics")),
                                
                                #checkboxInput(inputId = "enable_custom_statistics_ts",
                                #             label   = "Enable custom statistics",
@@ -3714,11 +3711,29 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                                  max = 90)),
                       ),
                       
+                      h4(helpText("Draw a box on the left map to use zoom function")),
+                      
                       div(id = "fad_map_a5",
-                          splitLayout(plotOutput("fad_winter_map_a5"), plotOutput("fad_summer_map_a5"))),
+                          splitLayout(
+                            plotOutput("fad_winter_map_a5",
+                                       brush = brushOpts(
+                                         id = "brush_fad1a5",
+                                         resetOnNew = TRUE
+                                       )),
+                            
+                            plotOutput("fad_zoom_winter_a5")
+                          )),
+                      
+                      div(id = "fad_map_b5",
+                          splitLayout(plotOutput("fad_summer_map_a5",
+                                                 brush = brushOpts(
+                                                   id = "brush_fad1b5",
+                                                   resetOnNew = TRUE
+                                                 )),
+                                      plotOutput("fad_zoom_summer_a5")
+                          )),
                       
              ),
-             
              
              ### Downloads ---- 
              tabPanel("Downloads",
@@ -3729,7 +3744,14 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                      h3(helpText("Time series data download")),
                                      radioButtons(inputId = "file_type_timeseries_data5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
                                      downloadButton(outputId = "download_timeseries_data5", label = "Download")), br(),
-
+                                      fluidRow(
+                                        column(width = 3,
+                                               radioButtons(inputId = "file_type_modera_source_a5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
+                                               downloadButton(outputId = "download_fad_wa5", label = "Download Oct. - Mar")),
+                                        column(width = 3,
+                                               radioButtons(inputId = "file_type_modera_source_b5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
+                                               downloadButton(outputId = "download_fad_sa5", label = "Download Apr. - Sept")),
+                                      ),
              )
              
              ## Main Panel END ----
@@ -4325,7 +4347,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_v1 == "ModE-RA",
+                    condition = input$source_v1 == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_modera_variable_v1",
@@ -4333,7 +4355,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_v1 == "ModE-RA",
+                    condition = input$source_v1 == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "season_v1",
@@ -4391,7 +4413,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_v2 == "ModE-RA",
+                    condition = input$source_v2 == "ModE-",
                     asis = FALSE)
 
     shinyjs::toggle(id = "hidden_modera_variable_v2",
@@ -4399,7 +4421,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_v2 == "ModE-RA",
+                    condition = input$source_v2 == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "season_v2",
@@ -4433,7 +4455,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_v1 == "ModE-RA",
+                    condition = input$source_v1 == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_v1_fad",
@@ -4441,7 +4463,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_v1 == "ModE-RA",
+                    condition = input$source_v1 == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_v2_fad_download",
@@ -4449,7 +4471,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_v2 == "ModE-RA",
+                    condition = input$source_v2 == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_v2_fad",
@@ -4457,7 +4479,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_v2 == "ModE-RA",
+                    condition = input$source_v2 == "ModE-",
                     asis = FALSE)
     
     # Regression
@@ -4493,7 +4515,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_iv == "ModE-RA",
+                    condition = input$source_iv == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_modera_variable_iv",
@@ -4501,7 +4523,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_iv == "ModE-RA",
+                    condition = input$source_iv == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "season_iv",
@@ -4559,7 +4581,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_dv == "ModE-RA",
+                    condition = input$source_dv == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_modera_variable_dv",
@@ -4567,7 +4589,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_dv == "ModE-RA",
+                    condition = input$source_dv == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "season_dv",
@@ -4601,7 +4623,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_iv == "ModE-RA",
+                    condition = input$source_iv == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_iv_fad",
@@ -4609,7 +4631,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_iv == "ModE-RA",
+                    condition = input$source_iv == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_dv_fad_download",
@@ -4617,7 +4639,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_dv == "ModE-RA",
+                    condition = input$source_dv == "ModE-",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_dv_fad",
@@ -4625,7 +4647,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$source_dv == "ModE-RA",
+                    condition = input$source_dv == "ModE-",
                     asis = FALSE)
     
     # Monthly TS
@@ -4907,7 +4929,7 @@ server <- function(input, output, session) {
     
     #Update Reference Map
     observe({
-      if (input$dataset_selected == "ModE-Clim"){
+      if (input$dataset_selected == "ModE-RAclim"){
         updateRadioButtons(
           inputId = "ref_map_mode",
           label    = NULL,
@@ -5065,7 +5087,7 @@ server <- function(input, output, session) {
           session = getDefaultReactiveDomain(),
           inputId = "line_position_ts",
           label = NULL,
-          value = as.character(round(input$ts_click1$y, digits = 2))
+          value = as.character(round(input$ts_dblclick1$y, digits = 2))
         )
       }
     })
@@ -5374,7 +5396,7 @@ server <- function(input, output, session) {
     
     #Update Reference Map
     observe({
-      if (input$dataset_selected2 == "ModE-Clim"){
+      if (input$dataset_selected2 == "ModE-RAclim"){
         updateRadioButtons(
           inputId = "ref_map_mode2",
           label    = NULL,
@@ -5532,7 +5554,7 @@ server <- function(input, output, session) {
           session = getDefaultReactiveDomain(),
           inputId = "line_position_ts2",
           label = NULL,
-          value = as.character(round(input$ts_click2$y, digits = 2))
+          value = as.character(round(input$ts_dblclick2$y, digits = 2))
         )
       }
     })
@@ -6265,7 +6287,7 @@ server <- function(input, output, session) {
           session = getDefaultReactiveDomain(),
           inputId = "line_position_ts3",
           label = NULL,
-          value = as.character(round(input$ts_click3$y, digits = 2))
+          value = as.character(round(input$ts_dblclick3$y, digits = 2))
         )
       }
     })
@@ -6793,7 +6815,7 @@ server <- function(input, output, session) {
       x_brush1_1 = (input$map_brush4_coeff[[1]]*1.14) - (0.14*input$range_longitude_dv[1])
       x_brush1_2 = (input$map_brush4_coeff[[2]]*1.14) - (0.14*input$range_longitude_dv[1])
       
-      if (input$source_dv == "ModE-RA"){
+      if (input$source_dv == "ModE-"){
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "range_longitude_dv",
@@ -6814,7 +6836,7 @@ server <- function(input, output, session) {
       x_brush1_1 = (input$map_brush4_pvalue[[1]]*1.14) - (0.14*input$range_longitude_dv[1])
       x_brush1_2 = (input$map_brush4_pvalue[[2]]*1.14) - (0.14*input$range_longitude_dv[1])
       
-      if (input$source_dv == "ModE-RA"){
+      if (input$source_dv == "ModE-"){
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "range_longitude_dv",
@@ -6835,7 +6857,7 @@ server <- function(input, output, session) {
       x_brush1_1 = (input$map_brush4_resi[[1]]*1.14) - (0.14*input$range_longitude_dv[1])
       x_brush1_2 = (input$map_brush4_resi[[2]]*1.14) - (0.14*input$range_longitude_dv[1])
       
-      if (input$source_dv == "ModE-RA"){
+      if (input$source_dv == "ModE-"){
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "range_longitude_dv",
@@ -7039,6 +7061,132 @@ server <- function(input, output, session) {
     
     
     
+    ### Interactivity ----
+    
+    # TS point/line setter
+    observeEvent(input$ts_click5,{
+      if (input$custom_features_ts5 == TRUE){
+        if (input$feature_ts5 == "Point"){
+          updateTextInput(
+            session = getDefaultReactiveDomain(),
+            inputId = "point_location_x_ts5",
+            label = NULL,
+            value = as.character(round(input$ts_click5$x, digits = 2))
+          )
+          
+          updateTextInput(
+            session = getDefaultReactiveDomain(),
+            inputId = "point_location_y_ts5",
+            label = NULL,
+            value = as.character(round(input$ts_click5$y, digits = 2))
+          )
+        } 
+        else if (input$feature_ts5 == "Line"){
+          updateRadioButtons(
+            session = getDefaultReactiveDomain(),
+            inputId = "line_orientation_ts5",
+            label = NULL,
+            selected = "Vertical")
+          
+          updateTextInput(
+            session = getDefaultReactiveDomain(),
+            inputId = "line_position_ts5",
+            label = NULL,
+            value = as.character(round(input$ts_click5$x, digits = 2))
+          )
+        }
+      }
+    })
+    
+    observeEvent(input$ts_dblclick5,{
+      if (input$custom_features_ts5 == TRUE & input$feature_ts5 == "Line"){
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId = "line_orientation_ts5",
+          label = NULL,
+          selected = "Horizontal")
+        
+        updateTextInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "line_position_ts5",
+          label = NULL,
+          value = as.character(round(input$ts_dblclick5$y, digits = 2))
+        )
+      }
+    })
+    
+    # TS highlight setter
+    observeEvent(input$ts_brush5,{
+      if (input$custom_features_ts5 == TRUE & input$feature_ts5 == "Highlight"){
+        
+        updateNumericRangeInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "highlight_x_values_ts5",
+          label = NULL,
+          value = round(c(input$ts_brush5[[1]],input$ts_brush5[[2]]), digits = 2))
+        
+        updateNumericRangeInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "highlight_y_values_ts5",
+          label = NULL,
+          value = round(c(input$ts_brush5[[3]],input$ts_brush5[[4]]), digits = 2))
+      }
+    })
+    
+    ### Initialise and update custom points lines highlights ----
+    
+    ts_points_data5 = reactiveVal(data.frame())
+    ts_highlights_data5 = reactiveVal(data.frame())
+    ts_lines_data5 = reactiveVal(data.frame())
+    
+    # time series Points
+    observeEvent(input$add_point_ts5, {
+      ts_points_data5(rbind(ts_points_data5(),
+                            create_new_points_data(input$point_location_x_ts5,input$point_location_y_ts5,
+                                                   input$point_label_ts5,input$point_shape_ts5,
+                                                   input$point_colour_ts5,input$point_size_ts5)))
+    })  
+    
+    observeEvent(input$remove_last_point_ts5, {
+      ts_points_data5(ts_points_data5()[-nrow(ts_points_data5()),])
+    })
+    
+    observeEvent(input$remove_all_points_ts5, {
+      ts_points_data5(data.frame())
+    })
+    
+    # time series Highlights
+    observeEvent(input$add_highlight_ts5, {
+      ts_highlights_data5(rbind(ts_highlights_data5(),
+                                create_new_highlights_data(input$highlight_x_values_ts5,input$highlight_y_values_ts5,
+                                                           input$highlight_colour_ts5,input$highlight_type_ts5,
+                                                           input$show_highlight_on_legend_ts5,input$highlight_label_ts5)))
+    })  
+    
+    observeEvent(input$remove_last_highlight_ts5, {
+      ts_highlights_data5(ts_highlights_data5()[-nrow(ts_highlights_data5()),])
+    })
+    
+    observeEvent(input$remove_all_highlights_ts5, {
+      ts_highlights_data5(data.frame())
+    })
+    
+    # time series Lines
+    observeEvent(input$add_line_ts5, {
+      ts_lines_data5(rbind(ts_lines_data5(),
+                           create_new_lines_data(input$line_orientation_ts5,input$line_position_ts5,
+                                                 input$line_colour_ts5,input$line_type_ts5,
+                                                 input$show_line_on_legend_ts5,input$line_label_ts5)))
+    })  
+    
+    observeEvent(input$remove_last_line_ts5, {
+      ts_lines_data5(ts_lines_data5()[-nrow(ts_lines_data5()),])
+    })
+    
+    observeEvent(input$remove_all_lines_ts5, {
+      ts_lines_data5(data.frame())
+    })
+    
   #Processing and Plotting ----
   ## GENERAL data processing and plotting ----  
   #Preparation
@@ -7154,7 +7302,11 @@ server <- function(input, output, session) {
       create_map_datatable(data_output2(), subset_lons(), subset_lats())
     } else if (input$ref_map_mode == "Reference Period"){
       create_map_datatable(data_output4(), subset_lons(), subset_lats())
-    } 
+    } else if (input$ref_map_mode == "SD Ratio"){
+      # Generate SD data for a single year
+      SD_data = load_ModE_data("SD Ratio",input$variable_selected)
+      ## SD Data is going to need to be preprocessed
+    }
   }    
   
   ref_map_titles = reactive({
@@ -7226,7 +7378,7 @@ server <- function(input, output, session) {
     add_custom_points(ts_points_data())
     if (input$show_key_ts == TRUE){
       add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range(),
-                 input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA)
+                 input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
     }
   }
   
@@ -7265,53 +7417,12 @@ server <- function(input, output, session) {
         plot_data <- fad_wa(labs = FALSE)
       }
       
-      # Calculate the aspect ratio of the original map
-      original_x_range <- lonlat_vals()[1:2]
-      original_y_range <- lonlat_vals()[3:4]
-      original_x_length <- diff(original_x_range)
-      original_y_length <- diff(original_y_range)
-      original_aspect_ratio <- original_x_length / original_y_length
-      
-      # Check if ranges$x and ranges$y are defined
-      if (!is.null(ranges$x) && !is.null(ranges$y)) {
-        x_range <- range(ranges$x)
-        y_range <- range(ranges$y)
-      } else {
-        x_range <- original_x_range
-        y_range <- original_y_range
-      }
-      
-      # Calculate the aspect ratio of the selected brush or the original map
-      x_length <- diff(x_range)
-      y_length <- diff(y_range)
-      aspect_ratio <- x_length / y_length
-      
-      # Determine whether the original plot is in landscape or portrait format
-      original_format_landscape <- original_x_length >= original_y_length
-      
-      # Calculate the desired aspect ratio based on the original plot
-      desired_aspect_ratio <- if (original_format_landscape) {
-        original_aspect_ratio
-      } else {
-        1 / original_aspect_ratio
-      }
-      
-      # Adjust the x and y limits while maintaining the desired aspect ratio
-      if (aspect_ratio > desired_aspect_ratio) {
-        y_center <- sum(y_range) / 2
-        new_y_length <- x_length / desired_aspect_ratio
-        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
-      } else {
-        x_center <- sum(x_range) / 2
-        new_x_length <- y_length * desired_aspect_ratio
-        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
-      }
-      
       # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
+      plot_data <- plot_data + coord_sf(xlim = ranges$x, ylim = ranges$y, crs = st_crs(4326))
       
       plot_data
     })
+      
     
     # Lower map (Original)
     output$fad_summer_map_a <- renderPlot({
@@ -7333,50 +7444,8 @@ server <- function(input, output, session) {
         plot_data <- fad_sa(labs = FALSE)
       }
       
-      # Calculate the aspect ratio of the original map
-      original_x_range <- lonlat_vals()[1:2]
-      original_y_range <- lonlat_vals()[3:4]
-      original_x_length <- diff(original_x_range)
-      original_y_length <- diff(original_y_range)
-      original_aspect_ratio <- original_x_length / original_y_length
-      
-      # Check if ranges2$x and ranges2$y are defined
-      if (!is.null(ranges2$x) && !is.null(ranges2$y)) {
-        x_range <- range(ranges2$x)
-        y_range <- range(ranges2$y)
-      } else {
-        x_range <- original_x_range
-        y_range <- original_y_range
-      }
-      
-      # Calculate the aspect ratio of the selected brush or the original map
-      x_length <- diff(x_range)
-      y_length <- diff(y_range)
-      aspect_ratio <- x_length / y_length
-      
-      # Determine whether the original plot is in landscape or portrait format
-      original_format_landscape <- original_x_length >= original_y_length
-      
-      # Calculate the desired aspect ratio based on the original plot
-      desired_aspect_ratio <- if (original_format_landscape) {
-        original_aspect_ratio
-      } else {
-        1 / original_aspect_ratio
-      }
-      
-      # Adjust the x and y limits while maintaining the desired aspect ratio
-      if (aspect_ratio > desired_aspect_ratio) {
-        y_center <- sum(y_range) / 2
-        new_y_length <- x_length / desired_aspect_ratio
-        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
-      } else {
-        x_center <- sum(x_range) / 2
-        new_x_length <- y_length * desired_aspect_ratio
-        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
-      }
-      
       # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
+      plot_data <- plot_data + coord_sf(xlim = ranges2$x, ylim = ranges2$y, crs = st_crs(4326))
       
       plot_data
     })
@@ -7740,7 +7809,7 @@ server <- function(input, output, session) {
     add_custom_points(ts_points_data2())
     if (input$show_key_ts2 == TRUE){
       add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_2(),
-                 FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA)
+                 FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
     }
   }
   
@@ -7789,50 +7858,8 @@ server <- function(input, output, session) {
       plot_data <- fad_wa2(labs = FALSE)
     }
     
-    # Calculate the aspect ratio of the original map
-    original_x_range <- lonlat_vals2()[1:2]
-    original_y_range <- lonlat_vals2()[3:4]
-    original_x_length <- diff(original_x_range)
-    original_y_length <- diff(original_y_range)
-    original_aspect_ratio <- original_x_length / original_y_length
-    
-    # Check if ranges_2$x and ranges_2$y are defined
-    if (!is.null(ranges_2$x) && !is.null(ranges_2$y)) {
-      x_range <- range(ranges_2$x)
-      y_range <- range(ranges_2$y)
-    } else {
-      x_range <- original_x_range
-      y_range <- original_y_range
-    }
-    
-    # Calculate the aspect ratio of the selected brush or the original map
-    x_length <- diff(x_range)
-    y_length <- diff(y_range)
-    aspect_ratio <- x_length / y_length
-    
-    # Determine whether the original plot is in landscape or portrait format
-    original_format_landscape <- original_x_length >= original_y_length
-    
-    # Calculate the desired aspect ratio based on the original plot
-    desired_aspect_ratio <- if (original_format_landscape) {
-      original_aspect_ratio
-    } else {
-      1 / original_aspect_ratio
-    }
-    
-    # Adjust the x and y limits while maintaining the desired aspect ratio
-    if (aspect_ratio > desired_aspect_ratio) {
-      y_center <- sum(y_range) / 2
-      new_y_length <- x_length / desired_aspect_ratio
-      y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
-    } else {
-      x_center <- sum(x_range) / 2
-      new_x_length <- y_length * desired_aspect_ratio
-      x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
-    }
-    
     # Apply coord_sf to the entire map with adjusted limits
-    plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
+    plot_data <- plot_data + coord_sf(xlim = ranges_2$x, ylim = ranges_2$y, crs = st_crs(4326))
     
     plot_data
   })
@@ -7857,50 +7884,8 @@ server <- function(input, output, session) {
       plot_data <- fad_sa2(labs = FALSE)
     }
     
-    # Calculate the aspect ratio of the original map
-    original_x_range <- lonlat_vals2()[1:2]
-    original_y_range <- lonlat_vals2()[3:4]
-    original_x_length <- diff(original_x_range)
-    original_y_length <- diff(original_y_range)
-    original_aspect_ratio <- original_x_length / original_y_length
-    
-    # Check if ranges2_2$x and ranges2_2$y are defined
-    if (!is.null(ranges2_2$x) && !is.null(ranges2_2$y)) {
-      x_range <- range(ranges2_2$x)
-      y_range <- range(ranges2_2$y)
-    } else {
-      x_range <- original_x_range
-      y_range <- original_y_range
-    }
-    
-    # Calculate the aspect ratio of the selected brush or the original map
-    x_length <- diff(x_range)
-    y_length <- diff(y_range)
-    aspect_ratio <- x_length / y_length
-    
-    # Determine whether the original plot is in landscape or portrait format
-    original_format_landscape <- original_x_length >= original_y_length
-    
-    # Calculate the desired aspect ratio based on the original plot
-    desired_aspect_ratio <- if (original_format_landscape) {
-      original_aspect_ratio
-    } else {
-      1 / original_aspect_ratio
-    }
-    
-    # Adjust the x and y limits while maintaining the desired aspect ratio
-    if (aspect_ratio > desired_aspect_ratio) {
-      y_center <- sum(y_range) / 2
-      new_y_length <- x_length / desired_aspect_ratio
-      y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
-    } else {
-      x_center <- sum(x_range) / 2
-      new_x_length <- y_length * desired_aspect_ratio
-      x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
-    }
-    
     # Apply coord_sf to the entire map with adjusted limits
-    plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
+    plot_data <- plot_data + coord_sf(xlim = ranges2_2$x, ylim = ranges2_2$y, crs = st_crs(4326))
     
     plot_data
   })
@@ -8335,13 +8320,13 @@ server <- function(input, output, session) {
     # Generate correlation titles
     plot_titles_cor = reactive({
       
-      if (input$source_v1 == "ModE-RA"){
+      if (input$source_v1 == "ModE-"){
         variable_v1 = input$ME_variable_v1
       } else {
         variable_v1 = input$user_variable_v1
       }
       
-      if (input$source_v2 == "ModE-RA"){
+      if (input$source_v2 == "ModE-"){
         variable_v2 = input$ME_variable_v2
       } else {
         variable_v2 = input$user_variable_v2
@@ -8358,7 +8343,7 @@ server <- function(input, output, session) {
     
     # Select variable timeseries data
     ts_data_v1 = reactive({
-      if (input$source_v1 == "ModE-RA"){
+      if (input$source_v1 == "ModE-"){
         tsd_v1 = timeseries_data_v1()
       } else {
         tsd_v1 = user_subset_v1()
@@ -8377,7 +8362,7 @@ server <- function(input, output, session) {
     })
     
     ts_data_v2 = reactive({
-      if (input$source_v2 == "ModE-RA"){
+      if (input$source_v2 == "ModE-"){
         tsd_v2 = timeseries_data_v2()
       } else {
         tsd_v2 = user_subset_v2()
@@ -8407,13 +8392,13 @@ server <- function(input, output, session) {
     
     corr_ts1 = function(){
       
-      if (input$source_v1 == "ModE-RA"){
+      if (input$source_v1 == "ModE-"){
         variable_v1 = input$ME_variable_v1
       } else {
         variable_v1 = input$user_variable_v1
       }
       
-      if (input$source_v2 == "ModE-RA"){
+      if (input$source_v2 == "ModE-"){
         variable_v2 = input$ME_variable_v2
       } else {
         variable_v2 = input$user_variable_v2
@@ -8427,7 +8412,7 @@ server <- function(input, output, session) {
       add_custom_points(ts_points_data3())
       if (input$show_key_ts3 == TRUE){
         add_TS_key(input$key_position_ts3,ts_highlights_data3(),ts_lines_data3(),variable_v1,month_range_v1(),
-                   input$custom_average_ts3,input$year_moving_ts3,FALSE,NA,variable_v2,month_range_v2())
+                   input$custom_average_ts3,input$year_moving_ts3,FALSE,NA,variable_v2,month_range_v2(),TRUE)
       }
       
     }
@@ -8488,13 +8473,13 @@ server <- function(input, output, session) {
       # Create output ts_data
       correlation_ts_datatable = reactive({
         
-        if (input$source_v1 == "ModE-RA"){
+        if (input$source_v1 == "ModE-"){
           variable_v1 = input$ME_variable_v1
         } else {
           variable_v1 = input$user_variable_v1
         }
         
-        if (input$source_v2 == "ModE-RA"){
+        if (input$source_v2 == "ModE-"){
           variable_v2 = input$ME_variable_v2
         } else {
           variable_v2 = input$user_variable_v2
@@ -8563,50 +8548,8 @@ server <- function(input, output, session) {
           plot_data <- fad_wa3a(labs = FALSE)
         }
         
-        # Calculate the aspect ratio of the original map
-        original_x_range <- lonlat_vals_v1()[1:2]
-        original_y_range <- lonlat_vals_v1()[3:4]
-        original_x_length <- diff(original_x_range)
-        original_y_length <- diff(original_y_range)
-        original_aspect_ratio <- original_x_length / original_y_length
-        
-        # Check if ranges_3a$x and ranges_3a$y are defined
-        if (!is.null(ranges_3a$x) && !is.null(ranges_3a$y)) {
-          x_range <- range(ranges_3a$x)
-          y_range <- range(ranges_3a$y)
-        } else {
-          x_range <- original_x_range
-          y_range <- original_y_range
-        }
-        
-        # Calculate the aspect ratio of the selected brush or the original map
-        x_length <- diff(x_range)
-        y_length <- diff(y_range)
-        aspect_ratio <- x_length / y_length
-        
-        # Determine whether the original plot is in landscape or portrait format
-        original_format_landscape <- original_x_length >= original_y_length
-        
-        # Calculate the desired aspect ratio based on the original plot
-        desired_aspect_ratio <- if (original_format_landscape) {
-          original_aspect_ratio
-        } else {
-          1 / original_aspect_ratio
-        }
-        
-        # Adjust the x and y limits while maintaining the desired aspect ratio
-        if (aspect_ratio > desired_aspect_ratio) {
-          y_center <- sum(y_range) / 2
-          new_y_length <- x_length / desired_aspect_ratio
-          y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
-        } else {
-          x_center <- sum(x_range) / 2
-          new_x_length <- y_length * desired_aspect_ratio
-          x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
-        }
-        
         # Apply coord_sf to the entire map with adjusted limits
-        plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
+        plot_data <- plot_data + coord_sf(xlim = ranges_3a$x, ylim = ranges_3a$y, crs = st_crs(4326))
         
         plot_data
       })
@@ -8631,50 +8574,8 @@ server <- function(input, output, session) {
           plot_data <- fad_sa3a(labs = FALSE)
         }
         
-        # Calculate the aspect ratio of the original map
-        original_x_range <- lonlat_vals_v1()[1:2]
-        original_y_range <- lonlat_vals_v1()[3:4]
-        original_x_length <- diff(original_x_range)
-        original_y_length <- diff(original_y_range)
-        original_aspect_ratio <- original_x_length / original_y_length
-        
-        # Check if ranges2_3a$x and ranges2_3a$y are defined
-        if (!is.null(ranges2_3a$x) && !is.null(ranges2_3a$y)) {
-          x_range <- range(ranges2_3a$x)
-          y_range <- range(ranges2_3a$y)
-        } else {
-          x_range <- original_x_range
-          y_range <- original_y_range
-        }
-        
-        # Calculate the aspect ratio of the selected brush or the original map
-        x_length <- diff(x_range)
-        y_length <- diff(y_range)
-        aspect_ratio <- x_length / y_length
-        
-        # Determine whether the original plot is in landscape or portrait format
-        original_format_landscape <- original_x_length >= original_y_length
-        
-        # Calculate the desired aspect ratio based on the original plot
-        desired_aspect_ratio <- if (original_format_landscape) {
-          original_aspect_ratio
-        } else {
-          1 / original_aspect_ratio
-        }
-        
-        # Adjust the x and y limits while maintaining the desired aspect ratio
-        if (aspect_ratio > desired_aspect_ratio) {
-          y_center <- sum(y_range) / 2
-          new_y_length <- x_length / desired_aspect_ratio
-          y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
-        } else {
-          x_center <- sum(x_range) / 2
-          new_x_length <- y_length * desired_aspect_ratio
-          x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
-        }
-        
         # Apply coord_sf to the entire map with adjusted limits
-        plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
+        plot_data <- plot_data + coord_sf(xlim = ranges2_3a$x, ylim = ranges2_3a$y, crs = st_crs(4326))
         
         plot_data
       })
@@ -8711,50 +8612,8 @@ server <- function(input, output, session) {
           plot_data <- fad_wa3b(labs = FALSE)
         }
         
-        # Calculate the aspect ratio of the original map
-        original_x_range <- lonlat_vals_v2()[1:2]
-        original_y_range <- lonlat_vals_v2()[3:4]
-        original_x_length <- diff(original_x_range)
-        original_y_length <- diff(original_y_range)
-        original_aspect_ratio <- original_x_length / original_y_length
-        
-        # Check if ranges_3b$x and ranges_3b$y are defined
-        if (!is.null(ranges_3b$x) && !is.null(ranges_3b$y)) {
-          x_range <- range(ranges_3b$x)
-          y_range <- range(ranges_3b$y)
-        } else {
-          x_range <- original_x_range
-          y_range <- original_y_range
-        }
-        
-        # Calculate the aspect ratio of the selected brush or the original map
-        x_length <- diff(x_range)
-        y_length <- diff(y_range)
-        aspect_ratio <- x_length / y_length
-        
-        # Determine whether the original plot is in landscape or portrait format
-        original_format_landscape <- original_x_length >= original_y_length
-        
-        # Calculate the desired aspect ratio based on the original plot
-        desired_aspect_ratio <- if (original_format_landscape) {
-          original_aspect_ratio
-        } else {
-          1 / original_aspect_ratio
-        }
-        
-        # Adjust the x and y limits while maintaining the desired aspect ratio
-        if (aspect_ratio > desired_aspect_ratio) {
-          y_center <- sum(y_range) / 2
-          new_y_length <- x_length / desired_aspect_ratio
-          y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
-        } else {
-          x_center <- sum(x_range) / 2
-          new_x_length <- y_length * desired_aspect_ratio
-          x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
-        }
-        
         # Apply coord_sf to the entire map with adjusted limits
-        plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
+        plot_data <- plot_data + coord_sf(xlim = ranges_3b$x, ylim = ranges_3b$y, crs = st_crs(4326))
         
         plot_data
       })
@@ -8778,51 +8637,9 @@ server <- function(input, output, session) {
         } else {
           plot_data <- fad_sa3b(labs = FALSE)
         }
-        
-        # Calculate the aspect ratio of the original map
-        original_x_range <- lonlat_vals_v2()[1:2]
-        original_y_range <- lonlat_vals_v2()[3:4]
-        original_x_length <- diff(original_x_range)
-        original_y_length <- diff(original_y_range)
-        original_aspect_ratio <- original_x_length / original_y_length
-        
-        # Check if ranges2_3b$x and ranges2_3b$y are defined
-        if (!is.null(ranges2_3b$x) && !is.null(ranges2_3b$y)) {
-          x_range <- range(ranges2_3b$x)
-          y_range <- range(ranges2_3b$y)
-        } else {
-          x_range <- original_x_range
-          y_range <- original_y_range
-        }
-        
-        # Calculate the aspect ratio of the selected brush or the original map
-        x_length <- diff(x_range)
-        y_length <- diff(y_range)
-        aspect_ratio <- x_length / y_length
-        
-        # Determine whether the original plot is in landscape or portrait format
-        original_format_landscape <- original_x_length >= original_y_length
-        
-        # Calculate the desired aspect ratio based on the original plot
-        desired_aspect_ratio <- if (original_format_landscape) {
-          original_aspect_ratio
-        } else {
-          1 / original_aspect_ratio
-        }
-        
-        # Adjust the x and y limits while maintaining the desired aspect ratio
-        if (aspect_ratio > desired_aspect_ratio) {
-          y_center <- sum(y_range) / 2
-          new_y_length <- x_length / desired_aspect_ratio
-          y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
-        } else {
-          x_center <- sum(x_range) / 2
-          new_x_length <- y_length * desired_aspect_ratio
-          x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
-        }
-        
+
         # Apply coord_sf to the entire map with adjusted limits
-        plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
+        plot_data <- plot_data + coord_sf(xlim = ranges2_3b$x, ylim = ranges2_3b$y, crs = st_crs(4326))
         
         plot_data
       })
@@ -9249,7 +9066,7 @@ server <- function(input, output, session) {
     
     # Set independent variables:
     variables_iv = reactive({
-      if (input$source_iv == "ModE-RA"){
+      if (input$source_iv == "ModE-"){
         v_iv = input$ME_variable_iv
       } else {
         v_iv = input$user_variable_iv
@@ -9258,7 +9075,7 @@ server <- function(input, output, session) {
     })
       
     variable_dv = reactive({
-      if (input$source_dv == "ModE-RA"){
+      if (input$source_dv == "ModE-"){
         v_dv = input$ME_variable_dv
       } else {
         v_dv = input$user_variable_dv
@@ -9281,7 +9098,7 @@ server <- function(input, output, session) {
     
     # Select variable timeseries data
       ts_data_iv = reactive({
-        if (input$source_iv == "ModE-RA"){
+        if (input$source_iv == "ModE-"){
           tsd_iv = ME_ts_data_iv()
         } else {
           tsd_iv = user_subset_iv()
@@ -9290,7 +9107,7 @@ server <- function(input, output, session) {
       })
       
       ts_data_dv = reactive({
-        if (input$source_dv == "ModE-RA"){
+        if (input$source_dv == "ModE-"){
           tsd_dv = timeseries_data_dv()
         } else {
           tsd_dv = user_subset_dv()
@@ -9488,51 +9305,9 @@ server <- function(input, output, session) {
       } else {
         plot_data <- fad_wa4a(labs = FALSE)
       }
-      
-      # Calculate the aspect ratio of the original map
-      original_x_range <- lonlat_vals_iv()[1:2]
-      original_y_range <- lonlat_vals_iv()[3:4]
-      original_x_length <- diff(original_x_range)
-      original_y_length <- diff(original_y_range)
-      original_aspect_ratio <- original_x_length / original_y_length
-      
-      # Check if ranges_4a$x and ranges_4a$y are defined
-      if (!is.null(ranges_4a$x) && !is.null(ranges_4a$y)) {
-        x_range <- range(ranges_4a$x)
-        y_range <- range(ranges_4a$y)
-      } else {
-        x_range <- original_x_range
-        y_range <- original_y_range
-      }
-      
-      # Calculate the aspect ratio of the selected brush or the original map
-      x_length <- diff(x_range)
-      y_length <- diff(y_range)
-      aspect_ratio <- x_length / y_length
-      
-      # Determine whether the original plot is in landscape or portrait format
-      original_format_landscape <- original_x_length >= original_y_length
-      
-      # Calculate the desired aspect ratio based on the original plot
-      desired_aspect_ratio <- if (original_format_landscape) {
-        original_aspect_ratio
-      } else {
-        1 / original_aspect_ratio
-      }
-      
-      # Adjust the x and y limits while maintaining the desired aspect ratio
-      if (aspect_ratio > desired_aspect_ratio) {
-        y_center <- sum(y_range) / 2
-        new_y_length <- x_length / desired_aspect_ratio
-        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
-      } else {
-        x_center <- sum(x_range) / 2
-        new_x_length <- y_length * desired_aspect_ratio
-        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
-      }
-      
+
       # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
+      plot_data <- plot_data + coord_sf(xlim = ranges_4a$x, ylim = ranges_4a$y, crs = st_crs(4326))
       
       plot_data
     })
@@ -9556,51 +9331,9 @@ server <- function(input, output, session) {
       } else {
         plot_data <- fad_sa4a(labs = FALSE)
       }
-      
-      # Calculate the aspect ratio of the original map
-      original_x_range <- lonlat_vals_iv()[1:2]
-      original_y_range <- lonlat_vals_iv()[3:4]
-      original_x_length <- diff(original_x_range)
-      original_y_length <- diff(original_y_range)
-      original_aspect_ratio <- original_x_length / original_y_length
-      
-      # Check if ranges2_4a$x and ranges2_4a$y are defined
-      if (!is.null(ranges2_4a$x) && !is.null(ranges2_4a$y)) {
-        x_range <- range(ranges2_4a$x)
-        y_range <- range(ranges2_4a$y)
-      } else {
-        x_range <- original_x_range
-        y_range <- original_y_range
-      }
-      
-      # Calculate the aspect ratio of the selected brush or the original map
-      x_length <- diff(x_range)
-      y_length <- diff(y_range)
-      aspect_ratio <- x_length / y_length
-      
-      # Determine whether the original plot is in landscape or portrait format
-      original_format_landscape <- original_x_length >= original_y_length
-      
-      # Calculate the desired aspect ratio based on the original plot
-      desired_aspect_ratio <- if (original_format_landscape) {
-        original_aspect_ratio
-      } else {
-        1 / original_aspect_ratio
-      }
-      
-      # Adjust the x and y limits while maintaining the desired aspect ratio
-      if (aspect_ratio > desired_aspect_ratio) {
-        y_center <- sum(y_range) / 2
-        new_y_length <- x_length / desired_aspect_ratio
-        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
-      } else {
-        x_center <- sum(x_range) / 2
-        new_x_length <- y_length * desired_aspect_ratio
-        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
-      }
-      
+
       # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
+      plot_data <- plot_data + coord_sf(xlim = ranges2_4a$x, ylim = ranges2_4a$y, crs = st_crs(4326))
       
       plot_data
     })
@@ -9637,50 +9370,8 @@ server <- function(input, output, session) {
         plot_data <- fad_wa4b(labs = FALSE)
       }
       
-      # Calculate the aspect ratio of the original map
-      original_x_range <- lonlat_vals_dv()[1:2]
-      original_y_range <- lonlat_vals_dv()[3:4]
-      original_x_length <- diff(original_x_range)
-      original_y_length <- diff(original_y_range)
-      original_aspect_ratio <- original_x_length / original_y_length
-      
-      # Check if ranges_4b$x and ranges_4b$y are defined
-      if (!is.null(ranges_4b$x) && !is.null(ranges_4b$y)) {
-        x_range <- range(ranges_4b$x)
-        y_range <- range(ranges_4b$y)
-      } else {
-        x_range <- original_x_range
-        y_range <- original_y_range
-      }
-      
-      # Calculate the aspect ratio of the selected brush or the original map
-      x_length <- diff(x_range)
-      y_length <- diff(y_range)
-      aspect_ratio <- x_length / y_length
-      
-      # Determine whether the original plot is in landscape or portrait format
-      original_format_landscape <- original_x_length >= original_y_length
-      
-      # Calculate the desired aspect ratio based on the original plot
-      desired_aspect_ratio <- if (original_format_landscape) {
-        original_aspect_ratio
-      } else {
-        1 / original_aspect_ratio
-      }
-      
-      # Adjust the x and y limits while maintaining the desired aspect ratio
-      if (aspect_ratio > desired_aspect_ratio) {
-        y_center <- sum(y_range) / 2
-        new_y_length <- x_length / desired_aspect_ratio
-        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
-      } else {
-        x_center <- sum(x_range) / 2
-        new_x_length <- y_length * desired_aspect_ratio
-        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
-      }
-      
       # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
+      plot_data <- plot_data + coord_sf(xlim = ranges_4b$x, ylim = ranges_4b$y, crs = st_crs(4326))
       
       plot_data
     })
@@ -9705,50 +9396,8 @@ server <- function(input, output, session) {
         plot_data <- fad_sa4b(labs = FALSE)
       }
       
-      # Calculate the aspect ratio of the original map
-      original_x_range <- lonlat_vals_dv()[1:2]
-      original_y_range <- lonlat_vals_dv()[3:4]
-      original_x_length <- diff(original_x_range)
-      original_y_length <- diff(original_y_range)
-      original_aspect_ratio <- original_x_length / original_y_length
-      
-      # Check if ranges2_4b$x and ranges2_4b$y are defined
-      if (!is.null(ranges2_4b$x) && !is.null(ranges2_4b$y)) {
-        x_range <- range(ranges2_4b$x)
-        y_range <- range(ranges2_4b$y)
-      } else {
-        x_range <- original_x_range
-        y_range <- original_y_range
-      }
-      
-      # Calculate the aspect ratio of the selected brush or the original map
-      x_length <- diff(x_range)
-      y_length <- diff(y_range)
-      aspect_ratio <- x_length / y_length
-      
-      # Determine whether the original plot is in landscape or portrait format
-      original_format_landscape <- original_x_length >= original_y_length
-      
-      # Calculate the desired aspect ratio based on the original plot
-      desired_aspect_ratio <- if (original_format_landscape) {
-        original_aspect_ratio
-      } else {
-        1 / original_aspect_ratio
-      }
-      
-      # Adjust the x and y limits while maintaining the desired aspect ratio
-      if (aspect_ratio > desired_aspect_ratio) {
-        y_center <- sum(y_range) / 2
-        new_y_length <- x_length / desired_aspect_ratio
-        y_range <- c(y_center - new_y_length / 2, y_center + new_y_length / 2)
-      } else {
-        x_center <- sum(x_range) / 2
-        new_x_length <- y_length * desired_aspect_ratio
-        x_range <- c(x_center - new_x_length / 2, x_center + new_x_length / 2)
-      }
-      
       # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = x_range, ylim = y_range, crs = st_crs(4326))
+      plot_data <- plot_data + coord_sf(xlim = ranges2_4b$x, ylim = ranges2_4b$y, crs = st_crs(4326))
       
       plot_data
     })
@@ -10041,13 +9690,21 @@ server <- function(input, output, session) {
                                                               }})
 
     
-    ## MONTHLY TS data processing and plotting ----
-    
+  ## MONTHLY TS data processing and plotting ----
     ### Plot timeseries & data ----
     
     # Plot Timeseries
     monthly_ts_plot = reactive({
-      plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5)
+      plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5,"base")
+      add_highlighted_areas(ts_highlights_data5())
+      add_custom_lines(ts_lines_data5())
+      plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5,"lines")
+      add_boxes(ts_highlights_data5())
+      add_custom_points(ts_points_data5())
+      if (input$show_key_ts5 == TRUE){
+        add_TS_key(input$key_position_ts5,ts_highlights_data5(),ts_lines_data5(),input$variable_selected5,c(1,2),
+                   FALSE,NA,FALSE,NA,NA,NA,FALSE)
+      }
     })
     
     output$timeseries5 <- renderPlot({monthly_ts_plot()}, height = 400)
@@ -10068,14 +9725,81 @@ server <- function(input, output, session) {
     
     ### ModE-RA sources ----
     
-    fad_wa5 <- function() {plot_modera_sources(input$fad_year_a5, "winter",input$fad_longitude_a5,input$fad_latitude_a5,TRUE)}
-    fad_sa5 <- function() {plot_modera_sources(input$fad_year_a5, "summer", input$fad_longitude_a5,input$fad_latitude_a5,TRUE)}
+    ranges5  <- reactiveValues(x = NULL, y = NULL)
+    ranges5_2 <- reactiveValues(x = NULL, y = NULL)
     
-    # Left map  
-    output$fad_winter_map_a5 <- renderPlot({fad_wa5()})
+    fad_wa5 <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a5, "winter",input$fad_longitude_a5,input$fad_latitude_a5,labs)}
+    fad_sa5 <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a5, "summer", input$fad_longitude_a5,input$fad_latitude_a5,labs)}
     
-    # Right map
-    output$fad_summer_map_a5 <- renderPlot({fad_sa5()})
+    # Upper map (Original)
+    output$fad_winter_map_a5 <- renderPlot({
+      
+      plot_data <- fad_wa5(labs = TRUE)
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
+    })
+    
+    # Upper map (Zoom)
+    output$fad_zoom_winter_a5 <- renderPlot({
+      plot_data <- fad_wa5(labs = FALSE)
+      
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = ranges5$x, ylim = ranges5$y, crs = st_crs(4326))
+      
+      plot_data
+    })
+    
+    # Lower map (Original)
+    output$fad_summer_map_a5 <- renderPlot({
+
+      plot_data <- fad_sa5(labs = TRUE)  
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
+    })
+    
+    # Lower map (Zoom)
+    output$fad_zoom_summer_a5 <- renderPlot({
+
+      plot_data <- fad_sa5(labs = FALSE)
+      
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = ranges5_2$x, ylim = ranges5_2$y, crs = st_crs(4326))
+      
+      plot_data
+    })
+    
+    
+    #Update Modera source year input and Brushes when Double Click happens
+    
+    observe({
+      brush <- input$brush_fad1a5
+      if (!is.null(brush)) {
+        ranges5$x <- c(brush$xmin, brush$xmax)
+        ranges5$y <- c(brush$ymin, brush$ymax)
+        
+      } else {
+        ranges5$x <- input$fad_longitude_a5
+        ranges5$y <- input$fad_latitude_a5
+      }
+    })
+    
+    observe({
+      brush_b <- input$brush_fad1b5
+      if (!is.null(brush_b)) {
+        ranges5_2$x <- c(brush_b$xmin, brush_b$xmax)
+        ranges5_2$y <- c(brush_b$ymin, brush_b$ymax)
+        
+      } else {
+        ranges5_2$x <- input$fad_longitude_a5
+        ranges5_2$y <- input$fad_latitude_a5
+      }
+    })
     
     
     # Update Modera source year & latlon input
@@ -10177,10 +9901,43 @@ server <- function(input, output, session) {
                                                                        col.names = TRUE)
                                                           }})
     
-
+    output$download_fad_sa5             <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a5, "-modera_source.",input$file_type_modera_source_b5, sep = "")},
+                                                           content  = function(file) {
+                                                             
+                                                             mmd5 = generate_map_dimensions(create_subset_lon_IDs(input$fad_longitude_a5),create_subset_lat_IDs(input$fad_latitude_a5), session$clientData$output_fad_winter_map_a5_width, input$dimension[2], FALSE)
+                                                             
+                                                             if (input$file_type_modera_source_b5 == "png"){
+                                                               png(file, width = mmd5[3] , height = mmd5[4], res = 400)  
+                                                               print(fad_sa5(labs = TRUE))
+                                                               dev.off()
+                                                             } else if (input$file_type_modera_source_b5 == "jpeg"){
+                                                               jpeg(file, width = mmd5[3] , height = mmd5[4], res = 400) 
+                                                               print(fad_sa5(labs = TRUE)) 
+                                                               dev.off()
+                                                             } else {
+                                                               pdf(file, width = mmd5[3]/400 , height = mmd5[4]/400) 
+                                                               print(fad_sa5(labs = TRUE))
+                                                               dev.off()
+                                                             }})
     
-
-  
+    output$download_fad_wa5             <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a5, "-modera_source.",input$file_type_modera_source_a5, sep = "")},
+                                                           content  = function(file) {
+                                                             
+                                                             mmd5 = generate_map_dimensions(create_subset_lon_IDs(input$fad_longitude_a5),create_subset_lat_IDs(input$fad_latitude_a5), session$clientData$output_fad_winter_map_a5_width, input$dimension[2], FALSE)
+                                                             
+                                                             if (input$file_type_modera_source_a5 == "png"){
+                                                               png(file, width = mmd5[3] , height = mmd5[4], res = 400)  
+                                                               print(fad_wa5(labs = TRUE))
+                                                               dev.off()
+                                                             } else if (input$file_type_modera_source_a5 == "jpeg"){
+                                                               jpeg(file, width = mmd5[3] , height = mmd5[4], res = 400) 
+                                                               print(fad_wa5(labs = TRUE)) 
+                                                               dev.off()
+                                                             } else {
+                                                               pdf(file, width = mmd5[3]/400 , height = mmd5[4]/400) 
+                                                               print(fad_wa5(labs = TRUE))
+                                                               dev.off()
+                                                             }})
 }
 
 # Run the app ----
