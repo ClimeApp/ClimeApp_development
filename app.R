@@ -4967,7 +4967,7 @@ server <- function(input, output, session) {
           label    = NULL,
           choices  = c("None", "Reference Period"),
           selected = "None" , inline = TRUE)
-      } else if (input$dataset_selected == "ModE-SIM"){
+      } else if (input$dataset_selected == "ModE-Sim"){
         updateRadioButtons(
           inputId = "ref_map_mode",
           label    = NULL,
@@ -5452,7 +5452,7 @@ server <- function(input, output, session) {
           label    = NULL,
           choices  = c("None", "Reference Period"),
           selected = "None" , inline = TRUE)
-      } else if (input$dataset_selected2 == "ModE-SIM"){
+      } else if (input$dataset_selected2 == "ModE-Sim"){
         updateRadioButtons(
           inputId = "ref_map_mode2",
           label    = NULL,
@@ -7418,24 +7418,36 @@ server <- function(input, output, session) {
   
   #Plotting the data (time series)
   timeseries_data <- reactive({
-    
-    ts_data1 <- create_timeseries_datatable(data_output3(), input$range_years, "range", subset_lons(), subset_lats())
-    
-    MA_alignment = switch(input$year_position_ts,
-                          "before" = "left",
-                          "on" = "center",
-                          "after" = "right")
-    
-    ts_data2 = add_stats_to_TS_datatable(ts_data1,input$custom_average_ts,input$year_moving_ts,
-                                         MA_alignment,input$custom_percentile_ts,input$percentile_ts,input$moving_percentile_ts)
-    
+    #Plot normal timeseries if year range is > 1 year
+    if (input$range_years[1] != input$range_years[2]){
+      ts_data1 <- create_timeseries_datatable(data_output3(), input$range_years, "range", subset_lons(), subset_lats())
+      
+      MA_alignment = switch(input$year_position_ts,
+                            "before" = "left",
+                            "on" = "center",
+                            "after" = "right")
+      
+      ts_data2 = add_stats_to_TS_datatable(ts_data1,input$custom_average_ts,input$year_moving_ts,
+                                           MA_alignment,input$custom_percentile_ts,input$percentile_ts,input$moving_percentile_ts)
+    } 
+    # Plot monthly TS if year range = 1 year
+    else {
+      ts_data1 = load_ModE_data(input$dataset_selected,input$variable_selected)
+      
+      ts_data2 = create_monthly_TS_data(ts_data1,input$variable_selected,
+                             input$range_years[1],input$range_longitude,
+                             input$range_latitude,"Anomaly",
+                             "Individual years",input$ref_period)
+    }
     return(ts_data2)
   })
   
   timeseries_data_output = reactive({
-    
-    output_ts_table = rewrite_tstable(timeseries_data(),input$variable_selected)
-    
+    if (input$range_years[1] != input$range_years[2]){
+      output_ts_table = rewrite_tstable(timeseries_data(),input$variable_selected)
+    } else {
+      output_ts_table = timeseries_data()
+    }
     return(output_ts_table) 
   })
   
@@ -7448,23 +7460,39 @@ server <- function(input, output, session) {
   
   #Plotting the time series
   timeseries_plot <- function(){
-    # Generate NA or reference mean
-    if(input$show_ref_ts == TRUE){
-      ref_ts = signif(mean(data_output4()),3)
-    } else {
-      ref_ts = NA
-    }
-    
-    plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
-    add_highlighted_areas(ts_highlights_data())
-    add_percentiles(timeseries_data())
-    add_custom_lines(ts_lines_data())
-    add_timeseries(timeseries_data(),"general",input$variable_selected)
-    add_boxes(ts_highlights_data())
-    add_custom_points(ts_points_data())
-    if (input$show_key_ts == TRUE){
-      add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range(),
-                 input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+    #Plot normal timeseries if year range is > 1 year
+    if (input$range_years[1] != input$range_years[2]){
+      # Generate NA or reference mean
+      if(input$show_ref_ts == TRUE){
+        ref_ts = signif(mean(data_output4()),3)
+      } else {
+        ref_ts = NA
+      }
+      
+      plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
+      add_highlighted_areas(ts_highlights_data())
+      add_percentiles(timeseries_data())
+      add_custom_lines(ts_lines_data())
+      add_timeseries(timeseries_data(),"general",input$variable_selected)
+      add_boxes(ts_highlights_data())
+      add_custom_points(ts_points_data())
+      if (input$show_key_ts == TRUE){
+        add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range(),
+                   input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+      }
+    } 
+    # Plot monthly TS if year range = 1 year
+    else {
+      plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","base")
+      add_highlighted_areas(ts_highlights_data())
+      add_custom_lines(ts_lines_data())
+      plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","lines")
+      add_boxes(ts_highlights_data())
+      add_custom_points(ts_points_data())
+      if (input$show_key_ts == TRUE){
+        add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range(),
+                   input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+      }
     }
   }
   
@@ -7770,7 +7798,7 @@ server <- function(input, output, session) {
       processed_data3_2 <- convert_composite_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), year_set_comp(), month_range_2(), input$prior_years2)
     } else {
       processed_data3_2 <- convert_subset_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), month_range_2(), year_set_comp_ref())
-      }
+    }
 
     return(processed_data3_2)
   })
@@ -7876,18 +7904,40 @@ server <- function(input, output, session) {
   
   #Plotting the data (time series)
   timeseries_data_2 <- reactive({
-    
-    ts_data1 <- create_timeseries_datatable(data_output3_2(), year_set_comp(), "set", subset_lons_2(), subset_lats_2())
-    
-    ts_data2 = add_stats_to_TS_datatable(ts_data1,FALSE,NA,NA,input$custom_percentile_ts2,
-                                         input$percentile_ts2,FALSE)
+    #Plot normal timeseries if year set is > 1 year
+    if (length(year_set_comp()) > 1){    
+      ts_data1 <- create_timeseries_datatable(data_output3_2(), year_set_comp(), "set", subset_lons_2(), subset_lats_2())
+      
+      ts_data2 = add_stats_to_TS_datatable(ts_data1,FALSE,NA,NA,input$custom_percentile_ts2,
+                                           input$percentile_ts2,FALSE)
+    } 
+    # Plot monthly TS if year range = 1 year
+    else {
+      ts_data1 = load_ModE_data(input$dataset_selected2,input$variable_selected2)
+      
+      # Generate ref years
+      if (input$mode_selected2 == "Fixed reference"){
+        ref_years = input$ref_period2
+      } else if (input$mode_selected2 == "Compared to X years prior"){
+        ref_years = c((year_set_comp()-input$prior_years2),year_set_comp()-1)
+      } else {
+        ref_years = year_set_comp_ref()
+      }
+      
+      ts_data2 = create_monthly_TS_data(ts_data1,input$variable_selected2,
+                                        year_set_comp(),input$range_longitude2,
+                                        input$range_latitude2,"Anomaly",
+                                        "Individual years",ref_years)
+    }
     return(ts_data2)
   })
   
   timeseries_data_output_2 = reactive({
-    
-    output_ts_table = rewrite_tstable(timeseries_data_2(),input$variable_selected2)
-    
+    if (length(year_set_comp()) > 1){ 
+      output_ts_table = rewrite_tstable(timeseries_data_2(),input$variable_selected2)
+    } else {
+      output_ts_table = timeseries_data_2()
+    }
     return(output_ts_table) 
   })
   
@@ -7900,23 +7950,39 @@ server <- function(input, output, session) {
   
   #Plotting the time series
   timeseries_plot_2 <- function(){
-    # Generate NA or reference mean
-    if(input$show_ref_ts2 == TRUE){
-      ref_ts2 = signif(mean(data_output4_2()),3)
-    } else {
-      ref_ts2 = NA
+    #Plot normal timeseries if year set is > 1 year
+    if (length(year_set_comp()) > 1){  
+      # Generate NA or reference mean
+      if(input$show_ref_ts2 == TRUE){
+        ref_ts2 = signif(mean(data_output4_2()),3)
+      } else {
+        ref_ts2 = NA
+      }
+  
+      plot_default_timeseries(timeseries_data_2(),"composites",input$variable_selected2,plot_titles_2(),input$title_mode_ts2,ref_ts2)
+      add_highlighted_areas(ts_highlights_data2())
+      add_percentiles(timeseries_data_2())
+      add_custom_lines(ts_lines_data2())
+      add_timeseries(timeseries_data_2(),"composites",input$variable_selected2)
+      add_boxes(ts_highlights_data2())
+      add_custom_points(ts_points_data2())
+      if (input$show_key_ts2 == TRUE){
+        add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_2(),
+                   FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
+      }
     }
-
-    plot_default_timeseries(timeseries_data_2(),"composites",input$variable_selected2,plot_titles_2(),input$title_mode_ts2,ref_ts2)
-    add_highlighted_areas(ts_highlights_data2())
-    add_percentiles(timeseries_data_2())
-    add_custom_lines(ts_lines_data2())
-    add_timeseries(timeseries_data_2(),"composites",input$variable_selected2)
-    add_boxes(ts_highlights_data2())
-    add_custom_points(ts_points_data2())
-    if (input$show_key_ts2 == TRUE){
-      add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_2(),
-                 FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
+    # Plot monthly TS if year range = 1 year
+    else {
+      plot_monthly_timeseries(timeseries_data_2(),plot_titles_2()$ts_title,"Custom","topright","base")
+      add_highlighted_areas(ts_highlights_data2())
+      add_custom_lines(ts_lines_data2())
+      plot_monthly_timeseries(timeseries_data_2(),plot_titles_2()$ts_title,"Custom","topright","lines")
+      add_boxes(ts_highlights_data2())
+      add_custom_points(ts_points_data2())
+      if (input$show_key_ts2 == TRUE){
+        add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_2(),
+                   FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
+      }
     }
   }
   

@@ -3069,8 +3069,13 @@ create_monthly_TS_data = function(data_input,variable,years,lon_range,lat_range,
   # Calculate reference data (if required) and remove from year_data
   if (mode == "Anomaly"){
     
-    ref_years = baseline_range[1]:baseline_range[2]
-    ref_df = data.frame()
+    if (length(baseline_range)<3){
+      ref_years = baseline_range[1]:baseline_range[2]
+      ref_df = data.frame()
+    } else {
+      ref_years = baseline_range
+    }
+
     
     for (Y in ref_years){
       year_data = c()
