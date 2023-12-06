@@ -3319,6 +3319,12 @@ tabPanel("Monthly Timeseries", id = "tab5",
                #Short description of the General Panel        
                h4(helpText("Creating monthly timeseries")),
                
+               #Choose one of three datasets (Select)                
+               selectInput(inputId  = "dataset_selected5",
+                           label    = "Choose a dataset:",
+                           choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
+                           selected = "ModE-RA"),
+               
                #Choose one of four variable (Select)                
                selectInput(inputId  = "variable_selected5",
                            label    = "Choose a variable to plot:",
@@ -3782,7 +3788,7 @@ tabPanel("Monthly Timeseries", id = "tab5",
      
 # Define server logic ----
 server <- function(input, output, session) {
-  #Preparations in the Server ----
+  #Preparations in the Server (Hidden options) ----
   track_usage(storage_mode = store_rds(path = "logs/"))
   #Hiding, showing, enabling/disenabling certain inputs
   observe({
@@ -5811,6 +5817,41 @@ server <- function(input, output, session) {
       }
     })     
     
+    # Mode Updater (based on dataset0)
+    observe({
+      if (input$dataset_selected_v1 == "ModE-RAclim"){
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId = "mode_selected_v1",
+          label = NULL,
+          choices = c("Anomaly"),
+          selected =  "Anomaly")
+      } else {
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId = "mode_selected_v1",
+          label = NULL,
+          choices = c("Anomaly","Absolute"))
+      }
+    })
+    
+    observe({
+      if (input$dataset_selected_v2 == "ModE-RAclim"){
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId = "mode_selected_v2",
+          label = NULL,
+          choices = c("Anomaly"),
+          selected =  "Anomaly")
+      } else {
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId = "mode_selected_v2",
+          label = NULL,
+          choices = c("Anomaly","Absolute"))
+      }
+    })
+    
     #Month Range Updater
     observe({
       if (input$season_selected_v1 == "Annual"){
@@ -6501,6 +6542,41 @@ server <- function(input, output, session) {
       }
     })
     
+    # Mode Updater (based on dataset0)
+    observe({
+      if (input$dataset_selected_iv == "ModE-RAclim"){
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId = "mode_selected_iv",
+          label = NULL,
+          choices = c("Anomaly"),
+          selected =  "Anomaly")
+      } else {
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId = "mode_selected_iv",
+          label = NULL,
+          choices = c("Anomaly","Absolute"))
+      }
+    })
+    
+    observe({
+      if (input$dataset_selected_dv == "ModE-RAclim"){
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId = "mode_selected_dv",
+          label = NULL,
+          choices = c("Anomaly"),
+          selected =  "Anomaly")
+      } else {
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId = "mode_selected_dv",
+          label = NULL,
+          choices = c("Anomaly","Absolute"))
+      }
+    })
+    
     # Coeff/pvalue variable selection updater
     observeEvent(variables_iv(),{
       updateSelectInput(
@@ -6943,7 +7019,7 @@ server <- function(input, output, session) {
     })
     
     
-    ## MONTHLY TIMESERIES observe, update & interactive controls----
+  ## MONTHLY TIMESERIES observe, update & interactive controls----
     ### Initialise and update timeseries dataframe ----
     
     # Add in initial data
@@ -6955,17 +7031,11 @@ server <- function(input, output, session) {
     observeEvent(input$add_monthly_ts, {
       
       #Combining Shiny Input with ModeRa Data
-      data_full <-   switch(input$variable_selected5,
-                            "Temperature"   = temp_data,
-                            "Precipitation" = prec_data,
-                            "SLP"           = SLP_data,
-                            "Z500"          = Z500_data)
-      
-      
+      data_full <-  load_ModE_data(input$dataset_selected5,input$variable_selected5)
       
       # Replace starter data if tracker = 1
       if (monthly_ts_tracker() == 1){
-        monthly_ts_data(create_monthly_TS_data(data_full,input$variable_selected5,
+        monthly_ts_data(create_monthly_TS_data(data_full,input$dataset_selected5,input$variable_selected5,
                                                input$range_years5,input$range_longitude5,
                                                input$range_latitude5,input$mode_selected5,
                                                input$type_selected5,input$ref_period5))
@@ -6974,18 +7044,22 @@ server <- function(input, output, session) {
         updateSelectInput(
           session = getDefaultReactiveDomain(),
           inputId  = "variable_selected5",
-          choices  = monthly_ts_data()[1,2], # Sets choices to only the Variable already selected
-          selected = monthly_ts_data()[1,2])
+          choices  = monthly_ts_data()[1,3], # Sets choices to only the Variable already selected
+          selected = monthly_ts_data()[1,3])
         
         # update tracker
         monthly_ts_tracker(monthly_ts_tracker()+1)
       } 
       # Otherwise, add to dataframe
       else {
-        monthly_ts_data(rbind(monthly_ts_data(),create_monthly_TS_data(data_full,input$variable_selected5,
-                                                                       input$range_years5,input$range_longitude5,
-                                                                       input$range_latitude5,input$mode_selected5,
-                                                                       input$type_selected5,input$ref_period5)))
+        new_rows = create_monthly_TS_data(data_full,input$dataset_selected5,input$variable_selected5,
+                                               input$range_years5,input$range_longitude5,
+                                               input$range_latitude5,input$mode_selected5,
+                                               input$type_selected5,input$ref_period5)
+        
+        updated_monthly_ts_data = rbind(monthly_ts_data(),new_rows)
+        
+        monthly_ts_data(updated_monthly_ts_data)
       }
       
     })  
@@ -7029,6 +7103,24 @@ server <- function(input, output, session) {
     
     
     ### Input updaters ----
+    
+    # Mode Updater (based on dataset0)
+    observe({
+      if (input$dataset_selected5 == "ModE-RAclim"){
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId = "mode_selected5",
+          label = NULL,
+          choices = c("Anomaly"),
+          selected =  "Anomaly")
+      } else {
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId = "mode_selected5",
+          label = NULL,
+          choices = c("Anomaly","Absolute"))
+      }
+    })
     
     # Continent buttons - updates range inputs and lonlat_values
     observeEvent(input$button_global5,{
@@ -7434,7 +7526,7 @@ server <- function(input, output, session) {
     else {
       ts_data1 = load_ModE_data(input$dataset_selected,input$variable_selected)
       
-      ts_data2 = create_monthly_TS_data(ts_data1,input$variable_selected,
+      ts_data2 = create_monthly_TS_data(ts_data1,input$dataset_selected,input$variable_selected,
                              input$range_years[1],input$range_longitude,
                              input$range_latitude,"Anomaly",
                              "Individual years",input$ref_period)
@@ -7924,7 +8016,7 @@ server <- function(input, output, session) {
         ref_years = year_set_comp_ref()
       }
       
-      ts_data2 = create_monthly_TS_data(ts_data1,input$variable_selected2,
+      ts_data2 = create_monthly_TS_data(ts_data1,input$dataset_selected2,input$variable_selected2,
                                         year_set_comp(),input$range_longitude2,
                                         input$range_latitude2,"Anomaly",
                                         "Individual years",ref_years)
@@ -9981,7 +10073,7 @@ server <- function(input, output, session) {
     last_year = reactive({
       
       # Get last years
-      last_yrs = as.character(tail(monthly_ts_data(),n=1)[1])
+      last_yrs = as.character(tail(monthly_ts_data(),n=1)[2])
       
       # Extract last year date
       if (grepl(",",last_yrs)){
@@ -9999,7 +10091,7 @@ server <- function(input, output, session) {
     last_coordinates = reactive({
       
       # Get last coords and split into lat,lon
-      last_coords = unlist(strsplit(as.character(tail(monthly_ts_data(),n=1)[16]),","))
+      last_coords = unlist(strsplit(as.character(tail(monthly_ts_data(),n=1)[17]),","))
       
       # Extract lon
       if (grepl(":",last_coords[1])){

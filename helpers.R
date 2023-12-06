@@ -3011,6 +3011,7 @@ plot_regression_timeseries = function(data_input,plot_type,regression_titles,
 
 ## (Monthly TS) Monthly TS starter data - Bern,1815  
 monthly_ts_starter_data = function(){
+  Dataset = "ModE-RA"
   Years = "1815" ; Variable = "Temperature" ; Unit = "\u00B0C"
   Jan = -3.17 ; Feb = 2.84 ; Mar = 5.3
   Apr = 6.97 ; May = 11.3 ; Jun = 13.92
@@ -3021,7 +3022,7 @@ monthly_ts_starter_data = function(){
   Ref = NA
   Type = "Individual years"
   
-  Bern_data = data.frame(Years,Variable,Unit,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec,
+  Bern_data = data.frame(Dataset,Years,Variable,Unit,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec,
                          Coordinates,Mode,Ref,Type)
   return(Bern_data)
 }
@@ -3035,7 +3036,7 @@ monthly_ts_starter_data = function(){
 ##                      or a range of years "1483-1489"
 ##              type = "Average" or "Individual years"
 
-create_monthly_TS_data = function(data_input,variable,years,lon_range,lat_range, mode, type, baseline_range){
+create_monthly_TS_data = function(data_input,dataset,variable,years,lon_range,lat_range, mode, type, baseline_range){
   
   # read in and interpret "years"
   if (grepl(",",years)){
@@ -3076,7 +3077,6 @@ create_monthly_TS_data = function(data_input,variable,years,lon_range,lat_range,
       ref_years = baseline_range
     }
 
-    
     for (Y in ref_years){
       year_data = c()
       for (M in 1:12){
@@ -3102,6 +3102,9 @@ create_monthly_TS_data = function(data_input,variable,years,lon_range,lat_range,
   } else {
     Years = as.character(year_vector)
   } 
+  
+  # Generate dataset column
+  Dataset = rep(dataset,length(Years))
   
   # Generate Variable column
   Variable = rep(variable,length(Years))
@@ -3153,7 +3156,7 @@ create_monthly_TS_data = function(data_input,variable,years,lon_range,lat_range,
   Ref = rep(ref,length(Years))
   
   # Combine Columns to create dataframe  
-  combined_df = data.frame(Years,Variable,Unit,year_df,Coordinates,Mode,Ref,Type)
+  combined_df = data.frame(Dataset,Years,Variable,Unit,year_df,Coordinates,Mode,Ref,Type)
   
   return(combined_df)
 }
@@ -3197,23 +3200,23 @@ plot_monthly_timeseries = function(data_input,custom_title,title_mode,key_positi
     legend_labels = c()
   
     for (i in 1:n_o_rows){
-      label = paste0(data_input$Years[i]," [",data_input$Coordinates[i],"]")
+      label = paste0(data_input$Dataset[i]," ",data_input$Years[i]," [",data_input$Coordinates[i],"]")
       legend_labels = c(legend_labels,label)
     }
   
     # Find min/max values
-    y_min = min(data_input[,4:15])  
-    y_max = max(data_input[,4:15])
+    y_min = min(data_input[,5:16])  
+    y_max = max(data_input[,5:16])
     y_space = 0.02*(y_max-y_min)
   
     # Plot
-    plot(1:12,data_input[1,4:15],type = "l",col=color_set[1], lwd=lwd_set[1],
+    plot(1:12,data_input[1,5:16],type = "l",col=color_set[1], lwd=lwd_set[1],
          ylim = c((y_min-y_space),(y_max+y_space)),
          xlab = "Month", ylab = y_label, xaxt = "n", xaxs="i")
     axis(1, at = 1:12, labels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
   
    for (i in 2:n_o_rows){
-      lines(1:12,data_input[i,4:15],col = color_set[i],lwd = lwd_set[i])
+      lines(1:12,data_input[i,5:16],col = color_set[i],lwd = lwd_set[i])
    }
   
     # Add title (if custom is selected)
@@ -3233,7 +3236,7 @@ plot_monthly_timeseries = function(data_input,custom_title,title_mode,key_positi
     ) 
   } 
   else { # Just add lines to plot
-    lines(1:12,data_input[1,4:15],type = "l",col=color_set[1], lwd=lwd_set[1])
+    lines(1:12,data_input[1,5:16],type = "l",col=color_set[1], lwd=lwd_set[1])
   }
   
 } 
