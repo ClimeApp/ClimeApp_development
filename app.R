@@ -3,7 +3,7 @@
 # WDs for Project ----
 
 #Noémie
-setwd("C:/Users/nw22d367/OneDrive - Universitaet Bern/ClimeApp_development")
+#setwd("C:/Users/nw22d367/OneDrive - Universitaet Bern/ClimeApp_development")
 
 
 #Nik
