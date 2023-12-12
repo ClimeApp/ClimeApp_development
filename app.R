@@ -3,7 +3,7 @@
 # WDs for Project ----
 
 #Noémie
-#setwd("C:/Users/nw22d367/OneDrive - Universitaet Bern/ClimeApp_development")
+setwd("C:/Users/nw22d367/OneDrive - Universitaet Bern/ClimeApp_development")
 
 
 #Nik
@@ -8341,7 +8341,7 @@ server <- function(input, output, session) {
       req(input$user_file_v1)
       
       if (input$source_v1 == "User Data"){
-        new_data1 = read_regcomp_data(input$user_file_v1$datapath)      
+        new_data1 = read_regcomp_data(input$user_file_v1$datapath)   
         return(new_data1)
       }
       else{
@@ -8355,7 +8355,7 @@ server <- function(input, output, session) {
       req(input$user_file_v2)
       
       if (input$source_v2 == "User Data"){
-        new_data2 = read_regcomp_data(input$user_file_v2$datapath)      
+        new_data2 = read_regcomp_data(input$user_file_v2$datapath)  
         return(new_data2)
       }
       else{
@@ -8365,32 +8365,46 @@ server <- function(input, output, session) {
     
     # Subset v1 data to year_range and chosen variable
     user_subset_v1 = reactive({
-      
+
       req(user_data_v1(),input$user_variable_v1)
-      
+
       usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3)
-      
+
       return(usr_ss1)
-    }) 
-    
+    })
+
     # Subset v2 data to year_range and chosen variable
     user_subset_v2 = reactive({
-      
+
       req(user_data_v2(),input$user_variable_v2)
-      
+
       usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3)
-      
+
       return(usr_ss2)
-    }) 
-    
-    
+    })
+
     year_range_cor = reactive({
       
-      yrc = extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath)
-      
-      return(yrc)
+      result <- tryCatch(
+        {
+          return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath))
+          return(yrc)
+        },
+        error = function(e) {
+          showModal(
+            # Add modal dialog for warning message
+            modalDialog(
+              title = "Error",
+              "There was an error in processing your uploaded data. 
+                  \nPlease check if the file has the correct format.",
+              easyClose = FALSE,
+              footer = tagList(modalButton("OK"))
+            ))
+          return(NULL)
+        }
+      )
+      return(result)
     })  
-    
     
     ### Generate ModE-RA data   
     
@@ -9168,10 +9182,25 @@ server <- function(input, output, session) {
       
       year_range_reg = reactive({
         
-        yrc = extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath)
-        
-        return(yrc)
-      })  
+        result <- tryCatch(
+          {
+            return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath))
+          },
+          error = function(e) {
+            showModal(
+              # Add modal dialog for warning message
+              modalDialog(
+                title = "Error",
+                "There was an error in processing your uploaded data. 
+                  \nPlease check if the file has the correct format.",
+                easyClose = FALSE,
+                footer = tagList(modalButton("OK"))
+              ))
+            return(NULL)
+          }
+        )
+        return(result)
+      }) 
       
       
       ### Generate ModE-RA data   
