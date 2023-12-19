@@ -1,20 +1,5 @@
 ### ClimeApp_beta ###
 
-# WDs for Project ----
-
-#Noémie
-#setwd("C:/Users/nw22d367/OneDrive - Universitaet Bern/ClimeApp_development")
-
-
-#Nik
-#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_GitHub/ClimeApp_development")
-
-#Richard:
-#Laptop/desktop:
-#setwd("C:/Users/Richard/OneDrive/ModE-RA Mapping/ClimeApp_development")
-#setwd("C:/Users/rw22z389/OneDrive/ModE-RA Mapping/ClimeApp_development")
-
-
 # Source for helpers ----
 source("helpers.R")
 
@@ -55,8 +40,23 @@ ui <- navbarPage(id = "nav1",
                        tags$style(type="text/css",
                                   ".shiny-output-error { visibility: hidden; }",
                                   ".shiny-output-error:before { visibility: hidden; }"
-                       )
-                       
+                       ),
+                       #Highlighted Buttons
+                       tags$style(HTML("
+                          .green-background {
+                            color: #d9b166;
+                            background-color: #094030 !important;
+                          }
+                          
+                          .green-background:hover {
+                            color: #d9b166 !important;
+                          }
+                          
+                          .green-background:focus {
+                            background-color: #094030 !important;
+                            color: #d9b166 !important;
+                          }
+                          ")),
                        ),
           theme = my_theme,
           position = c("fixed-top"),
@@ -103,8 +103,6 @@ ui <- navbarPage(id = "nav1",
             ),
             column(width = 12, br(), br()),
             
-            h5(helpText("Select a tab at the top to start plotting."))
-  
           ), width = 12),
           
           br(),
@@ -3435,24 +3433,35 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                  min = -90,
                                  max = 90),
                
-               br(), br(),
+               # #Enter Coordinates
+               # actionButton(inputId = "button_coord5",
+               #              label = "Update coordinates",
+               #              width = "200px"),
+               # 
+               # br(), br(),
+               
+               column(width = 12, fluidRow(
                
                #Add timeseries to graph
                actionButton(inputId = "add_monthly_ts",
                             label = "Add to graph",
-                            width = "200px"),
+                            width = "150px"),
+               
+               br(), br(),
                
                #Remove last timeseries
                actionButton(inputId = "remove_last_monthly_ts",
                             label = "Remove last TS",
-                            width = "200px"),
+                            width = "150px"),
+               
+               br(), br(),
                
                #Remove all timeseries
                actionButton(inputId = "remove_all_monthly_ts",
                             label = "Remove all TS",
-                            width = "200px"),
+                            width = "150px"),
                
-               
+               )),
                
              ), width = 12),
              
@@ -4870,10 +4879,69 @@ server <- function(input, output, session) {
       lonlat_vals(c(-90,-30,-60,15))
     })
     
-    observeEvent(input$button_coord, {
-      lonlat_vals(c(input$range_longitude,input$range_latitude))        
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude[1] == -180 && input$range_longitude[2] == 180 &&
+          input$range_latitude[1] == -90 && input$range_latitude[2] == 90) {
+        addClass("button_global", "green-background")
+      } else {
+        removeClass("button_global", "green-background")
+      }
     })
     
+    observe({
+      if (input$range_longitude[1] == -30 && input$range_longitude[2] == 40 &&
+          input$range_latitude[1] == 30 && input$range_latitude[2] == 75) {
+        addClass("button_europe", "green-background")
+      } else {
+        removeClass("button_europe", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == 25 && input$range_longitude[2] == 170 &&
+          input$range_latitude[1] == 5 && input$range_latitude[2] == 80) {
+        addClass("button_asia", "green-background")
+      } else {
+        removeClass("button_asia", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == 90 && input$range_longitude[2] == 180 &&
+          input$range_latitude[1] == -55 && input$range_latitude[2] == 20) {
+        addClass("button_oceania", "green-background")
+      } else {
+        removeClass("button_oceania", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == -25 && input$range_longitude[2] == 55 &&
+          input$range_latitude[1] == -40 && input$range_latitude[2] == 40) {
+        addClass("button_africa", "green-background")
+      } else {
+        removeClass("button_africa", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == -175 && input$range_longitude[2] == -10 &&
+          input$range_latitude[1] == 5 && input$range_latitude[2] == 85) {
+        addClass("button_n_america", "green-background")
+      } else {
+        removeClass("button_n_america", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == -90 && input$range_longitude[2] == -30 &&
+          input$range_latitude[1] == -60 && input$range_latitude[2] == 15) {
+        addClass("button_s_america", "green-background")
+      } else {
+        removeClass("button_s_america", "green-background")
+      }
+    })
 
     #Month Range Updater
     observe({
@@ -4988,11 +5056,1254 @@ server <- function(input, output, session) {
         showModal(
           # Add modal dialog for warning message
           modalDialog(
-            title = "Warning",
+            title = "Information",
             "Unrealistic values (such as negative precipitation) can occur if absolute values are used! Cf. “Usage Notes”",
-            easyClose = FALSE,
+            easyClose = TRUE,
             footer = tagList(modalButton("OK"))
           ))}
+    })
+    
+    #Updates Values outside of min / max (numericInput)
+    observe({
+      input_values <- input$point_size
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size2", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size2", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size3
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size3", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size3", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size3", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size_ts
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size_ts", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size_ts", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size_ts", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size_ts2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size_ts2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size_ts2", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size_ts2", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size_ts3
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size_ts3", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size_ts3", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size_ts3", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$percentage_sign_match
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "percentage_sign_match", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "percentage_sign_match", value = 1)
+            } else if (val > 100) {
+              updateNumericInput(inputId = "percentage_sign_match", value = 100)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$percentage_sign_match2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "percentage_sign_match2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "percentage_sign_match2", value = 1)
+            } else if (val > 100) {
+              updateNumericInput(inputId = "percentage_sign_match2", value = 100)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$percentage_sign_match2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "percentage_sign_match2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "percentage_sign_match2", value = 1)
+            } else if (val > 100) {
+              updateNumericInput(inputId = "percentage_sign_match2", value = 100)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$hidden_SD_ratio
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "hidden_SD_ratio", value = 0)
+        } else {
+          update_value <- function(val) {
+            if (val < 0) {
+              updateNumericInput(inputId = "hidden_SD_ratio", value = 0)
+            } else if (val > 1) {
+              updateNumericInput(inputId = "hidden_SD_ratio", value = 1)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$hidden_SD_ratio2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "hidden_SD_ratio2", value = 0)
+        } else {
+          update_value <- function(val) {
+            if (val < 0) {
+              updateNumericInput(inputId = "hidden_SD_ratio2", value = 0)
+            } else if (val > 1) {
+              updateNumericInput(inputId = "hidden_SD_ratio2", value = 1)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$year_moving_ts
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "year_moving_ts", value = 3)
+        } else {
+          update_value <- function(val) {
+            if (val < 3) {
+              updateNumericInput(inputId = "year_moving_ts", value = 3)
+            } else if (val > 30) {
+              updateNumericInput(inputId = "year_moving_ts", value = 30)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$year_moving_ts3
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "year_moving_ts3", value = 3)
+        } else {
+          update_value <- function(val) {
+            if (val < 3) {
+              updateNumericInput(inputId = "year_moving_ts3", value = 3)
+            } else if (val > 30) {
+              updateNumericInput(inputId = "year_moving_ts3", value = 30)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a2", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a2", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a2", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a3a
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a3a", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a3a", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a3a", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a3b
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a3b", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a3b", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a3b", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a4a
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a4a", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a4a", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a4a", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a4b
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a4b", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a4b", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a4b", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a5
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a5", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a5", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a5", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$prior_years2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "prior_years2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "prior_years2", value = 1)
+            } else if (val > 50) {
+              updateNumericInput(inputId = "prior_years2", value = 50)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$reg_resi_year
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "reg_resi_year", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "reg_resi_year", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "reg_resi_year", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    #Updates Values outside of min / max (numericRangeInput)
+    
+    observe({
+      range_values <- input$range_years
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "range_years", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "range_years", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "range_years", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "range_years", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_years3
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "range_years3", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "range_years3", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "range_years3", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "range_years3", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_years4
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "range_years4", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "range_years4", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "range_years4", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "range_years4", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period2", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period2", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period2", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period2", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period_v1
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_v1", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_v1", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_v1", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_v1", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period_v2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_v2", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_v2", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_v2", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_v2", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period_iv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_iv", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_iv", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_iv", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_iv", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period_dv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_dv", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_dv", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_dv", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_dv", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period5", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period5", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period5", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period5", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude2", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude2", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude2", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude2", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude_v1
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude_v2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude_iv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude_dv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude5", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude5", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude5", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude5", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude_v1
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude_v2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude_iv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude_dv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude5", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude5", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude5", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude5", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values_ts
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values_ts2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts2", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts2", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts2", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts2", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values_ts3
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts3", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts3", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts3", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts3", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values3
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values3", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values3", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values3", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values3", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values_ts5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts5", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts5", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts5", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts5", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values2", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values2", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values2", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values2", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values3
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values3", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values3", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values3", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values3", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values_ts
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values_ts2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts2", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts2", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts2", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts2", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values_ts3
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts3", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts3", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts3", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts3", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values_ts5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts5", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts5", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts5", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts5", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$fad_latitude_a5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$fad_longitude_a5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
     })
 
     ### Interactivity ----
@@ -5374,6 +6685,70 @@ server <- function(input, output, session) {
       lonlat_vals2(c(input$range_longitude2,input$range_latitude2))        
     })
     
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude2[1] == -180 && input$range_longitude2[2] == 180 &&
+          input$range_latitude2[1] == -90 && input$range_latitude2[2] == 90) {
+        addClass("button_global2", "green-background")
+      } else {
+        removeClass("button_global2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == -30 && input$range_longitude2[2] == 40 &&
+          input$range_latitude2[1] == 30 && input$range_latitude2[2] == 75) {
+        addClass("button_europe2", "green-background")
+      } else {
+        removeClass("button_europe2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == 25 && input$range_longitude2[2] == 170 &&
+          input$range_latitude2[1] == 5 && input$range_latitude2[2] == 80) {
+        addClass("button_asia2", "green-background")
+      } else {
+        removeClass("button_asia2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == 90 && input$range_longitude2[2] == 180 &&
+          input$range_latitude2[1] == -55 && input$range_latitude2[2] == 20) {
+        addClass("button_oceania2", "green-background")
+      } else {
+        removeClass("button_oceania2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == -25 && input$range_longitude2[2] == 55 &&
+          input$range_latitude2[1] == -40 && input$range_latitude2[2] == 40) {
+        addClass("button_africa2", "green-background")
+      } else {
+        removeClass("button_africa2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == -175 && input$range_longitude2[2] == -10 &&
+          input$range_latitude2[1] == 5 && input$range_latitude2[2] == 85) {
+        addClass("button_n_america2", "green-background")
+      } else {
+        removeClass("button_n_america2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == -90 && input$range_longitude2[2] == -30 &&
+          input$range_latitude2[1] == -60 && input$range_latitude2[2] == 15) {
+        addClass("button_s_america2", "green-background")
+      } else {
+        removeClass("button_s_america2", "green-background")
+      }
+    })
+    
     #Month Range Updater
     observe({
       if (input$season_selected2 == "Annual"){
@@ -5474,9 +6849,9 @@ server <- function(input, output, session) {
         showModal(
           # Add modal dialog for warning message
           modalDialog(
-            title = "Warning",
+            title = "Information",
             "Unrealistic values (such as negative precipitation) can occur if absolute values are used! Cf. “Usage Notes”",
-            easyClose = FALSE,
+            easyClose = TRUE,
             footer = tagList(modalButton("OK"))
           ))}
     })
@@ -6042,6 +7417,70 @@ server <- function(input, output, session) {
       lonlat_vals_v1(c(input$range_longitude_v1,input$range_latitude_v1))        
     })
     
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude_v1[1] == -180 && input$range_longitude_v1[2] == 180 &&
+          input$range_latitude_v1[1] == -90 && input$range_latitude_v1[2] == 90) {
+        addClass("button_global_v1", "green-background")
+      } else {
+        removeClass("button_global_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == -30 && input$range_longitude_v1[2] == 40 &&
+          input$range_latitude_v1[1] == 30 && input$range_latitude_v1[2] == 75) {
+        addClass("button_europe_v1", "green-background")
+      } else {
+        removeClass("button_europe_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == 25 && input$range_longitude_v1[2] == 170 &&
+          input$range_latitude_v1[1] == 5 && input$range_latitude_v1[2] == 80) {
+        addClass("button_asia_v1", "green-background")
+      } else {
+        removeClass("button_asia_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == 90 && input$range_longitude_v1[2] == 180 &&
+          input$range_latitude_v1[1] == -55 && input$range_latitude_v1[2] == 20) {
+        addClass("button_oceania_v1", "green-background")
+      } else {
+        removeClass("button_oceania_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == -25 && input$range_longitude_v1[2] == 55 &&
+          input$range_latitude_v1[1] == -40 && input$range_latitude_v1[2] == 40) {
+        addClass("button_africa_v1", "green-background")
+      } else {
+        removeClass("button_africa_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == -175 && input$range_longitude_v1[2] == -10 &&
+          input$range_latitude_v1[1] == 5 && input$range_latitude_v1[2] == 85) {
+        addClass("button_n_america_v1", "green-background")
+      } else {
+        removeClass("button_n_america_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == -90 && input$range_longitude_v1[2] == -30 &&
+          input$range_latitude_v1[1] == -60 && input$range_latitude_v1[2] == 15) {
+        addClass("button_s_america_v1", "green-background")
+      } else {
+        removeClass("button_s_america_v1", "green-background")
+      }
+    })
+    
     # Set iniital lon/lat values and update on button press
     lonlat_vals_v2 = reactiveVal(c(initial_lon_values,initial_lat_values))
     
@@ -6160,6 +7599,70 @@ server <- function(input, output, session) {
     
     observeEvent(input$button_coord_v2, {
       lonlat_vals_v2(c(input$range_longitude_v2,input$range_latitude_v2))        
+    })
+    
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude_v2[1] == -180 && input$range_longitude_v2[2] == 180 &&
+          input$range_latitude_v2[1] == -90 && input$range_latitude_v2[2] == 90) {
+        addClass("button_global_v2", "green-background")
+      } else {
+        removeClass("button_global_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == -30 && input$range_longitude_v2[2] == 40 &&
+          input$range_latitude_v2[1] == 30 && input$range_latitude_v2[2] == 75) {
+        addClass("button_europe_v2", "green-background")
+      } else {
+        removeClass("button_europe_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == 25 && input$range_longitude_v2[2] == 170 &&
+          input$range_latitude_v2[1] == 5 && input$range_latitude_v2[2] == 80) {
+        addClass("button_asia_v2", "green-background")
+      } else {
+        removeClass("button_asia_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == 90 && input$range_longitude_v2[2] == 180 &&
+          input$range_latitude_v2[1] == -55 && input$range_latitude_v2[2] == 20) {
+        addClass("button_oceania_v2", "green-background")
+      } else {
+        removeClass("button_oceania_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == -25 && input$range_longitude_v2[2] == 55 &&
+          input$range_latitude_v2[1] == -40 && input$range_latitude_v2[2] == 40) {
+        addClass("button_africa_v2", "green-background")
+      } else {
+        removeClass("button_africa_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == -175 && input$range_longitude_v2[2] == -10 &&
+          input$range_latitude_v2[1] == 5 && input$range_latitude_v2[2] == 85) {
+        addClass("button_n_america_v2", "green-background")
+      } else {
+        removeClass("button_n_america_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == -90 && input$range_longitude_v2[2] == -30 &&
+          input$range_latitude_v2[1] == -60 && input$range_latitude_v2[2] == 15) {
+        addClass("button_s_america_v2", "green-background")
+      } else {
+        removeClass("button_s_america_v2", "green-background")
+      }
     })
     
     # Correlation axis values updater 
@@ -6756,6 +8259,70 @@ server <- function(input, output, session) {
       lonlat_vals_iv(c(input$range_longitude_iv,input$range_latitude_iv))        
     })
     
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude_iv[1] == -180 && input$range_longitude_iv[2] == 180 &&
+          input$range_latitude_iv[1] == -90 && input$range_latitude_iv[2] == 90) {
+        addClass("button_global_iv", "green-background")
+      } else {
+        removeClass("button_global_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == -30 && input$range_longitude_iv[2] == 40 &&
+          input$range_latitude_iv[1] == 30 && input$range_latitude_iv[2] == 75) {
+        addClass("button_europe_iv", "green-background")
+      } else {
+        removeClass("button_europe_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == 25 && input$range_longitude_iv[2] == 170 &&
+          input$range_latitude_iv[1] == 5 && input$range_latitude_iv[2] == 80) {
+        addClass("button_asia_iv", "green-background")
+      } else {
+        removeClass("button_asia_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == 90 && input$range_longitude_iv[2] == 180 &&
+          input$range_latitude_iv[1] == -55 && input$range_latitude_iv[2] == 20) {
+        addClass("button_oceania_iv", "green-background")
+      } else {
+        removeClass("button_oceania_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == -25 && input$range_longitude_iv[2] == 55 &&
+          input$range_latitude_iv[1] == -40 && input$range_latitude_iv[2] == 40) {
+        addClass("button_africa_iv", "green-background")
+      } else {
+        removeClass("button_africa_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == -175 && input$range_longitude_iv[2] == -10 &&
+          input$range_latitude_iv[1] == 5 && input$range_latitude_iv[2] == 85) {
+        addClass("button_n_america_iv", "green-background")
+      } else {
+        removeClass("button_n_america_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == -90 && input$range_longitude_iv[2] == -30 &&
+          input$range_latitude_iv[1] == -60 && input$range_latitude_iv[2] == 15) {
+        addClass("button_s_america_iv", "green-background")
+      } else {
+        removeClass("button_s_america_iv", "green-background")
+      }
+    })
+    
     # Set iniital lon/lat values and update on button press
     lonlat_vals_dv = reactiveVal(c(initial_lon_values,initial_lat_values))
     
@@ -6874,6 +8441,70 @@ server <- function(input, output, session) {
     
     observeEvent(input$button_coord_dv, {
       lonlat_vals_dv(c(input$range_longitude_dv,input$range_latitude_dv))        
+    })
+    
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude_dv[1] == -180 && input$range_longitude_dv[2] == 180 &&
+          input$range_latitude_dv[1] == -90 && input$range_latitude_dv[2] == 90) {
+        addClass("button_global_dv", "green-background")
+      } else {
+        removeClass("button_global_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == -30 && input$range_longitude_dv[2] == 40 &&
+          input$range_latitude_dv[1] == 30 && input$range_latitude_dv[2] == 75) {
+        addClass("button_europe_dv", "green-background")
+      } else {
+        removeClass("button_europe_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == 25 && input$range_longitude_dv[2] == 170 &&
+          input$range_latitude_dv[1] == 5 && input$range_latitude_dv[2] == 80) {
+        addClass("button_asia_dv", "green-background")
+      } else {
+        removeClass("button_asia_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == 90 && input$range_longitude_dv[2] == 180 &&
+          input$range_latitude_dv[1] == -55 && input$range_latitude_dv[2] == 20) {
+        addClass("button_oceania_dv", "green-background")
+      } else {
+        removeClass("button_oceania_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == -25 && input$range_longitude_dv[2] == 55 &&
+          input$range_latitude_dv[1] == -40 && input$range_latitude_dv[2] == 40) {
+        addClass("button_africa_dv", "green-background")
+      } else {
+        removeClass("button_africa_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == -175 && input$range_longitude_dv[2] == -10 &&
+          input$range_latitude_dv[1] == 5 && input$range_latitude_dv[2] == 85) {
+        addClass("button_n_america_dv", "green-background")
+      } else {
+        removeClass("button_n_america_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == -90 && input$range_longitude_dv[2] == -30 &&
+          input$range_latitude_dv[1] == -60 && input$range_latitude_dv[2] == 15) {
+        addClass("button_s_america_dv", "green-background")
+      } else {
+        removeClass("button_s_america_dv", "green-background")
+      }
     })
     
     ### Interactivity ----
@@ -7030,6 +8661,9 @@ server <- function(input, output, session) {
     
     ### Input updaters ----
     
+    # Set iniital lon/lat values on startup
+    lonlat_vals5 = reactiveVal(c(initial_lon_values,initial_lat_values))
+    
     # Continent buttons - updates range inputs and lonlat_values
     observeEvent(input$button_global5,{
       updateNumericRangeInput(
@@ -7129,6 +8763,73 @@ server <- function(input, output, session) {
         value = c(-60,15))
     })
     
+    # observeEvent(input$button_coord5, {
+    #   lonlat_vals5(c(input$range_longitude5,input$range_latitude5))        
+    # })
+    
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude5[1] == -180 && input$range_longitude5[2] == 180 &&
+          input$range_latitude5[1] == -90 && input$range_latitude5[2] == 90) {
+        addClass("button_global5", "green-background")
+      } else {
+        removeClass("button_global5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == -30 && input$range_longitude5[2] == 40 &&
+          input$range_latitude5[1] == 30 && input$range_latitude5[2] == 75) {
+        addClass("button_europe5", "green-background")
+      } else {
+        removeClass("button_europe5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == 25 && input$range_longitude5[2] == 170 &&
+          input$range_latitude5[1] == 5 && input$range_latitude5[2] == 80) {
+        addClass("button_asia5", "green-background")
+      } else {
+        removeClass("button_asia5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == 90 && input$range_longitude5[2] == 180 &&
+          input$range_latitude5[1] == -55 && input$range_latitude5[2] == 20) {
+        addClass("button_oceania5", "green-background")
+      } else {
+        removeClass("button_oceania5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == -25 && input$range_longitude5[2] == 55 &&
+          input$range_latitude5[1] == -40 && input$range_latitude5[2] == 40) {
+        addClass("button_africa5", "green-background")
+      } else {
+        removeClass("button_africa5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == -175 && input$range_longitude5[2] == -10 &&
+          input$range_latitude5[1] == 5 && input$range_latitude5[2] == 85) {
+        addClass("button_n_america5", "green-background")
+      } else {
+        removeClass("button_n_america5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == -90 && input$range_longitude5[2] == -30 &&
+          input$range_latitude5[1] == -60 && input$range_latitude5[2] == 15) {
+        addClass("button_s_america5", "green-background")
+      } else {
+        removeClass("button_s_america5", "green-background")
+      }
+    })
     
     
     ### Interactivity ----
@@ -9824,8 +11525,6 @@ server <- function(input, output, session) {
       paging = TRUE,
       pagingType = "numbers"
     ))
-    
-    
     
     
     # Close Server    

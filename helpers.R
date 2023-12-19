@@ -388,6 +388,9 @@ load_ModE_data = function(dataset,variable){
       data_output = ncvar_get(data_nc,varid="geopoth")/100
     }
     
+    # remove the first year (1421)
+    data_output = data_output[,,13:7080]
+    
     nc_close(data_nc)
   }
   # ModE-RAclim
@@ -1624,6 +1627,7 @@ add_correlation_timeseries = function(data_input1,data_input2,variable1,variable
   plot(x,y1,type = "l", col = v_col1, lwd=2, xaxs="i", axes = FALSE, bty = "n", xlab = "", ylab = "")
   if ("Moving_Average" %in% cnames){
     lines(x,data_input1$Moving_Average,lwd = 3.5,col = "black")
+    lines(x,data_input1$Moving_Average,lwd = 2,col = v_col1)
   }
   
   # Needed to merge the plots
@@ -1633,6 +1637,7 @@ add_correlation_timeseries = function(data_input1,data_input2,variable1,variable
   plot(x,y2,type = "l", col = v_col2, lwd=2, xaxs="i", axes = FALSE, bty = "n", xlab = "", ylab = "")
   if ("Moving_Average" %in% cnames){
     lines(x,data_input2$Moving_Average,lwd = 3.5,col = "black")
+    lines(x,data_input2$Moving_Average,lwd = 2,col = v_col2)
   }
   # Reset original graphical parameters
   par(old.par)
@@ -1727,18 +1732,36 @@ add_TS_key = function(key_position,data_highlights,data_lines,variable,month_ran
     }
     label = paste(title_months,secondary_variable)
     # color
-    if (secondary_variable == "Temperature"){
-      color = "red3" 
-    } else if (secondary_variable == "Precipitation"){
-      color = "turquoise4"
-    } else if (secondary_variable == "SLP"){
-      color = "purple4"
-    } else if (secondary_variable == "Z500"){
-      color = "green4"
+    if (variable == secondary_variable){
+      
+      if (secondary_variable == "Temperature"){
+        color = "red2" 
+      } else if (secondary_variable == "Precipitation"){
+        color = "turquoise2"
+      } else if (secondary_variable == "SLP"){
+        color = "purple2"
+      } else if (secondary_variable == "Z500"){
+        color = "green2"
+      } else {
+        color = "saddlebrown"
+          label = secondary_variable
+      }
+
     } else {
-      color = "saddlebrown"
-      label = secondary_variable
+      if (secondary_variable == "Temperature"){
+        color = "red3" 
+      } else if (secondary_variable == "Precipitation"){
+        color = "turquoise4"
+      } else if (secondary_variable == "SLP"){
+        color = "purple4"
+      } else if (secondary_variable == "Z500"){
+        color = "green4"
+      } else {
+        color = "saddlebrown"
+        label = secondary_variable
+      }
     }
+
     
     # line parameters
     lwd = 2 ; lty = "solid"
@@ -1757,7 +1780,7 @@ add_TS_key = function(key_position,data_highlights,data_lines,variable,month_ran
     label = paste(moving_average_range,"yr Moving Ave.",sep = "")
     color = "black"
     # line parameters
-    lwd = 3 ; lty = "solid"
+    lwd = 2 ; lty = "solid"
     # box parameters
     fill = NA; density = 0 ; border = "grey90"
     # alignment parameters
