@@ -30,6 +30,8 @@ library(shinylogs)
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
 
+#reset
+
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
 
