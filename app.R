@@ -1,5 +1,23 @@
 ### ClimeApp_beta ###
 
+<<<<<<< HEAD
+=======
+# WDs for Project ----
+
+#Noémie
+setwd("C:/Users/nw22d367/OneDrive - Universitaet Bern/ClimeApp_development")
+
+
+#Nik
+#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_GitHub/ClimeApp_development")
+
+#Richard:
+#Laptop/desktop:
+#setwd("C:/Users/Richard/OneDrive/ModE-RA Mapping/ClimeApp_development")
+#setwd("C:/Users/rw22z389/OneDrive/ModE-RA Mapping/ClimeApp_development")
+
+
+>>>>>>> parent of 0c119dd (oops, forgot to comment out setwd)
 # Source for helpers ----
 source("helpers.R")
 
