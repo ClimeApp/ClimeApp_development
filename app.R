@@ -56,8 +56,23 @@ ui <- navbarPage(id = "nav1",
                        tags$style(type="text/css",
                                   ".shiny-output-error { visibility: hidden; }",
                                   ".shiny-output-error:before { visibility: hidden; }"
-                       )
-                       
+                       ),
+                       #Highlighted Buttons
+                       tags$style(HTML("
+                          .green-background {
+                            color: #d9b166;
+                            background-color: #094030 !important;
+                          }
+                          
+                          .green-background:hover {
+                            color: #d9b166 !important;
+                          }
+                          
+                          .green-background:focus {
+                            background-color: #094030 !important;
+                            color: #d9b166 !important;
+                          }
+                          ")),
                        ),
           theme = my_theme,
           position = c("fixed-top"),
@@ -104,8 +119,6 @@ ui <- navbarPage(id = "nav1",
             ),
             column(width = 12, br(), br()),
             
-            h5(helpText("Select a tab at the top to start plotting."))
-  
           ), width = 12),
           
           br(),
@@ -193,12 +206,27 @@ ui <- navbarPage(id = "nav1",
                                 selected = "Temperature"),
             
                     #Choose your year of interest        
+                    hidden(
                     numericRangeInput(inputId    = "range_years",
                                        label     = "Select the range of years (1422-2008):",
                                        value     = c(1422,2008),
                                        separator = " to ",
                                        min       = 1422,
-                                       max       = 2008),
+                                       max       = 2008)),
+                    
+                    #Choose single year
+                    column(12,
+                    checkboxInput(inputId = "single_year",
+                                  label   = "Select single year",
+                                  value   = FALSE)),
+                    
+                    
+                    hidden(
+                    numericInput(inputId   = "range_years_sg",
+                                 label     = "Select the single year:",
+                                 value     = NA,
+                                 min       = 1422,
+                                 max       = 2008)),
             
                     #Choose Season, Year or Months
                     radioButtons(inputId  = "season_selected",
@@ -216,13 +244,28 @@ ui <- navbarPage(id = "nav1",
                                               selected = c("January", "December")),
                     )),      
                             
-                    #Choose reference period  
+                    #Choose reference period
+                    hidden(
                     numericRangeInput(inputId = "ref_period",
                                       label      = "Select the reference period:",
                                       value      = c(1961,1990),
                                       separator  = " to ",
                                       min        = 1422,
-                                       max        = 2008)
+                                       max        = 2008)),
+                    
+                    #Choose single ref year
+                    column(12,
+                           checkboxInput(inputId = "ref_single_year",
+                                         label   = "Select single year",
+                                         value   = FALSE)),
+                    
+                    
+                    hidden(
+                      numericInput(inputId   = "ref_period_sg",
+                                   label     = "Select the single year:",
+                                   value     = NA,
+                                   min       = 1422,
+                                   max       = 2008)),
     
                     ), width = 12), br(),
             
@@ -980,12 +1023,28 @@ ui <- navbarPage(id = "nav1",
                      #Choose reference period for either Fixed Anomaly or enter X years (1-50) for Anomalies compared to X years prior (Hidden objects)      
                      shinyjs::hidden(
                        div(id = "optional2a",
+                           hidden(
                            numericRangeInput(inputId = "ref_period2",
                                              label      = "Reference period:",
                                              value      = c(1961,1990),
                                              separator  = " to ",
                                              min        = 1422,
-                                             max        = 2008))),
+                                             max        = 2008)),
+                       
+                       #Choose single ref year
+                       column(12,
+                              checkboxInput(inputId = "ref_single_year2",
+                                            label   = "Select single year",
+                                            value   = FALSE)),
+                       
+                       
+                       hidden(
+                         numericInput(inputId   = "ref_period_sg2",
+                                      label     = "Select the single year:",
+                                      value     = NA,
+                                      min       = 1422,
+                                      max       = 2008)),
+                       )),
 
                      shinyjs::hidden(
                        div(id = "optional2b",
@@ -1779,12 +1838,28 @@ ui <- navbarPage(id = "nav1",
                    #Choose reference period if Anomaly values are chosen (Hidden object)      
                    shinyjs::hidden(
                      div(id = "optional_v1",
+                         hidden(
                          numericRangeInput(inputId = "ref_period_v1",
                                            label      = "Reference period:",
                                            value      = c(1961,1990),
                                            separator  = " to ",
                                            min        = 1422,
-                                           max        = 2008)
+                                           max        = 2008)),
+                         
+                         #Choose single ref year
+                         column(12,
+                                checkboxInput(inputId = "ref_single_year_v1",
+                                              label   = "Select single year",
+                                              value   = FALSE)),
+                         
+                         
+                         hidden(
+                           numericInput(inputId   = "ref_period_sg_v1",
+                                        label     = "Select the single year:",
+                                        value     = NA,
+                                        min       = 1422,
+                                        max       = 2008)),
+                         
                          )),
                    
                    #Choose Coordinates input 
@@ -1884,13 +1959,29 @@ ui <- navbarPage(id = "nav1",
                    ### Second Sidebar panel (Year range) ----
                    
                    sidebarPanel(fluidRow(
-                     #Choose your year of interest        
+                     #Choose your year of interest
+                     hidden(
                      numericRangeInput(inputId    = "range_years3",
                                        label     = "Select the range of years (1422-2008):",
                                        value     = c(1900,2008),
                                        separator = " to ",
                                        min       = 1422,
-                                       max       = 2008),
+                                       max       = 2008)),
+                     
+                     #Choose single year
+                     column(12,
+                            checkboxInput(inputId = "single_year3",
+                                          label   = "Select single year",
+                                          value   = FALSE)),
+                     
+                     
+                     hidden(
+                       numericInput(inputId   = "range_years_sg3",
+                                    label     = "Select the single year:",
+                                    value     = NA,
+                                    min       = 1422,
+                                    max       = 2008)),
+                     
                    ), width = 12),
                    
                    br(),
@@ -1983,12 +2074,30 @@ ui <- navbarPage(id = "nav1",
                      #Choose reference period if Anomaly values are chosen (Hidden object)      
                      shinyjs::hidden(
                        div(id = "optional_v2",
+                           hidden(
                            numericRangeInput(inputId = "ref_period_v2",
                                              label      = "Reference period:",
                                              value      = c(1961,1990),
                                              separator  = " to ",
                                              min        = 1422,
-                                             max        = 2008))),
+                                             max        = 2008)),
+                           
+                           #Choose single ref year
+                           column(12,
+                                  checkboxInput(inputId = "ref_single_year_v2",
+                                                label   = "Select single year",
+                                                value   = FALSE)),
+                           
+                           
+                           hidden(
+                             numericInput(inputId   = "ref_period_sg_v2",
+                                          label     = "Select the single year:",
+                                          value     = NA,
+                                          min       = 1422,
+                                          max       = 2008)),
+                           
+                           
+                           )),
                      
                      #Choose Coordinates input 
                      radioButtons(inputId  = "coordinates_type_v2",
@@ -2773,12 +2882,28 @@ tabPanel("Regression", id = "tab4",
                      #Choose reference period if Anomaly values are chosen (Hidden object)      
                      shinyjs::hidden(
                        div(id = "optional_iv",
+                           hidden(
                            numericRangeInput(inputId = "ref_period_iv",
                                              label      = "Reference period:",
                                              value      = c(1961,1990),
                                              separator  = " to ",
                                              min        = 1422,
-                                             max        = 2008)
+                                             max        = 2008)),
+                           
+                           #Choose single ref year
+                           column(12,
+                                  checkboxInput(inputId = "ref_single_year_iv",
+                                                label   = "Select single year",
+                                                value   = FALSE)),
+                           
+                           
+                           hidden(
+                             numericInput(inputId   = "ref_period_sg_iv",
+                                          label     = "Select the single year:",
+                                          value     = NA,
+                                          min       = 1422,
+                                          max       = 2008)),
+                           
                        )),
                      
                      #Choose Coordinates input 
@@ -2878,13 +3003,29 @@ tabPanel("Regression", id = "tab4",
              ### Second Sidebar panel (Year range) ----
              
              sidebarPanel(fluidRow(
-               #Choose your year of interest        
+               #Choose your year of interest   
+               hidden(
                numericRangeInput(inputId    = "range_years4",
                                  label     = "Select the range of years (1422-2008):",
                                  value     = c(1900,2000),
                                  separator = " to ",
                                  min       = 1422,
-                                 max       = 2008),
+                                 max       = 2008)),
+               
+               #Choose single year
+               column(12,
+                      checkboxInput(inputId = "single_year4",
+                                    label   = "Select single year",
+                                    value   = FALSE)),
+               
+               
+               hidden(
+                 numericInput(inputId   = "range_years_sg4",
+                              label     = "Select the single year:",
+                              value     = NA,
+                              min       = 1422,
+                              max       = 2008)),
+               
              ), width = 12),
              
              br(),
@@ -2973,12 +3114,30 @@ tabPanel("Regression", id = "tab4",
                      #Choose reference period if Anomaly values are chosen (Hidden object)      
                      shinyjs::hidden(
                        div(id = "optional_dv",
+                           
+                           hidden(
                            numericRangeInput(inputId = "ref_period_dv",
                                              label      = "Reference period:",
                                              value      = c(1961,1990),
                                              separator  = " to ",
                                              min        = 1422,
-                                             max        = 2008))),
+                                             max        = 2008)),
+                           
+                           #Choose single ref year
+                           column(12,
+                                  checkboxInput(inputId = "ref_single_year_dv",
+                                                label   = "Select single year",
+                                                value   = FALSE)),
+                           
+                           
+                           hidden(
+                             numericInput(inputId   = "ref_period_sg_dv",
+                                          label     = "Select the single year:",
+                                          value     = NA,
+                                          min       = 1422,
+                                          max       = 2008)),
+                           
+                           )),
                      
                      #Choose Coordinates input 
                      radioButtons(inputId  = "coordinates_type_dv",
@@ -3347,12 +3506,27 @@ tabPanel("Monthly Timeseries", id = "tab5",
                #Choose reference period if Anomaly values are chosen (Hidden object)      
                shinyjs::hidden(
                  div(id = "optional5",
+                     hidden(
                      numericRangeInput(inputId = "ref_period5",
                                        label      = "Reference period:",
                                        value      = c(1961,1990),
                                        separator  = " to ",
                                        min        = 1422,
-                                       max        = 2000)
+                                       max        = 2000)),
+                     
+                     #Choose single ref year
+                     column(12,
+                            checkboxInput(inputId = "ref_single_year5",
+                                          label   = "Select single year",
+                                          value   = FALSE)),
+                     
+                     
+                     hidden(
+                       numericInput(inputId   = "ref_period_sg5",
+                                    label     = "Select the single year:",
+                                    value     = NA,
+                                    min       = 1422,
+                                    max       = 2008)),
                  )),
                
                #Choose a Type of plot: Average or Individual years
@@ -3442,24 +3616,35 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                  min = -90,
                                  max = 90),
                
-               br(), br(),
+               # #Enter Coordinates
+               # actionButton(inputId = "button_coord5",
+               #              label = "Update coordinates",
+               #              width = "200px"),
+               # 
+               # br(), br(),
+               
+               column(width = 12, fluidRow(
                
                #Add timeseries to graph
                actionButton(inputId = "add_monthly_ts",
                             label = "Add to graph",
-                            width = "200px"),
+                            width = "150px"),
+               
+               br(), br(),
                
                #Remove last timeseries
                actionButton(inputId = "remove_last_monthly_ts",
                             label = "Remove last TS",
-                            width = "200px"),
+                            width = "150px"),
+               
+               br(), br(),
                
                #Remove all timeseries
                actionButton(inputId = "remove_all_monthly_ts",
                             label = "Remove all TS",
-                            width = "200px"),
+                            width = "150px"),
                
-               
+               )),
                
              ), width = 12),
              
@@ -4754,6 +4939,170 @@ server <- function(input, output, session) {
                     selector = NULL,
                     condition = input$feature_ts5 == "Line",
                     asis = FALSE)
+    
+    #Toggle Single Year UI
+    
+    shinyjs::toggle(id = "range_years_sg",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$single_year == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "range_years",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$single_year == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year2 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year2 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg_v1",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_v1 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_v1",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_v1 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg_v2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_v2 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_v2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_v2 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "range_years_sg3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$single_year3 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "range_years3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$single_year3 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg_iv",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_iv == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_iv",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_iv == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "range_years_sg4",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$single_year4 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "range_years4",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$single_year4 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg_dv",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_dv == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_dv",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_dv == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg5",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year5 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period5",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year5 == FALSE,
+                    asis = FALSE)
+    
+    
   
   })
   
@@ -4881,6 +5230,69 @@ server <- function(input, output, session) {
       lonlat_vals(c(input$range_longitude,input$range_latitude))        
     })
     
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude[1] == -180 && input$range_longitude[2] == 180 &&
+          input$range_latitude[1] == -90 && input$range_latitude[2] == 90) {
+        addClass("button_global", "green-background")
+      } else {
+        removeClass("button_global", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == -30 && input$range_longitude[2] == 40 &&
+          input$range_latitude[1] == 30 && input$range_latitude[2] == 75) {
+        addClass("button_europe", "green-background")
+      } else {
+        removeClass("button_europe", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == 25 && input$range_longitude[2] == 170 &&
+          input$range_latitude[1] == 5 && input$range_latitude[2] == 80) {
+        addClass("button_asia", "green-background")
+      } else {
+        removeClass("button_asia", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == 90 && input$range_longitude[2] == 180 &&
+          input$range_latitude[1] == -55 && input$range_latitude[2] == 20) {
+        addClass("button_oceania", "green-background")
+      } else {
+        removeClass("button_oceania", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == -25 && input$range_longitude[2] == 55 &&
+          input$range_latitude[1] == -40 && input$range_latitude[2] == 40) {
+        addClass("button_africa", "green-background")
+      } else {
+        removeClass("button_africa", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == -175 && input$range_longitude[2] == -10 &&
+          input$range_latitude[1] == 5 && input$range_latitude[2] == 85) {
+        addClass("button_n_america", "green-background")
+      } else {
+        removeClass("button_n_america", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == -90 && input$range_longitude[2] == -30 &&
+          input$range_latitude[1] == -60 && input$range_latitude[2] == 15) {
+        addClass("button_s_america", "green-background")
+      } else {
+        removeClass("button_s_america", "green-background")
+      }
+    })
 
     #Month Range Updater
     observe({
@@ -4995,13 +5407,13 @@ server <- function(input, output, session) {
         showModal(
           # Add modal dialog for warning message
           modalDialog(
-            title = "Warning",
+            title = "Information",
             "Unrealistic values (such as negative precipitation) can occur if absolute values are used! Cf. “Usage Notes”",
-            easyClose = FALSE,
+            easyClose = TRUE,
             footer = tagList(modalButton("OK"))
           ))}
     })
-
+    
     ### Interactivity ----
     
     # Input geo-coded locations
@@ -5381,6 +5793,70 @@ server <- function(input, output, session) {
       lonlat_vals2(c(input$range_longitude2,input$range_latitude2))        
     })
     
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude2[1] == -180 && input$range_longitude2[2] == 180 &&
+          input$range_latitude2[1] == -90 && input$range_latitude2[2] == 90) {
+        addClass("button_global2", "green-background")
+      } else {
+        removeClass("button_global2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == -30 && input$range_longitude2[2] == 40 &&
+          input$range_latitude2[1] == 30 && input$range_latitude2[2] == 75) {
+        addClass("button_europe2", "green-background")
+      } else {
+        removeClass("button_europe2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == 25 && input$range_longitude2[2] == 170 &&
+          input$range_latitude2[1] == 5 && input$range_latitude2[2] == 80) {
+        addClass("button_asia2", "green-background")
+      } else {
+        removeClass("button_asia2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == 90 && input$range_longitude2[2] == 180 &&
+          input$range_latitude2[1] == -55 && input$range_latitude2[2] == 20) {
+        addClass("button_oceania2", "green-background")
+      } else {
+        removeClass("button_oceania2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == -25 && input$range_longitude2[2] == 55 &&
+          input$range_latitude2[1] == -40 && input$range_latitude2[2] == 40) {
+        addClass("button_africa2", "green-background")
+      } else {
+        removeClass("button_africa2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == -175 && input$range_longitude2[2] == -10 &&
+          input$range_latitude2[1] == 5 && input$range_latitude2[2] == 85) {
+        addClass("button_n_america2", "green-background")
+      } else {
+        removeClass("button_n_america2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == -90 && input$range_longitude2[2] == -30 &&
+          input$range_latitude2[1] == -60 && input$range_latitude2[2] == 15) {
+        addClass("button_s_america2", "green-background")
+      } else {
+        removeClass("button_s_america2", "green-background")
+      }
+    })
+    
     #Month Range Updater
     observe({
       if (input$season_selected2 == "Annual"){
@@ -5481,9 +5957,9 @@ server <- function(input, output, session) {
         showModal(
           # Add modal dialog for warning message
           modalDialog(
-            title = "Warning",
+            title = "Information",
             "Unrealistic values (such as negative precipitation) can occur if absolute values are used! Cf. “Usage Notes”",
-            easyClose = FALSE,
+            easyClose = TRUE,
             footer = tagList(modalButton("OK"))
           ))}
     })
@@ -6084,6 +6560,70 @@ server <- function(input, output, session) {
       lonlat_vals_v1(c(input$range_longitude_v1,input$range_latitude_v1))        
     })
     
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude_v1[1] == -180 && input$range_longitude_v1[2] == 180 &&
+          input$range_latitude_v1[1] == -90 && input$range_latitude_v1[2] == 90) {
+        addClass("button_global_v1", "green-background")
+      } else {
+        removeClass("button_global_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == -30 && input$range_longitude_v1[2] == 40 &&
+          input$range_latitude_v1[1] == 30 && input$range_latitude_v1[2] == 75) {
+        addClass("button_europe_v1", "green-background")
+      } else {
+        removeClass("button_europe_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == 25 && input$range_longitude_v1[2] == 170 &&
+          input$range_latitude_v1[1] == 5 && input$range_latitude_v1[2] == 80) {
+        addClass("button_asia_v1", "green-background")
+      } else {
+        removeClass("button_asia_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == 90 && input$range_longitude_v1[2] == 180 &&
+          input$range_latitude_v1[1] == -55 && input$range_latitude_v1[2] == 20) {
+        addClass("button_oceania_v1", "green-background")
+      } else {
+        removeClass("button_oceania_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == -25 && input$range_longitude_v1[2] == 55 &&
+          input$range_latitude_v1[1] == -40 && input$range_latitude_v1[2] == 40) {
+        addClass("button_africa_v1", "green-background")
+      } else {
+        removeClass("button_africa_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == -175 && input$range_longitude_v1[2] == -10 &&
+          input$range_latitude_v1[1] == 5 && input$range_latitude_v1[2] == 85) {
+        addClass("button_n_america_v1", "green-background")
+      } else {
+        removeClass("button_n_america_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == -90 && input$range_longitude_v1[2] == -30 &&
+          input$range_latitude_v1[1] == -60 && input$range_latitude_v1[2] == 15) {
+        addClass("button_s_america_v1", "green-background")
+      } else {
+        removeClass("button_s_america_v1", "green-background")
+      }
+    })
+    
     # Set iniital lon/lat values and update on button press
     lonlat_vals_v2 = reactiveVal(c(initial_lon_values,initial_lat_values))
     
@@ -6202,6 +6742,70 @@ server <- function(input, output, session) {
     
     observeEvent(input$button_coord_v2, {
       lonlat_vals_v2(c(input$range_longitude_v2,input$range_latitude_v2))        
+    })
+    
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude_v2[1] == -180 && input$range_longitude_v2[2] == 180 &&
+          input$range_latitude_v2[1] == -90 && input$range_latitude_v2[2] == 90) {
+        addClass("button_global_v2", "green-background")
+      } else {
+        removeClass("button_global_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == -30 && input$range_longitude_v2[2] == 40 &&
+          input$range_latitude_v2[1] == 30 && input$range_latitude_v2[2] == 75) {
+        addClass("button_europe_v2", "green-background")
+      } else {
+        removeClass("button_europe_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == 25 && input$range_longitude_v2[2] == 170 &&
+          input$range_latitude_v2[1] == 5 && input$range_latitude_v2[2] == 80) {
+        addClass("button_asia_v2", "green-background")
+      } else {
+        removeClass("button_asia_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == 90 && input$range_longitude_v2[2] == 180 &&
+          input$range_latitude_v2[1] == -55 && input$range_latitude_v2[2] == 20) {
+        addClass("button_oceania_v2", "green-background")
+      } else {
+        removeClass("button_oceania_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == -25 && input$range_longitude_v2[2] == 55 &&
+          input$range_latitude_v2[1] == -40 && input$range_latitude_v2[2] == 40) {
+        addClass("button_africa_v2", "green-background")
+      } else {
+        removeClass("button_africa_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == -175 && input$range_longitude_v2[2] == -10 &&
+          input$range_latitude_v2[1] == 5 && input$range_latitude_v2[2] == 85) {
+        addClass("button_n_america_v2", "green-background")
+      } else {
+        removeClass("button_n_america_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == -90 && input$range_longitude_v2[2] == -30 &&
+          input$range_latitude_v2[1] == -60 && input$range_latitude_v2[2] == 15) {
+        addClass("button_s_america_v2", "green-background")
+      } else {
+        removeClass("button_s_america_v2", "green-background")
+      }
     })
     
     # Correlation axis values updater 
@@ -6833,6 +7437,70 @@ server <- function(input, output, session) {
       lonlat_vals_iv(c(input$range_longitude_iv,input$range_latitude_iv))        
     })
     
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude_iv[1] == -180 && input$range_longitude_iv[2] == 180 &&
+          input$range_latitude_iv[1] == -90 && input$range_latitude_iv[2] == 90) {
+        addClass("button_global_iv", "green-background")
+      } else {
+        removeClass("button_global_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == -30 && input$range_longitude_iv[2] == 40 &&
+          input$range_latitude_iv[1] == 30 && input$range_latitude_iv[2] == 75) {
+        addClass("button_europe_iv", "green-background")
+      } else {
+        removeClass("button_europe_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == 25 && input$range_longitude_iv[2] == 170 &&
+          input$range_latitude_iv[1] == 5 && input$range_latitude_iv[2] == 80) {
+        addClass("button_asia_iv", "green-background")
+      } else {
+        removeClass("button_asia_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == 90 && input$range_longitude_iv[2] == 180 &&
+          input$range_latitude_iv[1] == -55 && input$range_latitude_iv[2] == 20) {
+        addClass("button_oceania_iv", "green-background")
+      } else {
+        removeClass("button_oceania_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == -25 && input$range_longitude_iv[2] == 55 &&
+          input$range_latitude_iv[1] == -40 && input$range_latitude_iv[2] == 40) {
+        addClass("button_africa_iv", "green-background")
+      } else {
+        removeClass("button_africa_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == -175 && input$range_longitude_iv[2] == -10 &&
+          input$range_latitude_iv[1] == 5 && input$range_latitude_iv[2] == 85) {
+        addClass("button_n_america_iv", "green-background")
+      } else {
+        removeClass("button_n_america_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == -90 && input$range_longitude_iv[2] == -30 &&
+          input$range_latitude_iv[1] == -60 && input$range_latitude_iv[2] == 15) {
+        addClass("button_s_america_iv", "green-background")
+      } else {
+        removeClass("button_s_america_iv", "green-background")
+      }
+    })
+    
     # Set iniital lon/lat values and update on button press
     lonlat_vals_dv = reactiveVal(c(initial_lon_values,initial_lat_values))
     
@@ -6951,6 +7619,70 @@ server <- function(input, output, session) {
     
     observeEvent(input$button_coord_dv, {
       lonlat_vals_dv(c(input$range_longitude_dv,input$range_latitude_dv))        
+    })
+    
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude_dv[1] == -180 && input$range_longitude_dv[2] == 180 &&
+          input$range_latitude_dv[1] == -90 && input$range_latitude_dv[2] == 90) {
+        addClass("button_global_dv", "green-background")
+      } else {
+        removeClass("button_global_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == -30 && input$range_longitude_dv[2] == 40 &&
+          input$range_latitude_dv[1] == 30 && input$range_latitude_dv[2] == 75) {
+        addClass("button_europe_dv", "green-background")
+      } else {
+        removeClass("button_europe_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == 25 && input$range_longitude_dv[2] == 170 &&
+          input$range_latitude_dv[1] == 5 && input$range_latitude_dv[2] == 80) {
+        addClass("button_asia_dv", "green-background")
+      } else {
+        removeClass("button_asia_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == 90 && input$range_longitude_dv[2] == 180 &&
+          input$range_latitude_dv[1] == -55 && input$range_latitude_dv[2] == 20) {
+        addClass("button_oceania_dv", "green-background")
+      } else {
+        removeClass("button_oceania_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == -25 && input$range_longitude_dv[2] == 55 &&
+          input$range_latitude_dv[1] == -40 && input$range_latitude_dv[2] == 40) {
+        addClass("button_africa_dv", "green-background")
+      } else {
+        removeClass("button_africa_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == -175 && input$range_longitude_dv[2] == -10 &&
+          input$range_latitude_dv[1] == 5 && input$range_latitude_dv[2] == 85) {
+        addClass("button_n_america_dv", "green-background")
+      } else {
+        removeClass("button_n_america_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == -90 && input$range_longitude_dv[2] == -30 &&
+          input$range_latitude_dv[1] == -60 && input$range_latitude_dv[2] == 15) {
+        addClass("button_s_america_dv", "green-background")
+      } else {
+        removeClass("button_s_america_dv", "green-background")
+      }
     })
     
     ### Interactivity ----
@@ -7222,6 +7954,73 @@ server <- function(input, output, session) {
         value = c(-60,15))
     })
     
+    # observeEvent(input$button_coord5, {
+    #   lonlat_vals5(c(input$range_longitude5,input$range_latitude5))        
+    # })
+    
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude5[1] == -180 && input$range_longitude5[2] == 180 &&
+          input$range_latitude5[1] == -90 && input$range_latitude5[2] == 90) {
+        addClass("button_global5", "green-background")
+      } else {
+        removeClass("button_global5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == -30 && input$range_longitude5[2] == 40 &&
+          input$range_latitude5[1] == 30 && input$range_latitude5[2] == 75) {
+        addClass("button_europe5", "green-background")
+      } else {
+        removeClass("button_europe5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == 25 && input$range_longitude5[2] == 170 &&
+          input$range_latitude5[1] == 5 && input$range_latitude5[2] == 80) {
+        addClass("button_asia5", "green-background")
+      } else {
+        removeClass("button_asia5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == 90 && input$range_longitude5[2] == 180 &&
+          input$range_latitude5[1] == -55 && input$range_latitude5[2] == 20) {
+        addClass("button_oceania5", "green-background")
+      } else {
+        removeClass("button_oceania5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == -25 && input$range_longitude5[2] == 55 &&
+          input$range_latitude5[1] == -40 && input$range_latitude5[2] == 40) {
+        addClass("button_africa5", "green-background")
+      } else {
+        removeClass("button_africa5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == -175 && input$range_longitude5[2] == -10 &&
+          input$range_latitude5[1] == 5 && input$range_latitude5[2] == 85) {
+        addClass("button_n_america5", "green-background")
+      } else {
+        removeClass("button_n_america5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == -90 && input$range_longitude5[2] == -30 &&
+          input$range_latitude5[1] == -60 && input$range_latitude5[2] == 15) {
+        addClass("button_s_america5", "green-background")
+      } else {
+        removeClass("button_s_america5", "green-background")
+      }
+    })
     
     
     ### Interactivity ----
@@ -10233,10 +11032,1545 @@ server <- function(input, output, session) {
                                                                print(fad_wa5(labs = TRUE))
                                                                dev.off()
                                                              }})
+  ## Conercning all modes (mainly updating Ui) ----
+    
+    #Updates Values outside of min / max (numericInput)
+    observe({
+      input_values <- input$point_size
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size2", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size2", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size3
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size3", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size3", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size3", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size_ts
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size_ts", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size_ts", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size_ts", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size_ts2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size_ts2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size_ts2", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size_ts2", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size_ts3
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size_ts3", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size_ts3", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size_ts3", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$percentage_sign_match
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "percentage_sign_match", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "percentage_sign_match", value = 1)
+            } else if (val > 100) {
+              updateNumericInput(inputId = "percentage_sign_match", value = 100)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$percentage_sign_match2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "percentage_sign_match2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "percentage_sign_match2", value = 1)
+            } else if (val > 100) {
+              updateNumericInput(inputId = "percentage_sign_match2", value = 100)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$percentage_sign_match2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "percentage_sign_match2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "percentage_sign_match2", value = 1)
+            } else if (val > 100) {
+              updateNumericInput(inputId = "percentage_sign_match2", value = 100)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$hidden_SD_ratio
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "hidden_SD_ratio", value = 0)
+        } else {
+          update_value <- function(val) {
+            if (val < 0) {
+              updateNumericInput(inputId = "hidden_SD_ratio", value = 0)
+            } else if (val > 1) {
+              updateNumericInput(inputId = "hidden_SD_ratio", value = 1)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$hidden_SD_ratio2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "hidden_SD_ratio2", value = 0)
+        } else {
+          update_value <- function(val) {
+            if (val < 0) {
+              updateNumericInput(inputId = "hidden_SD_ratio2", value = 0)
+            } else if (val > 1) {
+              updateNumericInput(inputId = "hidden_SD_ratio2", value = 1)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$year_moving_ts
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "year_moving_ts", value = 3)
+        } else {
+          update_value <- function(val) {
+            if (val < 3) {
+              updateNumericInput(inputId = "year_moving_ts", value = 3)
+            } else if (val > 30) {
+              updateNumericInput(inputId = "year_moving_ts", value = 30)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$year_moving_ts3
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "year_moving_ts3", value = 3)
+        } else {
+          update_value <- function(val) {
+            if (val < 3) {
+              updateNumericInput(inputId = "year_moving_ts3", value = 3)
+            } else if (val > 30) {
+              updateNumericInput(inputId = "year_moving_ts3", value = 30)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a2", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a2", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a2", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a3a
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a3a", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a3a", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a3a", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a3b
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a3b", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a3b", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a3b", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a4a
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a4a", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a4a", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a4a", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a4b
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a4b", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a4b", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a4b", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a5
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a5", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a5", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a5", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$prior_years2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "prior_years2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "prior_years2", value = 1)
+            } else if (val > 50) {
+              updateNumericInput(inputId = "prior_years2", value = 50)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$reg_resi_year
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "reg_resi_year", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "reg_resi_year", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "reg_resi_year", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$range_years_sg
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "range_years_sg", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "range_years_sg", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "range_years_sg", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$ref_period_sg
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$ref_period_sg2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg2", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg2", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg2", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$ref_period_sg_v1
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg_v1", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$range_years_sg3
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "range_years_sg3", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "range_years_sg3", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "range_years_sg3", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    
+    observe({
+      input_values <- input$ref_period_sg_v2
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg_v2", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$ref_period_sg_iv
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg_iv", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$range_years_sg4
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "range_years_sg4", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "range_years_sg4", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "range_years_sg4", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$ref_period_sg_dv
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg_dv", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$ref_period_sg5
+      
+      delay(1000, {
+        if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg5", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg5", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg5", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    #Updates Values outside of min / max (numericRangeInput)
+    
+    observe({
+      range_values <- input$range_years
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "range_years", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "range_years", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "range_years", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "range_years", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_years3
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "range_years3", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "range_years3", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "range_years3", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "range_years3", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_years4
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "range_years4", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "range_years4", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "range_years4", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "range_years4", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period2", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period2", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period2", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period2", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period_v1
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_v1", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_v1", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_v1", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_v1", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period_v2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_v2", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_v2", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_v2", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_v2", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period_iv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_iv", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_iv", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_iv", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_iv", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period_dv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_dv", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_dv", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_dv", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_dv", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period5", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period5", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period5", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period5", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude2", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude2", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude2", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude2", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude_v1
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude_v2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude_iv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude_dv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude5", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude5", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude5", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude5", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude_v1
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude_v2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude_iv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude_dv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude5", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude5", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude5", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude5", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values_ts
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values_ts2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts2", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts2", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts2", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts2", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values_ts3
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts3", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts3", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts3", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts3", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values3
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values3", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values3", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values3", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values3", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_x_values_ts5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts5", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts5", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts5", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "highlight_x_values_ts5", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values2", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values2", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values2", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values2", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values3
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values3", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values3", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values3", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values3", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values_ts
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values_ts2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts2", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts2", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts2", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts2", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values_ts3
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts3", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts3", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts3", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts3", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$highlight_y_values_ts5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts5", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts5", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts5", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "highlight_y_values_ts5", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$fad_latitude_a5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$fad_longitude_a5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    #Single Year inputs update
+    observe({
+      if (!is.na(input$range_years_sg)) {
+        updateNumericRangeInput(
+          inputId = "range_years",
+          value   = c(input$range_years_sg, input$range_years_sg)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg)) {
+        updateNumericRangeInput(
+          inputId = "ref_period",
+          value   = c(input$ref_period_sg, input$ref_period_sg)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg2)) {
+        updateNumericRangeInput(
+          inputId = "ref_period2",
+          value   = c(input$ref_period_sg2, input$ref_period_sg2)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg_v1)) {
+        updateNumericRangeInput(
+          inputId = "ref_period_v1",
+          value   = c(input$ref_period_sg_v1, input$ref_period_sg_v1)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg_v2)) {
+        updateNumericRangeInput(
+          inputId = "ref_period_v2",
+          value   = c(input$ref_period_sg_v2, input$ref_period_sg_v2)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$range_years_sg3)) {
+        updateNumericRangeInput(
+          inputId = "range_years3",
+          value   = c(input$range_years_sg3, input$range_years_sg3)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg_iv)) {
+        updateNumericRangeInput(
+          inputId = "ref_period_iv",
+          value   = c(input$ref_period_sg_iv, input$ref_period_sg_iv)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg_dv)) {
+        updateNumericRangeInput(
+          inputId = "ref_period_dv",
+          value   = c(input$ref_period_sg_dv, input$ref_period_sg_dv)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$range_years_sg4)) {
+        updateNumericRangeInput(
+          inputId = "range_years4",
+          value   = c(input$range_years_sg4, input$range_years_sg4)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg5)) {
+        updateNumericRangeInput(
+          inputId = "ref_period5",
+          value   = c(input$ref_period_sg5, input$ref_period_sg5)
+        )
+      }
+    })
+    
+    
 }
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
-  
-
-
