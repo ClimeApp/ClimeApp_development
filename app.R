@@ -1,21 +1,5 @@
 ### ClimeApp_beta ###
 
-# WDs for Project ----
-
-#Noémie
-#setwd("C:/Users/nw22d367/OneDrive - Universitaet Bern/ClimeApp_development")
-
-
-#Nik
-#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_GitHub/ClimeApp_development")
-
-#Richard:
-#Laptop/desktop:
-#setwd("C:/Users/Richard/OneDrive/ModE-RA Mapping/ClimeApp_development")
-#setwd("C:/Users/rw22z389/OneDrive/ModE-RA Mapping/ClimeApp_development")
-
-#reset
-
 # Source for helpers ----
 source("helpers.R")
 
@@ -26,7 +10,7 @@ ui <- navbarPage(id = "nav1",
           ## Configs for navbarPage: theme, images (Header and Footer) ----
           title = div(style = "display: inline;",
                       img(src = 'pics/Logo_ClimeApp_V2_210623.png', id = "ClimeApp", height = "75px", width = "75px", style = "margin-right: -10px"),
-                      img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v0.3)",
+                      img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v0.4)",
                       ),
           footer = div(class = "navbar-footer",
                        style = "display: inline;",
