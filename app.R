@@ -596,16 +596,12 @@ ui <- navbarPage(id = "nav1",
                       ),
                       
                       #### Download map ----
-                      h4(helpText("Download map")),
+                      h4(helpText("Download map and NETcdf")),
                       fluidRow(
                         column(2, radioButtons(inputId = "file_type_map", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                        column(3, downloadButton(outputId = "download_map", label = "Download map"))
-                      ),
-                      
-                      #NETcdf download
-                      h4(helpText("Download NETcdf")),
-                      fluidRow(
-                        column(2, checkboxGroupInput(inputId = "netcdf_variables", label = "Choose one or more variable(s):", selected = NULL, inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_map", label = "Download map")),
+                      #NETcdf download pickerInput checkboxGroupInput
+                        column(3, pickerInput(inputId = "netcdf_variables", label = "Choose one or multiple variables:", choices = NULL, selected = NULL, inline = TRUE, multiple = TRUE,)),
                         column(3, downloadButton(outputId = "download_netcdf", label = "Download NETcdf"))
                       ),
 
@@ -5558,7 +5554,7 @@ server <- function(input, output, session) {
       
       choices  = c("Temperature", "Precipitation", "SLP", "Z500")
       
-      updateCheckboxGroupInput(
+      updatePickerInput(
         session, "netcdf_variables",
         choices = choices,
         selected = input$variable_selected
