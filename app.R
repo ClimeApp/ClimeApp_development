@@ -154,9 +154,39 @@ ui <- navbarPage(id = "nav1",
                      helpText("ModE-RAclim should be seen as a sensitivity study and is only a side product of the project. ModE-RAclim does not contain centennial scale climate variability. For most users, the main product ModE-RA therefore should be used for regular studies on past climate. The main differences between ModE-RAclim and ModE-RA are on the model side: ModE-RAclim uses 100 randomly-picked years from ModE-Sim as a priori state. Thereby stationarity in the covariance structure is assumed and the externally-forced signal in the model simulations is eliminated. In combination with ModE-Sim and ModE-RA it can be used to distinguish the forced and unforced parts of climate variability seen in ModE-RA."),
                      br(), br(),
                      helpText("ModE-RA makes use of several data compilations and assimilates various direct and indirect sources of past climate compared to 20CRv3. Hence, if monthly resolution is sufficient for the planned study, ModE-RA may have higher quality already from 1850 backwards to analyze past climate changes and can be viewed as the backward extension of 20CRv3."),
-                     
-                     
             ),
+            #### Tab Version History ----
+            tabPanel("Version history",
+                     br(), br(), 
+                     h4(helpText("Beta v0.5 (22.12.2023)")),
+                     h6(helpText("- Download NetCDF files")),
+                     h6(helpText("- Version History")),
+                     br(), br(), 
+                     h4(helpText("Beta v0.4")),
+                     h6(helpText("- Select single years")),
+                     br(), br(), 
+                     h4(helpText("Beta v0.3")),
+                     h6(helpText("- Time series customization")),
+                     h6(helpText("- Percentiles, maps & statistics based on model constraint change")),
+                     h6(helpText("- Reference line option in timeseries")),
+                     br(), br(), 
+                     h4(helpText("Beta v0.2 (10.11.2023)")),
+                     h6(helpText("- Use ModE-Sim and ModE-RAclim data")),
+                     h6(helpText("- Create monthly time series")),
+                     h6(helpText("- View ModE-RA sources")),
+                     h6(helpText("- Download ModE-RA sources maps as image")),
+                     h6(helpText("- Upload User data for correlation and regression")),
+                     h6(helpText("- Reference maps with absolute values, reference period, and SD ratio for Anomalies and Composites")),
+                     br(), br(), 
+                     h4(helpText("Beta")),
+                     h6(helpText("- First running version online")),
+                     h6(helpText("- Use ModE-RA data with four variables:  Temperature, Precipitation, Sea level pressure, Pressure at 500 hPa geopotential height")),
+                     h6(helpText("- Calculate Anomalies, Composites, Correlations and Regressions (coefficien, p values residuals) as maps and timeseries")),
+                     h6(helpText("- Customize maps and timeseries (title, labelling, add custom points and highlights, statistics)")),
+                     h6(helpText("- Download maps and timeseries plots as images")),
+                     h6(helpText("- Download map and timeseries data in xlsx or csv format"))
+            ),
+
             ### Tabs END ----
             )            
           ## Main Panel END ----
