@@ -10,7 +10,7 @@ ui <- navbarPage(id = "nav1",
           ## Configs for navbarPage: theme, images (Header and Footer) ----
           title = div(style = "display: inline;",
                       img(src = 'pics/Logo_ClimeApp_V2_210623.png', id = "ClimeApp", height = "75px", width = "75px", style = "margin-right: -10px"),
-                      img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v0.4)",
+                      img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v0.5)",
                       ),
           footer = div(class = "navbar-footer",
                        style = "display: inline;",
@@ -101,8 +101,7 @@ ui <- navbarPage(id = "nav1",
               h5(helpText("SLP = Sea level pressure [hPa]")),
               h5(helpText("Z500 = Pressure at 500 hPa geopotential height [hPa]"))
             ),
-            column(width = 12, br(), br()),
-            
+
           ), width = 12),
           
           br(),
@@ -122,7 +121,7 @@ ui <- navbarPage(id = "nav1",
           ## Main panel START ----
           mainPanel(
             ### Tabs Start ----
-            tabsetPanel(
+            tabsetPanel(id = "tabset0",
             #### Tab Welcome ----
             tabPanel("Welcome",
                      tags$head(tags$style(HTML(".responsive-img {
@@ -345,7 +344,7 @@ ui <- navbarPage(id = "nav1",
                 )),
 
                 ## Main Panel START ----
-                mainPanel(tabsetPanel(
+                mainPanel(tabsetPanel(id = "tabset1",
                 
                     ### Map plot START ----   
                     tabPanel("Map", plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)),
@@ -564,6 +563,21 @@ ui <- navbarPage(id = "nav1",
                     
                       #### Customization panels END ----
                       ),
+                      
+                      #### Download map ----
+                      h4(helpText("Download map")),
+                      fluidRow(
+                        column(2, radioButtons(inputId = "file_type_map", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_map", label = "Download map"))
+                      ),
+                      
+                      #NETcdf download
+                      h4(helpText("Download NETcdf")),
+                      fluidRow(
+                        column(2, checkboxGroupInput(inputId = "netcdf_variables", label = "Choose one or more variable(s):", selected = NULL, inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_netcdf", label = "Download NETcdf"))
+                      ),
+
                       #### Abs/Ref Map plot START ----
                       h4(helpText("Reference map")), 
                       
@@ -572,7 +586,16 @@ ui <- navbarPage(id = "nav1",
                                    choices  = c("None", "Absolute Values","Reference Period","SD Ratio"),
                                    selected = "None" , inline = TRUE),
                       
-                      plotOutput("ref_map", height = "auto")
+                      plotOutput("ref_map", height = "auto"),
+                      
+                      #### Download ref. map ----
+                      shinyjs::hidden(div(id ="hidden_sec_map_download",
+                                          h4(helpText("Download reference map")),
+                                          fluidRow(
+                                            column(2, radioButtons(inputId = "file_type_map_sec", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                            column(3, downloadButton(outputId = "download_map_sec", label = "Download reference map"))
+                                          ),
+                      )),
 
                     ### Map plot END ----
                     ),
@@ -844,12 +867,38 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Customization panels END ----
                      ),
+                      #### Downloads ----
+                       h4(helpText("Download")),
+                       fluidRow(
+                         column(2, radioButtons(inputId = "file_type_timeseries", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                         column(3, downloadButton(outputId = "download_timeseries", label = "Download time series"))
+                       ),
+                     
                     ### TS plot END ----       
                              ),
 
                     ### Other plots ----
-                    tabPanel("Map data", br(), tableOutput("data1")),
-                    tabPanel("Time series data", br(), column(width = 3, dataTableOutput("data2"))),
+                    tabPanel("Map data",
+                             
+                             #Download
+                             br(), h4(helpText("Download")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_map_data", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_map_data", label = "Download map data"))
+                             ),
+                             
+                             br(), tableOutput("data1")),
+                    
+                    tabPanel("Time series data",
+                             
+                             # Download
+                             br(),  h4(helpText("Download")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_timeseries_data", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_timeseries_data", label = "Download time series data"))
+                             ),
+                             
+                             br(), column(width = 3, dataTableOutput("data2"))),
                     
                     ### Feedback archive documentation (FAD) ----
                     tabPanel("ModE-RA sources", br(),
@@ -862,8 +911,25 @@ ui <- navbarPage(id = "nav1",
                                         value = 1422,
                                         min = 1422,
                                         max = 2008)),
-                               h4(helpText("Draw a box on the left map to use zoom function")),
                              ),
+                             
+                             fluidRow(
+                             #Download
+                             div(h4(helpText("Download Oct. - Mar.")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_modera_source_a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_fad_wa", label = "Download Oct. - Mar."))
+                             )),
+                             
+                             #Download  
+                             div(h4(helpText("Download Apr. - Sep.")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_modera_source_b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_fad_sa", label = "Download Apr. - Sep."))
+                             )),
+                             ),
+                             
+                             h4(helpText("Draw a box on the left map to use zoom function")),
                              
                              div(id = "fad_map_a",
                              splitLayout(
@@ -875,7 +941,7 @@ ui <- navbarPage(id = "nav1",
 
                                          plotOutput("fad_zoom_winter_a")
                                          )),
-
+                             
                              div(id = "fad_map_b",
                              splitLayout(plotOutput("fad_summer_map_a",
                                                     brush = brushOpts(
@@ -885,48 +951,6 @@ ui <- navbarPage(id = "nav1",
                                          plotOutput("fad_zoom_summer_a")
                                          )),
                     ),
-                    
-                    
-                    ### Downloads ----
-                    tabPanel("Downloads",
-                    verticalLayout(br(),
-                          fluidRow(
-                            column(width = 3,
-                                   h3(helpText("Primary map download")),
-                                   radioButtons(inputId = "file_type_map", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                   downloadButton(outputId = "download_map", label = "Download")),
-                            shinyjs::hidden(div(id ="hidden_sec_map_download",
-                            column(width = 3,
-                                   h3(helpText("Secondary map download")),
-                                   radioButtons(inputId = "file_type_map_sec", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                   downloadButton(outputId = "download_map_sec", label = "Download")),
-                            )),
-                            ),
-                            br(),
-                          h3(helpText("Time series download")),
-                             radioButtons(inputId = "file_type_timeseries", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                             downloadButton(outputId = "download_timeseries", label = "Download"), br(),
-                          h3(helpText("Map data download")),
-                             radioButtons(inputId = "file_type_map_data", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                             downloadButton(outputId = "download_map_data", label = "Download"), br(),
-                          h3(helpText("Time series data download")),
-                             radioButtons(inputId = "file_type_timeseries_data", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                             downloadButton(outputId = "download_timeseries_data", label = "Download")), br(),
-                          h3(helpText("ModE-RA sources download")),
-                          fluidRow(
-                            column(width = 3,
-                                   radioButtons(inputId = "file_type_modera_source_a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                   downloadButton(outputId = "download_fad_wa", label = "Download Oct. - Mar")),
-                            column(width = 3,
-                                   radioButtons(inputId = "file_type_modera_source_b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                   downloadButton(outputId = "download_fad_sa", label = "Download Apr. - Sept")),
-                          ),
-                          br(),
-                          h3(helpText("NetCDF download")),
-                             checkboxGroupInput(inputId = "netcdf_variables", label = "Choose your variables:", selected = NULL, inline = TRUE),
-                             downloadButton(outputId = "download_netcdf", label = "Download")
-                            )
-        
                 ## Main Panel END ----
                 ), width = 8),
 # Average & anomaly END ----  
@@ -1162,7 +1186,7 @@ ui <- navbarPage(id = "nav1",
                  )),
                  
                  ## Main Panel START ----
-                 mainPanel(tabsetPanel(
+                 mainPanel(tabsetPanel(id = "tabset2",
                     ### Map plot START ----
                      tabPanel("Map", br(),
                               h4(textOutput("text_years2")),
@@ -1386,6 +1410,14 @@ ui <- navbarPage(id = "nav1",
                       ),
                       #### Customization panels END ----
                       ),
+                     
+                      #### Download map ----
+                     h4(helpText("Download map")),
+                     fluidRow(
+                       column(2, radioButtons(inputId = "file_type_map2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                       column(3, downloadButton(outputId = "download_map2", label = "Download map"))
+                     ),
+                     
                      #### Abs/Ref Map plot START ----
                      h4(helpText("Reference map")), 
                      
@@ -1394,7 +1426,16 @@ ui <- navbarPage(id = "nav1",
                                   choices  = c("None", "Absolute Values","Reference Period","SD Ratio"),
                                   selected = "None" , inline = TRUE),
                      
-                     plotOutput("ref_map2", height = "auto")
+                     plotOutput("ref_map2", height = "auto"),
+                     
+                     #### Download ref. map ----
+                     shinyjs::hidden(div(id ="hidden_sec_map_download2",
+                                         h4(helpText("Download reference map")),
+                                         fluidRow(
+                                           column(2, radioButtons(inputId = "file_type_map_sec2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                           column(3, downloadButton(outputId = "download_map_sec2", label = "Download reference map"))
+                                         ),
+                     )),
                      
                     ### Map plot END ----  
                       ),
@@ -1648,12 +1689,37 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Customization panels END ----
              ),
+             
+                      #### Downloads ----
+                       h4(helpText("Download")),
+                       fluidRow(
+                         column(2, radioButtons(inputId = "file_type_timeseries2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                         column(3, downloadButton(outputId = "download_timeseries2", label = "Download time series"))
+                       ),
+             
                     ### Composite TS plot END ----
                     ),
                    
                     ### Other plots ----
-                    tabPanel("Map data", br(), tableOutput("data3")),
-                    tabPanel("Time series data", br(), column(width = 3, dataTableOutput("data4"))),
+                    tabPanel("Map data",
+                             
+                             #Download
+                             br(), h4(helpText("Download")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_map_data2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_map_data2", label = "Download map data"))
+                             ),
+                             
+                             br(), tableOutput("data3")),
+                    tabPanel("Time series data",
+                             
+                             br(),  h4(helpText("Download")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_timeseries_data2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_timeseries_data2", label = "Download time series data"))
+                             ),
+                             
+                             br(), column(width = 3, dataTableOutput("data4"))),
                     
                     ### Feedback archive documentation (FAD) ----
                    tabPanel("ModE-RA sources", br(),
@@ -1666,8 +1732,25 @@ ui <- navbarPage(id = "nav1",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              h4(helpText("Draw a box on the left map to use zoom function")),
                             ),
+                            
+                            fluidRow(
+                              #Download
+                              div(h4(helpText("Download Oct. - Mar.")),
+                                  fluidRow(
+                                    column(2, radioButtons(inputId = "file_type_modera_source_a2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_wa2", label = "Download Oct. - Mar."))
+                                  )),
+                              
+                              #Download  
+                              div(h4(helpText("Download Apr. - Sep.")),
+                                  fluidRow(
+                                    column(2, radioButtons(inputId = "file_type_modera_source_b2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_sa2", label = "Download Apr. - Sep."))
+                                  )),
+                            ),
+                            
+                            h4(helpText("Draw a box on the left map to use zoom function")),
                             
                             div(id = "fad_map_a2",
                                 splitLayout(
@@ -1688,42 +1771,6 @@ ui <- navbarPage(id = "nav1",
                                                        )),
                                             plotOutput("fad_zoom_summer_a2")
                                 )),
-                   ),
-                   
-                    ### Downloads ----
-                    tabPanel("Downloads",
-                            verticalLayout(br(),
-                                   fluidRow(
-                                     column(width = 3,
-                                            h3(helpText("Primary map download")),
-                                            radioButtons(inputId = "file_type_map2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                            downloadButton(outputId = "download_map2", label = "Download")),
-                                            shinyjs::hidden(div(id = "hidden_sec_map_download2",
-                                            column(width = 3,
-                                                   h3(helpText("Secondary map download")),
-                                                   radioButtons(inputId = "file_type_map_sec2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                   downloadButton(outputId = "download_map_sec2", label = "Download")),
-                                            )),
-                                            ),
-                                            br(),
-                                    h3(helpText("Time series download")),
-                                           radioButtons(inputId = "file_type_timeseries2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                           downloadButton(outputId = "download_timeseries2", label = "Download"), br(),
-                                    h3(helpText("Map data download")),
-                                           radioButtons(inputId = "file_type_map_data2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                           downloadButton(outputId = "download_map_data2", label = "Download"), br(),
-                                    h3(helpText("Time series data download")),
-                                           radioButtons(inputId = "file_type_timeseries_data2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                           downloadButton(outputId = "download_timeseries_data2", label = "Download")), br(),
-                                    h3(helpText("ModE-RA sources download")),
-                                    fluidRow(
-                                      column(width = 3,
-                                             radioButtons(inputId = "file_type_modera_source_a2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                             downloadButton(outputId = "download_fad_wa2", label = "Download Oct. - Mar")),
-                                      column(width = 3,
-                                             radioButtons(inputId = "file_type_modera_source_b2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                             downloadButton(outputId = "download_fad_sa2", label = "Download Apr. - Sept")),
-                                    ),
                    ),
                    
                 ## Main Panel END ----
@@ -1778,6 +1825,7 @@ ui <- navbarPage(id = "nav1",
                    #Choose one of three datasets (Select)
                    shinyjs::hidden(
                    div(id = "hidden_me_dataset_variable_v1",
+                   fluidRow(
                    selectInput(inputId  = "dataset_selected_v1",
                                label    = "Choose a dataset:",
                                choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
@@ -1785,9 +1833,9 @@ ui <- navbarPage(id = "nav1",
 
                    #Choose a variable (Mod-ERA) 
                    selectInput(inputId  = "ME_variable_v1",
-                               label    = "Choose a variable:",
+                               label    = "Choose a variable to plot:",
                                choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
-                               selected = "Temperature"),
+                               selected = "Temperature")),
                    )),
                    
                    shinyjs::hidden(
@@ -1795,7 +1843,7 @@ ui <- navbarPage(id = "nav1",
                    #Choose how to use ME data: As a time series or field  
                    radioButtons(inputId  = "type_v1",
                                 label    = "Choose how to use ModE-RA data:",
-                                choices  = c( "Field", "Time series"),
+                                choices  = c("Field", "Time series"),
                                 selected = "Time series" ,
                                 inline = TRUE),
                    
@@ -2014,6 +2062,7 @@ ui <- navbarPage(id = "nav1",
                      #Choose one of three datasets (Select)
                      shinyjs::hidden(
                      div(id = "hidden_me_dataset_variable_v2",
+                     fluidRow(
                      selectInput(inputId  = "dataset_selected_v2",
                                  label    = "Choose a dataset:",
                                  choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
@@ -2021,9 +2070,9 @@ ui <- navbarPage(id = "nav1",
 
                      #Choose a variable (Mod-ERA) 
                      selectInput(inputId  = "ME_variable_v2",
-                                 label    = "Choose a variable:",
+                                 label    = "Choose a variable to plot:",
                                  choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
-                                 selected = "Temperature"),
+                                 selected = "Temperature")),
                      )),
                      
                      shinyjs::hidden(
@@ -2031,7 +2080,7 @@ ui <- navbarPage(id = "nav1",
                      #Choose how to use ME data: As a time series or field  
                      radioButtons(inputId  = "type_v2",
                                   label    = "Choose how to use the ModE-RA data:",
-                                  choices  = c( "Field","Time series"),
+                                  choices  = c("Field","Time series"),
                                   selected = "Field" ,
                                   inline = TRUE),
                      
@@ -2181,7 +2230,7 @@ ui <- navbarPage(id = "nav1",
                )),
                  
                ## Main Panel START ---- ----
-               mainPanel(tabsetPanel(
+               mainPanel(tabsetPanel(id = "tabset3",
                    ### v1, v2 plot: ----
                    tabPanel("Variables", br(),
                             h4("Variable 1"),
@@ -2440,13 +2489,20 @@ ui <- navbarPage(id = "nav1",
                       ),
                       
                       #### Customization panels END ----
-                    ),         
+                    ),
+                    
+                      #### Downloads ----
+                      h4(helpText("Download")),
+                      fluidRow(
+                        column(2, radioButtons(inputId = "file_type_timeseries3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_timeseries3", label = "Download time series"))
+                      ),
                     
                    ### Shared TS plot: End ----          
                   ),
                    
                    ### Map plot: START ----
-                   tabPanel("Correlation map", br(),
+                   tabPanel("Correlation map", value = "corr_map_tab", br(),
                             #Choose a correlation method 
                             radioButtons(inputId  = "cor_method_map",
                                          label    = "Choose a correlation method:",
@@ -2650,14 +2706,39 @@ ui <- navbarPage(id = "nav1",
                               # )),
                       ),
                       #### Customization panels END ----
-                    ),      
+                    ),
+                    
+                      #### Download map ----
+                      h4(helpText("Download map")),
+                      fluidRow(
+                        column(2, radioButtons(inputId = "file_type_map3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_map3", label = "Download map"))
+                      ),
                     
                    ### Map plot: END ----        
                             ),
                    
                    ### Other plots ----
-                   tabPanel("Time series data", br(), column(width = 3, dataTableOutput("correlation_ts_data"))),
-                   tabPanel("Correlation map data",br(), tableOutput("correlation_map_data")),
+                   tabPanel("Time series data", 
+                            
+                            #Download
+                            br(),  h4(helpText("Download")),
+                            fluidRow(
+                              column(2, radioButtons(inputId = "file_type_timeseries_data3", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                              column(3, downloadButton(outputId = "download_timeseries_data3", label = "Download time series data"))
+                            ),
+                            
+                            br(), column(width = 3, dataTableOutput("correlation_ts_data"))),
+                   tabPanel("Correlation map data",
+                            
+                            #Download
+                            br(), h4(helpText("Download")),
+                            fluidRow(
+                              column(2, radioButtons(inputId = "file_type_map_data3", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                              column(3, downloadButton(outputId = "download_map_data3", label = "Download map data"))
+                            ),
+                            
+                            br(), tableOutput("correlation_map_data")),
              
                    ### Feedback archive documentation (FAD) ----
                    tabPanel("ModE-RA sources", br(),
@@ -2672,10 +2753,20 @@ ui <- navbarPage(id = "nav1",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              h4(helpText("Draw a box on the left map to use zoom function")),
-                            ),
+                              ),
+                            
+                            shinyjs::hidden(
+                              div(id = "hidden_v1_fad_download",
+                                  h4(helpText("Downloads")),
+                                  fluidRow(
+                                    column(2, radioButtons(inputId = "file_type_modera_source_a3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_wa3a", label = "Download Oct. - Mar.")),
+                                    column(2, radioButtons(inputId = "file_type_modera_source_b3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_sa3a", label = "Download Apr. - Sep.")),
+                                  ))),
                             
                             div(id = "fad_map_a3a",
+                                h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
                                   plotOutput("fad_winter_map_a3a",
                                              brush = brushOpts(
@@ -2709,10 +2800,21 @@ ui <- navbarPage(id = "nav1",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              h4(helpText("Draw a box on the left map to use zoom function")),
-                            ),
+                              ),
+                            
+                            shinyjs::hidden(
+                              div(id = "hidden_v2_fad_download",
+                                  h4(helpText("Downloads")),
+                                  fluidRow(
+                                    column(2,radioButtons(inputId = "file_type_modera_source_a3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3,downloadButton(outputId = "download_fad_wa3b", label = "Download Oct. - Mar.")),
+                                    column(2,radioButtons(inputId = "file_type_modera_source_b3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3,downloadButton(outputId = "download_fad_sa3b", label = "Download Apr. - Sep.")),
+                                  ))),
+                            
                             
                             div(id = "fad_map_a3b",
+                                h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
                                   plotOutput("fad_winter_map_a3b",
                                              brush = brushOpts(
@@ -2735,47 +2837,6 @@ ui <- navbarPage(id = "nav1",
                             )),
                    ),
              
-                   ### Downloads ----
-                   tabPanel("Downloads",
-                            verticalLayout(br(),
-                                           h3(helpText("Time series download")),
-                                           radioButtons(inputId = "file_type_timeseries3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                           downloadButton(outputId = "download_timeseries3", label = "Download"), br(),
-                                           h3(helpText("Correlation map download")),
-                                           radioButtons(inputId = "file_type_map3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                           downloadButton(outputId = "download_map3", label = "Download"), br(),
-                                           h3(helpText("Time series data download")),
-                                           radioButtons(inputId = "file_type_timeseries_data3", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                           downloadButton(outputId = "download_timeseries_data3", label = "Download"), br(),
-                                           h3(helpText("Correlation map data download")),
-                                           radioButtons(inputId = "file_type_map_data3", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                           downloadButton(outputId = "download_map_data3", label = "Download")), br(),
-                                            h3(helpText("ModE-RA sources download")),
-                                            shinyjs::hidden(
-                                              div(id = "hidden_v1_fad_download",
-                                            fluidRow(
-                                              h4("Variable 1"),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_a3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_wa3a", label = "Download Oct. - Mar")),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_b3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_sa3a", label = "Download Apr. - Sept")),
-                                            ))),
-                                            br(),
-                                            shinyjs::hidden(
-                                              div(id = "hidden_v2_fad_download",
-                                            fluidRow(
-                                              h4("Variable 2"),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_a3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_wa3b", label = "Download Oct. - Mar")),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_b3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_sa3b", label = "Download Apr. - Sept")),
-                                            ))),
-                   )
-
                ## Main Panel END ----
                ), width = 8)
                
@@ -2829,6 +2890,7 @@ tabPanel("Regression", id = "tab4",
                #Choose one of three datasets (Select) 
                shinyjs::hidden(
                div(id = "hidden_me_variable_dataset_iv",
+               fluidRow(
                selectInput(inputId  = "dataset_selected_iv",
                            label    = "Choose a dataset:",
                            choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
@@ -2839,7 +2901,7 @@ tabPanel("Regression", id = "tab4",
                            label    = "Choose one or multiple variables:",
                            choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
                            selected = "Temperature",
-                           multiple = TRUE),
+                           multiple = TRUE)),
                )),
                
                shinyjs::hidden(
@@ -3062,6 +3124,7 @@ tabPanel("Regression", id = "tab4",
                div(id = "hidden_me_variable_dataset_dv",
                      
                  #Choose one of three datasets (Select)                
+                 fluidRow(
                  selectInput(inputId  = "dataset_selected_dv",
                              label    = "Choose a dataset:",
                              choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
@@ -3069,9 +3132,9 @@ tabPanel("Regression", id = "tab4",
                  
                  #Choose a variable (Mod-ERA) 
                  selectInput(inputId  = "ME_variable_dv",
-                             label    = "Choose a variable:",
+                             label    = "Choose a variable to plot:",
                              choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
-                             selected = "Temperature"),
+                             selected = "Temperature")),
                  )),
                
                shinyjs::hidden(
@@ -3222,7 +3285,7 @@ tabPanel("Regression", id = "tab4",
            ## Sidebar Panels END ----
            )),
            ## Main Panel START ---- ----
-           mainPanel(tabsetPanel(
+           mainPanel(tabsetPanel(id = "tabset4",
              ### Independent / dependent variable ----
              tabPanel("Variables", br(),
                       h4("Independent variable"),
@@ -3236,6 +3299,25 @@ tabPanel("Regression", id = "tab4",
                       plotOutput("plot_reg_ts1"),
                       plotOutput("plot_reg_ts2"),
                       br(),
+                      div(id = "reg1",
+                          fluidRow(
+                            h3(helpText("Downloads")), 
+                            column(width = 3,
+                                   radioButtons(inputId = "reg_ts_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
+                                   downloadButton(outputId = "download_reg_ts_plot", label = "Download plot 1")),
+                            
+                            column(width = 3,
+                                   radioButtons(inputId = "reg_ts2_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
+                                   downloadButton(outputId = "download_reg_ts2_plot", label = "Download plot 2")), 
+                            
+                            column(width = 3,
+                                   radioButtons(inputId = "reg_ts_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
+                                   downloadButton(outputId = "download_reg_ts_plot_data", label = "Download data")),
+                            
+                            column(width = 3,
+                                   h4("Statistical summary"),
+                                   downloadButton(outputId = "download_reg_sum_txt", label = "Download ")),
+                          )), br(), 
                       splitLayout(
                         column(width = 4,
                                dataTableOutput("data_reg_ts")),
@@ -3254,6 +3336,15 @@ tabPanel("Regression", id = "tab4",
                                   selected = NULL),
                       plotOutput("plot_reg_coeff", height = "auto", brush = brushOpts(id = "map_brush4_coeff",resetOnNew = TRUE)),
                       br(),
+                      div(id = "reg2",
+                          fluidRow(
+                            h3(helpText("Downloads")),
+                            column(2, radioButtons(inputId = "reg_coe_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                            column(3, downloadButton(outputId = "download_reg_coe_plot", label = "Download map")), 
+                            
+                            column(2, radioButtons(inputId = "reg_coe_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                            column(3, downloadButton(outputId = "download_reg_coe_plot_data", label = "Download data")),
+                          )), br(),
                       tableOutput("data_reg_coeff")
              ),
              
@@ -3265,6 +3356,15 @@ tabPanel("Regression", id = "tab4",
                                   selected = NULL),
                       plotOutput("plot_reg_pval", height = "auto",brush = brushOpts(id = "map_brush4_pvalue",resetOnNew = TRUE)),
                       br(),
+                      div(id = "reg3",
+                          fluidRow(
+                            h3(helpText("Downloads")),  
+                            column(2, radioButtons(inputId = "reg_pval_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                            column(3, downloadButton(outputId = "download_reg_pval_plot", label = "Download map")), 
+                            
+                            column(2,radioButtons(inputId = "reg_pval_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                            column(3, downloadButton(outputId = "download_reg_pval_plot_data", label = "Download data")),
+                          )), br(),
                       tableOutput("data_reg_pval")
              ),
              
@@ -3281,6 +3381,15 @@ tabPanel("Regression", id = "tab4",
                       ),
                       plotOutput("plot_reg_resi", height = "auto",brush = brushOpts(id = "map_brush4_resi",resetOnNew = TRUE)),
                       br(),
+                      div(id = "reg4",
+                          fluidRow(
+                            h3(helpText("Downloads")),   
+                            column(2, radioButtons(inputId = "reg_res_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                            column(3, downloadButton(outputId = "download_reg_res_plot", label = "Download map")), 
+                            
+                            column(2,radioButtons(inputId = "reg_res_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                            column(3, downloadButton(outputId = "download_reg_res_plot_data", label = "Download data")),
+                          )), br(),
                       tableOutput("data_reg_resi")
              ),
 
@@ -3297,10 +3406,21 @@ tabPanel("Regression", id = "tab4",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              h4(helpText("Draw a box on the left map to use zoom function")),
                             ),
                             
+                            #Downloads
+                            shinyjs::hidden(
+                              div(id = "hidden_iv_fad_download",
+                                  h4(helpText("Downloads")),
+                                  fluidRow(
+                                    column(2, radioButtons(inputId = "file_type_modera_source_a4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_wa4a", label = "Download Oct. - Mar.")),
+                                    column(2, radioButtons(inputId = "file_type_modera_source_b4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_sa4a", label = "Download Apr. - Sep.")),
+                                  ))),
+                            
                             div(id = "fad_map_a4a",
+                                h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
                                   plotOutput("fad_winter_map_a4a",
                                              brush = brushOpts(
@@ -3333,10 +3453,21 @@ tabPanel("Regression", id = "tab4",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              h4(helpText("Draw a box on the left map to use zoom function")),
                             ),
                             
+                            #Downloads
+                            shinyjs::hidden(
+                              div(id = "hidden_dv_fad_download",
+                                  h4(helpText("Downloads")),
+                                  fluidRow(
+                                    column(2,radioButtons(inputId = "file_type_modera_source_a4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3,downloadButton(outputId = "download_fad_wa4b", label = "Download Oct. - Mar.")),
+                                    column(2,radioButtons(inputId = "file_type_modera_source_b4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3,downloadButton(outputId = "download_fad_sa4b", label = "Download Apr. - Sep.")),
+                                  ))),
+                            
                             div(id = "fad_map_a4b",
+                                h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
                                   plotOutput("fad_winter_map_a4b",
                                              brush = brushOpts(
@@ -3358,95 +3489,6 @@ tabPanel("Regression", id = "tab4",
 
                         )),
              ),
-             
-             ### Downloads ----
-             tabPanel("Downloads",
-                      verticalLayout(br(),
-                                     
-                                     div(id = "reg1",
-                                         fluidRow(
-                                           h3(helpText("Regression time series")), 
-                                           column(width = 3,
-                                                  radioButtons(inputId = "reg_ts_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                  downloadButton(outputId = "download_reg_ts_plot", label = "Download plot 1")),
-                                           
-                                           column(width = 3,
-                                                  radioButtons(inputId = "reg_ts2_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                  downloadButton(outputId = "download_reg_ts2_plot", label = "Download plot 2")), 
-                                           
-                                           column(width = 3,
-                                                  radioButtons(inputId = "reg_ts_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                                  downloadButton(outputId = "download_reg_ts_plot_data", label = "Download data")),
-                                           
-                                           column(width = 3,
-                                                  h4("Statistical summary"),
-                                                  downloadButton(outputId = "download_reg_sum_txt", label = "Download ")),
-                                         )), br(),   
-
-                                     div(id = "reg2",
-                                     fluidRow(
-                                     h3(helpText("Regression coefficient download")),
-                                     column(width = 3, 
-                                     radioButtons(inputId = "reg_coe_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                     downloadButton(outputId = "download_reg_coe_plot", label = "Download map")), 
-                                     
-                                     column(width = 3,
-                                     radioButtons(inputId = "reg_coe_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                     downloadButton(outputId = "download_reg_coe_plot_data", label = "Download data")),
-                                     )), br(),
-                                     
-
-                                     div(id = "reg3",
-                                     fluidRow(
-                                     h3(helpText("Regression pvalues download")),  
-                                     column(width = 3,
-                                     radioButtons(inputId = "reg_pval_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                     downloadButton(outputId = "download_reg_pval_plot", label = "Download map")), 
-                                     
-                                     column(width = 3,
-                                            radioButtons(inputId = "reg_pval_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                            downloadButton(outputId = "download_reg_pval_plot_data", label = "Download data")),
-                                     )), br(),
-                                     
-
-                                     div(id = "reg4",
-                                     fluidRow(
-                                     h3(helpText("Regression residuals download")),   
-                                     column(width = 3,
-                                     radioButtons(inputId = "reg_res_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                     downloadButton(outputId = "download_reg_res_plot", label = "Download map")), 
-                                     
-                                     column(width = 3,
-                                            radioButtons(inputId = "reg_res_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                            downloadButton(outputId = "download_reg_res_plot_data", label = "Download data")),
-                                     )), br(),
-                                     ),
-                                     
-                                     h3(helpText("ModE-RA sources download")),
-                                      shinyjs::hidden(
-                                        div(id = "hidden_iv_fad_download",
-                                            fluidRow(
-                                              h4("Independent variable"),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_a4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_wa4a", label = "Download Oct. - Mar")),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_b4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_sa4a", label = "Download Apr. - Sept")),
-                                            ))),
-                                      br(),
-                                      shinyjs::hidden(
-                                        div(id = "hidden_dv_fad_download",
-                                            fluidRow(
-                                              h4("Dependent variable"),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_a4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_wa4b", label = "Download Oct. - Mar")),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_b4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_sa4b", label = "Download Apr. - Sept")),
-                                            ))),
-             )
              
            ## Main Panel END ----
            ), width = 8)
@@ -3642,12 +3684,12 @@ tabPanel("Monthly Timeseries", id = "tab5",
            )),
            
            ## Main Panel START ----
-           mainPanel(tabsetPanel(
+           mainPanel(tabsetPanel(id = "tabset5",
              
              ### TS plot START ----
              tabPanel("Time series", plotOutput("timeseries5", click = "ts_click5",dblclick = "ts_dblclick5",brush = brushOpts(id = "ts_brush5",resetOnNew = TRUE)),
-                      #### Customization panels START ----       
-                      fluidRow(
+                        #### Customization panels START ----       
+                        fluidRow(
                         #### Time series customization ----
                         column(width = 4,
                                h4(helpText("Customize your time series")),  
@@ -3872,14 +3914,28 @@ tabPanel("Monthly Timeseries", id = "tab5",
                         
                         #### Customization panels END ----
                       ),
-                      ### TS plot END ----       
+                      
+                        #### Downloads ----
+                        h4(helpText("Download")),
+                        fluidRow(
+                          column(2, radioButtons(inputId = "file_type_timeseries5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                          column(3, downloadButton(outputId = "download_timeseries5", label = "Download time series"))
+                        ),
+                      
+             ### TS plot END ----       
              ),
              
              ### TS data ----
              tabPanel("Time series data", br(),
                       
+                      h4(helpText("Download")),
+                      fluidRow(
+                        column(2, radioButtons(inputId = "file_type_timeseries_data5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_timeseries_data5", label = "Download time series data"))
+                      ),
+                      br(),
+                      
                       column(width = 3, dataTableOutput("data5"))),
-             
              
              ### Feedback archive documentation (FAD) ----
              tabPanel("ModE-RA sources", br(),
@@ -3911,6 +3967,15 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                                  max = 90)),
                       ),
                       
+                      h4(helpText("Downloads")),
+                      
+                      fluidRow(
+                        column(2, radioButtons(inputId = "file_type_modera_source_a5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_fad_wa5", label = "Download Oct. - Mar.")),
+                        column(2, radioButtons(inputId = "file_type_modera_source_b5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_fad_sa5", label = "Download Apr. - Sep.")),
+                      ),
+                      
                       h4(helpText("Draw a box on the left map to use zoom function")),
                       
                       div(id = "fad_map_a5",
@@ -3934,29 +3999,10 @@ tabPanel("Monthly Timeseries", id = "tab5",
                           )),
                       
              ),
-             
-             ### Downloads ---- 
-             tabPanel("Downloads",
-                      verticalLayout(br(),
-                                     h3(helpText("Time series download")),
-                                     radioButtons(inputId = "file_type_timeseries5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                     downloadButton(outputId = "download_timeseries5", label = "Download"), br(),
-                                     h3(helpText("Time series data download")),
-                                     radioButtons(inputId = "file_type_timeseries_data5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                     downloadButton(outputId = "download_timeseries_data5", label = "Download")), br(),
-                                      fluidRow(
-                                        column(width = 3,
-                                               radioButtons(inputId = "file_type_modera_source_a5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                               downloadButton(outputId = "download_fad_wa5", label = "Download Oct. - Mar")),
-                                        column(width = 3,
-                                               radioButtons(inputId = "file_type_modera_source_b5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                               downloadButton(outputId = "download_fad_sa5", label = "Download Apr. - Sept")),
-                                      ),
-             )
-             
+
              ## Main Panel END ----
            ), width = 8),
-           # Monthly timeseries END ----  
+# Monthly timeseries END ----  
          )),
 
 # END ----
@@ -3968,6 +4014,60 @@ tabPanel("Monthly Timeseries", id = "tab5",
 server <- function(input, output, session) {
   #Preparations in the Server (Hidden options) ----
   track_usage(storage_mode = store_rds(path = "logs/"))
+  
+  # Add logic to toggle the visibility of the specific tabPanel (COrrelation Map) based on radio button values ("Time Series")
+  observe({
+    if (input$type_v1 == "Time series" && input$type_v2 == "Time series") {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+        // Hide the tabPanel
+        tabPanelToHide.hide();
+      ')
+    } else {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+        // Show the tabPanel
+        tabPanelToHide.show();
+      ')
+    }
+  })
+  
+  #Same based on Lon Lat Values
+  observe({
+    # Get the range values
+    range_lon_v1 <- input$range_longitude_v1
+    range_lat_v1 <- input$range_latitude_v1
+    range_lon_v2 <- input$range_longitude_v2
+    range_lat_v2 <- input$range_latitude_v2
+    
+    # Check for overlap
+    overlap_lon <- !(range_lon_v1[2] < range_lon_v2[1] || range_lon_v1[1] > range_lon_v2[2])
+    overlap_lat <- !(range_lat_v1[2] < range_lat_v2[1] || range_lat_v1[1] > range_lat_v2[2])
+    
+    # Return the result
+    if (overlap_lon && overlap_lat) {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+        // Show the tabPanel
+        tabPanelToHide.show();
+      ')
+    } else {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+        // Hide the tabPanel
+        tabPanelToHide.hide();
+      ')
+    }
+  })
+  
   #Hiding, showing, enabling/disenabling certain inputs
   observe({
 
