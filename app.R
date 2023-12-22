@@ -939,21 +939,13 @@ ui <- navbarPage(id = "nav1",
                                         min = 1422,
                                         max = 2008)),
                              ),
-                             
-                             fluidRow(
                              #Download
-                             div(h4(helpText("Download Oct. - Mar.")),
+                             h4(helpText("Downloads")),
                              fluidRow(
                                column(2, radioButtons(inputId = "file_type_modera_source_a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_fad_wa", label = "Download Oct. - Mar."))
-                             )),
-                             
-                             #Download  
-                             div(h4(helpText("Download Apr. - Sep.")),
-                             fluidRow(
+                               column(3, downloadButton(outputId = "download_fad_wa", label = "Download Oct. - Mar.")),
                                column(2, radioButtons(inputId = "file_type_modera_source_b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                                column(3, downloadButton(outputId = "download_fad_sa", label = "Download Apr. - Sep."))
-                             )),
                              ),
                              
                              h4(helpText("Draw a box on the left map to use zoom function")),
@@ -1760,21 +1752,13 @@ ui <- navbarPage(id = "nav1",
                                        min = 1422,
                                        max = 2008)),
                             ),
-                            
+                            #Download
+                            h4(helpText("Downloads")),
                             fluidRow(
-                              #Download
-                              div(h4(helpText("Download Oct. - Mar.")),
-                                  fluidRow(
                                     column(2, radioButtons(inputId = "file_type_modera_source_a2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_fad_wa2", label = "Download Oct. - Mar."))
-                                  )),
-                              
-                              #Download  
-                              div(h4(helpText("Download Apr. - Sep.")),
-                                  fluidRow(
+                                    column(3, downloadButton(outputId = "download_fad_wa2", label = "Download Oct. - Mar.")),
                                     column(2, radioButtons(inputId = "file_type_modera_source_b2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                                     column(3, downloadButton(outputId = "download_fad_sa2", label = "Download Apr. - Sep."))
-                                  )),
                             ),
                             
                             h4(helpText("Draw a box on the left map to use zoom function")),
