@@ -9,7 +9,8 @@ source("helpers.R")
 ui <- navbarPage(id = "nav1",
           ## Configs for navbarPage: theme, images (Header and Footer) ----
           title = div(style = "display: inline;",
-                      img(src = 'pics/Logo_ClimeApp_V2_210623.png', id = "ClimeApp", height = "75px", width = "75px", style = "margin-right: -10px"),
+                      img(src = 'pics/Clim-mas.png', id = "Clim-mas", height = "75px", width = "142px", style = "margin-right: -10px"),
+                      #img(src = 'pics/Logo_ClimeApp_V2_210623.png', id = "ClimeApp", height = "75px", width = "75px", style = "margin-right: -10px"),
                       img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v0.5)",
                       ),
           footer = div(class = "navbar-footer",
