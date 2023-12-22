@@ -756,9 +756,10 @@ ui <- navbarPage(id = "nav1",
                                                   label   = "Show on legend",
                                                   value   = FALSE),
                                     
+                                    hidden(
                                     textInput(inputId = "highlight_label_ts", 
                                               label   = "Label:",
-                                              value   = ""),
+                                              value   = "")),
                                     
                                     
                                     column(width = 12,
@@ -802,9 +803,10 @@ ui <- navbarPage(id = "nav1",
                                                   label   = "Show on legend",
                                                   value   = FALSE),
                                     
+                                    hidden(
                                     textInput(inputId = "line_label_ts", 
                                               label   = "Label:",
-                                              value   = ""),
+                                              value   = "")),
                                     
                                     column(width = 12,
                                            actionButton(inputId = "add_line_ts",
@@ -1584,9 +1586,10 @@ ui <- navbarPage(id = "nav1",
                                                        label   = "Show on legend",
                                                        value   = FALSE),
                                          
+                                         hidden(
                                          textInput(inputId = "highlight_label_ts2", 
                                                    label   = "Label:",
-                                                   value   = ""),
+                                                   value   = "")),
                                          
                                          
                                          column(width = 12,
@@ -1630,9 +1633,10 @@ ui <- navbarPage(id = "nav1",
                                                        label   = "Show on legend",
                                                        value   = FALSE),
                                          
+                                         hidden(
                                          textInput(inputId = "line_label_ts2", 
                                                    label   = "Label:",
-                                                   value   = ""),
+                                                   value   = "")),
                                          
                                          column(width = 12,
                                                 actionButton(inputId = "add_line_ts2",
@@ -2368,9 +2372,10 @@ ui <- navbarPage(id = "nav1",
                                                        label   = "Show on legend",
                                                        value   = FALSE),
                                          
+                                         hidden(
                                          textInput(inputId = "highlight_label_ts3", 
                                                    label   = "Label:",
-                                                   value   = ""),
+                                                   value   = "")),
                                          
                                          
                                          column(width = 12,
@@ -2414,9 +2419,10 @@ ui <- navbarPage(id = "nav1",
                                                        label   = "Show on legend",
                                                        value   = FALSE),
                                          
+                                         hidden(
                                          textInput(inputId = "line_label_ts3", 
                                                    label   = "Label:",
-                                                   value   = ""),
+                                                   value   = "")),
                                          
                                          column(width = 12,
                                                 actionButton(inputId = "add_line_ts3",
@@ -3821,9 +3827,10 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                                          label   = "Show on legend",
                                                          value   = FALSE),
                                            
+                                           hidden(
                                            textInput(inputId = "highlight_label_ts5", 
                                                      label   = "Label:",
-                                                     value   = ""),
+                                                     value   = "")),
                                            
                                            
                                            column(width = 12,
@@ -3866,9 +3873,10 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                                          label   = "Show on legend",
                                                          value   = FALSE),
                                            
+                                           hidden(
                                            textInput(inputId = "line_label_ts5", 
                                                      label   = "Label:",
-                                                     value   = ""),
+                                                     value   = "")),
                                            
                                            column(width = 12,
                                                   actionButton(inputId = "add_line_ts5",
@@ -5114,6 +5122,70 @@ server <- function(input, output, session) {
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year5 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "highlight_label_ts",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_highlight_on_legend_ts == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "highlight_label_ts2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_highlight_on_legend_ts2 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "highlight_label_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_highlight_on_legend_ts3 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "highlight_label_ts5",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_highlight_on_legend_ts5 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "line_label_ts",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_line_on_legend_ts == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "line_label_ts2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_line_on_legend_ts2 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "line_label_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_line_on_legend_ts3 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "line_label_ts5",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_line_on_legend_ts5 == TRUE,
                     asis = FALSE)
     
     
@@ -11053,7 +11125,8 @@ server <- function(input, output, session) {
       input_values <- input$point_size
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size", value = 1)
         } else {
           update_value <- function(val) {
@@ -11073,7 +11146,8 @@ server <- function(input, output, session) {
       input_values <- input$point_size2
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size2", value = 1)
         } else {
           update_value <- function(val) {
@@ -11093,7 +11167,8 @@ server <- function(input, output, session) {
       input_values <- input$point_size3
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size3", value = 1)
         } else {
           update_value <- function(val) {
@@ -11113,7 +11188,8 @@ server <- function(input, output, session) {
       input_values <- input$point_size_ts
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size_ts", value = 1)
         } else {
           update_value <- function(val) {
@@ -11133,7 +11209,8 @@ server <- function(input, output, session) {
       input_values <- input$point_size_ts2
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size_ts2", value = 1)
         } else {
           update_value <- function(val) {
@@ -11153,7 +11230,8 @@ server <- function(input, output, session) {
       input_values <- input$point_size_ts3
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size_ts3", value = 1)
         } else {
           update_value <- function(val) {
@@ -11173,7 +11251,8 @@ server <- function(input, output, session) {
       input_values <- input$percentage_sign_match
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "percentage_sign_match", value = 1)
         } else {
           update_value <- function(val) {
@@ -11193,7 +11272,8 @@ server <- function(input, output, session) {
       input_values <- input$percentage_sign_match2
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "percentage_sign_match2", value = 1)
         } else {
           update_value <- function(val) {
@@ -11213,7 +11293,8 @@ server <- function(input, output, session) {
       input_values <- input$percentage_sign_match2
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "percentage_sign_match2", value = 1)
         } else {
           update_value <- function(val) {
@@ -11233,7 +11314,8 @@ server <- function(input, output, session) {
       input_values <- input$hidden_SD_ratio
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "hidden_SD_ratio", value = 0)
         } else {
           update_value <- function(val) {
@@ -11253,7 +11335,8 @@ server <- function(input, output, session) {
       input_values <- input$hidden_SD_ratio2
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "hidden_SD_ratio2", value = 0)
         } else {
           update_value <- function(val) {
@@ -11273,7 +11356,8 @@ server <- function(input, output, session) {
       input_values <- input$year_moving_ts
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "year_moving_ts", value = 3)
         } else {
           update_value <- function(val) {
@@ -11293,7 +11377,8 @@ server <- function(input, output, session) {
       input_values <- input$year_moving_ts3
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "year_moving_ts3", value = 3)
         } else {
           update_value <- function(val) {
@@ -11313,7 +11398,8 @@ server <- function(input, output, session) {
       input_values <- input$fad_year_a
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11333,7 +11419,8 @@ server <- function(input, output, session) {
       input_values <- input$fad_year_a2
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a2", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11353,7 +11440,8 @@ server <- function(input, output, session) {
       input_values <- input$fad_year_a3a
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a3a", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11373,7 +11461,8 @@ server <- function(input, output, session) {
       input_values <- input$fad_year_a3b
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a3b", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11393,7 +11482,8 @@ server <- function(input, output, session) {
       input_values <- input$fad_year_a4a
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a4a", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11413,7 +11503,8 @@ server <- function(input, output, session) {
       input_values <- input$fad_year_a4b
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a4b", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11433,7 +11524,8 @@ server <- function(input, output, session) {
       input_values <- input$fad_year_a5
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a5", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11453,7 +11545,8 @@ server <- function(input, output, session) {
       input_values <- input$prior_years2
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "prior_years2", value = 1)
         } else {
           update_value <- function(val) {
@@ -11473,7 +11566,8 @@ server <- function(input, output, session) {
       input_values <- input$reg_resi_year
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "reg_resi_year", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11493,7 +11587,8 @@ server <- function(input, output, session) {
       input_values <- input$range_years_sg
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "range_years_sg", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11513,7 +11608,8 @@ server <- function(input, output, session) {
       input_values <- input$ref_period_sg
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11533,7 +11629,8 @@ server <- function(input, output, session) {
       input_values <- input$ref_period_sg2
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg2", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11553,7 +11650,8 @@ server <- function(input, output, session) {
       input_values <- input$ref_period_sg_v1
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11573,7 +11671,8 @@ server <- function(input, output, session) {
       input_values <- input$range_years_sg3
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "range_years_sg3", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11594,7 +11693,8 @@ server <- function(input, output, session) {
       input_values <- input$ref_period_sg_v2
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11614,7 +11714,8 @@ server <- function(input, output, session) {
       input_values <- input$ref_period_sg_iv
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11634,7 +11735,8 @@ server <- function(input, output, session) {
       input_values <- input$range_years_sg4
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "range_years_sg4", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11654,7 +11756,8 @@ server <- function(input, output, session) {
       input_values <- input$ref_period_sg_dv
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
         } else {
           update_value <- function(val) {
@@ -11674,7 +11777,8 @@ server <- function(input, output, session) {
       input_values <- input$ref_period_sg5
       
       delay(1000, {
-        if (!is.numeric(input_values)) {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg5", value = 1422)
         } else {
           update_value <- function(val) {
@@ -12146,306 +12250,6 @@ server <- function(input, output, session) {
           updateNumericRangeInput(inputId = "range_latitude5", value = c(range_values[1], 90))
         } else if (right > 90) {
           updateNumericRangeInput(inputId = "range_latitude5", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_x_values
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_x_values_ts
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_x_values2
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_x_values2
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values2", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_x_values_ts2
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts2", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts2", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts2", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts2", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_x_values_ts3
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts3", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts3", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts3", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts3", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_x_values3
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values3", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values3", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values3", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values3", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_x_values_ts5
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts5", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts5", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts5", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "highlight_x_values_ts5", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_y_values
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_y_values2
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values2", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values2", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values2", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values2", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_y_values3
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values3", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values3", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values3", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values3", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_y_values_ts
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_y_values_ts2
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts2", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts2", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts2", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts2", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_y_values_ts3
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts3", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts3", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts3", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts3", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$highlight_y_values_ts5
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts5", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts5", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts5", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "highlight_y_values_ts5", value = c(range_values[1], 90))
         }
       }
       
