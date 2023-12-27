@@ -461,11 +461,8 @@ ui <- navbarPage(id = "nav1",
                                              value   = NULL,
                                              placeholder = "e.g. Bern"),
                                    
-                                   
-                                   
                                    actionButton(inputId = "search",
                                                 label   = "Search"),
-                                   
                                    
                                    shinyjs::hidden(div(id = "inv_location",
                                                        h6(helpText("Invalid location"))
@@ -3582,10 +3579,10 @@ tabPanel("Monthly Timeseries", id = "tab5",
              
              ### Second sidebar panel (Location selection) ----
              sidebarPanel(fluidRow(
-               
+
+               shinyjs::hidden(div(id = "hidden_region_input",               
                #Short description of the Coord. Sidebar        
-               h4(helpText("Choose a map or enter coordinates manually")),
-               
+               h4(helpText("Choose a region or enter coordinates manually")),
                
                column(width = 12, fluidRow(      
                  #Global Button
@@ -3659,12 +3656,51 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                  min = -90,
                                  max = 90),
                
-               # #Enter Coordinates
-               # actionButton(inputId = "button_coord5",
-               #              label = "Update coordinates",
-               #              width = "200px"),
-               # 
-               # br(), br(),
+               )),
+               
+               #Custom location
+               h4(helpText("Choose a location input")),
+               
+               checkboxInput(inputId = "custom_features5",
+                             label   = "Switch to location input",
+                             value   = FALSE),
+               
+               shinyjs::hidden(div(id = "hidden_custom_points5",
+                   h6(helpText("Enter location/coordinates")),
+                   
+                   textInput(inputId = "location5", 
+                             label   = "Enter a location:",
+                             value   = NULL,
+                             placeholder = "e.g. Bern"),
+                   
+                   actionButton(inputId = "search5",
+                                label   = "Search"),
+                   
+                   shinyjs::hidden(div(id = "inv_location5",
+                                       h6(helpText("Invalid location"))
+                   )),
+                   
+                   column(width = 12, offset = 0,
+                          column(width = 6,
+                                 textInput(inputId = "point_location_x5", 
+                                           label   = "Point longitude:",
+                                           value   = "")
+                          ),
+                          column(width = 6,
+                                 textInput(inputId = "point_location_y5", 
+                                           label   = "Point latitude:",
+                                           value   = "")
+                          )),
+                   
+                   # #Enter Coordinates
+                   actionButton(inputId = "button_location5",
+                                label = "Update point location",
+                                width = "200px"),
+                   
+               )),
+               
+
+                br(), br(),
                
                column(width = 12, fluidRow(
                
@@ -5041,6 +5077,22 @@ server <- function(input, output, session) {
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts5 == "Line",
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "hidden_region_input",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$custom_features5 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "hidden_custom_points5",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$custom_features5 == TRUE,
                     asis = FALSE)
     
     #Toggle Single Year UI
@@ -8189,6 +8241,46 @@ server <- function(input, output, session) {
       }
     })
     
+    #Update Coordinates if Location is selected
+    
+    # Input geo-coded locations
+    observeEvent(input$search5, {
+      location5 <- input$location5
+      if (!is.null(location5) && nchar(location5) > 0) {
+        result <- geocode_OSM(location5)
+        if (!is.null(result$coords)) {
+          longitude5 <- result$coords[1]
+          latitude5 <- result$coords[2]
+          updateTextInput(session, "point_location_x5", value = as.character(longitude5))
+          updateTextInput(session, "point_location_y5", value = as.character(latitude5))
+          shinyjs::hide(id = "inv_location5")  # Hide the "Invalid location" message
+        } else {
+          shinyjs::show(id = "inv_location5")  # Show the "Invalid location" message
+        }
+      } else {
+        shinyjs::hide(id = "inv_location5")  # Hide the "Invalid location" message when no input
+      }
+    })
+    
+    observeEvent(input$button_location5, {
+      # Update range_longitude5 if point_location_x5 is not empty
+      
+        updateNumericRangeInput(inputId = "range_longitude5",
+                                session = getDefaultReactiveDomain(),
+                                label = NULL,
+                                value = c(input$point_location_x5, input$point_location_x5))
+      
+    })
+
+    observeEvent(input$button_location5, {
+      # Update range_latitude5 if point_location_y5 is not empty
+      
+        updateNumericRangeInput(inputId = "range_latitude5",
+                                session = getDefaultReactiveDomain(),
+                                label = NULL,
+                                value = c(input$point_location_y5, input$point_location_y5))
+      
+    })
     
     ### Interactivity ----
     
@@ -8261,7 +8353,7 @@ server <- function(input, output, session) {
           value = round(c(input$ts_brush5[[3]],input$ts_brush5[[4]]), digits = 2))
       }
     })
-    
+
     ### Initialise and update custom points lines highlights ----
     
     ts_points_data5 = reactiveVal(data.frame())
