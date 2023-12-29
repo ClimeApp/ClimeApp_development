@@ -9,8 +9,7 @@ source("helpers.R")
 ui <- navbarPage(id = "nav1",
           ## Configs for navbarPage: theme, images (Header and Footer) ----
           title = div(style = "display: inline;",
-                      img(src = 'pics/Clim-mas.png', id = "Clim-mas", height = "75px", width = "142px", style = "margin-right: -10px"),
-                      #img(src = 'pics/Logo_ClimeApp_V2_210623.png', id = "ClimeApp", height = "75px", width = "75px", style = "margin-right: -10px"),
+                      uiOutput("logo_output", inline = TRUE),
                       img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v0.5)",
                       ),
           footer = div(class = "navbar-footer",
@@ -3659,17 +3658,17 @@ tabPanel("Monthly Timeseries", id = "tab5",
                )),
                
                #Custom location
-               h4(helpText("Choose a location input")),
+               h4(helpText("Choose a point location input")),
                
                checkboxInput(inputId = "custom_features5",
-                             label   = "Switch to location input",
+                             label   = "Switch to point location input",
                              value   = FALSE),
                
                shinyjs::hidden(div(id = "hidden_custom_points5",
                    h6(helpText("Enter location/coordinates")),
                    
                    textInput(inputId = "location5", 
-                             label   = "Enter a location:",
+                             label   = "Enter a point location:",
                              value   = NULL,
                              placeholder = "e.g. Bern"),
                    
@@ -3697,10 +3696,10 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                 label = "Update point location",
                                 width = "200px"),
                    
+                   br(), br(),
+                   
                )),
                
-
-                br(), br(),
                
                column(width = 12, fluidRow(
                
@@ -4061,6 +4060,24 @@ tabPanel("Monthly Timeseries", id = "tab5",
 server <- function(input, output, session) {
   #Preparations in the Server (Hidden options) ----
   track_usage(storage_mode = store_rds(path = "logs/"))
+  
+  #Easter Eggs
+  
+  # Get the current month and day
+  current_month_day <- format(Sys.Date(), "%m-%d")
+  
+  # Check if the current month and day are between December 01 and December 31
+  if (current_month_day >= "12-01" && current_month_day <= "12-31") {
+    # Christmas Egg
+    output$logo_output <- renderUI({
+      img(src = 'pics/Clim-mas.png', id = "Clim-mas", height = "75px", width = "142px", style = "margin-right: -10px; display: inline")
+    })
+  } else {
+    # Normal Climeapp Logo
+    output$logo_output <- renderUI({
+      img(src = 'pics/Logo_ClimeApp_V2_210623.png', id = "ClimeApp", height = "75px", width = "75px", style = "margin-right: -10px; display: inline")
+    })
+  }
   
   # Add logic to toggle the visibility of the specific tabPanel (COrrelation Map) based on radio button values ("Time Series")
   observe({
