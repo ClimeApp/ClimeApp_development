@@ -57,12 +57,33 @@ ui <- navbarPage(id = "nav1",
                             color: #d9b166 !important;
                           }
                           ")),
+                       
+                       #Tooltips for Tabpanels
+                       tags$head(
+                         tags$style(
+                          HTML('
+                            .tooltip {
+                              background-color: black !important;
+                              color: white !important;
+                            }
+                          ')
+                         )
+                       ),
+                       tags$script(HTML('
+                         // Add tooltips using shinyjs
+                         $("#nav1 a[data-value=\'tab1\']").attr("title", "Analyzing averages involves calculating the mean of a dataset, providing a central tendency measure. Anomalies are deviations from this mean. In climate research, comparing monthly or yearly averages helps identify trends. Analyzing anomalies, the differences from long-term averages, reveals unusual patterns, aiding in detecting climate changes and anomalies such as El Niño or global warming impacts.");
+                         $("#nav1 a[data-value=\'tab2\']").attr("title", "Composite analysis in climate research involves averaging variables over specific conditions, such as extreme events. By grouping and averaging data during these conditions, researchers can identify patterns and anomalies, providing insights into the atmospheric or climatic responses associated with certain events.");
+                         $("#nav1 a[data-value=\'tab3\']").attr("title", "Correlation measures the strength and direction of a linear relationship between two variables. A correlation coefficient, like Pearsons r, ranges from -1 to 1. Positive values indicate a positive correlation, negative values a negative correlation, and 0 suggests no linear relationship. Correlation is a statistical tool to assess the degree of association between variables.");
+                         $("#nav1 a[data-value=\'tab4\']").attr("title", "Regression analyzes the relationship between dependent and independent variables. It fits a mathematical model to data, estimating the impact of independent variables on the dependent one. In climate reconstructions, regression helps identify patterns and derive equations to predict past climate conditions using proxy data.");
+                         $("#nav1 a[data-value=\'tab5\']").attr("title", "Analyzing monthly time series involves examining data over consecutive months. Researchers can identify trends, seasonality, and anomalies in climate variables like temperature or precipitation. Statistical techniques, such as moving averages or seasonal decomposition, help reveal patterns and variations in monthly data, aiding in climate research and trend identification.");
+                       '))
+                     
                        ),
           theme = my_theme,
           position = c("fixed-top"),
 
 # Welcome START ----                             
-      tabPanel("Welcome", id = "tab0",
+  tabPanel("Welcome", id = "tab0",
         shinyjs::useShinyjs(),
         includeCSS("www/custom.css"),
         use_tracking(),
@@ -193,7 +214,7 @@ ui <- navbarPage(id = "nav1",
 # Welcome END ----  
        )),
 # Average & anomaly START ----                             
-      tabPanel("Anomalies", id = "tab1",
+  tabPanel("Anomalies", value = "tab1",
                 shinyjs::useShinyjs(),
                 sidebarLayout(
       
@@ -970,9 +991,9 @@ ui <- navbarPage(id = "nav1",
                 ), width = 8),
 # Average & anomaly END ----  
         )),
-        
+
 # Composites START----      
-        tabPanel("Composites", id = "tab2",
+  tabPanel("Composites", value = "tab2",
         shinyjs::useShinyjs(),
         sidebarLayout(
                  ## Sidebar Panels START ----
@@ -1786,7 +1807,7 @@ ui <- navbarPage(id = "nav1",
         )),
 
 # Correlation START ----
-          tabPanel("Correlation", id = "tab3",
+  tabPanel("Correlation", value = "tab3",
           shinyjs::useShinyjs(),
           sidebarLayout(
                ## Sidebar Panels START ----          
@@ -2851,7 +2872,7 @@ ui <- navbarPage(id = "nav1",
           )),
 
 # Regression START ----
-tabPanel("Regression", id = "tab4",
+  tabPanel("Regression", value = "tab4",
          shinyjs::useShinyjs(),
          sidebarLayout(
            ## Sidebar Panels START ----          
@@ -3503,9 +3524,8 @@ tabPanel("Regression", id = "tab4",
 # Regression END ----
          )),
 
-
 # Monthly timeseries START ----                             
-tabPanel("Monthly Timeseries", id = "tab5",
+  tabPanel("Monthly Timeseries", value = "tab5",
          shinyjs::useShinyjs(),
          sidebarLayout(
            
