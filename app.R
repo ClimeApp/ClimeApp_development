@@ -4086,18 +4086,72 @@ server <- function(input, output, session) {
   # Get the current month and day
   current_month_day <- format(Sys.Date(), "%m-%d")
   
-  # Check if the current month and day are between December 01 and December 31
+  # Default logo
+  logo_src <- 'pics/Logo_ClimeApp_V2_210623.png'
+  logo_id <- "ClimeApp"
+  logo_height <- "75px"
+  logo_width <- "75px"
+  logo_style <- "margin-right: -10px; display: inline"
+  
+  # Check for special occasions
   if (current_month_day >= "12-01" && current_month_day <= "12-31") {
     # Christmas Egg
-    output$logo_output <- renderUI({
-      img(src = 'pics/Clim-mas.png', id = "Clim-mas", height = "75px", width = "142px", style = "margin-right: -10px; display: inline")
-    })
-  } else {
-    # Normal Climeapp Logo
-    output$logo_output <- renderUI({
-      img(src = 'pics/Logo_ClimeApp_V2_210623.png', id = "ClimeApp", height = "75px", width = "75px", style = "margin-right: -10px; display: inline")
-    })
+    logo_src <- 'pics/Clim-mas.png'
+    logo_id <- "Clim-mas"
+    logo_width <- "142px"
+  } else if (current_month_day >= "05-02" && current_month_day <= "05-02") {
+    # Harry Potter Egg
+    logo_src <- 'pics/Clim-bledore.png'
+    logo_id <- "Clim-bledore"
+    logo_width <- "142px"
+  } else if (current_month_day >= "05-15" && current_month_day <= "05-15") {
+    # World Climate Day Egg
+    logo_src <- 'pics/Clim-day.png'
+    logo_id <- "Clim-day"
+    logo_width <- "142px"
+  } else if (current_month_day >= "01-06" && current_month_day <= "01-06") {
+    # Dreikönigs Tag Egg
+    logo_src <- 'pics/Clim-king.png'
+    logo_id <- "Clim-king"
+    logo_width <- "142px"
+  } else if (current_month_day >= "09-22" && current_month_day <= "09-22") {
+    # Lord of The Rings Day Egg
+    logo_src <- 'pics/Clim-lord.png'
+    logo_id <- "Clim-lord"
+    logo_width <- "142px"
+  } else if ((current_month_day >= "03-22" && current_month_day <= "04-09") ||
+             (current_month_day >= "04-11" && current_month_day <= "04-25")) {
+    # Easter Egg
+    logo_src <- 'pics/Clim-ster.png'
+    logo_id <- "Clim-ster"
+    logo_width <- "142px"
+  } else if (current_month_day >= "04-10" && current_month_day <= "04-10") {
+    # International Volcano Day Egg
+    logo_src <- 'pics/Clim-vol.png'
+    logo_id <- "Clim-vol"
+    logo_width <- "142px"
+  } else if (current_month_day >= "05-04" && current_month_day <= "05-04") {
+    # May the Fourth Egg
+    logo_src <- 'pics/Clim-wars.png'
+    logo_id <- "Clim-wars"
+    logo_width <- "142px"
+  } else if (current_month_day >= "10-15" && current_month_day <= "11-02") {
+    # Halloween Egg
+    logo_src <- 'pics/Clim-ween.png'
+    logo_id <- "Clim-ween"
+    logo_width <- "142px"
+  } else if (current_month_day >= "01-01" && current_month_day <= "01-03") {
+    # New Year Egg
+    logo_src <- 'pics/Clim-year.png'
+    logo_id <- "Clim-year"
+    logo_width <- "142px"
   }
+  
+  # Render the logo
+  output$logo_output <- renderUI({
+    img(src = logo_src, id = logo_id, height = logo_height, width = logo_width, style = logo_style)
+  })
+  
   
   # Add logic to toggle the visibility of the specific tabPanel (COrrelation Map) based on radio button values ("Time Series")
   observe({
