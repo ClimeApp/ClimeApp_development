@@ -3,7 +3,6 @@
 # Source for helpers ----
 source("helpers.R")
 
-
 # Define UI ----
 
 ui <- navbarPage(id = "nav1",
@@ -11,6 +10,10 @@ ui <- navbarPage(id = "nav1",
           title = div(style = "display: inline;",
                       uiOutput("logo_output", inline = TRUE),
                       img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v0.5)",
+                      #Preparation to use Tracking ShinyJS and CSS
+                      shinyjs::useShinyjs(),
+                      includeCSS("www/custom.css"),
+                      use_tracking(),
                       ),
           footer = div(class = "navbar-footer",
                        style = "display: inline;",
@@ -18,9 +21,7 @@ ui <- navbarPage(id = "nav1",
                        img(src = 'pics/LOGO_ERC-FLAG_EU_.jpg', id = "ClimeApp4", height = "100px", width = "141px", style = "margin-top: 20px; margin-bottom: 20px;"),
                        img(src = 'pics/WBF_SBFI_EU_Frameworkprogramme_E_RGB_pos_quer.jpg', id = "ClimeApp5", height = "100px", width = "349px", style = "margin-top: 20px; margin-bottom: 20px;"),
                        img(src = 'pics/SNF_Logo_Logo.png', id = "ClimeApp6", height = "75px", width = "560px", style = "margin-top: 20px; margin-bottom: 20px;"),
-                       tags$style(HTML(".navbar-footer {margin-top: 20px; margin-bottom: 20px;}")),
                        # Navbar properties
-                       tags$style(HTML(".navbar { height: 75px !important; }")),
                        tags$style(type="text/css", "body {padding-top: 90px;}"),
                        # Window dimensions
                        tags$head(tags$script('
@@ -41,34 +42,8 @@ ui <- navbarPage(id = "nav1",
                                   ".shiny-output-error { visibility: hidden; }",
                                   ".shiny-output-error:before { visibility: hidden; }"
                        ),
-                       #Highlighted Buttons
-                       tags$style(HTML("
-                          .green-background {
-                            color: #d9b166;
-                            background-color: #094030 !important;
-                          }
-                          
-                          .green-background:hover {
-                            color: #d9b166 !important;
-                          }
-                          
-                          .green-background:focus {
-                            background-color: #094030 !important;
-                            color: #d9b166 !important;
-                          }
-                          ")),
-                       
+
                        #Tooltips for Tabpanels
-                       tags$head(
-                         tags$style(
-                          HTML('
-                            .tooltip {
-                              background-color: black !important;
-                              color: white !important;
-                            }
-                          ')
-                         )
-                       ),
                        tags$script(HTML('
                          // Add tooltips using shinyjs
                          $("#nav1 a[data-value=\'tab1\']").attr("title", "Analyzing averages involves calculating the mean of a dataset, providing a central tendency measure. Anomalies are deviations from this mean. In climate research, comparing monthly or yearly averages helps identify trends. Analyzing anomalies, the differences from long-term averages, reveals unusual patterns, aiding in detecting climate changes and anomalies such as El Niño or global warming impacts.");
@@ -77,16 +52,13 @@ ui <- navbarPage(id = "nav1",
                          $("#nav1 a[data-value=\'tab4\']").attr("title", "Regression analyzes the relationship between dependent and independent variables. It fits a mathematical model to data, estimating the impact of independent variables on the dependent one. In climate reconstructions, regression helps identify patterns and derive equations to predict past climate conditions using proxy data.");
                          $("#nav1 a[data-value=\'tab5\']").attr("title", "Analyzing monthly time series involves examining data over consecutive months. Researchers can identify trends, seasonality, and anomalies in climate variables like temperature or precipitation. Statistical techniques, such as moving averages or seasonal decomposition, help reveal patterns and variations in monthly data, aiding in climate research and trend identification.");
                        '))
-                     
+                       
                        ),
           theme = my_theme,
           position = c("fixed-top"),
 
 # Welcome START ----                             
-  tabPanel("Welcome", id = "tab0",
-        shinyjs::useShinyjs(),
-        includeCSS("www/custom.css"),
-        use_tracking(),
+  tabPanel("Welcome", value = "tab0",
         sidebarLayout(
                          
           ## Sidebar Panels START ----          
@@ -145,11 +117,6 @@ ui <- navbarPage(id = "nav1",
             tabsetPanel(id = "tabset0",
             #### Tab Welcome ----
             tabPanel("Welcome",
-                     tags$head(tags$style(HTML(".responsive-img {
-                                                max-width: 100%;
-                                                height: auto;
-                                              }
-                                            "))),
             tags$img(src = 'pics/welcome_map.jpg', id = "welcome_map", class = "responsive-img"),
             h4(helpText("For more information on ModE-RA please see:")),
             h4(helpText(a("ModE-RAclim - A version of the ModE-RA reanalysis with climatological prior for sensitivity studies", href = "https://www.wdc-climate.de/ui/entry?acronym=ModE-RAc"), ", [Place Holder for link to: ModE-RA paper & ClimeApp technical paper (in progress)]")),
@@ -221,11 +188,11 @@ ui <- navbarPage(id = "nav1",
                 ## Sidebar Panels START ----          
                 sidebarPanel(verticalLayout(
                 
-                    ### First Sidebar panel (Variable and time selection) ----
+                    ### First Sidebar panel (Variable and dataset selection) ----
                     sidebarPanel(fluidRow(
           
-                    #Short description of the General Panel        
-                    h4(helpText("Plot average anomalies for a selected time period")),
+                    #Short description of the selection options        
+                    h4(helpText("Select dataset and variable")),
                     
                     #Choose one of three datasets (Select)                
                     selectInput(inputId  = "dataset_selected",
@@ -238,6 +205,14 @@ ui <- navbarPage(id = "nav1",
                                 label    = "Choose a variable to plot:",
                                 choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
                                 selected = "Temperature"),
+                    
+                    ), width = 12), br(),
+                    
+                    ### Second Sidebar panel (Time selection) ----
+                    sidebarPanel(fluidRow(
+                      
+                    #Short description of the temporal selection        
+                    h4(helpText("Plot average anomalies for a selected time period")),
             
                     #Choose your year of interest        
                     hidden(
@@ -303,7 +278,7 @@ ui <- navbarPage(id = "nav1",
     
                     ), width = 12), br(),
             
-                    ### Second sidebar panel (Location selection) ----
+                    ### Third sidebar panel (Location selection) ----
                     sidebarPanel(fluidRow(
               
                     #Short description of the Coord. Sidebar        
@@ -999,11 +974,11 @@ ui <- navbarPage(id = "nav1",
                  ## Sidebar Panels START ----
                  sidebarPanel(verticalLayout(
                    
-                    ### First Sidebar panel (Variable and time selection) ----
+                    ### First Sidebar panel (Variable and dataset selection) ----
                     sidebarPanel(fluidRow( 
                      
                      #Short description of the Panel Composites        
-                     h4(helpText("Plot composite anomalies for a set of years")),
+                     h4(helpText("Select dataset and variable for composite anomalies")),
                      
                      #Choose one of three datasets (Select)                
                      selectInput(inputId  = "dataset_selected2",
@@ -1016,6 +991,14 @@ ui <- navbarPage(id = "nav1",
                                  label    = "Choose a variable to plot:",
                                  choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
                                  selected = "Temperature"),
+                     
+                    ), width = 12), br(),
+                    
+                    ### Second Sidebar panel (Time selection) ----
+                    sidebarPanel(fluidRow(
+                      
+                      #Short description of the temporal selection        
+                      h4(helpText("Plot composite anomalies for a selected time period")),
                      
                      #Type in your year of interest OR upload a file
                      radioButtons(inputId  = "enter_upload2",
@@ -1128,11 +1111,9 @@ ui <- navbarPage(id = "nav1",
                      )),
                        )),
                      
-                     ), width = 12),
-                     
-                     br(),
+                     ), width = 12), br(),
                    
-                    ### Second sidebar panel (Location selection) ----
+                    ### Third sidebar panel (Location selection) ----
                      sidebarPanel(fluidRow(
                      
                      #Short description of the Coord. Sidebar        
@@ -4109,11 +4090,6 @@ server <- function(input, output, session) {
     logo_src <- 'pics/Clim-day.png'
     logo_id <- "Clim-day"
     logo_width <- "142px"
-  } else if (current_month_day >= "01-06" && current_month_day <= "01-06") {
-    # Dreikönigs Tag Egg
-    logo_src <- 'pics/Clim-king.png'
-    logo_id <- "Clim-king"
-    logo_width <- "142px"
   } else if (current_month_day >= "09-22" && current_month_day <= "09-22") {
     # Lord of The Rings Day Egg
     logo_src <- 'pics/Clim-lord.png'
@@ -5411,8 +5387,6 @@ server <- function(input, output, session) {
                     selector = NULL,
                     condition = input$show_line_on_legend_ts5 == TRUE,
                     asis = FALSE)
-    
-    
   
   })
   
@@ -8606,7 +8580,6 @@ server <- function(input, output, session) {
   
   output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
   # code line below sets height as a function of the ratio of lat/lon 
-  
   
   #Ref/Absolute/SD ratio Map
   ref_map_data <- function(){
@@ -12650,7 +12623,6 @@ server <- function(input, output, session) {
         )
       }
     })
-    
     
 }
 

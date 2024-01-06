@@ -20,7 +20,7 @@ library(shinylogs)
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
 
 #Richard:
 #Laptop/desktop:
@@ -141,7 +141,7 @@ nc_close(SON_slp_nc)
 ## Create dataframe of continent lon/lats and Set initial latlon values
 Europe = c(-30,40,30,75) 
 Asia = c(25,170,5,80)
-Australasia = c(90,180,-55,10)
+Australasia = c(90,180,-55,20)
 Africa = c(-25,55,-40,40)
 N_America = c(-175,-10,5,85)
 S_America = c(-90,-30,-60,15)
