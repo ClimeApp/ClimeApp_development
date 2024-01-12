@@ -12,7 +12,6 @@ ui <- navbarPage(id = "nav1",
                       img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v0.5)",
                       #Preparation to use Tracking ShinyJS and CSS
                       shinyjs::useShinyjs(),
-                      includeCSS("www/custom.css"),
                       use_tracking(),
                       ),
           footer = div(class = "navbar-footer",
@@ -45,20 +44,21 @@ ui <- navbarPage(id = "nav1",
 
                        #Tooltips for Tabpanels
                        tags$script(HTML('
-                         // Add tooltips using shinyjs
-                         $("#nav1 a[data-value=\'tab1\']").attr("title", "Analyzing averages involves calculating the mean of a dataset, providing a central tendency measure. Anomalies are deviations from this mean. In climate research, comparing monthly or yearly averages helps identify trends. Analyzing anomalies, the differences from long-term averages, reveals unusual patterns, aiding in detecting climate changes and anomalies such as El Niño or global warming impacts.");
-                         $("#nav1 a[data-value=\'tab2\']").attr("title", "Composite analysis in climate research involves averaging variables over specific conditions, such as extreme events. By grouping and averaging data during these conditions, researchers can identify patterns and anomalies, providing insights into the atmospheric or climatic responses associated with certain events.");
-                         $("#nav1 a[data-value=\'tab3\']").attr("title", "Correlation measures the strength and direction of a linear relationship between two variables. A correlation coefficient, like Pearsons r, ranges from -1 to 1. Positive values indicate a positive correlation, negative values a negative correlation, and 0 suggests no linear relationship. Correlation is a statistical tool to assess the degree of association between variables.");
-                         $("#nav1 a[data-value=\'tab4\']").attr("title", "Regression analyzes the relationship between dependent and independent variables. It fits a mathematical model to data, estimating the impact of independent variables on the dependent one. In climate reconstructions, regression helps identify patterns and derive equations to predict past climate conditions using proxy data.");
-                         $("#nav1 a[data-value=\'tab5\']").attr("title", "Analyzing monthly time series involves examining data over consecutive months. Researchers can identify trends, seasonality, and anomalies in climate variables like temperature or precipitation. Statistical techniques, such as moving averages or seasonal decomposition, help reveal patterns and variations in monthly data, aiding in climate research and trend identification.");
-                       '))
-                       
+                          // Add tooltips using shinyjs
+                          $("#nav1 a[data-value=\'tab1\']").attr("title", "Analyzing averages involves calculating the mean of a dataset, providing a central tendency measure. Anomalies are deviations from this mean. In climate research, comparing monthly or yearly averages helps identify trends. Analyzing anomalies, the differences from long-term averages, reveals unusual patterns, aiding in detecting climate changes and anomalies such as El Niño or global warming impacts.");
+                          $("#nav1 a[data-value=\'tab2\']").attr("title", "Composite analysis in climate research involves averaging variables over specific conditions, such as extreme events. By grouping and averaging data during these conditions, researchers can identify patterns and anomalies, providing insights into the atmospheric or climatic responses associated with certain events.");
+                          $("#nav1 a[data-value=\'tab3\']").attr("title", "Correlation measures the strength and direction of a linear relationship between two variables. A correlation coefficient, like Pearsons r, ranges from -1 to 1. Positive values indicate a positive correlation, negative values a negative correlation, and 0 suggests no linear relationship. Correlation is a statistical tool to assess the degree of association between variables.");
+                          $("#nav1 a[data-value=\'tab4\']").attr("title", "Regression analyzes the relationship between dependent and independent variables. It fits a mathematical model to data, estimating the impact of independent variables on the dependent one. In climate reconstructions, regression helps identify patterns and derive equations to predict past climate conditions using proxy data.");
+                          $("#nav1 a[data-value=\'tab5\']").attr("title", "Analyzing monthly time series involves examining data over consecutive months. Researchers can identify trends, seasonality, and anomalies in climate variables like temperature or precipitation. Statistical techniques, such as moving averages or seasonal decomposition, help reveal patterns and variations in monthly data, aiding in climate research and trend identification.");
+                        ')),
                        ),
           theme = my_theme,
           position = c("fixed-top"),
+          
 
 # Welcome START ----                             
   tabPanel("Welcome", value = "tab0",
+        includeCSS("www/custom.css"),
         sidebarLayout(
                          
           ## Sidebar Panels START ----          
@@ -93,6 +93,17 @@ ui <- navbarPage(id = "nav1",
               h5(helpText("Precipitation = Total monthly precipitation [mm]")),
               h5(helpText("SLP = Sea level pressure [hPa]")),
               h5(helpText("Z500 = Pressure at 500 hPa geopotential height [hPa]"))
+            ),
+            
+            column(width = 12, br()),
+            
+            column(width = 12,
+                   
+                   h5(strong("User information:", style = "color: #094030;")),
+                   h5(helpText("To receive additional information for certain options, hover over UI elements e.g. Composites.")),
+                   h5(helpText("Additional features and subordinate options are initially hidden but can be made visible by clicking or ticking the respective elements.")),
+                   h5(helpText("ClimeApp updates instantly when inputs are changed or new values are selected. Customizations have to be added manually.")),
+                   h5(helpText("Wait until the loading symbol is gone or the new plot is rendered befor changing further values."))
             ),
 
           ), width = 12),
@@ -2738,7 +2749,7 @@ ui <- navbarPage(id = "nav1",
                             ),
                             
                             br(), column(width = 3, dataTableOutput("correlation_ts_data"))),
-                   tabPanel("Correlation map data",
+                   tabPanel("Correlation map data", value = "corr_map_data_tab",
                             
                             #Download
                             br(), h4(helpText("Download")),
@@ -4129,7 +4140,7 @@ server <- function(input, output, session) {
   })
   
   
-  # Add logic to toggle the visibility of the specific tabPanel (COrrelation Map) based on radio button values ("Time Series")
+  # Add logic to toggle the visibility of the specific tabPanel (Correlation Map) based on radio button values ("Time Series")
   observe({
     if (input$type_v1 == "Time series" && input$type_v2 == "Time series") {
       shinyjs::runjs('
@@ -4143,6 +4154,26 @@ server <- function(input, output, session) {
       shinyjs::runjs('
         // Get the tabPanel element by ID
         var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+        // Show the tabPanel
+        tabPanelToHide.show();
+      ')
+    }
+  })
+  
+  observe({
+    if (input$type_v1 == "Time series" && input$type_v2 == "Time series") {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+
+        // Hide the tabPanel
+        tabPanelToHide.hide();
+      ')
+    } else {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
 
         // Show the tabPanel
         tabPanelToHide.show();
@@ -4175,6 +4206,37 @@ server <- function(input, output, session) {
       shinyjs::runjs('
         // Get the tabPanel element by ID
         var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+        // Hide the tabPanel
+        tabPanelToHide.hide();
+      ')
+    }
+  })
+  
+  observe({
+    # Get the range values
+    range_lon_v1 <- input$range_longitude_v1
+    range_lat_v1 <- input$range_latitude_v1
+    range_lon_v2 <- input$range_longitude_v2
+    range_lat_v2 <- input$range_latitude_v2
+    
+    # Check for overlap
+    overlap_lon <- !(range_lon_v1[2] < range_lon_v2[1] || range_lon_v1[1] > range_lon_v2[2])
+    overlap_lat <- !(range_lat_v1[2] < range_lat_v2[1] || range_lat_v1[1] > range_lat_v2[2])
+    
+    # Return the result
+    if (overlap_lon && overlap_lat) {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+
+        // Show the tabPanel
+        tabPanelToHide.show();
+      ')
+    } else {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
 
         // Hide the tabPanel
         tabPanelToHide.hide();
