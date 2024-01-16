@@ -73,7 +73,7 @@ ui <- navbarPage(id = "nav1",
             h4(em(helpText("Co-developped by No\u00E9mie Wellinger."))),
             br(),
             h4("Data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis", style = "color: #094030;"),
-            h5(helpText("Franke, J., Veronika, V., Hand, R., Samakinwa, E., Burgdorf, A.M., Lundstad, E., Brugnara, Y., H\u00F6vel, L. and Br\u00F6nnimann S., 2023")),
+            h5(helpText("Franke, J., Veronika, V., Hand, R., Samakinwa, E., Burgdorf, A.M., Lundstad, E., Brugnara, Y., H\u00F6vel, L. and Br\u00F6nnimann, S., 2023")),
             
             
             column(width = 12,
