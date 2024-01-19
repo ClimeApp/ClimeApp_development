@@ -29,6 +29,7 @@ library(shinylogs)
 
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
+#setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
