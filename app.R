@@ -385,7 +385,11 @@ ui <- navbarPage(id = "nav1",
                 mainPanel(tabsetPanel(id = "tabset1",
                 
                     ### Map plot START ----   
-                    tabPanel("Map", plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)),
+                    tabPanel("Map", 
+                             withSpinner(ui_element = plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
+                                         image = "https://github.com/ClimeApp/ClimeApp_development/blob/main/www/ClimeApp_Loading_V2.gif?raw=true",
+                                         image.width = 310,
+                                         image.height = 200),
                       
                       #### Customization panels START ----       
                       fluidRow(
