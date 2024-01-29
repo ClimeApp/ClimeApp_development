@@ -20,7 +20,7 @@ library(shinylogs)
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
 
 #Richard:
 #Laptop/desktop:
@@ -29,6 +29,7 @@ library(shinylogs)
 
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
+#setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
@@ -141,7 +142,7 @@ nc_close(SON_slp_nc)
 ## Create dataframe of continent lon/lats and Set initial latlon values
 Europe = c(-30,40,30,75) 
 Asia = c(25,170,5,80)
-Australasia = c(90,180,-55,10)
+Australasia = c(90,180,-55,20)
 Africa = c(-25,55,-40,40)
 N_America = c(-175,-10,5,85)
 S_America = c(-90,-30,-60,15)
@@ -1628,6 +1629,7 @@ add_correlation_timeseries = function(data_input1,data_input2,variable1,variable
   plot(x,y1,type = "l", col = v_col1, lwd=2, xaxs="i", axes = FALSE, bty = "n", xlab = "", ylab = "")
   if ("Moving_Average" %in% cnames){
     lines(x,data_input1$Moving_Average,lwd = 3.5,col = "black")
+    lines(x,data_input1$Moving_Average,lwd = 2,col = v_col1)
   }
   
   # Needed to merge the plots
@@ -1637,6 +1639,7 @@ add_correlation_timeseries = function(data_input1,data_input2,variable1,variable
   plot(x,y2,type = "l", col = v_col2, lwd=2, xaxs="i", axes = FALSE, bty = "n", xlab = "", ylab = "")
   if ("Moving_Average" %in% cnames){
     lines(x,data_input2$Moving_Average,lwd = 3.5,col = "black")
+    lines(x,data_input2$Moving_Average,lwd = 2,col = v_col2)
   }
   # Reset original graphical parameters
   par(old.par)
@@ -1731,18 +1734,36 @@ add_TS_key = function(key_position,data_highlights,data_lines,variable,month_ran
     }
     label = paste(title_months,secondary_variable)
     # color
-    if (secondary_variable == "Temperature"){
-      color = "red3" 
-    } else if (secondary_variable == "Precipitation"){
-      color = "turquoise4"
-    } else if (secondary_variable == "SLP"){
-      color = "purple4"
-    } else if (secondary_variable == "Z500"){
-      color = "green4"
+    if (variable == secondary_variable){
+      
+      if (secondary_variable == "Temperature"){
+        color = "red2" 
+      } else if (secondary_variable == "Precipitation"){
+        color = "turquoise2"
+      } else if (secondary_variable == "SLP"){
+        color = "purple2"
+      } else if (secondary_variable == "Z500"){
+        color = "green2"
+      } else {
+        color = "saddlebrown"
+          label = secondary_variable
+      }
+
     } else {
-      color = "saddlebrown"
-      label = secondary_variable
+      if (secondary_variable == "Temperature"){
+        color = "red3" 
+      } else if (secondary_variable == "Precipitation"){
+        color = "turquoise4"
+      } else if (secondary_variable == "SLP"){
+        color = "purple4"
+      } else if (secondary_variable == "Z500"){
+        color = "green4"
+      } else {
+        color = "saddlebrown"
+        label = secondary_variable
+      }
     }
+
     
     # line parameters
     lwd = 2 ; lty = "solid"
@@ -1761,7 +1782,7 @@ add_TS_key = function(key_position,data_highlights,data_lines,variable,month_ran
     label = paste(moving_average_range,"yr Moving Ave.",sep = "")
     color = "black"
     # line parameters
-    lwd = 3 ; lty = "solid"
+    lwd = 2 ; lty = "solid"
     # box parameters
     fill = NA; density = 0 ; border = "grey90"
     # alignment parameters

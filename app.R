@@ -1,31 +1,18 @@
 ### ClimeApp_beta ###
 
-# WDs for Project ----
-
-#Noémie
-#setwd("C:/Users/nw22d367/OneDrive - Universitaet Bern/ClimeApp_development")
-
-
-#Nik
-#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_GitHub/ClimeApp_development")
-
-#Richard:
-#Laptop/desktop:
-#setwd("C:/Users/Richard/OneDrive/ModE-RA Mapping/ClimeApp_development")
-#setwd("C:/Users/rw22z389/OneDrive/ModE-RA Mapping/ClimeApp_development")
-
-
 # Source for helpers ----
 source("helpers.R")
-
 
 # Define UI ----
 
 ui <- navbarPage(id = "nav1",
           ## Configs for navbarPage: theme, images (Header and Footer) ----
           title = div(style = "display: inline;",
-                      img(src = 'pics/Logo_ClimeApp_V2_210623.png', id = "ClimeApp", height = "75px", width = "75px", style = "margin-right: -10px"),
-                      img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v0.3)",
+                      uiOutput("logo_output", inline = TRUE),
+                      img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v0.5)",
+                      #Preparation to use Tracking ShinyJS and CSS
+                      shinyjs::useShinyjs(),
+                      use_tracking(),
                       ),
           footer = div(class = "navbar-footer",
                        style = "display: inline;",
@@ -33,9 +20,7 @@ ui <- navbarPage(id = "nav1",
                        img(src = 'pics/LOGO_ERC-FLAG_EU_.jpg', id = "ClimeApp4", height = "100px", width = "141px", style = "margin-top: 20px; margin-bottom: 20px;"),
                        img(src = 'pics/WBF_SBFI_EU_Frameworkprogramme_E_RGB_pos_quer.jpg', id = "ClimeApp5", height = "100px", width = "349px", style = "margin-top: 20px; margin-bottom: 20px;"),
                        img(src = 'pics/SNF_Logo_Logo.png', id = "ClimeApp6", height = "75px", width = "560px", style = "margin-top: 20px; margin-bottom: 20px;"),
-                       tags$style(HTML(".navbar-footer {margin-top: 20px; margin-bottom: 20px;}")),
                        # Navbar properties
-                       tags$style(HTML(".navbar { height: 75px !important; }")),
                        tags$style(type="text/css", "body {padding-top: 90px;}"),
                        # Window dimensions
                        tags$head(tags$script('
@@ -55,17 +40,25 @@ ui <- navbarPage(id = "nav1",
                        tags$style(type="text/css",
                                   ".shiny-output-error { visibility: hidden; }",
                                   ".shiny-output-error:before { visibility: hidden; }"
-                       )
-                       
+                       ),
+
+                       #Tooltips for Tabpanels
+                       tags$script(HTML('
+                          // Add tooltips using shinyjs
+                          $("#nav1 a[data-value=\'tab1\']").attr("title", "Analyzing averages involves calculating the mean of a dataset, providing a central tendency measure. Anomalies are deviations from this mean. In climate research, comparing monthly or yearly averages helps identify trends. Analyzing anomalies, the differences from long-term averages, reveals unusual patterns, aiding in detecting climate changes and anomalies such as El Niño or global warming impacts.");
+                          $("#nav1 a[data-value=\'tab2\']").attr("title", "Composite analysis in climate research involves averaging variables over specific conditions, such as extreme events. By grouping and averaging data during these conditions, researchers can identify patterns and anomalies, providing insights into the atmospheric or climatic responses associated with certain events.");
+                          $("#nav1 a[data-value=\'tab3\']").attr("title", "Correlation measures the strength and direction of a linear relationship between two variables. A correlation coefficient, like Pearsons r, ranges from -1 to 1. Positive values indicate a positive correlation, negative values a negative correlation, and 0 suggests no linear relationship. Correlation is a statistical tool to assess the degree of association between variables.");
+                          $("#nav1 a[data-value=\'tab4\']").attr("title", "Regression analyzes the relationship between dependent and independent variables. It fits a mathematical model to data, estimating the impact of independent variables on the dependent one. In climate reconstructions, regression helps identify patterns and derive equations to predict past climate conditions using proxy data.");
+                          $("#nav1 a[data-value=\'tab5\']").attr("title", "Analyzing monthly time series involves examining data over consecutive months. Researchers can identify trends, seasonality, and anomalies in climate variables like temperature or precipitation. Statistical techniques, such as moving averages or seasonal decomposition, help reveal patterns and variations in monthly data, aiding in climate research and trend identification.");
+                        ')),
                        ),
           theme = my_theme,
           position = c("fixed-top"),
+          
 
 # Welcome START ----                             
-      tabPanel("Welcome", id = "tab0",
-        shinyjs::useShinyjs(),
+  tabPanel("Welcome", value = "tab0",
         includeCSS("www/custom.css"),
-        use_tracking(),
         sidebarLayout(
                          
           ## Sidebar Panels START ----          
@@ -80,7 +73,7 @@ ui <- navbarPage(id = "nav1",
             h4(em(helpText("Co-developped by No\u00E9mie Wellinger."))),
             br(),
             h4("Data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis", style = "color: #094030;"),
-            h5(helpText("Franke, J., Veronika, V., Hand, R., Samakinwa, E., Burgdorf, A.M., Lundstad, E., Brugnara, Y., H\u00F6vel, L. and Br\u00F6nnimann, 2023")),
+            h5(helpText("Franke, J., Veronika, V., Hand, R., Samakinwa, E., Burgdorf, A.M., Lundstad, E., Brugnara, Y., H\u00F6vel, L. and Br\u00F6nnimann, S., 2023")),
             
             
             column(width = 12,
@@ -101,10 +94,18 @@ ui <- navbarPage(id = "nav1",
               h5(helpText("SLP = Sea level pressure [hPa]")),
               h5(helpText("Z500 = Pressure at 500 hPa geopotential height [hPa]"))
             ),
-            column(width = 12, br(), br()),
             
-            h5(helpText("Select a tab at the top to start plotting."))
-  
+            column(width = 12, br()),
+            
+            column(width = 12,
+                   
+                   h5(strong("User information:", style = "color: #094030;")),
+                   h5(helpText("To receive additional information for certain options, hover over UI elements e.g. Composites.")),
+                   h5(helpText("Additional features and subordinate options are initially hidden but can be made visible by clicking or ticking the respective elements.")),
+                   h5(helpText("ClimeApp updates instantly when inputs are changed or new values are selected. Customizations have to be added manually.")),
+                   h5(helpText("Wait until the loading symbol is gone or the new plot is rendered befor changing further values."))
+            ),
+
           ), width = 12),
           
           br(),
@@ -124,20 +125,16 @@ ui <- navbarPage(id = "nav1",
           ## Main panel START ----
           mainPanel(
             ### Tabs Start ----
-            tabsetPanel(
+            tabsetPanel(id = "tabset0",
             #### Tab Welcome ----
             tabPanel("Welcome",
-                     tags$head(tags$style(HTML(".responsive-img {
-                                                max-width: 100%;
-                                                height: auto;
-                                              }
-                                            "))),
             tags$img(src = 'pics/welcome_map.jpg', id = "welcome_map", class = "responsive-img"),
             h4(helpText("For more information on ModE-RA please see:")),
-            h4(helpText(a("ModE-RAclim - A version of the ModE-RA reanalysis with climatological prior for sensitivity studies", href = "https://www.wdc-climate.de/ui/entry?acronym=ModE-RAc"), ", [Place Holder for link to: ModE-RA paper & ClimeApp technical paper (in progress)]")),
+            h5(helpText(a("ModE-RA - a global monthly paleo-reanalysis of the modern era 1421 to 2008", href = "https://doi.org/10.1038/s41597-023-02733-8"), br(), a("ModE-RAclim - a version of the ModE-RA reanalysis with climatological prior for sensitivity studies", href = "https://www.wdc-climate.de/ui/entry?acronym=ModE-RAc"), br(),  a("ModE-Sim – a medium-sized atmospheric general circulation model (AGCM) ensemble to study climate variability during the modern era (1420 to 2009)", href = "https://gmd.copernicus.org/articles/16/4853/2023/"), br(), "[Place Holder for link to: ClimeApp technical paper (in progress)]")),
             h4(helpText("To cite, please reference:")),
-            h4(helpText("[Place Holder: ClimeApp technical paper (in progress)]")),
-            h4(helpText("V. Valler, J. Franke, Y. Brugnara, E. Samakinwa, R. Hand, E. Lundstad, A.-M. Burgdorf, L. Lipfert, A. R. Friedman, S. Br\u00F6nnimann (in review): ModE-RA - a global monthly paleo-reanalysis of the modern era (1421-2008). Scientific Data.")),
+            h5(helpText("[Place Holder: ClimeApp technical paper (in progress)]")),
+            h5(helpText("V. Valler, J. Franke, Y. Brugnara, E. Samakinwa, R. Hand, E. Lundstad, A.-M. Burgdorf, L. Lipfert, A. R. Friedman, S. Br\u00F6nnimann: ModE-RA: a global monthly paleo-reanalysis of the modern era 1421 to 2008. Scientific Data 11 (2024).")),
+            h5(helpText("R. Hand, E. Samakinwa, L. Lipfert, and S. Br\u00F6nnimann: ModE-Sim – a medium-sized atmospheric general circulation model (AGCM) ensemble to study climate variability during the modern era (1420 to 2009). GMD 16 (2023).")),
             h6(helpText("PALAEO-RA: H2020/ERC grant number 787574")),
             h6(helpText("DEBTS: SNFS grant number PZ00P1_201953")),
             h6(helpText("VolCOPE: SERI contract number MB22.00030")),
@@ -156,9 +153,39 @@ ui <- navbarPage(id = "nav1",
                      helpText("ModE-RAclim should be seen as a sensitivity study and is only a side product of the project. ModE-RAclim does not contain centennial scale climate variability. For most users, the main product ModE-RA therefore should be used for regular studies on past climate. The main differences between ModE-RAclim and ModE-RA are on the model side: ModE-RAclim uses 100 randomly-picked years from ModE-Sim as a priori state. Thereby stationarity in the covariance structure is assumed and the externally-forced signal in the model simulations is eliminated. In combination with ModE-Sim and ModE-RA it can be used to distinguish the forced and unforced parts of climate variability seen in ModE-RA."),
                      br(), br(),
                      helpText("ModE-RA makes use of several data compilations and assimilates various direct and indirect sources of past climate compared to 20CRv3. Hence, if monthly resolution is sufficient for the planned study, ModE-RA may have higher quality already from 1850 backwards to analyze past climate changes and can be viewed as the backward extension of 20CRv3."),
-                     
-                     
             ),
+            #### Tab Version History ----
+            tabPanel("Version history",
+                     br(), br(), 
+                     h4(helpText("Beta v0.5 (22.12.2023)")),
+                     h6(helpText("- Download NetCDF files")),
+                     h6(helpText("- Version History")),
+                     br(), br(), 
+                     h4(helpText("Beta v0.4")),
+                     h6(helpText("- Select single years")),
+                     br(), br(), 
+                     h4(helpText("Beta v0.3")),
+                     h6(helpText("- Time series customization")),
+                     h6(helpText("- Percentiles, maps & statistics based on model constraint change")),
+                     h6(helpText("- Reference line option in timeseries")),
+                     br(), br(), 
+                     h4(helpText("Beta v0.2 (10.11.2023)")),
+                     h6(helpText("- Use ModE-Sim and ModE-RAclim data")),
+                     h6(helpText("- Create monthly time series")),
+                     h6(helpText("- View ModE-RA sources")),
+                     h6(helpText("- Download ModE-RA sources maps as image")),
+                     h6(helpText("- Upload User data for correlation and regression")),
+                     h6(helpText("- Reference maps with absolute values, reference period, and SD ratio for Anomalies and Composites")),
+                     br(), br(), 
+                     h4(helpText("Beta")),
+                     h6(helpText("- First running version online")),
+                     h6(helpText("- Use ModE-RA data with four variables:  Temperature, Precipitation, Sea level pressure, Pressure at 500 hPa geopotential height")),
+                     h6(helpText("- Calculate Anomalies, Composites, Correlations and Regressions (coefficien, p values residuals) as maps and timeseries")),
+                     h6(helpText("- Customize maps and timeseries (title, labelling, add custom points and highlights, statistics)")),
+                     h6(helpText("- Download maps and timeseries plots as images")),
+                     h6(helpText("- Download map and timeseries data in xlsx or csv format"))
+            ),
+
             ### Tabs END ----
             )            
           ## Main Panel END ----
@@ -166,18 +193,18 @@ ui <- navbarPage(id = "nav1",
 # Welcome END ----  
        )),
 # Average & anomaly START ----                             
-      tabPanel("Anomalies", id = "tab1",
+  tabPanel("Anomalies", value = "tab1",
                 shinyjs::useShinyjs(),
                 sidebarLayout(
       
                 ## Sidebar Panels START ----          
                 sidebarPanel(verticalLayout(
                 
-                    ### First Sidebar panel (Variable and time selection) ----
+                    ### First Sidebar panel (Variable and dataset selection) ----
                     sidebarPanel(fluidRow(
           
-                    #Short description of the General Panel        
-                    h4(helpText("Plot average anomalies for a selected time period")),
+                    #Short description of the selection options        
+                    h4(helpText("Select dataset and variable")),
                     
                     #Choose one of three datasets (Select)                
                     selectInput(inputId  = "dataset_selected",
@@ -190,14 +217,37 @@ ui <- navbarPage(id = "nav1",
                                 label    = "Choose a variable to plot:",
                                 choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
                                 selected = "Temperature"),
+                    
+                    ), width = 12), br(),
+                    
+                    ### Second Sidebar panel (Time selection) ----
+                    sidebarPanel(fluidRow(
+                      
+                    #Short description of the temporal selection        
+                    h4(helpText("Plot average anomalies for a selected time period")),
             
                     #Choose your year of interest        
+                    hidden(
                     numericRangeInput(inputId    = "range_years",
                                        label     = "Select the range of years (1422-2008):",
                                        value     = c(1422,2008),
                                        separator = " to ",
                                        min       = 1422,
-                                       max       = 2008),
+                                       max       = 2008)),
+                    
+                    #Choose single year
+                    column(12,
+                    checkboxInput(inputId = "single_year",
+                                  label   = "Select single year",
+                                  value   = FALSE)),
+                    
+                    
+                    hidden(
+                    numericInput(inputId   = "range_years_sg",
+                                 label     = "Select the single year:",
+                                 value     = NA,
+                                 min       = 1422,
+                                 max       = 2008)),
             
                     #Choose Season, Year or Months
                     radioButtons(inputId  = "season_selected",
@@ -215,17 +265,32 @@ ui <- navbarPage(id = "nav1",
                                               selected = c("January", "December")),
                     )),      
                             
-                    #Choose reference period  
+                    #Choose reference period
+                    hidden(
                     numericRangeInput(inputId = "ref_period",
                                       label      = "Select the reference period:",
                                       value      = c(1961,1990),
                                       separator  = " to ",
                                       min        = 1422,
-                                       max        = 2008)
+                                       max        = 2008)),
+                    
+                    #Choose single ref year
+                    column(12,
+                           checkboxInput(inputId = "ref_single_year",
+                                         label   = "Select single year",
+                                         value   = FALSE)),
+                    
+                    
+                    hidden(
+                      numericInput(inputId   = "ref_period_sg",
+                                   label     = "Select the single year:",
+                                   value     = NA,
+                                   min       = 1422,
+                                   max       = 2008)),
     
                     ), width = 12), br(),
             
-                    ### Second sidebar panel (Location selection) ----
+                    ### Third sidebar panel (Location selection) ----
                     sidebarPanel(fluidRow(
               
                     #Short description of the Coord. Sidebar        
@@ -317,10 +382,14 @@ ui <- navbarPage(id = "nav1",
                 )),
 
                 ## Main Panel START ----
-                mainPanel(tabsetPanel(
+                mainPanel(tabsetPanel(id = "tabset1",
                 
                     ### Map plot START ----   
-                    tabPanel("Map", plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)),
+                    tabPanel("Map", 
+                             withSpinner(ui_element = plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
+                                         image = "https://github.com/ClimeApp/ClimeApp_development/blob/main/www/ClimeApp_Loading_V2.gif?raw=true",
+                                         image.width = 310,
+                                         image.height = 200),
                       
                       #### Customization panels START ----       
                       fluidRow(
@@ -403,11 +472,8 @@ ui <- navbarPage(id = "nav1",
                                              value   = NULL,
                                              placeholder = "e.g. Bern"),
                                    
-                                   
-                                   
                                    actionButton(inputId = "search",
                                                 label   = "Search"),
-                                   
                                    
                                    shinyjs::hidden(div(id = "inv_location",
                                                        h6(helpText("Invalid location"))
@@ -536,6 +602,17 @@ ui <- navbarPage(id = "nav1",
                     
                       #### Customization panels END ----
                       ),
+                      
+                      #### Download map ----
+                      h4(helpText("Download map and NETcdf")),
+                      fluidRow(
+                        column(2, radioButtons(inputId = "file_type_map", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_map", label = "Download map")),
+                      #NETcdf download pickerInput checkboxGroupInput
+                        column(3, pickerInput(inputId = "netcdf_variables", label = "Choose one or multiple variables:", choices = NULL, selected = NULL, inline = TRUE, multiple = TRUE,)),
+                        column(3, downloadButton(outputId = "download_netcdf", label = "Download NETcdf"))
+                      ),
+
                       #### Abs/Ref Map plot START ----
                       h4(helpText("Reference map")), 
                       
@@ -544,7 +621,16 @@ ui <- navbarPage(id = "nav1",
                                    choices  = c("None", "Absolute Values","Reference Period","SD Ratio"),
                                    selected = "None" , inline = TRUE),
                       
-                      plotOutput("ref_map", height = "auto")
+                      plotOutput("ref_map", height = "auto"),
+                      
+                      #### Download ref. map ----
+                      shinyjs::hidden(div(id ="hidden_sec_map_download",
+                                          h4(helpText("Download reference map")),
+                                          fluidRow(
+                                            column(2, radioButtons(inputId = "file_type_map_sec", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                            column(3, downloadButton(outputId = "download_map_sec", label = "Download reference map"))
+                                          ),
+                      )),
 
                     ### Map plot END ----
                     ),
@@ -698,9 +784,10 @@ ui <- navbarPage(id = "nav1",
                                                   label   = "Show on legend",
                                                   value   = FALSE),
                                     
+                                    hidden(
                                     textInput(inputId = "highlight_label_ts", 
                                               label   = "Label:",
-                                              value   = ""),
+                                              value   = "")),
                                     
                                     
                                     column(width = 12,
@@ -744,9 +831,10 @@ ui <- navbarPage(id = "nav1",
                                                   label   = "Show on legend",
                                                   value   = FALSE),
                                     
+                                    hidden(
                                     textInput(inputId = "line_label_ts", 
                                               label   = "Label:",
-                                              value   = ""),
+                                              value   = "")),
                                     
                                     column(width = 12,
                                            actionButton(inputId = "add_line_ts",
@@ -814,12 +902,38 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Customization panels END ----
                      ),
+                      #### Downloads ----
+                       h4(helpText("Download")),
+                       fluidRow(
+                         column(2, radioButtons(inputId = "file_type_timeseries", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                         column(3, downloadButton(outputId = "download_timeseries", label = "Download time series"))
+                       ),
+                     
                     ### TS plot END ----       
                              ),
 
                     ### Other plots ----
-                    tabPanel("Map data", br(), tableOutput("data1")),
-                    tabPanel("Time series data", br(), column(width = 3, dataTableOutput("data2"))),
+                    tabPanel("Map data",
+                             
+                             #Download
+                             br(), h4(helpText("Download")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_map_data", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_map_data", label = "Download map data"))
+                             ),
+                             
+                             br(), tableOutput("data1")),
+                    
+                    tabPanel("Time series data",
+                             
+                             # Download
+                             br(),  h4(helpText("Download")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_timeseries_data", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_timeseries_data", label = "Download time series data"))
+                             ),
+                             
+                             br(), column(width = 3, dataTableOutput("data2"))),
                     
                     ### Feedback archive documentation (FAD) ----
                     tabPanel("ModE-RA sources", br(),
@@ -832,8 +946,17 @@ ui <- navbarPage(id = "nav1",
                                         value = 1422,
                                         min = 1422,
                                         max = 2008)),
-                               h4(helpText("Draw a box on the left map to use zoom function")),
                              ),
+                             #Download
+                             h4(helpText("Downloads")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_modera_source_a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_fad_wa", label = "Download Oct. - Mar.")),
+                               column(2, radioButtons(inputId = "file_type_modera_source_b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_fad_sa", label = "Download Apr. - Sep."))
+                             ),
+                             
+                             h4(helpText("Draw a box on the left map to use zoom function")),
                              
                              div(id = "fad_map_a",
                              splitLayout(
@@ -845,7 +968,7 @@ ui <- navbarPage(id = "nav1",
 
                                          plotOutput("fad_zoom_winter_a")
                                          )),
-
+                             
                              div(id = "fad_map_b",
                              splitLayout(plotOutput("fad_summer_map_a",
                                                     brush = brushOpts(
@@ -855,65 +978,23 @@ ui <- navbarPage(id = "nav1",
                                          plotOutput("fad_zoom_summer_a")
                                          )),
                     ),
-                    
-                    
-                    ### Downloads ----
-                    tabPanel("Downloads",
-                    verticalLayout(br(),
-                          fluidRow(
-                            column(width = 3,
-                                   h3(helpText("Primary map download")),
-                                   radioButtons(inputId = "file_type_map", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                   downloadButton(outputId = "download_map", label = "Download")),
-                            shinyjs::hidden(div(id ="hidden_sec_map_download",
-                            column(width = 3,
-                                   h3(helpText("Secondary map download")),
-                                   radioButtons(inputId = "file_type_map_sec", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                   downloadButton(outputId = "download_map_sec", label = "Download")),
-                            )),
-                            ),
-                            br(),
-                          h3(helpText("Time series download")),
-                             radioButtons(inputId = "file_type_timeseries", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                             downloadButton(outputId = "download_timeseries", label = "Download"), br(),
-                          h3(helpText("Map data download")),
-                             radioButtons(inputId = "file_type_map_data", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                             downloadButton(outputId = "download_map_data", label = "Download"), br(),
-                          h3(helpText("Time series data download")),
-                             radioButtons(inputId = "file_type_timeseries_data", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                             downloadButton(outputId = "download_timeseries_data", label = "Download")), br(),
-                          h3(helpText("ModE-RA sources download")),
-                          fluidRow(
-                            column(width = 3,
-                                   radioButtons(inputId = "file_type_modera_source_a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                   downloadButton(outputId = "download_fad_wa", label = "Download Oct. - Mar")),
-                            column(width = 3,
-                                   radioButtons(inputId = "file_type_modera_source_b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                   downloadButton(outputId = "download_fad_sa", label = "Download Apr. - Sept")),
-                          ),
-                          br(),
-                          h3(helpText("NetCDF download")),
-                             checkboxGroupInput(inputId = "netcdf_variables", label = "Choose your variables:", selected = NULL, inline = TRUE),
-                             downloadButton(outputId = "download_netcdf", label = "Download")
-                            )
-        
                 ## Main Panel END ----
                 ), width = 8),
 # Average & anomaly END ----  
         )),
-        
+
 # Composites START----      
-        tabPanel("Composites", id = "tab2",
+  tabPanel("Composites", value = "tab2",
         shinyjs::useShinyjs(),
         sidebarLayout(
                  ## Sidebar Panels START ----
                  sidebarPanel(verticalLayout(
                    
-                    ### First Sidebar panel (Variable and time selection) ----
+                    ### First Sidebar panel (Variable and dataset selection) ----
                     sidebarPanel(fluidRow( 
                      
                      #Short description of the Panel Composites        
-                     h4(helpText("Plot composite anomalies for a set of years")),
+                     h4(helpText("Select dataset and variable for composite anomalies")),
                      
                      #Choose one of three datasets (Select)                
                      selectInput(inputId  = "dataset_selected2",
@@ -926,6 +1007,14 @@ ui <- navbarPage(id = "nav1",
                                  label    = "Choose a variable to plot:",
                                  choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
                                  selected = "Temperature"),
+                     
+                    ), width = 12), br(),
+                    
+                    ### Second Sidebar panel (Time selection) ----
+                    sidebarPanel(fluidRow(
+                      
+                      #Short description of the temporal selection        
+                      h4(helpText("Plot composite anomalies for a selected time period")),
                      
                      #Type in your year of interest OR upload a file
                      radioButtons(inputId  = "enter_upload2",
@@ -979,12 +1068,28 @@ ui <- navbarPage(id = "nav1",
                      #Choose reference period for either Fixed Anomaly or enter X years (1-50) for Anomalies compared to X years prior (Hidden objects)      
                      shinyjs::hidden(
                        div(id = "optional2a",
+                           hidden(
                            numericRangeInput(inputId = "ref_period2",
                                              label      = "Reference period:",
                                              value      = c(1961,1990),
                                              separator  = " to ",
                                              min        = 1422,
-                                             max        = 2008))),
+                                             max        = 2008)),
+                       
+                       #Choose single ref year
+                       column(12,
+                              checkboxInput(inputId = "ref_single_year2",
+                                            label   = "Select single year",
+                                            value   = FALSE)),
+                       
+                       
+                       hidden(
+                         numericInput(inputId   = "ref_period_sg2",
+                                      label     = "Select the single year:",
+                                      value     = NA,
+                                      min       = 1422,
+                                      max       = 2008)),
+                       )),
 
                      shinyjs::hidden(
                        div(id = "optional2b",
@@ -1022,11 +1127,9 @@ ui <- navbarPage(id = "nav1",
                      )),
                        )),
                      
-                     ), width = 12),
-                     
-                     br(),
+                     ), width = 12), br(),
                    
-                    ### Second sidebar panel (Location selection) ----
+                    ### Third sidebar panel (Location selection) ----
                      sidebarPanel(fluidRow(
                      
                      #Short description of the Coord. Sidebar        
@@ -1116,7 +1219,7 @@ ui <- navbarPage(id = "nav1",
                  )),
                  
                  ## Main Panel START ----
-                 mainPanel(tabsetPanel(
+                 mainPanel(tabsetPanel(id = "tabset2",
                     ### Map plot START ----
                      tabPanel("Map", br(),
                               h4(textOutput("text_years2")),
@@ -1340,6 +1443,14 @@ ui <- navbarPage(id = "nav1",
                       ),
                       #### Customization panels END ----
                       ),
+                     
+                      #### Download map ----
+                     h4(helpText("Download map")),
+                     fluidRow(
+                       column(2, radioButtons(inputId = "file_type_map2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                       column(3, downloadButton(outputId = "download_map2", label = "Download map"))
+                     ),
+                     
                      #### Abs/Ref Map plot START ----
                      h4(helpText("Reference map")), 
                      
@@ -1348,7 +1459,16 @@ ui <- navbarPage(id = "nav1",
                                   choices  = c("None", "Absolute Values","Reference Period","SD Ratio"),
                                   selected = "None" , inline = TRUE),
                      
-                     plotOutput("ref_map2", height = "auto")
+                     plotOutput("ref_map2", height = "auto"),
+                     
+                     #### Download ref. map ----
+                     shinyjs::hidden(div(id ="hidden_sec_map_download2",
+                                         h4(helpText("Download reference map")),
+                                         fluidRow(
+                                           column(2, radioButtons(inputId = "file_type_map_sec2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                           column(3, downloadButton(outputId = "download_map_sec2", label = "Download reference map"))
+                                         ),
+                     )),
                      
                     ### Map plot END ----  
                       ),
@@ -1510,9 +1630,10 @@ ui <- navbarPage(id = "nav1",
                                                        label   = "Show on legend",
                                                        value   = FALSE),
                                          
+                                         hidden(
                                          textInput(inputId = "highlight_label_ts2", 
                                                    label   = "Label:",
-                                                   value   = ""),
+                                                   value   = "")),
                                          
                                          
                                          column(width = 12,
@@ -1556,9 +1677,10 @@ ui <- navbarPage(id = "nav1",
                                                        label   = "Show on legend",
                                                        value   = FALSE),
                                          
+                                         hidden(
                                          textInput(inputId = "line_label_ts2", 
                                                    label   = "Label:",
-                                                   value   = ""),
+                                                   value   = "")),
                                          
                                          column(width = 12,
                                                 actionButton(inputId = "add_line_ts2",
@@ -1600,12 +1722,37 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Customization panels END ----
              ),
+             
+                      #### Downloads ----
+                       h4(helpText("Download")),
+                       fluidRow(
+                         column(2, radioButtons(inputId = "file_type_timeseries2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                         column(3, downloadButton(outputId = "download_timeseries2", label = "Download time series"))
+                       ),
+             
                     ### Composite TS plot END ----
                     ),
                    
                     ### Other plots ----
-                    tabPanel("Map data", br(), tableOutput("data3")),
-                    tabPanel("Time series data", br(), column(width = 3, dataTableOutput("data4"))),
+                    tabPanel("Map data",
+                             
+                             #Download
+                             br(), h4(helpText("Download")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_map_data2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_map_data2", label = "Download map data"))
+                             ),
+                             
+                             br(), tableOutput("data3")),
+                    tabPanel("Time series data",
+                             
+                             br(),  h4(helpText("Download")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_timeseries_data2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_timeseries_data2", label = "Download time series data"))
+                             ),
+                             
+                             br(), column(width = 3, dataTableOutput("data4"))),
                     
                     ### Feedback archive documentation (FAD) ----
                    tabPanel("ModE-RA sources", br(),
@@ -1618,8 +1765,17 @@ ui <- navbarPage(id = "nav1",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              h4(helpText("Draw a box on the left map to use zoom function")),
                             ),
+                            #Download
+                            h4(helpText("Downloads")),
+                            fluidRow(
+                                    column(2, radioButtons(inputId = "file_type_modera_source_a2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_wa2", label = "Download Oct. - Mar.")),
+                                    column(2, radioButtons(inputId = "file_type_modera_source_b2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_sa2", label = "Download Apr. - Sep."))
+                            ),
+                            
+                            h4(helpText("Draw a box on the left map to use zoom function")),
                             
                             div(id = "fad_map_a2",
                                 splitLayout(
@@ -1642,49 +1798,13 @@ ui <- navbarPage(id = "nav1",
                                 )),
                    ),
                    
-                    ### Downloads ----
-                    tabPanel("Downloads",
-                            verticalLayout(br(),
-                                   fluidRow(
-                                     column(width = 3,
-                                            h3(helpText("Primary map download")),
-                                            radioButtons(inputId = "file_type_map2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                            downloadButton(outputId = "download_map2", label = "Download")),
-                                            shinyjs::hidden(div(id = "hidden_sec_map_download2",
-                                            column(width = 3,
-                                                   h3(helpText("Secondary map download")),
-                                                   radioButtons(inputId = "file_type_map_sec2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                   downloadButton(outputId = "download_map_sec2", label = "Download")),
-                                            )),
-                                            ),
-                                            br(),
-                                    h3(helpText("Time series download")),
-                                           radioButtons(inputId = "file_type_timeseries2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                           downloadButton(outputId = "download_timeseries2", label = "Download"), br(),
-                                    h3(helpText("Map data download")),
-                                           radioButtons(inputId = "file_type_map_data2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                           downloadButton(outputId = "download_map_data2", label = "Download"), br(),
-                                    h3(helpText("Time series data download")),
-                                           radioButtons(inputId = "file_type_timeseries_data2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                           downloadButton(outputId = "download_timeseries_data2", label = "Download")), br(),
-                                    h3(helpText("ModE-RA sources download")),
-                                    fluidRow(
-                                      column(width = 3,
-                                             radioButtons(inputId = "file_type_modera_source_a2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                             downloadButton(outputId = "download_fad_wa2", label = "Download Oct. - Mar")),
-                                      column(width = 3,
-                                             radioButtons(inputId = "file_type_modera_source_b2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                             downloadButton(outputId = "download_fad_sa2", label = "Download Apr. - Sept")),
-                                    ),
-                   ),
-                   
                 ## Main Panel END ----
                 ), width = 8),
 # Composites END ----           
         )),
 
 # Correlation START ----
-          tabPanel("Correlation", id = "tab3",
+  tabPanel("Correlation", value = "tab3",
           shinyjs::useShinyjs(),
           sidebarLayout(
                ## Sidebar Panels START ----          
@@ -1730,6 +1850,7 @@ ui <- navbarPage(id = "nav1",
                    #Choose one of three datasets (Select)
                    shinyjs::hidden(
                    div(id = "hidden_me_dataset_variable_v1",
+                   fluidRow(
                    selectInput(inputId  = "dataset_selected_v1",
                                label    = "Choose a dataset:",
                                choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
@@ -1737,9 +1858,9 @@ ui <- navbarPage(id = "nav1",
 
                    #Choose a variable (Mod-ERA) 
                    selectInput(inputId  = "ME_variable_v1",
-                               label    = "Choose a variable:",
+                               label    = "Choose a variable to plot:",
                                choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
-                               selected = "Temperature"),
+                               selected = "Temperature")),
                    )),
                    
                    shinyjs::hidden(
@@ -1747,7 +1868,7 @@ ui <- navbarPage(id = "nav1",
                    #Choose how to use ME data: As a time series or field  
                    radioButtons(inputId  = "type_v1",
                                 label    = "Choose how to use ModE-RA data:",
-                                choices  = c( "Field", "Time series"),
+                                choices  = c("Field", "Time series"),
                                 selected = "Time series" ,
                                 inline = TRUE),
                    
@@ -1778,12 +1899,28 @@ ui <- navbarPage(id = "nav1",
                    #Choose reference period if Anomaly values are chosen (Hidden object)      
                    shinyjs::hidden(
                      div(id = "optional_v1",
+                         hidden(
                          numericRangeInput(inputId = "ref_period_v1",
                                            label      = "Reference period:",
                                            value      = c(1961,1990),
                                            separator  = " to ",
                                            min        = 1422,
-                                           max        = 2008)
+                                           max        = 2008)),
+                         
+                         #Choose single ref year
+                         column(12,
+                                checkboxInput(inputId = "ref_single_year_v1",
+                                              label   = "Select single year",
+                                              value   = FALSE)),
+                         
+                         
+                         hidden(
+                           numericInput(inputId   = "ref_period_sg_v1",
+                                        label     = "Select the single year:",
+                                        value     = NA,
+                                        min       = 1422,
+                                        max       = 2008)),
+                         
                          )),
                    
                    #Choose Coordinates input 
@@ -1883,13 +2020,29 @@ ui <- navbarPage(id = "nav1",
                    ### Second Sidebar panel (Year range) ----
                    
                    sidebarPanel(fluidRow(
-                     #Choose your year of interest        
+                     #Choose your year of interest
+                     hidden(
                      numericRangeInput(inputId    = "range_years3",
                                        label     = "Select the range of years (1422-2008):",
                                        value     = c(1900,2008),
                                        separator = " to ",
                                        min       = 1422,
-                                       max       = 2008),
+                                       max       = 2008)),
+                     
+                     #Choose single year
+                     column(12,
+                            checkboxInput(inputId = "single_year3",
+                                          label   = "Select single year",
+                                          value   = FALSE)),
+                     
+                     
+                     hidden(
+                       numericInput(inputId   = "range_years_sg3",
+                                    label     = "Select the single year:",
+                                    value     = NA,
+                                    min       = 1422,
+                                    max       = 2008)),
+                     
                    ), width = 12),
                    
                    br(),
@@ -1934,6 +2087,7 @@ ui <- navbarPage(id = "nav1",
                      #Choose one of three datasets (Select)
                      shinyjs::hidden(
                      div(id = "hidden_me_dataset_variable_v2",
+                     fluidRow(
                      selectInput(inputId  = "dataset_selected_v2",
                                  label    = "Choose a dataset:",
                                  choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
@@ -1941,9 +2095,9 @@ ui <- navbarPage(id = "nav1",
 
                      #Choose a variable (Mod-ERA) 
                      selectInput(inputId  = "ME_variable_v2",
-                                 label    = "Choose a variable:",
+                                 label    = "Choose a variable to plot:",
                                  choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
-                                 selected = "Temperature"),
+                                 selected = "Temperature")),
                      )),
                      
                      shinyjs::hidden(
@@ -1951,7 +2105,7 @@ ui <- navbarPage(id = "nav1",
                      #Choose how to use ME data: As a time series or field  
                      radioButtons(inputId  = "type_v2",
                                   label    = "Choose how to use the ModE-RA data:",
-                                  choices  = c( "Field","Time series"),
+                                  choices  = c("Field","Time series"),
                                   selected = "Field" ,
                                   inline = TRUE),
                      
@@ -1982,12 +2136,30 @@ ui <- navbarPage(id = "nav1",
                      #Choose reference period if Anomaly values are chosen (Hidden object)      
                      shinyjs::hidden(
                        div(id = "optional_v2",
+                           hidden(
                            numericRangeInput(inputId = "ref_period_v2",
                                              label      = "Reference period:",
                                              value      = c(1961,1990),
                                              separator  = " to ",
                                              min        = 1422,
-                                             max        = 2008))),
+                                             max        = 2008)),
+                           
+                           #Choose single ref year
+                           column(12,
+                                  checkboxInput(inputId = "ref_single_year_v2",
+                                                label   = "Select single year",
+                                                value   = FALSE)),
+                           
+                           
+                           hidden(
+                             numericInput(inputId   = "ref_period_sg_v2",
+                                          label     = "Select the single year:",
+                                          value     = NA,
+                                          min       = 1422,
+                                          max       = 2008)),
+                           
+                           
+                           )),
                      
                      #Choose Coordinates input 
                      radioButtons(inputId  = "coordinates_type_v2",
@@ -2083,7 +2255,7 @@ ui <- navbarPage(id = "nav1",
                )),
                  
                ## Main Panel START ---- ----
-               mainPanel(tabsetPanel(
+               mainPanel(tabsetPanel(id = "tabset3",
                    ### v1, v2 plot: ----
                    tabPanel("Variables", br(),
                             h4("Variable 1"),
@@ -2244,9 +2416,10 @@ ui <- navbarPage(id = "nav1",
                                                        label   = "Show on legend",
                                                        value   = FALSE),
                                          
+                                         hidden(
                                          textInput(inputId = "highlight_label_ts3", 
                                                    label   = "Label:",
-                                                   value   = ""),
+                                                   value   = "")),
                                          
                                          
                                          column(width = 12,
@@ -2290,9 +2463,10 @@ ui <- navbarPage(id = "nav1",
                                                        label   = "Show on legend",
                                                        value   = FALSE),
                                          
+                                         hidden(
                                          textInput(inputId = "line_label_ts3", 
                                                    label   = "Label:",
-                                                   value   = ""),
+                                                   value   = "")),
                                          
                                          column(width = 12,
                                                 actionButton(inputId = "add_line_ts3",
@@ -2340,13 +2514,20 @@ ui <- navbarPage(id = "nav1",
                       ),
                       
                       #### Customization panels END ----
-                    ),         
+                    ),
+                    
+                      #### Downloads ----
+                      h4(helpText("Download")),
+                      fluidRow(
+                        column(2, radioButtons(inputId = "file_type_timeseries3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_timeseries3", label = "Download time series"))
+                      ),
                     
                    ### Shared TS plot: End ----          
                   ),
                    
                    ### Map plot: START ----
-                   tabPanel("Correlation map", br(),
+                   tabPanel("Correlation map", value = "corr_map_tab", br(),
                             #Choose a correlation method 
                             radioButtons(inputId  = "cor_method_map",
                                          label    = "Choose a correlation method:",
@@ -2550,14 +2731,39 @@ ui <- navbarPage(id = "nav1",
                               # )),
                       ),
                       #### Customization panels END ----
-                    ),      
+                    ),
+                    
+                      #### Download map ----
+                      h4(helpText("Download map")),
+                      fluidRow(
+                        column(2, radioButtons(inputId = "file_type_map3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_map3", label = "Download map"))
+                      ),
                     
                    ### Map plot: END ----        
                             ),
                    
                    ### Other plots ----
-                   tabPanel("Time series data", br(), column(width = 3, dataTableOutput("correlation_ts_data"))),
-                   tabPanel("Correlation map data",br(), tableOutput("correlation_map_data")),
+                   tabPanel("Time series data", 
+                            
+                            #Download
+                            br(),  h4(helpText("Download")),
+                            fluidRow(
+                              column(2, radioButtons(inputId = "file_type_timeseries_data3", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                              column(3, downloadButton(outputId = "download_timeseries_data3", label = "Download time series data"))
+                            ),
+                            
+                            br(), column(width = 3, dataTableOutput("correlation_ts_data"))),
+                   tabPanel("Correlation map data", value = "corr_map_data_tab",
+                            
+                            #Download
+                            br(), h4(helpText("Download")),
+                            fluidRow(
+                              column(2, radioButtons(inputId = "file_type_map_data3", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                              column(3, downloadButton(outputId = "download_map_data3", label = "Download map data"))
+                            ),
+                            
+                            br(), tableOutput("correlation_map_data")),
              
                    ### Feedback archive documentation (FAD) ----
                    tabPanel("ModE-RA sources", br(),
@@ -2572,10 +2778,20 @@ ui <- navbarPage(id = "nav1",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              h4(helpText("Draw a box on the left map to use zoom function")),
-                            ),
+                              ),
+                            
+                            shinyjs::hidden(
+                              div(id = "hidden_v1_fad_download",
+                                  h4(helpText("Downloads")),
+                                  fluidRow(
+                                    column(2, radioButtons(inputId = "file_type_modera_source_a3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_wa3a", label = "Download Oct. - Mar.")),
+                                    column(2, radioButtons(inputId = "file_type_modera_source_b3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_sa3a", label = "Download Apr. - Sep.")),
+                                  ))),
                             
                             div(id = "fad_map_a3a",
+                                h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
                                   plotOutput("fad_winter_map_a3a",
                                              brush = brushOpts(
@@ -2609,10 +2825,21 @@ ui <- navbarPage(id = "nav1",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              h4(helpText("Draw a box on the left map to use zoom function")),
-                            ),
+                              ),
+                            
+                            shinyjs::hidden(
+                              div(id = "hidden_v2_fad_download",
+                                  h4(helpText("Downloads")),
+                                  fluidRow(
+                                    column(2,radioButtons(inputId = "file_type_modera_source_a3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3,downloadButton(outputId = "download_fad_wa3b", label = "Download Oct. - Mar.")),
+                                    column(2,radioButtons(inputId = "file_type_modera_source_b3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3,downloadButton(outputId = "download_fad_sa3b", label = "Download Apr. - Sep.")),
+                                  ))),
+                            
                             
                             div(id = "fad_map_a3b",
+                                h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
                                   plotOutput("fad_winter_map_a3b",
                                              brush = brushOpts(
@@ -2635,47 +2862,6 @@ ui <- navbarPage(id = "nav1",
                             )),
                    ),
              
-                   ### Downloads ----
-                   tabPanel("Downloads",
-                            verticalLayout(br(),
-                                           h3(helpText("Time series download")),
-                                           radioButtons(inputId = "file_type_timeseries3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                           downloadButton(outputId = "download_timeseries3", label = "Download"), br(),
-                                           h3(helpText("Correlation map download")),
-                                           radioButtons(inputId = "file_type_map3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                           downloadButton(outputId = "download_map3", label = "Download"), br(),
-                                           h3(helpText("Time series data download")),
-                                           radioButtons(inputId = "file_type_timeseries_data3", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                           downloadButton(outputId = "download_timeseries_data3", label = "Download"), br(),
-                                           h3(helpText("Correlation map data download")),
-                                           radioButtons(inputId = "file_type_map_data3", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                           downloadButton(outputId = "download_map_data3", label = "Download")), br(),
-                                            h3(helpText("ModE-RA sources download")),
-                                            shinyjs::hidden(
-                                              div(id = "hidden_v1_fad_download",
-                                            fluidRow(
-                                              h4("Variable 1"),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_a3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_wa3a", label = "Download Oct. - Mar")),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_b3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_sa3a", label = "Download Apr. - Sept")),
-                                            ))),
-                                            br(),
-                                            shinyjs::hidden(
-                                              div(id = "hidden_v2_fad_download",
-                                            fluidRow(
-                                              h4("Variable 2"),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_a3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_wa3b", label = "Download Oct. - Mar")),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_b3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_sa3b", label = "Download Apr. - Sept")),
-                                            ))),
-                   )
-
                ## Main Panel END ----
                ), width = 8)
                
@@ -2683,7 +2869,7 @@ ui <- navbarPage(id = "nav1",
           )),
 
 # Regression START ----
-tabPanel("Regression", id = "tab4",
+  tabPanel("Regression", value = "tab4",
          shinyjs::useShinyjs(),
          sidebarLayout(
            ## Sidebar Panels START ----          
@@ -2729,6 +2915,7 @@ tabPanel("Regression", id = "tab4",
                #Choose one of three datasets (Select) 
                shinyjs::hidden(
                div(id = "hidden_me_variable_dataset_iv",
+               fluidRow(
                selectInput(inputId  = "dataset_selected_iv",
                            label    = "Choose a dataset:",
                            choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
@@ -2739,7 +2926,7 @@ tabPanel("Regression", id = "tab4",
                            label    = "Choose one or multiple variables:",
                            choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
                            selected = "Temperature",
-                           multiple = TRUE),
+                           multiple = TRUE)),
                )),
                
                shinyjs::hidden(
@@ -2772,12 +2959,28 @@ tabPanel("Regression", id = "tab4",
                      #Choose reference period if Anomaly values are chosen (Hidden object)      
                      shinyjs::hidden(
                        div(id = "optional_iv",
+                           hidden(
                            numericRangeInput(inputId = "ref_period_iv",
                                              label      = "Reference period:",
                                              value      = c(1961,1990),
                                              separator  = " to ",
                                              min        = 1422,
-                                             max        = 2008)
+                                             max        = 2008)),
+                           
+                           #Choose single ref year
+                           column(12,
+                                  checkboxInput(inputId = "ref_single_year_iv",
+                                                label   = "Select single year",
+                                                value   = FALSE)),
+                           
+                           
+                           hidden(
+                             numericInput(inputId   = "ref_period_sg_iv",
+                                          label     = "Select the single year:",
+                                          value     = NA,
+                                          min       = 1422,
+                                          max       = 2008)),
+                           
                        )),
                      
                      #Choose Coordinates input 
@@ -2877,13 +3080,29 @@ tabPanel("Regression", id = "tab4",
              ### Second Sidebar panel (Year range) ----
              
              sidebarPanel(fluidRow(
-               #Choose your year of interest        
+               #Choose your year of interest   
+               hidden(
                numericRangeInput(inputId    = "range_years4",
                                  label     = "Select the range of years (1422-2008):",
                                  value     = c(1900,2000),
                                  separator = " to ",
                                  min       = 1422,
-                                 max       = 2008),
+                                 max       = 2008)),
+               
+               #Choose single year
+               column(12,
+                      checkboxInput(inputId = "single_year4",
+                                    label   = "Select single year",
+                                    value   = FALSE)),
+               
+               
+               hidden(
+                 numericInput(inputId   = "range_years_sg4",
+                              label     = "Select the single year:",
+                              value     = NA,
+                              min       = 1422,
+                              max       = 2008)),
+               
              ), width = 12),
              
              br(),
@@ -2930,6 +3149,7 @@ tabPanel("Regression", id = "tab4",
                div(id = "hidden_me_variable_dataset_dv",
                      
                  #Choose one of three datasets (Select)                
+                 fluidRow(
                  selectInput(inputId  = "dataset_selected_dv",
                              label    = "Choose a dataset:",
                              choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
@@ -2937,9 +3157,9 @@ tabPanel("Regression", id = "tab4",
                  
                  #Choose a variable (Mod-ERA) 
                  selectInput(inputId  = "ME_variable_dv",
-                             label    = "Choose a variable:",
+                             label    = "Choose a variable to plot:",
                              choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
-                             selected = "Temperature"),
+                             selected = "Temperature")),
                  )),
                
                shinyjs::hidden(
@@ -2972,12 +3192,30 @@ tabPanel("Regression", id = "tab4",
                      #Choose reference period if Anomaly values are chosen (Hidden object)      
                      shinyjs::hidden(
                        div(id = "optional_dv",
+                           
+                           hidden(
                            numericRangeInput(inputId = "ref_period_dv",
                                              label      = "Reference period:",
                                              value      = c(1961,1990),
                                              separator  = " to ",
                                              min        = 1422,
-                                             max        = 2008))),
+                                             max        = 2008)),
+                           
+                           #Choose single ref year
+                           column(12,
+                                  checkboxInput(inputId = "ref_single_year_dv",
+                                                label   = "Select single year",
+                                                value   = FALSE)),
+                           
+                           
+                           hidden(
+                             numericInput(inputId   = "ref_period_sg_dv",
+                                          label     = "Select the single year:",
+                                          value     = NA,
+                                          min       = 1422,
+                                          max       = 2008)),
+                           
+                           )),
                      
                      #Choose Coordinates input 
                      radioButtons(inputId  = "coordinates_type_dv",
@@ -3072,7 +3310,7 @@ tabPanel("Regression", id = "tab4",
            ## Sidebar Panels END ----
            )),
            ## Main Panel START ---- ----
-           mainPanel(tabsetPanel(
+           mainPanel(tabsetPanel(id = "tabset4",
              ### Independent / dependent variable ----
              tabPanel("Variables", br(),
                       h4("Independent variable"),
@@ -3086,6 +3324,25 @@ tabPanel("Regression", id = "tab4",
                       plotOutput("plot_reg_ts1"),
                       plotOutput("plot_reg_ts2"),
                       br(),
+                      div(id = "reg1",
+                          fluidRow(
+                            h3(helpText("Downloads")), 
+                            column(width = 3,
+                                   radioButtons(inputId = "reg_ts_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
+                                   downloadButton(outputId = "download_reg_ts_plot", label = "Download plot 1")),
+                            
+                            column(width = 3,
+                                   radioButtons(inputId = "reg_ts2_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
+                                   downloadButton(outputId = "download_reg_ts2_plot", label = "Download plot 2")), 
+                            
+                            column(width = 3,
+                                   radioButtons(inputId = "reg_ts_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
+                                   downloadButton(outputId = "download_reg_ts_plot_data", label = "Download data")),
+                            
+                            column(width = 3,
+                                   h4("Statistical summary"),
+                                   downloadButton(outputId = "download_reg_sum_txt", label = "Download ")),
+                          )), br(), 
                       splitLayout(
                         column(width = 4,
                                dataTableOutput("data_reg_ts")),
@@ -3104,6 +3361,15 @@ tabPanel("Regression", id = "tab4",
                                   selected = NULL),
                       plotOutput("plot_reg_coeff", height = "auto", brush = brushOpts(id = "map_brush4_coeff",resetOnNew = TRUE)),
                       br(),
+                      div(id = "reg2",
+                          fluidRow(
+                            h3(helpText("Downloads")),
+                            column(2, radioButtons(inputId = "reg_coe_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                            column(3, downloadButton(outputId = "download_reg_coe_plot", label = "Download map")), 
+                            
+                            column(2, radioButtons(inputId = "reg_coe_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                            column(3, downloadButton(outputId = "download_reg_coe_plot_data", label = "Download data")),
+                          )), br(),
                       tableOutput("data_reg_coeff")
              ),
              
@@ -3115,6 +3381,15 @@ tabPanel("Regression", id = "tab4",
                                   selected = NULL),
                       plotOutput("plot_reg_pval", height = "auto",brush = brushOpts(id = "map_brush4_pvalue",resetOnNew = TRUE)),
                       br(),
+                      div(id = "reg3",
+                          fluidRow(
+                            h3(helpText("Downloads")),  
+                            column(2, radioButtons(inputId = "reg_pval_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                            column(3, downloadButton(outputId = "download_reg_pval_plot", label = "Download map")), 
+                            
+                            column(2,radioButtons(inputId = "reg_pval_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                            column(3, downloadButton(outputId = "download_reg_pval_plot_data", label = "Download data")),
+                          )), br(),
                       tableOutput("data_reg_pval")
              ),
              
@@ -3131,6 +3406,15 @@ tabPanel("Regression", id = "tab4",
                       ),
                       plotOutput("plot_reg_resi", height = "auto",brush = brushOpts(id = "map_brush4_resi",resetOnNew = TRUE)),
                       br(),
+                      div(id = "reg4",
+                          fluidRow(
+                            h3(helpText("Downloads")),   
+                            column(2, radioButtons(inputId = "reg_res_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                            column(3, downloadButton(outputId = "download_reg_res_plot", label = "Download map")), 
+                            
+                            column(2,radioButtons(inputId = "reg_res_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                            column(3, downloadButton(outputId = "download_reg_res_plot_data", label = "Download data")),
+                          )), br(),
                       tableOutput("data_reg_resi")
              ),
 
@@ -3147,10 +3431,21 @@ tabPanel("Regression", id = "tab4",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              h4(helpText("Draw a box on the left map to use zoom function")),
                             ),
                             
+                            #Downloads
+                            shinyjs::hidden(
+                              div(id = "hidden_iv_fad_download",
+                                  h4(helpText("Downloads")),
+                                  fluidRow(
+                                    column(2, radioButtons(inputId = "file_type_modera_source_a4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_wa4a", label = "Download Oct. - Mar.")),
+                                    column(2, radioButtons(inputId = "file_type_modera_source_b4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_sa4a", label = "Download Apr. - Sep.")),
+                                  ))),
+                            
                             div(id = "fad_map_a4a",
+                                h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
                                   plotOutput("fad_winter_map_a4a",
                                              brush = brushOpts(
@@ -3183,10 +3478,21 @@ tabPanel("Regression", id = "tab4",
                                        value = 1422,
                                        min = 1422,
                                        max = 2008)),
-                              h4(helpText("Draw a box on the left map to use zoom function")),
                             ),
                             
+                            #Downloads
+                            shinyjs::hidden(
+                              div(id = "hidden_dv_fad_download",
+                                  h4(helpText("Downloads")),
+                                  fluidRow(
+                                    column(2,radioButtons(inputId = "file_type_modera_source_a4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3,downloadButton(outputId = "download_fad_wa4b", label = "Download Oct. - Mar.")),
+                                    column(2,radioButtons(inputId = "file_type_modera_source_b4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3,downloadButton(outputId = "download_fad_sa4b", label = "Download Apr. - Sep.")),
+                                  ))),
+                            
                             div(id = "fad_map_a4b",
+                                h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
                                   plotOutput("fad_winter_map_a4b",
                                              brush = brushOpts(
@@ -3209,104 +3515,14 @@ tabPanel("Regression", id = "tab4",
                         )),
              ),
              
-             ### Downloads ----
-             tabPanel("Downloads",
-                      verticalLayout(br(),
-                                     
-                                     div(id = "reg1",
-                                         fluidRow(
-                                           h3(helpText("Regression time series")), 
-                                           column(width = 3,
-                                                  radioButtons(inputId = "reg_ts_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                  downloadButton(outputId = "download_reg_ts_plot", label = "Download plot 1")),
-                                           
-                                           column(width = 3,
-                                                  radioButtons(inputId = "reg_ts2_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                  downloadButton(outputId = "download_reg_ts2_plot", label = "Download plot 2")), 
-                                           
-                                           column(width = 3,
-                                                  radioButtons(inputId = "reg_ts_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                                  downloadButton(outputId = "download_reg_ts_plot_data", label = "Download data")),
-                                           
-                                           column(width = 3,
-                                                  h4("Statistical summary"),
-                                                  downloadButton(outputId = "download_reg_sum_txt", label = "Download ")),
-                                         )), br(),   
-
-                                     div(id = "reg2",
-                                     fluidRow(
-                                     h3(helpText("Regression coefficient download")),
-                                     column(width = 3, 
-                                     radioButtons(inputId = "reg_coe_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                     downloadButton(outputId = "download_reg_coe_plot", label = "Download map")), 
-                                     
-                                     column(width = 3,
-                                     radioButtons(inputId = "reg_coe_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                     downloadButton(outputId = "download_reg_coe_plot_data", label = "Download data")),
-                                     )), br(),
-                                     
-
-                                     div(id = "reg3",
-                                     fluidRow(
-                                     h3(helpText("Regression pvalues download")),  
-                                     column(width = 3,
-                                     radioButtons(inputId = "reg_pval_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                     downloadButton(outputId = "download_reg_pval_plot", label = "Download map")), 
-                                     
-                                     column(width = 3,
-                                            radioButtons(inputId = "reg_pval_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                            downloadButton(outputId = "download_reg_pval_plot_data", label = "Download data")),
-                                     )), br(),
-                                     
-
-                                     div(id = "reg4",
-                                     fluidRow(
-                                     h3(helpText("Regression residuals download")),   
-                                     column(width = 3,
-                                     radioButtons(inputId = "reg_res_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                     downloadButton(outputId = "download_reg_res_plot", label = "Download map")), 
-                                     
-                                     column(width = 3,
-                                            radioButtons(inputId = "reg_res_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                            downloadButton(outputId = "download_reg_res_plot_data", label = "Download data")),
-                                     )), br(),
-                                     ),
-                                     
-                                     h3(helpText("ModE-RA sources download")),
-                                      shinyjs::hidden(
-                                        div(id = "hidden_iv_fad_download",
-                                            fluidRow(
-                                              h4("Independent variable"),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_a4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_wa4a", label = "Download Oct. - Mar")),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_b4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_sa4a", label = "Download Apr. - Sept")),
-                                            ))),
-                                      br(),
-                                      shinyjs::hidden(
-                                        div(id = "hidden_dv_fad_download",
-                                            fluidRow(
-                                              h4("Dependent variable"),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_a4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_wa4b", label = "Download Oct. - Mar")),
-                                              column(width = 3,
-                                                     radioButtons(inputId = "file_type_modera_source_b4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                                     downloadButton(outputId = "download_fad_sa4b", label = "Download Apr. - Sept")),
-                                            ))),
-             )
-             
            ## Main Panel END ----
            ), width = 8)
 
 # Regression END ----
          )),
 
-
 # Monthly timeseries START ----                             
-tabPanel("Monthly Timeseries", id = "tab5",
+  tabPanel("Monthly Timeseries", value = "tab5",
          shinyjs::useShinyjs(),
          sidebarLayout(
            
@@ -3346,12 +3562,27 @@ tabPanel("Monthly Timeseries", id = "tab5",
                #Choose reference period if Anomaly values are chosen (Hidden object)      
                shinyjs::hidden(
                  div(id = "optional5",
+                     hidden(
                      numericRangeInput(inputId = "ref_period5",
                                        label      = "Reference period:",
                                        value      = c(1961,1990),
                                        separator  = " to ",
                                        min        = 1422,
-                                       max        = 2000)
+                                       max        = 2000)),
+                     
+                     #Choose single ref year
+                     column(12,
+                            checkboxInput(inputId = "ref_single_year5",
+                                          label   = "Select single year",
+                                          value   = FALSE)),
+                     
+                     
+                     hidden(
+                       numericInput(inputId   = "ref_period_sg5",
+                                    label     = "Select the single year:",
+                                    value     = NA,
+                                    min       = 1422,
+                                    max       = 2008)),
                  )),
                
                #Choose a Type of plot: Average or Individual years
@@ -3364,10 +3595,10 @@ tabPanel("Monthly Timeseries", id = "tab5",
              
              ### Second sidebar panel (Location selection) ----
              sidebarPanel(fluidRow(
-               
+
+               shinyjs::hidden(div(id = "hidden_region_input",               
                #Short description of the Coord. Sidebar        
-               h4(helpText("Choose a map or enter coordinates manually")),
-               
+               h4(helpText("Choose a region or enter coordinates manually")),
                
                column(width = 12, fluidRow(      
                  #Global Button
@@ -3441,24 +3672,74 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                  min = -90,
                                  max = 90),
                
-               br(), br(),
+               )),
+               
+               #Custom location
+               h4(helpText("Choose a point location input")),
+               
+               checkboxInput(inputId = "custom_features5",
+                             label   = "Switch to point location input",
+                             value   = FALSE),
+               
+               shinyjs::hidden(div(id = "hidden_custom_points5",
+                   h6(helpText("Enter location/coordinates")),
+                   
+                   textInput(inputId = "location5", 
+                             label   = "Enter a point location:",
+                             value   = NULL,
+                             placeholder = "e.g. Bern"),
+                   
+                   actionButton(inputId = "search5",
+                                label   = "Search"),
+                   
+                   shinyjs::hidden(div(id = "inv_location5",
+                                       h6(helpText("Invalid location"))
+                   )),
+                   
+                   column(width = 12, offset = 0,
+                          column(width = 6,
+                                 textInput(inputId = "point_location_x5", 
+                                           label   = "Point longitude:",
+                                           value   = "")
+                          ),
+                          column(width = 6,
+                                 textInput(inputId = "point_location_y5", 
+                                           label   = "Point latitude:",
+                                           value   = "")
+                          )),
+                   
+                   # #Enter Coordinates
+                   actionButton(inputId = "button_location5",
+                                label = "Update point location",
+                                width = "200px"),
+                   
+                   br(), br(),
+                   
+               )),
+               
+               
+               column(width = 12, fluidRow(
                
                #Add timeseries to graph
                actionButton(inputId = "add_monthly_ts",
                             label = "Add to graph",
-                            width = "200px"),
+                            width = "150px"),
+               
+               br(), br(),
                
                #Remove last timeseries
                actionButton(inputId = "remove_last_monthly_ts",
                             label = "Remove last TS",
-                            width = "200px"),
+                            width = "150px"),
+               
+               br(), br(),
                
                #Remove all timeseries
                actionButton(inputId = "remove_all_monthly_ts",
                             label = "Remove all TS",
-                            width = "200px"),
+                            width = "150px"),
                
-               
+               )),
                
              ), width = 12),
              
@@ -3466,12 +3747,12 @@ tabPanel("Monthly Timeseries", id = "tab5",
            )),
            
            ## Main Panel START ----
-           mainPanel(tabsetPanel(
+           mainPanel(tabsetPanel(id = "tabset5",
              
              ### TS plot START ----
              tabPanel("Time series", plotOutput("timeseries5", click = "ts_click5",dblclick = "ts_dblclick5",brush = brushOpts(id = "ts_brush5",resetOnNew = TRUE)),
-                      #### Customization panels START ----       
-                      fluidRow(
+                        #### Customization panels START ----       
+                        fluidRow(
                         #### Time series customization ----
                         column(width = 4,
                                h4(helpText("Customize your time series")),  
@@ -3621,9 +3902,10 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                                          label   = "Show on legend",
                                                          value   = FALSE),
                                            
+                                           hidden(
                                            textInput(inputId = "highlight_label_ts5", 
                                                      label   = "Label:",
-                                                     value   = ""),
+                                                     value   = "")),
                                            
                                            
                                            column(width = 12,
@@ -3666,9 +3948,10 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                                          label   = "Show on legend",
                                                          value   = FALSE),
                                            
+                                           hidden(
                                            textInput(inputId = "line_label_ts5", 
                                                      label   = "Label:",
-                                                     value   = ""),
+                                                     value   = "")),
                                            
                                            column(width = 12,
                                                   actionButton(inputId = "add_line_ts5",
@@ -3694,14 +3977,28 @@ tabPanel("Monthly Timeseries", id = "tab5",
                         
                         #### Customization panels END ----
                       ),
-                      ### TS plot END ----       
+                      
+                        #### Downloads ----
+                        h4(helpText("Download")),
+                        fluidRow(
+                          column(2, radioButtons(inputId = "file_type_timeseries5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                          column(3, downloadButton(outputId = "download_timeseries5", label = "Download time series"))
+                        ),
+                      
+             ### TS plot END ----       
              ),
              
              ### TS data ----
              tabPanel("Time series data", br(),
                       
+                      h4(helpText("Download")),
+                      fluidRow(
+                        column(2, radioButtons(inputId = "file_type_timeseries_data5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_timeseries_data5", label = "Download time series data"))
+                      ),
+                      br(),
+                      
                       column(width = 3, dataTableOutput("data5"))),
-             
              
              ### Feedback archive documentation (FAD) ----
              tabPanel("ModE-RA sources", br(),
@@ -3733,6 +4030,15 @@ tabPanel("Monthly Timeseries", id = "tab5",
                                                  max = 90)),
                       ),
                       
+                      h4(helpText("Downloads")),
+                      
+                      fluidRow(
+                        column(2, radioButtons(inputId = "file_type_modera_source_a5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_fad_wa5", label = "Download Oct. - Mar.")),
+                        column(2, radioButtons(inputId = "file_type_modera_source_b5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_fad_sa5", label = "Download Apr. - Sep.")),
+                      ),
+                      
                       h4(helpText("Draw a box on the left map to use zoom function")),
                       
                       div(id = "fad_map_a5",
@@ -3756,29 +4062,10 @@ tabPanel("Monthly Timeseries", id = "tab5",
                           )),
                       
              ),
-             
-             ### Downloads ---- 
-             tabPanel("Downloads",
-                      verticalLayout(br(),
-                                     h3(helpText("Time series download")),
-                                     radioButtons(inputId = "file_type_timeseries5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                     downloadButton(outputId = "download_timeseries5", label = "Download"), br(),
-                                     h3(helpText("Time series data download")),
-                                     radioButtons(inputId = "file_type_timeseries_data5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                                     downloadButton(outputId = "download_timeseries_data5", label = "Download")), br(),
-                                      fluidRow(
-                                        column(width = 3,
-                                               radioButtons(inputId = "file_type_modera_source_a5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                               downloadButton(outputId = "download_fad_wa5", label = "Download Oct. - Mar")),
-                                        column(width = 3,
-                                               radioButtons(inputId = "file_type_modera_source_b5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
-                                               downloadButton(outputId = "download_fad_sa5", label = "Download Apr. - Sept")),
-                                      ),
-             )
-             
+
              ## Main Panel END ----
            ), width = 8),
-           # Monthly timeseries END ----  
+# Monthly timeseries END ----  
          )),
 
 # END ----
@@ -3790,6 +4077,178 @@ tabPanel("Monthly Timeseries", id = "tab5",
 server <- function(input, output, session) {
   #Preparations in the Server (Hidden options) ----
   track_usage(storage_mode = store_rds(path = "logs/"))
+  
+  #Easter Eggs
+  
+  # Get the current month and day
+  current_month_day <- format(Sys.Date(), "%m-%d")
+  
+  # Default logo
+  logo_src <- 'pics/Logo_ClimeApp_V2_210623.png'
+  logo_id <- "ClimeApp"
+  logo_height <- "75px"
+  logo_width <- "75px"
+  logo_style <- "margin-right: -10px; display: inline"
+  
+  # Check for special occasions
+  if (current_month_day >= "12-01" && current_month_day <= "12-31") {
+    # Christmas Egg
+    logo_src <- 'pics/Clim-mas.png'
+    logo_id <- "Clim-mas"
+    logo_width <- "142px"
+  } else if (current_month_day >= "05-02" && current_month_day <= "05-02") {
+    # Harry Potter Egg
+    logo_src <- 'pics/Clim-bledore.png'
+    logo_id <- "Clim-bledore"
+    logo_width <- "142px"
+  } else if (current_month_day >= "05-15" && current_month_day <= "05-15") {
+    # World Climate Day Egg
+    logo_src <- 'pics/Clim-day.png'
+    logo_id <- "Clim-day"
+    logo_width <- "142px"
+  } else if (current_month_day >= "09-22" && current_month_day <= "09-22") {
+    # Lord of The Rings Day Egg
+    logo_src <- 'pics/Clim-lord.png'
+    logo_id <- "Clim-lord"
+    logo_width <- "142px"
+  } else if ((current_month_day >= "03-22" && current_month_day <= "04-09") ||
+             (current_month_day >= "04-11" && current_month_day <= "04-25")) {
+    # Easter Egg
+    logo_src <- 'pics/Clim-ster.png'
+    logo_id <- "Clim-ster"
+    logo_width <- "142px"
+  } else if (current_month_day >= "04-10" && current_month_day <= "04-10") {
+    # International Volcano Day Egg
+    logo_src <- 'pics/Clim-vol.png'
+    logo_id <- "Clim-vol"
+    logo_width <- "142px"
+  } else if (current_month_day >= "05-04" && current_month_day <= "05-04") {
+    # May the Fourth Egg
+    logo_src <- 'pics/Clim-wars.png'
+    logo_id <- "Clim-wars"
+    logo_width <- "142px"
+  } else if (current_month_day >= "10-15" && current_month_day <= "11-02") {
+    # Halloween Egg
+    logo_src <- 'pics/Clim-ween.png'
+    logo_id <- "Clim-ween"
+    logo_width <- "142px"
+  } else if (current_month_day >= "01-01" && current_month_day <= "01-03") {
+    # New Year Egg
+    logo_src <- 'pics/Clim-year.png'
+    logo_id <- "Clim-year"
+    logo_width <- "142px"
+  }
+  
+  # Render the logo
+  output$logo_output <- renderUI({
+    img(src = logo_src, id = logo_id, height = logo_height, width = logo_width, style = logo_style)
+  })
+  
+  
+  # Add logic to toggle the visibility of the specific tabPanel (Correlation Map) based on radio button values ("Time Series")
+  observe({
+    if (input$type_v1 == "Time series" && input$type_v2 == "Time series") {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+        // Hide the tabPanel
+        tabPanelToHide.hide();
+      ')
+    } else {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+        // Show the tabPanel
+        tabPanelToHide.show();
+      ')
+    }
+  })
+  
+  observe({
+    if (input$type_v1 == "Time series" && input$type_v2 == "Time series") {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+
+        // Hide the tabPanel
+        tabPanelToHide.hide();
+      ')
+    } else {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+
+        // Show the tabPanel
+        tabPanelToHide.show();
+      ')
+    }
+  })
+  
+  #Same based on Lon Lat Values
+  observe({
+    # Get the range values
+    range_lon_v1 <- input$range_longitude_v1
+    range_lat_v1 <- input$range_latitude_v1
+    range_lon_v2 <- input$range_longitude_v2
+    range_lat_v2 <- input$range_latitude_v2
+    
+    # Check for overlap
+    overlap_lon <- !(range_lon_v1[2] < range_lon_v2[1] || range_lon_v1[1] > range_lon_v2[2])
+    overlap_lat <- !(range_lat_v1[2] < range_lat_v2[1] || range_lat_v1[1] > range_lat_v2[2])
+    
+    # Return the result
+    if (overlap_lon && overlap_lat) {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+        // Show the tabPanel
+        tabPanelToHide.show();
+      ')
+    } else {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+        // Hide the tabPanel
+        tabPanelToHide.hide();
+      ')
+    }
+  })
+  
+  observe({
+    # Get the range values
+    range_lon_v1 <- input$range_longitude_v1
+    range_lat_v1 <- input$range_latitude_v1
+    range_lon_v2 <- input$range_longitude_v2
+    range_lat_v2 <- input$range_latitude_v2
+    
+    # Check for overlap
+    overlap_lon <- !(range_lon_v1[2] < range_lon_v2[1] || range_lon_v1[1] > range_lon_v2[2])
+    overlap_lat <- !(range_lat_v1[2] < range_lat_v2[1] || range_lat_v1[1] > range_lat_v2[2])
+    
+    # Return the result
+    if (overlap_lon && overlap_lat) {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+
+        // Show the tabPanel
+        tabPanelToHide.show();
+      ')
+    } else {
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+
+        // Hide the tabPanel
+        tabPanelToHide.hide();
+      ')
+    }
+  })
+  
   #Hiding, showing, enabling/disenabling certain inputs
   observe({
 
@@ -4753,6 +5212,248 @@ server <- function(input, output, session) {
                     selector = NULL,
                     condition = input$feature_ts5 == "Line",
                     asis = FALSE)
+    
+    shinyjs::toggle(id = "hidden_region_input",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$custom_features5 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "hidden_custom_points5",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$custom_features5 == TRUE,
+                    asis = FALSE)
+    
+    #Toggle Single Year UI
+    
+    shinyjs::toggle(id = "range_years_sg",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$single_year == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "range_years",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$single_year == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year2 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year2 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg_v1",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_v1 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_v1",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_v1 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg_v2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_v2 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_v2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_v2 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "range_years_sg3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$single_year3 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "range_years3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$single_year3 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg_iv",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_iv == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_iv",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_iv == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "range_years_sg4",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$single_year4 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "range_years4",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$single_year4 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg_dv",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_dv == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_dv",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year_dv == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period_sg5",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year5 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "ref_period5",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$ref_single_year5 == FALSE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "highlight_label_ts",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_highlight_on_legend_ts == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "highlight_label_ts2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_highlight_on_legend_ts2 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "highlight_label_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_highlight_on_legend_ts3 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "highlight_label_ts5",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_highlight_on_legend_ts5 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "line_label_ts",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_line_on_legend_ts == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "line_label_ts2",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_line_on_legend_ts2 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "line_label_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_line_on_legend_ts3 == TRUE,
+                    asis = FALSE)
+    
+    shinyjs::toggle(id = "line_label_ts5",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_line_on_legend_ts5 == TRUE,
+                    asis = FALSE)
   
   })
   
@@ -4880,6 +5581,69 @@ server <- function(input, output, session) {
       lonlat_vals(c(input$range_longitude,input$range_latitude))        
     })
     
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude[1] == -180 && input$range_longitude[2] == 180 &&
+          input$range_latitude[1] == -90 && input$range_latitude[2] == 90) {
+        addClass("button_global", "green-background")
+      } else {
+        removeClass("button_global", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == -30 && input$range_longitude[2] == 40 &&
+          input$range_latitude[1] == 30 && input$range_latitude[2] == 75) {
+        addClass("button_europe", "green-background")
+      } else {
+        removeClass("button_europe", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == 25 && input$range_longitude[2] == 170 &&
+          input$range_latitude[1] == 5 && input$range_latitude[2] == 80) {
+        addClass("button_asia", "green-background")
+      } else {
+        removeClass("button_asia", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == 90 && input$range_longitude[2] == 180 &&
+          input$range_latitude[1] == -55 && input$range_latitude[2] == 20) {
+        addClass("button_oceania", "green-background")
+      } else {
+        removeClass("button_oceania", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == -25 && input$range_longitude[2] == 55 &&
+          input$range_latitude[1] == -40 && input$range_latitude[2] == 40) {
+        addClass("button_africa", "green-background")
+      } else {
+        removeClass("button_africa", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == -175 && input$range_longitude[2] == -10 &&
+          input$range_latitude[1] == 5 && input$range_latitude[2] == 85) {
+        addClass("button_n_america", "green-background")
+      } else {
+        removeClass("button_n_america", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude[1] == -90 && input$range_longitude[2] == -30 &&
+          input$range_latitude[1] == -60 && input$range_latitude[2] == 15) {
+        addClass("button_s_america", "green-background")
+      } else {
+        removeClass("button_s_america", "green-background")
+      }
+    })
 
     #Month Range Updater
     observe({
@@ -4958,7 +5722,7 @@ server <- function(input, output, session) {
       
       choices  = c("Temperature", "Precipitation", "SLP", "Z500")
       
-      updateCheckboxGroupInput(
+      updatePickerInput(
         session, "netcdf_variables",
         choices = choices,
         selected = input$variable_selected
@@ -4994,13 +5758,13 @@ server <- function(input, output, session) {
         showModal(
           # Add modal dialog for warning message
           modalDialog(
-            title = "Warning",
+            title = "Information",
             "Unrealistic values (such as negative precipitation) can occur if absolute values are used! Cf. “Usage Notes”",
-            easyClose = FALSE,
+            easyClose = TRUE,
             footer = tagList(modalButton("OK"))
           ))}
     })
-
+    
     ### Interactivity ----
     
     # Input geo-coded locations
@@ -5380,6 +6144,70 @@ server <- function(input, output, session) {
       lonlat_vals2(c(input$range_longitude2,input$range_latitude2))        
     })
     
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude2[1] == -180 && input$range_longitude2[2] == 180 &&
+          input$range_latitude2[1] == -90 && input$range_latitude2[2] == 90) {
+        addClass("button_global2", "green-background")
+      } else {
+        removeClass("button_global2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == -30 && input$range_longitude2[2] == 40 &&
+          input$range_latitude2[1] == 30 && input$range_latitude2[2] == 75) {
+        addClass("button_europe2", "green-background")
+      } else {
+        removeClass("button_europe2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == 25 && input$range_longitude2[2] == 170 &&
+          input$range_latitude2[1] == 5 && input$range_latitude2[2] == 80) {
+        addClass("button_asia2", "green-background")
+      } else {
+        removeClass("button_asia2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == 90 && input$range_longitude2[2] == 180 &&
+          input$range_latitude2[1] == -55 && input$range_latitude2[2] == 20) {
+        addClass("button_oceania2", "green-background")
+      } else {
+        removeClass("button_oceania2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == -25 && input$range_longitude2[2] == 55 &&
+          input$range_latitude2[1] == -40 && input$range_latitude2[2] == 40) {
+        addClass("button_africa2", "green-background")
+      } else {
+        removeClass("button_africa2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == -175 && input$range_longitude2[2] == -10 &&
+          input$range_latitude2[1] == 5 && input$range_latitude2[2] == 85) {
+        addClass("button_n_america2", "green-background")
+      } else {
+        removeClass("button_n_america2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude2[1] == -90 && input$range_longitude2[2] == -30 &&
+          input$range_latitude2[1] == -60 && input$range_latitude2[2] == 15) {
+        addClass("button_s_america2", "green-background")
+      } else {
+        removeClass("button_s_america2", "green-background")
+      }
+    })
+    
     #Month Range Updater
     observe({
       if (input$season_selected2 == "Annual"){
@@ -5480,9 +6308,9 @@ server <- function(input, output, session) {
         showModal(
           # Add modal dialog for warning message
           modalDialog(
-            title = "Warning",
+            title = "Information",
             "Unrealistic values (such as negative precipitation) can occur if absolute values are used! Cf. “Usage Notes”",
-            easyClose = FALSE,
+            easyClose = TRUE,
             footer = tagList(modalButton("OK"))
           ))}
     })
@@ -6083,6 +6911,70 @@ server <- function(input, output, session) {
       lonlat_vals_v1(c(input$range_longitude_v1,input$range_latitude_v1))        
     })
     
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude_v1[1] == -180 && input$range_longitude_v1[2] == 180 &&
+          input$range_latitude_v1[1] == -90 && input$range_latitude_v1[2] == 90) {
+        addClass("button_global_v1", "green-background")
+      } else {
+        removeClass("button_global_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == -30 && input$range_longitude_v1[2] == 40 &&
+          input$range_latitude_v1[1] == 30 && input$range_latitude_v1[2] == 75) {
+        addClass("button_europe_v1", "green-background")
+      } else {
+        removeClass("button_europe_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == 25 && input$range_longitude_v1[2] == 170 &&
+          input$range_latitude_v1[1] == 5 && input$range_latitude_v1[2] == 80) {
+        addClass("button_asia_v1", "green-background")
+      } else {
+        removeClass("button_asia_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == 90 && input$range_longitude_v1[2] == 180 &&
+          input$range_latitude_v1[1] == -55 && input$range_latitude_v1[2] == 20) {
+        addClass("button_oceania_v1", "green-background")
+      } else {
+        removeClass("button_oceania_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == -25 && input$range_longitude_v1[2] == 55 &&
+          input$range_latitude_v1[1] == -40 && input$range_latitude_v1[2] == 40) {
+        addClass("button_africa_v1", "green-background")
+      } else {
+        removeClass("button_africa_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == -175 && input$range_longitude_v1[2] == -10 &&
+          input$range_latitude_v1[1] == 5 && input$range_latitude_v1[2] == 85) {
+        addClass("button_n_america_v1", "green-background")
+      } else {
+        removeClass("button_n_america_v1", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v1[1] == -90 && input$range_longitude_v1[2] == -30 &&
+          input$range_latitude_v1[1] == -60 && input$range_latitude_v1[2] == 15) {
+        addClass("button_s_america_v1", "green-background")
+      } else {
+        removeClass("button_s_america_v1", "green-background")
+      }
+    })
+    
     # Set iniital lon/lat values and update on button press
     lonlat_vals_v2 = reactiveVal(c(initial_lon_values,initial_lat_values))
     
@@ -6201,6 +7093,70 @@ server <- function(input, output, session) {
     
     observeEvent(input$button_coord_v2, {
       lonlat_vals_v2(c(input$range_longitude_v2,input$range_latitude_v2))        
+    })
+    
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude_v2[1] == -180 && input$range_longitude_v2[2] == 180 &&
+          input$range_latitude_v2[1] == -90 && input$range_latitude_v2[2] == 90) {
+        addClass("button_global_v2", "green-background")
+      } else {
+        removeClass("button_global_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == -30 && input$range_longitude_v2[2] == 40 &&
+          input$range_latitude_v2[1] == 30 && input$range_latitude_v2[2] == 75) {
+        addClass("button_europe_v2", "green-background")
+      } else {
+        removeClass("button_europe_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == 25 && input$range_longitude_v2[2] == 170 &&
+          input$range_latitude_v2[1] == 5 && input$range_latitude_v2[2] == 80) {
+        addClass("button_asia_v2", "green-background")
+      } else {
+        removeClass("button_asia_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == 90 && input$range_longitude_v2[2] == 180 &&
+          input$range_latitude_v2[1] == -55 && input$range_latitude_v2[2] == 20) {
+        addClass("button_oceania_v2", "green-background")
+      } else {
+        removeClass("button_oceania_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == -25 && input$range_longitude_v2[2] == 55 &&
+          input$range_latitude_v2[1] == -40 && input$range_latitude_v2[2] == 40) {
+        addClass("button_africa_v2", "green-background")
+      } else {
+        removeClass("button_africa_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == -175 && input$range_longitude_v2[2] == -10 &&
+          input$range_latitude_v2[1] == 5 && input$range_latitude_v2[2] == 85) {
+        addClass("button_n_america_v2", "green-background")
+      } else {
+        removeClass("button_n_america_v2", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_v2[1] == -90 && input$range_longitude_v2[2] == -30 &&
+          input$range_latitude_v2[1] == -60 && input$range_latitude_v2[2] == 15) {
+        addClass("button_s_america_v2", "green-background")
+      } else {
+        removeClass("button_s_america_v2", "green-background")
+      }
     })
     
     # Correlation axis values updater 
@@ -6832,6 +7788,70 @@ server <- function(input, output, session) {
       lonlat_vals_iv(c(input$range_longitude_iv,input$range_latitude_iv))        
     })
     
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude_iv[1] == -180 && input$range_longitude_iv[2] == 180 &&
+          input$range_latitude_iv[1] == -90 && input$range_latitude_iv[2] == 90) {
+        addClass("button_global_iv", "green-background")
+      } else {
+        removeClass("button_global_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == -30 && input$range_longitude_iv[2] == 40 &&
+          input$range_latitude_iv[1] == 30 && input$range_latitude_iv[2] == 75) {
+        addClass("button_europe_iv", "green-background")
+      } else {
+        removeClass("button_europe_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == 25 && input$range_longitude_iv[2] == 170 &&
+          input$range_latitude_iv[1] == 5 && input$range_latitude_iv[2] == 80) {
+        addClass("button_asia_iv", "green-background")
+      } else {
+        removeClass("button_asia_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == 90 && input$range_longitude_iv[2] == 180 &&
+          input$range_latitude_iv[1] == -55 && input$range_latitude_iv[2] == 20) {
+        addClass("button_oceania_iv", "green-background")
+      } else {
+        removeClass("button_oceania_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == -25 && input$range_longitude_iv[2] == 55 &&
+          input$range_latitude_iv[1] == -40 && input$range_latitude_iv[2] == 40) {
+        addClass("button_africa_iv", "green-background")
+      } else {
+        removeClass("button_africa_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == -175 && input$range_longitude_iv[2] == -10 &&
+          input$range_latitude_iv[1] == 5 && input$range_latitude_iv[2] == 85) {
+        addClass("button_n_america_iv", "green-background")
+      } else {
+        removeClass("button_n_america_iv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_iv[1] == -90 && input$range_longitude_iv[2] == -30 &&
+          input$range_latitude_iv[1] == -60 && input$range_latitude_iv[2] == 15) {
+        addClass("button_s_america_iv", "green-background")
+      } else {
+        removeClass("button_s_america_iv", "green-background")
+      }
+    })
+    
     # Set iniital lon/lat values and update on button press
     lonlat_vals_dv = reactiveVal(c(initial_lon_values,initial_lat_values))
     
@@ -6950,6 +7970,70 @@ server <- function(input, output, session) {
     
     observeEvent(input$button_coord_dv, {
       lonlat_vals_dv(c(input$range_longitude_dv,input$range_latitude_dv))        
+    })
+    
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude_dv[1] == -180 && input$range_longitude_dv[2] == 180 &&
+          input$range_latitude_dv[1] == -90 && input$range_latitude_dv[2] == 90) {
+        addClass("button_global_dv", "green-background")
+      } else {
+        removeClass("button_global_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == -30 && input$range_longitude_dv[2] == 40 &&
+          input$range_latitude_dv[1] == 30 && input$range_latitude_dv[2] == 75) {
+        addClass("button_europe_dv", "green-background")
+      } else {
+        removeClass("button_europe_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == 25 && input$range_longitude_dv[2] == 170 &&
+          input$range_latitude_dv[1] == 5 && input$range_latitude_dv[2] == 80) {
+        addClass("button_asia_dv", "green-background")
+      } else {
+        removeClass("button_asia_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == 90 && input$range_longitude_dv[2] == 180 &&
+          input$range_latitude_dv[1] == -55 && input$range_latitude_dv[2] == 20) {
+        addClass("button_oceania_dv", "green-background")
+      } else {
+        removeClass("button_oceania_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == -25 && input$range_longitude_dv[2] == 55 &&
+          input$range_latitude_dv[1] == -40 && input$range_latitude_dv[2] == 40) {
+        addClass("button_africa_dv", "green-background")
+      } else {
+        removeClass("button_africa_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == -175 && input$range_longitude_dv[2] == -10 &&
+          input$range_latitude_dv[1] == 5 && input$range_latitude_dv[2] == 85) {
+        addClass("button_n_america_dv", "green-background")
+      } else {
+        removeClass("button_n_america_dv", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude_dv[1] == -90 && input$range_longitude_dv[2] == -30 &&
+          input$range_latitude_dv[1] == -60 && input$range_latitude_dv[2] == 15) {
+        addClass("button_s_america_dv", "green-background")
+      } else {
+        removeClass("button_s_america_dv", "green-background")
+      }
     })
     
     ### Interactivity ----
@@ -7221,7 +8305,114 @@ server <- function(input, output, session) {
         value = c(-60,15))
     })
     
+    # observeEvent(input$button_coord5, {
+    #   lonlat_vals5(c(input$range_longitude5,input$range_latitude5))        
+    # })
     
+    #Make continental buttons stay highlighted
+    observe({
+      if (input$range_longitude5[1] == -180 && input$range_longitude5[2] == 180 &&
+          input$range_latitude5[1] == -90 && input$range_latitude5[2] == 90) {
+        addClass("button_global5", "green-background")
+      } else {
+        removeClass("button_global5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == -30 && input$range_longitude5[2] == 40 &&
+          input$range_latitude5[1] == 30 && input$range_latitude5[2] == 75) {
+        addClass("button_europe5", "green-background")
+      } else {
+        removeClass("button_europe5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == 25 && input$range_longitude5[2] == 170 &&
+          input$range_latitude5[1] == 5 && input$range_latitude5[2] == 80) {
+        addClass("button_asia5", "green-background")
+      } else {
+        removeClass("button_asia5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == 90 && input$range_longitude5[2] == 180 &&
+          input$range_latitude5[1] == -55 && input$range_latitude5[2] == 20) {
+        addClass("button_oceania5", "green-background")
+      } else {
+        removeClass("button_oceania5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == -25 && input$range_longitude5[2] == 55 &&
+          input$range_latitude5[1] == -40 && input$range_latitude5[2] == 40) {
+        addClass("button_africa5", "green-background")
+      } else {
+        removeClass("button_africa5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == -175 && input$range_longitude5[2] == -10 &&
+          input$range_latitude5[1] == 5 && input$range_latitude5[2] == 85) {
+        addClass("button_n_america5", "green-background")
+      } else {
+        removeClass("button_n_america5", "green-background")
+      }
+    })
+    
+    observe({
+      if (input$range_longitude5[1] == -90 && input$range_longitude5[2] == -30 &&
+          input$range_latitude5[1] == -60 && input$range_latitude5[2] == 15) {
+        addClass("button_s_america5", "green-background")
+      } else {
+        removeClass("button_s_america5", "green-background")
+      }
+    })
+    
+    #Update Coordinates if Location is selected
+    
+    # Input geo-coded locations
+    observeEvent(input$search5, {
+      location5 <- input$location5
+      if (!is.null(location5) && nchar(location5) > 0) {
+        result <- geocode_OSM(location5)
+        if (!is.null(result$coords)) {
+          longitude5 <- result$coords[1]
+          latitude5 <- result$coords[2]
+          updateTextInput(session, "point_location_x5", value = as.character(longitude5))
+          updateTextInput(session, "point_location_y5", value = as.character(latitude5))
+          shinyjs::hide(id = "inv_location5")  # Hide the "Invalid location" message
+        } else {
+          shinyjs::show(id = "inv_location5")  # Show the "Invalid location" message
+        }
+      } else {
+        shinyjs::hide(id = "inv_location5")  # Hide the "Invalid location" message when no input
+      }
+    })
+    
+    observeEvent(input$button_location5, {
+      # Update range_longitude5 if point_location_x5 is not empty
+      
+        updateNumericRangeInput(inputId = "range_longitude5",
+                                session = getDefaultReactiveDomain(),
+                                label = NULL,
+                                value = c(input$point_location_x5, input$point_location_x5))
+      
+    })
+
+    observeEvent(input$button_location5, {
+      # Update range_latitude5 if point_location_y5 is not empty
+      
+        updateNumericRangeInput(inputId = "range_latitude5",
+                                session = getDefaultReactiveDomain(),
+                                label = NULL,
+                                value = c(input$point_location_y5, input$point_location_y5))
+      
+    })
     
     ### Interactivity ----
     
@@ -7294,7 +8485,7 @@ server <- function(input, output, session) {
           value = round(c(input$ts_brush5[[3]],input$ts_brush5[[4]]), digits = 2))
       }
     })
-    
+
     ### Initialise and update custom points lines highlights ----
     
     ts_points_data5 = reactiveVal(data.frame())
@@ -7456,7 +8647,6 @@ server <- function(input, output, session) {
   
   output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
   # code line below sets height as a function of the ratio of lat/lon 
-  
   
   #Ref/Absolute/SD ratio Map
   ref_map_data <- function(){
@@ -8341,7 +9531,7 @@ server <- function(input, output, session) {
       req(input$user_file_v1)
       
       if (input$source_v1 == "User Data"){
-        new_data1 = read_regcomp_data(input$user_file_v1$datapath)      
+        new_data1 = read_regcomp_data(input$user_file_v1$datapath)   
         return(new_data1)
       }
       else{
@@ -8355,7 +9545,7 @@ server <- function(input, output, session) {
       req(input$user_file_v2)
       
       if (input$source_v2 == "User Data"){
-        new_data2 = read_regcomp_data(input$user_file_v2$datapath)      
+        new_data2 = read_regcomp_data(input$user_file_v2$datapath)  
         return(new_data2)
       }
       else{
@@ -8365,32 +9555,46 @@ server <- function(input, output, session) {
     
     # Subset v1 data to year_range and chosen variable
     user_subset_v1 = reactive({
-      
+
       req(user_data_v1(),input$user_variable_v1)
-      
+
       usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3)
-      
+
       return(usr_ss1)
-    }) 
-    
+    })
+
     # Subset v2 data to year_range and chosen variable
     user_subset_v2 = reactive({
-      
+
       req(user_data_v2(),input$user_variable_v2)
-      
+
       usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3)
-      
+
       return(usr_ss2)
-    }) 
-    
-    
+    })
+
     year_range_cor = reactive({
       
-      yrc = extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath)
-      
-      return(yrc)
+      result <- tryCatch(
+        {
+          return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath))
+          return(yrc)
+        },
+        error = function(e) {
+          showModal(
+            # Add modal dialog for warning message
+            modalDialog(
+              title = "Error",
+              "There was an error in processing your uploaded data. 
+                  \nPlease check if the file has the correct format.",
+              easyClose = FALSE,
+              footer = tagList(modalButton("OK"))
+            ))
+          return(NULL)
+        }
+      )
+      return(result)
     })  
-    
     
     ### Generate ModE-RA data   
     
@@ -9168,10 +10372,25 @@ server <- function(input, output, session) {
       
       year_range_reg = reactive({
         
-        yrc = extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath)
-        
-        return(yrc)
-      })  
+        result <- tryCatch(
+          {
+            return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath))
+          },
+          error = function(e) {
+            showModal(
+              # Add modal dialog for warning message
+              modalDialog(
+                title = "Error",
+                "There was an error in processing your uploaded data. 
+                  \nPlease check if the file has the correct format.",
+                easyClose = FALSE,
+                footer = tagList(modalButton("OK"))
+              ))
+            return(NULL)
+          }
+        )
+        return(result)
+      }) 
       
       
       ### Generate ModE-RA data   
@@ -10203,10 +11422,1276 @@ server <- function(input, output, session) {
                                                                print(fad_wa5(labs = TRUE))
                                                                dev.off()
                                                              }})
+  ## Conercning all modes (mainly updating Ui) ----
+    
+    #Updates Values outside of min / max (numericInput)
+    observe({
+      input_values <- input$point_size
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size2
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size2", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size2", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size3
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size3", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size3", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size3", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size_ts
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size_ts", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size_ts", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size_ts", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size_ts2
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size_ts2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size_ts2", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size_ts2", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$point_size_ts3
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "point_size_ts3", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "point_size_ts3", value = 1)
+            } else if (val > 10) {
+              updateNumericInput(inputId = "point_size_ts3", value = 10)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$percentage_sign_match
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "percentage_sign_match", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "percentage_sign_match", value = 1)
+            } else if (val > 100) {
+              updateNumericInput(inputId = "percentage_sign_match", value = 100)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$percentage_sign_match2
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "percentage_sign_match2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "percentage_sign_match2", value = 1)
+            } else if (val > 100) {
+              updateNumericInput(inputId = "percentage_sign_match2", value = 100)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$percentage_sign_match2
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "percentage_sign_match2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "percentage_sign_match2", value = 1)
+            } else if (val > 100) {
+              updateNumericInput(inputId = "percentage_sign_match2", value = 100)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$hidden_SD_ratio
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "hidden_SD_ratio", value = 0)
+        } else {
+          update_value <- function(val) {
+            if (val < 0) {
+              updateNumericInput(inputId = "hidden_SD_ratio", value = 0)
+            } else if (val > 1) {
+              updateNumericInput(inputId = "hidden_SD_ratio", value = 1)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$hidden_SD_ratio2
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "hidden_SD_ratio2", value = 0)
+        } else {
+          update_value <- function(val) {
+            if (val < 0) {
+              updateNumericInput(inputId = "hidden_SD_ratio2", value = 0)
+            } else if (val > 1) {
+              updateNumericInput(inputId = "hidden_SD_ratio2", value = 1)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$year_moving_ts
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "year_moving_ts", value = 3)
+        } else {
+          update_value <- function(val) {
+            if (val < 3) {
+              updateNumericInput(inputId = "year_moving_ts", value = 3)
+            } else if (val > 30) {
+              updateNumericInput(inputId = "year_moving_ts", value = 30)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$year_moving_ts3
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "year_moving_ts3", value = 3)
+        } else {
+          update_value <- function(val) {
+            if (val < 3) {
+              updateNumericInput(inputId = "year_moving_ts3", value = 3)
+            } else if (val > 30) {
+              updateNumericInput(inputId = "year_moving_ts3", value = 30)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a2
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a2", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a2", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a2", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a3a
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a3a", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a3a", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a3a", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a3b
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a3b", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a3b", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a3b", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a4a
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a4a", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a4a", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a4a", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a4b
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a4b", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a4b", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a4b", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$fad_year_a5
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "fad_year_a5", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "fad_year_a5", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "fad_year_a5", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$prior_years2
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "prior_years2", value = 1)
+        } else {
+          update_value <- function(val) {
+            if (val < 1) {
+              updateNumericInput(inputId = "prior_years2", value = 1)
+            } else if (val > 50) {
+              updateNumericInput(inputId = "prior_years2", value = 50)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$reg_resi_year
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "reg_resi_year", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "reg_resi_year", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "reg_resi_year", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$range_years_sg
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "range_years_sg", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "range_years_sg", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "range_years_sg", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$ref_period_sg
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$ref_period_sg2
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg2", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg2", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg2", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$ref_period_sg_v1
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg_v1", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$range_years_sg3
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "range_years_sg3", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "range_years_sg3", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "range_years_sg3", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    
+    observe({
+      input_values <- input$ref_period_sg_v2
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg_v2", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$ref_period_sg_iv
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg_iv", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$range_years_sg4
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "range_years_sg4", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "range_years_sg4", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "range_years_sg4", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$ref_period_sg_dv
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg_dv", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    observe({
+      input_values <- input$ref_period_sg5
+      
+      delay(1000, {
+        if (is.null(input_values) || is.na(input_values)) {         
+          } else if (!is.numeric(input_values)) {
+          updateNumericInput(inputId = "ref_period_sg5", value = 1422)
+        } else {
+          update_value <- function(val) {
+            if (val < 1422) {
+              updateNumericInput(inputId = "ref_period_sg5", value = 1422)
+            } else if (val > 2008) {
+              updateNumericInput(inputId = "ref_period_sg5", value = 2008)
+            }
+          }
+          
+          update_value(input_values)
+        }
+      })
+    })
+    
+    #Updates Values outside of min / max (numericRangeInput)
+    
+    observe({
+      range_values <- input$range_years
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "range_years", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "range_years", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "range_years", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "range_years", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_years3
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "range_years3", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "range_years3", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "range_years3", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "range_years3", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_years4
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "range_years4", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "range_years4", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "range_years4", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "range_years4", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period2", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period2", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period2", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period2", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period_v1
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_v1", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_v1", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_v1", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_v1", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period_v2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_v2", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_v2", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_v2", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_v2", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period_iv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_iv", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_iv", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_iv", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_iv", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period_dv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_dv", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_dv", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period_dv", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period_dv", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$ref_period5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < 1422) {
+          updateNumericRangeInput(inputId = "ref_period5", value = c(1422, range_values[2]))
+        } else if (left > 2008) {
+          updateNumericRangeInput(inputId = "ref_period5", value = c(1422, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < 1422) {
+          updateNumericRangeInput(inputId = "ref_period5", value = c(range_values[1], 2008))
+        } else if (right > 2008) {
+          updateNumericRangeInput(inputId = "ref_period5", value = c(range_values[1], 2008))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude2", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude2", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude2", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude2", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude_v1
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude_v2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude_iv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude_dv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_longitude5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "range_longitude5", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "range_longitude5", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "range_longitude5", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "range_longitude5", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude_v1
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude_v2
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude_iv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude_dv
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$range_latitude5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "range_latitude5", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "range_latitude5", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "range_latitude5", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "range_latitude5", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$fad_latitude_a5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -90) {
+          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(-90, range_values[2]))
+        } else if (left > 90) {
+          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(-90, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -90) {
+          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(range_values[1], 90))
+        } else if (right > 90) {
+          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(range_values[1], 90))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    observe({
+      range_values <- input$fad_longitude_a5
+      
+      update_values <- function(left, right) {
+        if (!is.numeric(left) || is.na(left) || left < -180) {
+          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(-180, range_values[2]))
+        } else if (left > 180) {
+          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(-180, range_values[2]))
+        }
+        
+        if (!is.numeric(right) || is.na(right) || right < -180) {
+          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(range_values[1], 180))
+        } else if (right > 180) {
+          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(range_values[1], 180))
+        }
+      }
+      
+      update_values(range_values[1], range_values[2])
+    })
+    
+    #Single Year inputs update
+    observe({
+      if (!is.na(input$range_years_sg)) {
+        updateNumericRangeInput(
+          inputId = "range_years",
+          value   = c(input$range_years_sg, input$range_years_sg)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg)) {
+        updateNumericRangeInput(
+          inputId = "ref_period",
+          value   = c(input$ref_period_sg, input$ref_period_sg)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg2)) {
+        updateNumericRangeInput(
+          inputId = "ref_period2",
+          value   = c(input$ref_period_sg2, input$ref_period_sg2)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg_v1)) {
+        updateNumericRangeInput(
+          inputId = "ref_period_v1",
+          value   = c(input$ref_period_sg_v1, input$ref_period_sg_v1)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg_v2)) {
+        updateNumericRangeInput(
+          inputId = "ref_period_v2",
+          value   = c(input$ref_period_sg_v2, input$ref_period_sg_v2)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$range_years_sg3)) {
+        updateNumericRangeInput(
+          inputId = "range_years3",
+          value   = c(input$range_years_sg3, input$range_years_sg3)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg_iv)) {
+        updateNumericRangeInput(
+          inputId = "ref_period_iv",
+          value   = c(input$ref_period_sg_iv, input$ref_period_sg_iv)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg_dv)) {
+        updateNumericRangeInput(
+          inputId = "ref_period_dv",
+          value   = c(input$ref_period_sg_dv, input$ref_period_sg_dv)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$range_years_sg4)) {
+        updateNumericRangeInput(
+          inputId = "range_years4",
+          value   = c(input$range_years_sg4, input$range_years_sg4)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg5)) {
+        updateNumericRangeInput(
+          inputId = "ref_period5",
+          value   = c(input$ref_period_sg5, input$ref_period_sg5)
+        )
+      }
+    })
+    
 }
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
-  
-
-
