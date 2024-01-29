@@ -375,6 +375,7 @@ load_ModE_data = function(dataset,variable){
                     "Precipitation" = "totprec",
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
+
     data_nc = nc_open(paste0("data/ModE-SIM/Monthly/ModE-Sim_ensmean_",vname,"_abs_1420-2009.nc"))
     
     # extract data and convert units if necessary                  
@@ -387,6 +388,9 @@ load_ModE_data = function(dataset,variable){
     } else {
       data_output = ncvar_get(data_nc,varid="geopoth")/100
     }
+    
+    # remove the first year (1421)
+    data_output = data_output[,,13:7080]
     
     nc_close(data_nc)
   }
