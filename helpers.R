@@ -1304,7 +1304,7 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
 
 
 ## (Plot Features) CREATE STATISTICAL HIGHLIGHTS DATA - creates a dataframe for
-##                 adding dots to an anomaly map to mark points which match a certain
+##                 adding dots to an anomaly map to mark points which match a certain criteria
 ##                 stat_highlight = "None","% sign match", "SD ratio"
 ##                 data_input = any subset_to_anomaly ModE-RA data
 ##                 tab = "general" or "composites"
