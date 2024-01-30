@@ -12683,4 +12683,9 @@ server <- function(input, output, session) {
 }
 
 # Run the app ----
-shinyApp(ui = ui, server = server)
+app <- shinyApp(ui = ui, server = server)
+  # Run the app normally
+  runApp(app)
+  # Run the app with profiling
+  profvis({runApp(app)})
+

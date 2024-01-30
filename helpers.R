@@ -17,7 +17,7 @@ library(ggplot2)
 library(sf)
 library(shinylogs)
 library(shinycssloaders)
-
+library(profvis)
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
