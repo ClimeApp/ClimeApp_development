@@ -16,6 +16,7 @@ library(tmaptools)
 library(ggplot2)
 library(sf)
 library(shinylogs)
+library(shinycssloaders)
 
 
 #Nik:
