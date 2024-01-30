@@ -16,8 +16,7 @@ library(tmaptools)
 library(ggplot2)
 library(sf)
 library(shinylogs)
-#library(shinycssloaders)
-
+library(shinycssloaders)
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
@@ -30,6 +29,7 @@ library(shinylogs)
 
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
+#setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
@@ -376,6 +376,7 @@ load_ModE_data = function(dataset,variable){
                     "Precipitation" = "totprec",
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
+
     data_nc = nc_open(paste0("data/ModE-SIM/Monthly/ModE-Sim_ensmean_",vname,"_abs_1420-2009.nc"))
     
     # extract data and convert units if necessary                  
@@ -1304,19 +1305,18 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
 
 ## (Plot Features) CREATE STATISTICAL HIGHLIGHTS DATA - creates a dataframe for
 ##                 adding dots to an anomaly map to mark points which match a certain
-##                 criteria
+##                 stat_highlight = "None","% sign match", "SD ratio"
 ##                 data_input = any subset_to_anomaly ModE-RA data
 ##                 tab = "general" or "composites"
 ##                 add_stat_highlight = TRUE or FALSE
-##                 criteria = "% sign match" or "SD ratio" 
 ##                 sdratio = any numeric value from 0 to 1
 ##                 percent = any numeric value from 1 to 100
 
-create_stat_highlights_data = function(data_input,tab,add_stat_highlight,criteria,sdratio,
+create_stat_highlights_data = function(data_input,tab,stat_highlight,sdratio,
                                        percent,variable,subset_lon_IDs,subset_lat_IDs,
                                        month_range,year_range){
-  if (add_stat_highlight == TRUE){
-    if (criteria == "% sign match"){
+  if (stat_highlight != "None"){
+    if (stat_highlight == "% sign match"){
       # Create sign_check function
       matching_sign_check = function(anom_data,chosen_p){
         pos = sum(anom_data>0)
@@ -1338,7 +1338,7 @@ create_stat_highlights_data = function(data_input,tab,add_stat_highlight,criteri
       criteria_vals = c(apply(data_input, c(1:2),matching_sign_check,percent))
     }
     
-    else if (criteria == "SD ratio"){
+    else if (stat_highlight == "SD ratio"){
       # Load & process SD data
       SD_data0 = load_ModE_data("SD Ratio",variable)
       # Lat/lon subset:
