@@ -140,7 +140,7 @@ ui <- navbarPage(id = "nav1",
             h6(helpText("VolCOPE: SERI contract number MB22.00030")),
             ),
             #### Tab Usage Notes ----
-            tabPanel("Usage notes",
+            tabPanel("ModE data",
                      br(), br(), 
                      helpText("The ModE-RA paleo-reanalysis is identical to the ModE-Sim simulations in areas far away from any assimilated observations, especially at the beginning of the reconstruction period. With time more and more observations are available, suggesting that the reconstruction becomes more skillful. Therefore, the users first should ensure how reliable the paleo-reanalysis is for a given region and time period. This can be achieved by looking at the ensemble spread and the differences between ModE-Sim and ModE-RA. Among the reconstructed variables, the ones with observational input data are the most realistically estimated. We encourage the users to make use of the ensemble members and not only the ensemble mean."),
                      br(), br(), 
@@ -153,6 +153,10 @@ ui <- navbarPage(id = "nav1",
                      helpText("ModE-RAclim should be seen as a sensitivity study and is only a side product of the project. ModE-RAclim does not contain centennial scale climate variability. For most users, the main product ModE-RA therefore should be used for regular studies on past climate. The main differences between ModE-RAclim and ModE-RA are on the model side: ModE-RAclim uses 100 randomly-picked years from ModE-Sim as a priori state. Thereby stationarity in the covariance structure is assumed and the externally-forced signal in the model simulations is eliminated. In combination with ModE-Sim and ModE-RA it can be used to distinguish the forced and unforced parts of climate variability seen in ModE-RA."),
                      br(), br(),
                      helpText("ModE-RA makes use of several data compilations and assimilates various direct and indirect sources of past climate compared to 20CRv3. Hence, if monthly resolution is sufficient for the planned study, ModE-RA may have higher quality already from 1850 backwards to analyze past climate changes and can be viewed as the backward extension of 20CRv3."),
+            ),
+            tabPanel("ClimeApp functions",
+                     br(), br(), 
+                     helpText("Some helptext about ClimeApp functions"),
             ),
             #### Tab Version History ----
             tabPanel("Version history",
@@ -175,7 +179,7 @@ ui <- navbarPage(id = "nav1",
                      h6(helpText("- View ModE-RA sources")),
                      h6(helpText("- Download ModE-RA sources maps as image")),
                      h6(helpText("- Upload User data for correlation and regression")),
-                     h6(helpText("- Reference maps with absolute values, reference period, and SD ratio for Anomalies and Composites")),
+                     h6(helpText("- Reference maps with absolute values, Reference values, and SD ratio for Anomalies and Composites")),
                      br(), br(), 
                      h4(helpText("Beta")),
                      h6(helpText("- First running version online")),
@@ -406,8 +410,8 @@ ui <- navbarPage(id = "nav1",
           
                              radioButtons(inputId  = "axis_mode",
                                           label    = "Axis customization:",
-                                          choices  = c("Default", "Custom"),
-                                          selected = "Default" , inline = TRUE),
+                                          choices  = c("Automatic","Fixed"),
+                                          selected = "Automatic" , inline = TRUE),
                              
                              shinyjs::hidden(
                                div(id = "hidden_custom_axis",
@@ -580,15 +584,7 @@ ui <- navbarPage(id = "nav1",
                                    radioButtons(inputId      = "custom_statistic",
                                                 label        = NULL,
                                                 inline       = TRUE,
-                                                choices      = c("SD ratio", "% sign match")),
-                             
-                                   div(id = "hidden_sign_match",  
-                                       numericInput(inputId = "percentage_sign_match",
-                                                  label  = "% of years in range with matching sign:",
-                                                  value  = 90,
-                                                  min    = 1,
-                                                  max    = 100)
-                                   ),
+                                                choices      = c("None","SD ratio")),
                                    
                                    div(id = "hidden_SD_ratio",  
                                        numericInput(inputId = "sd_ratio",
@@ -618,7 +614,7 @@ ui <- navbarPage(id = "nav1",
                       
                       radioButtons(inputId  = "ref_map_mode",
                                    label    = NULL,
-                                   choices  = c("None", "Absolute Values","Reference Period","SD Ratio"),
+                                   choices  = c("None", "Absolute Values","Reference Values","SD Ratio"),
                                    selected = "None" , inline = TRUE),
                       
                       plotOutput("ref_map", height = "auto"),
@@ -871,11 +867,11 @@ ui <- navbarPage(id = "nav1",
                                                min    = 3,
                                                max    = 30),
                                   
-                                  radioButtons(inputId   = "year_position_ts",
-                                               label     = "Position for each year:"  ,
-                                               choices   = c("before", "on", "after"),
-                                               selected  = "on",
-                                               inline    = TRUE)
+                                  #radioButtons(inputId   = "year_position_ts",
+                                  #             label     = "Position for each year:"  ,
+                                   #            choices   = c("before", "on", "after"),
+                                    #           selected  = "on",
+                                     #          inline    = TRUE)
                               )),
                                  
                                   checkboxInput(inputId = "custom_percentile_ts",
@@ -1245,8 +1241,8 @@ ui <- navbarPage(id = "nav1",
                             
                             radioButtons(inputId  = "axis_mode2",
                                          label    = "Axis customization:",
-                                         choices  = c("Default", "Custom"),
-                                         selected = "Default" , inline = TRUE),
+                                         choices  = c("Automatic","Fixed"),
+                                         selected = "Automatic" , inline = TRUE),
                             
                             shinyjs::hidden(
                             div(id = "hidden_custom_axis2",
@@ -1421,7 +1417,7 @@ ui <- navbarPage(id = "nav1",
                                  radioButtons(inputId      = "custom_statistic2",
                                               label        = NULL,
                                               inline       = TRUE,
-                                              choices      = c("SD ratio","% sign match")),
+                                              choices      = c("None","SD ratio","% sign match")),
                             
                                div(id = "hidden_sign_match2",  
                                    numericInput(inputId = "percentage_sign_match2",
@@ -1456,7 +1452,7 @@ ui <- navbarPage(id = "nav1",
                      
                      radioButtons(inputId  = "ref_map_mode2",
                                   label    = NULL,
-                                  choices  = c("None", "Absolute Values","Reference Period","SD Ratio"),
+                                  choices  = c("None", "Absolute Values","Reference Values","SD Ratio"),
                                   selected = "None" , inline = TRUE),
                      
                      plotOutput("ref_map2", height = "auto"),
@@ -2503,11 +2499,11 @@ ui <- navbarPage(id = "nav1",
                                                       min    = 3,
                                                       max    = 30),
                                          
-                                         radioButtons(inputId   = "year_position_ts3",
-                                                      label     = "Position for each year:"  ,
-                                                      choices   = c("before", "on", "after"),
-                                                      selected  = "on",
-                                                      inline    = TRUE)
+                                         #radioButtons(inputId   = "year_position_ts3",
+                                          #            label     = "Position for each year:"  ,
+                                           #           choices   = c("before", "on", "after"),
+                                            #          selected  = "on",
+                                             #         inline    = TRUE)
                                      )),
                                    
                                )),
@@ -2549,8 +2545,8 @@ ui <- navbarPage(id = "nav1",
                                    
                                    radioButtons(inputId  = "axis_mode3",
                                                 label    = "Axis customization:",
-                                                choices  = c("Default", "Custom"),
-                                                selected = "Default" , inline = TRUE),
+                                                choices  = c("Automatic","Fixed"),
+                                                selected = "Automatic" , inline = TRUE),
                                    
                                    shinyjs::hidden(
                                      div(id = "hidden_custom_axis3",
@@ -4374,7 +4370,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$axis_mode == "Custom",
+                    condition = input$axis_mode == "Fixed",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_custom_title",
@@ -4415,14 +4411,6 @@ server <- function(input, output, session) {
                     time = 0.5,
                     selector = NULL,
                     condition = input$enable_custom_statistics == TRUE,
-                    asis = FALSE)
-    
-    shinyjs::toggle(id = "hidden_sign_match",
-                    anim = TRUE,
-                    animType = "slide",
-                    time = 0.5,
-                    selector = NULL,
-                    condition = input$custom_statistic == "% sign match",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_SD_ratio",
@@ -4538,7 +4526,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$axis_mode2 == "Custom",
+                    condition = input$axis_mode2 == "Fixed",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_custom_title2",
@@ -4702,7 +4690,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$axis_mode3 == "Custom",
+                    condition = input$axis_mode3 == "Fixed",
                     asis = FALSE)
     
     shinyjs::toggle(id = "hidden_custom_title3",
@@ -5700,7 +5688,7 @@ server <- function(input, output, session) {
     
     # Axis values updater 
     observe({
-      if (input$axis_mode == "Default"){
+      if (input$axis_mode == "Automatic"){
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "axis_input",
@@ -5709,7 +5697,7 @@ server <- function(input, output, session) {
     })
     
     observe({
-      if (input$axis_mode == "Custom" & is.null(input$axis_input)){
+      if (input$axis_mode == "Fixed" & is.null(input$axis_input)){
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "axis_input",
@@ -5735,19 +5723,19 @@ server <- function(input, output, session) {
         updateRadioButtons(
           inputId = "ref_map_mode",
           label    = NULL,
-          choices  = c("None", "Reference Period"),
+          choices  = c("None", "Reference Values"),
           selected = "None" , inline = TRUE)
       } else if (input$dataset_selected == "ModE-Sim"){
         updateRadioButtons(
           inputId = "ref_map_mode",
           label    = NULL,
-          choices  = c("None", "Absolute Values","Reference Period"),
+          choices  = c("None", "Absolute Values","Reference Values"),
           selected = "None" , inline = TRUE)
       } else {
         updateRadioButtons(
           inputId = "ref_map_mode",
           label    = NULL,
-          choices  = c("None", "Absolute Values","Reference Period","SD Ratio"),
+          choices  = c("None", "Absolute Values","Reference Values","SD Ratio"),
           selected = "None" , inline = TRUE)
       }
     })
@@ -6261,7 +6249,7 @@ server <- function(input, output, session) {
     
     # Composite Axis values updater 
     observe({
-      if (input$axis_mode2 == "Default"){
+      if (input$axis_mode2 == "Automatic"){
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "axis_input2",
@@ -6270,7 +6258,7 @@ server <- function(input, output, session) {
     })
     
     observe({
-      if (input$axis_mode2 == "Custom" & is.null(input$axis_input2)){
+      if (input$axis_mode2 == "Fixed" & is.null(input$axis_input2)){
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "axis_input2",
@@ -6284,19 +6272,35 @@ server <- function(input, output, session) {
         updateRadioButtons(
           inputId = "ref_map_mode2",
           label    = NULL,
-          choices  = c("None", "Reference Period"),
+          choices  = c("None", "Reference Values"),
           selected = "None" , inline = TRUE)
       } else if (input$dataset_selected2 == "ModE-Sim"){
         updateRadioButtons(
           inputId = "ref_map_mode2",
           label    = NULL,
-          choices  = c("None", "Absolute Values","Reference Period"),
+          choices  = c("None", "Absolute Values","Reference Values"),
           selected = "None" , inline = TRUE)
       } else {
         updateRadioButtons(
           inputId = "ref_map_mode2",
           label    = NULL,
-          choices  = c("None", "Absolute Values","Reference Period", "SD Ratio"),
+          choices  = c("None", "Absolute Values","Reference Values", "SD Ratio"),
+          selected = "None" , inline = TRUE)
+      }
+    })
+    
+    observe({
+      if(input$mode_selected2 == "Compared to X years prior"){
+        updateRadioButtons(
+          inputId = "ref_map_mode2",
+          label    = NULL,
+          choices  = c("None", "Absolute Values", "SD Ratio"),
+          selected = "None" , inline = TRUE)
+      } else {
+        updateRadioButtons(
+          inputId = "ref_map_mode2",
+          label    = NULL,
+          choices  = c("None", "Absolute Values","Reference Values", "SD Ratio"),
           selected = "None" , inline = TRUE)
       }
     })
@@ -7161,7 +7165,7 @@ server <- function(input, output, session) {
     
     # Correlation axis values updater 
     observe({
-      if (input$axis_mode3 == "Default"){
+      if (input$axis_mode3 == "Automatic"){
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "axis_input3",
@@ -7170,7 +7174,7 @@ server <- function(input, output, session) {
     })
     
     observe({
-      if (input$axis_mode3 == "Custom" & is.null(input$axis_input3)){
+      if (input$axis_mode3 == "Fixed" & is.null(input$axis_input3)){
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "axis_input3",
@@ -8622,9 +8626,9 @@ server <- function(input, output, session) {
   
   map_statistics = reactive({
     
-    my_stats = create_stat_highlights_data(data_output3(),"general",input$enable_custom_statistics,
+    my_stats = create_stat_highlights_data(data_output3(),"general",
                                            input$custom_statistic,input$sd_ratio,
-                                           input$percentage_sign_match,input$variable_selected,
+                                           NA,input$variable_selected,
                                            subset_lons(),subset_lats(),month_range(),input$range_years)
     
     return(my_stats)
@@ -8652,7 +8656,7 @@ server <- function(input, output, session) {
   ref_map_data <- function(){
     if (input$ref_map_mode == "Absolute Values"){
       create_map_datatable(data_output2(), subset_lons(), subset_lats())
-    } else if (input$ref_map_mode == "Reference Period"){
+    } else if (input$ref_map_mode == "Reference Values"){
       create_map_datatable(data_output4(), subset_lons(), subset_lats())
     } else if (input$ref_map_mode == "SD Ratio"){
       # Generate SD data for a single year
@@ -8676,7 +8680,7 @@ server <- function(input, output, session) {
       rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
                                   month_range(), input$range_years, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
                                   input$title1_input, input$title2_input,input$title1_input_ts)
-    } else if (input$ref_map_mode == "Reference Period"){
+    } else if (input$ref_map_mode == "Reference Values"){
       rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
                                   month_range(), input$ref_period, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
                                   input$title1_input, input$title2_input,input$title1_input_ts)
@@ -8688,7 +8692,7 @@ server <- function(input, output, session) {
   })  
   
   ref_map_plot <- function(){
-    if (input$ref_map_mode == "Absolute Values" | input$ref_map_mode == "Reference Period" ){
+    if (input$ref_map_mode == "Absolute Values" | input$ref_map_mode == "Reference Values" ){
       plot_default_map(ref_map_data(), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame())
     } else if(input$ref_map_mode == "SD Ratio"){
       plot_default_map(ref_map_data(), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame())
@@ -8704,13 +8708,8 @@ server <- function(input, output, session) {
     if (input$range_years[1] != input$range_years[2]){
       ts_data1 <- create_timeseries_datatable(data_output3(), input$range_years, "range", subset_lons(), subset_lats())
       
-      MA_alignment = switch(input$year_position_ts,
-                            "before" = "left",
-                            "on" = "center",
-                            "after" = "right")
-      
       ts_data2 = add_stats_to_TS_datatable(ts_data1,input$custom_average_ts,input$year_moving_ts,
-                                           MA_alignment,input$custom_percentile_ts,input$percentile_ts,input$moving_percentile_ts)
+                                           "center",input$custom_percentile_ts,input$percentile_ts,input$moving_percentile_ts)
     } 
     # Plot monthly TS if year range = 1 year
     else {
@@ -9107,7 +9106,7 @@ server <- function(input, output, session) {
   
   map_statistics_2 = reactive({
     
-    my_stats = create_stat_highlights_data(data_output3_2(),"composites",input$enable_custom_statistics2,
+    my_stats = create_stat_highlights_data(data_output3_2(),"composites",
                                            input$custom_statistic2,input$sd_ratio2,
                                            input$percentage_sign_match2,input$variable_selected2,
                                            subset_lons_2(),subset_lats_2(),month_range_2(),year_set_comp())
@@ -9138,7 +9137,7 @@ server <- function(input, output, session) {
   ref_map_data_2 <- function(){
     if (input$ref_map_mode2 == "Absolute Values"){
       create_map_datatable(data_output2_2(), subset_lons_2(), subset_lats_2())
-    } else if (input$ref_map_mode2 == "Reference Period"){
+    } else if (input$ref_map_mode2 == "Reference Values"){
       create_map_datatable(data_output4_2(), subset_lons_2(), subset_lats_2())
     } else if (input$ref_map_mode2 == "SD Ratio"){
       # Generate SD data for a single year
@@ -9162,7 +9161,7 @@ server <- function(input, output, session) {
       rm_title2 <- generate_titles("composites",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
                                   month_range_2(), year_set_comp(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
                                   input$title1_input2, input$title2_input2,input$title1_input_ts2)
-    } else if (input$ref_map_mode2 == "Reference Period"){
+    } else if (input$ref_map_mode2 == "Reference Values"){
       rm_title2 <- generate_titles("reference",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
                                   month_range_2(), year_set_comp_ref(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
                                   input$title1_input2, input$title2_input2,input$title1_input_ts2)
@@ -9174,7 +9173,7 @@ server <- function(input, output, session) {
   })  
   
   ref_map_plot_2 <- function(){
-    if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Period" ){
+    if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Values" ){
       plot_default_map(ref_map_data_2(), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame())
     } else if (input$ref_map_mode2 == "SD Ratio"){
       plot_default_map(ref_map_data_2(), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame())
@@ -9819,13 +9818,8 @@ server <- function(input, output, session) {
       }
       
       # Add moving averages (if chosen)
-      MA_alignment = switch(input$year_position_ts3,
-                            "before" = "left",
-                            "on" = "center",
-                            "after" = "right")
-      
       tsds_v1 = add_stats_to_TS_datatable(tsd_v1,input$custom_average_ts3,input$year_moving_ts3,
-                                          MA_alignment,FALSE,NA,FALSE)
+                                          "center",FALSE,NA,FALSE)
       
       return(tsds_v1)
     })
@@ -9838,13 +9832,8 @@ server <- function(input, output, session) {
       } 
       
       # Add moving averages (if chosen)
-      MA_alignment = switch(input$year_position_ts3,
-                            "before" = "left",
-                            "on" = "center",
-                            "after" = "right")
-      
       tsds_v2 = add_stats_to_TS_datatable(tsd_v2,input$custom_average_ts3,input$year_moving_ts3,
-                                          MA_alignment,FALSE,NA,FALSE)
+                                          "center",FALSE,NA,FALSE)
       
       return(tsds_v2)
     })
