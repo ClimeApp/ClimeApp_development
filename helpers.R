@@ -38,6 +38,11 @@ addResourcePath(prefix = 'pics', directoryPath = "www")
 # Choosing theme and making colouring changes
 my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")
 
+# Spinner configurations
+spinner_image = "https://github.com/ClimeApp/ClimeApp_development/blob/main/www/ClimeApp_Loading_V2.gif?raw=true"
+spinner_width = 310
+spinner_height = 200
+
 # Load data 
 temp_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_mon.nc")
 prec_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_mon.nc")
