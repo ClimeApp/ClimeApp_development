@@ -17,10 +17,11 @@ library(ggplot2)
 library(sf)
 library(shinylogs)
 library(shinycssloaders)
+library(profvis)
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
 
 #Richard:
 #Laptop/desktop:
@@ -36,6 +37,11 @@ addResourcePath(prefix = 'pics', directoryPath = "www")
 
 # Choosing theme and making colouring changes
 my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")
+
+# Spinner configurations
+spinner_image = "https://github.com/ClimeApp/ClimeApp_development/blob/main/www/ClimeApp_Loading_V2.gif?raw=true"
+spinner_width = 310
+spinner_height = 200
 
 # Load data 
 temp_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_mon.nc")
@@ -376,7 +382,6 @@ load_ModE_data = function(dataset,variable){
                     "Precipitation" = "totprec",
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
-
     data_nc = nc_open(paste0("data/ModE-SIM/Monthly/ModE-Sim_ensmean_",vname,"_abs_1420-2009.nc"))
     
     # extract data and convert units if necessary                  
@@ -1304,19 +1309,20 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
 
 
 ## (Plot Features) CREATE STATISTICAL HIGHLIGHTS DATA - creates a dataframe for
-##                 adding dots to an anomaly map to mark points which match a certain criteria
-##                 stat_highlight = "None","% sign match", "SD ratio"
+##                 adding dots to an anomaly map to mark points which match a certain
+##                 criteria
 ##                 data_input = any subset_to_anomaly ModE-RA data
 ##                 tab = "general" or "composites"
 ##                 add_stat_highlight = TRUE or FALSE
+##                 criteria = "% sign match" or "SD ratio" 
 ##                 sdratio = any numeric value from 0 to 1
 ##                 percent = any numeric value from 1 to 100
 
-create_stat_highlights_data = function(data_input,tab,stat_highlight,sdratio,
+create_stat_highlights_data = function(data_input,tab,add_stat_highlight,criteria,sdratio,
                                        percent,variable,subset_lon_IDs,subset_lat_IDs,
                                        month_range,year_range){
-  if (stat_highlight != "None"){
-    if (stat_highlight == "% sign match"){
+  if (add_stat_highlight == TRUE){
+    if (criteria == "% sign match"){
       # Create sign_check function
       matching_sign_check = function(anom_data,chosen_p){
         pos = sum(anom_data>0)
@@ -1338,7 +1344,7 @@ create_stat_highlights_data = function(data_input,tab,stat_highlight,sdratio,
       criteria_vals = c(apply(data_input, c(1:2),matching_sign_check,percent))
     }
     
-    else if (stat_highlight == "SD ratio"){
+    else if (criteria == "SD ratio"){
       # Load & process SD data
       SD_data0 = load_ModE_data("SD Ratio",variable)
       # Lat/lon subset:

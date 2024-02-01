@@ -54,7 +54,6 @@ ui <- navbarPage(id = "nav1",
                        ),
           theme = my_theme,
           position = c("fixed-top"),
-          
 
 # Welcome START ----                             
   tabPanel("Welcome", value = "tab0",
@@ -391,9 +390,9 @@ ui <- navbarPage(id = "nav1",
                     ### Map plot START ----   
                     tabPanel("Map", 
                              withSpinner(ui_element = plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
-                                         image = "https://github.com/ClimeApp/ClimeApp_development/blob/main/www/ClimeApp_Loading_V2.gif?raw=true",
-                                         image.width = 310,
-                                         image.height = 200),
+                                         image = spinner_image,
+                                         image.width = spinner_width,
+                                         image.height = spinner_height),
                       
                       #### Customization panels START ----       
                       fluidRow(
@@ -617,7 +616,10 @@ ui <- navbarPage(id = "nav1",
                                    choices  = c("None", "Absolute Values","Reference Values","SD Ratio"),
                                    selected = "None" , inline = TRUE),
                       
-                      plotOutput("ref_map", height = "auto"),
+                      withSpinner(ui_element = plotOutput("ref_map", height = "auto"), 
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
                       
                       #### Download ref. map ----
                       shinyjs::hidden(div(id ="hidden_sec_map_download",
@@ -633,7 +635,11 @@ ui <- navbarPage(id = "nav1",
             
           
                     ### TS plot START ----
-                    tabPanel("Time series", plotOutput("timeseries", click = "ts_click1",dblclick = "ts_dblclick1",brush = brushOpts(id = "ts_brush1",resetOnNew = TRUE)),
+                    tabPanel("Time series", 
+                             withSpinner(ui_element = plotOutput("timeseries", click = "ts_click1",dblclick = "ts_dblclick1",brush = brushOpts(id = "ts_brush1",resetOnNew = TRUE)),
+                                         image = spinner_image,
+                                         image.width = spinner_width,
+                                         image.height = spinner_height),
                       #### Customization panels START ----       
                       fluidRow(
                       #### Time series customization ----
@@ -955,22 +961,28 @@ ui <- navbarPage(id = "nav1",
                              h4(helpText("Draw a box on the left map to use zoom function")),
                              
                              div(id = "fad_map_a",
-                             splitLayout(
-                                         plotOutput("fad_winter_map_a",
-                                                     brush = brushOpts(
-                                                       id = "brush_fad1a",
-                                                       resetOnNew = TRUE
-                                                     )),
+                             splitLayout(withSpinner(ui_element = plotOutput("fad_winter_map_a",
+                                                                              brush = brushOpts(
+                                                                                id = "brush_fad1a",
+                                                                                resetOnNew = TRUE
+                                                                              )), 
+                                                     image = spinner_image,
+                                                     image.width = spinner_width,
+                                                     image.height = spinner_height),
 
                                          plotOutput("fad_zoom_winter_a")
                                          )),
                              
                              div(id = "fad_map_b",
-                             splitLayout(plotOutput("fad_summer_map_a",
-                                                    brush = brushOpts(
-                                                      id = "brush_fad1b",
-                                                      resetOnNew = TRUE
-                                                    )),
+                             splitLayout(withSpinner(ui_element = plotOutput("fad_summer_map_a",
+                                                                             brush = brushOpts(
+                                                                               id = "brush_fad1b",
+                                                                               resetOnNew = TRUE
+                                                                             )), 
+                                                     image = spinner_image,
+                                                     image.width = spinner_width,
+                                                     image.height = spinner_height),
+                               
                                          plotOutput("fad_zoom_summer_a")
                                          )),
                     ),
@@ -1224,7 +1236,11 @@ ui <- navbarPage(id = "nav1",
                               h4(textOutput("text_custom_years2")),
                               textOutput("custom_years2")
                      )),
-                              plotOutput("map2",height = "auto", dblclick = "map_dblclick2", brush = brushOpts(id = "map_brush2",resetOnNew = TRUE)),
+                     
+                     withSpinner(ui_element = plotOutput("map2",height = "auto", dblclick = "map_dblclick2", brush = brushOpts(id = "map_brush2",resetOnNew = TRUE)),
+                                 image = spinner_image,
+                                 image.width = spinner_width,
+                                 image.height = spinner_height),         
                               
                       #### Customization panels START ----       
                       fluidRow(
@@ -1455,7 +1471,10 @@ ui <- navbarPage(id = "nav1",
                                   choices  = c("None", "Absolute Values","Reference Values","SD Ratio"),
                                   selected = "None" , inline = TRUE),
                      
-                     plotOutput("ref_map2", height = "auto"),
+                     withSpinner(ui_element = plotOutput("ref_map2", height = "auto"),
+                                 image = spinner_image,
+                                 image.width = spinner_width,
+                                 image.height = spinner_height),
                      
                      #### Download ref. map ----
                      shinyjs::hidden(div(id ="hidden_sec_map_download2",
@@ -1477,7 +1496,10 @@ ui <- navbarPage(id = "nav1",
                                                 h4(textOutput("text_custom_years2b")),
                                                 textOutput("custom_years2b")
                             )),
-                            plotOutput("timeseries2", click = "ts_click2", dblclick = "ts_dblclick2", brush = brushOpts(id = "ts_brush2",resetOnNew = TRUE)),
+                            withSpinner(ui_element = plotOutput("timeseries2", click = "ts_click2", dblclick = "ts_dblclick2", brush = brushOpts(id = "ts_brush2",resetOnNew = TRUE)),
+                                        image = spinner_image,
+                                        image.width = spinner_width,
+                                        image.height = spinner_height),
                       
                       #### Customization panels START ----       
                       fluidRow(
@@ -1775,22 +1797,30 @@ ui <- navbarPage(id = "nav1",
                             
                             div(id = "fad_map_a2",
                                 splitLayout(
-                                  plotOutput("fad_winter_map_a2",
-                                             brush = brushOpts(
-                                               id = "brush_fad1a2",
-                                               resetOnNew = TRUE
-                                             )),
-                                  
+                                  withSpinner(ui_element = plotOutput("fad_winter_map_a2",
+                                                                      brush = brushOpts(
+                                                                        id = "brush_fad1a2",
+                                                                        resetOnNew = TRUE
+                                                                      )),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
+
                                   plotOutput("fad_zoom_winter_a2")
                                 )),
                             
                             div(id = "fad_map_b2",
-                                splitLayout(plotOutput("fad_summer_map_a2",
-                                                       brush = brushOpts(
-                                                         id = "brush_fad1b2",
-                                                         resetOnNew = TRUE
-                                                       )),
-                                            plotOutput("fad_zoom_summer_a2")
+                                splitLayout(
+                                  withSpinner(ui_element = plotOutput("fad_summer_map_a2",
+                                                                      brush = brushOpts(
+                                                                        id = "brush_fad1b2",
+                                                                        resetOnNew = TRUE
+                                                                      )),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
+                                  
+                                  plotOutput("fad_zoom_summer_a2")
                                 )),
                    ),
                    
@@ -2255,9 +2285,15 @@ ui <- navbarPage(id = "nav1",
                    ### v1, v2 plot: ----
                    tabPanel("Variables", br(),
                             h4("Variable 1"),
-                            plotOutput("plot_v1", height = "auto"),
+                            withSpinner(ui_element = plotOutput("plot_v1", height = "auto"),
+                                        image = spinner_image,
+                                        image.width = spinner_width,
+                                        image.height = spinner_height),
                             h4("Variable 2"),
-                            plotOutput("plot_v2", height = "auto")),
+                            withSpinner(ui_element = plotOutput("plot_v2", height = "auto")),
+                                        image = spinner_image,
+                                        image.width = spinner_width,
+                                        image.height = spinner_height),
                    
                    ### Shared TS plot: START ----
                    tabPanel("Time series", br(),
@@ -2267,8 +2303,10 @@ ui <- navbarPage(id = "nav1",
                                          choices  = c("pearson", "spearman"),
                                          selected = "pearson" , inline = TRUE),
                             textOutput("correlation_r_value"),
-                            plotOutput("correlation_ts",click = "ts_click3", dblclick = "ts_dblclick3", brush = brushOpts(id = "ts_brush3",resetOnNew = TRUE)),
-                            
+                            withSpinner(ui_element = plotOutput("correlation_ts",click = "ts_click3", dblclick = "ts_dblclick3", brush = brushOpts(id = "ts_brush3",resetOnNew = TRUE)),
+                                        image = spinner_image,
+                                        image.width = spinner_width,
+                                        image.height = spinner_height),
                       #### Customization panels START ----       
                       fluidRow(
                         
@@ -2529,7 +2567,10 @@ ui <- navbarPage(id = "nav1",
                                          label    = "Choose a correlation method:",
                                          choices  = c("pearson", "spearman"),
                                          selected = "pearson" , inline = TRUE),
-                            plotOutput("correlation_map", height = "auto", dblclick = "map_dblclick3", brush = brushOpts(id = "map_brush3",resetOnNew = TRUE)),
+                            withSpinner(ui_element = plotOutput("correlation_map", height = "auto", dblclick = "map_dblclick3", brush = brushOpts(id = "map_brush3",resetOnNew = TRUE)),
+                                        image = spinner_image,
+                                        image.width = spinner_width,
+                                        image.height = spinner_height),
                       #### Customization panels START ----       
                       fluidRow(
                       #### Map customization ----       
@@ -2789,22 +2830,30 @@ ui <- navbarPage(id = "nav1",
                             div(id = "fad_map_a3a",
                                 h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
-                                  plotOutput("fad_winter_map_a3a",
-                                             brush = brushOpts(
-                                               id = "brush_fad1a3a",
-                                               resetOnNew = TRUE
-                                             )),
+                                  withSpinner(ui_element = plotOutput("fad_winter_map_a3a",
+                                                                      brush = brushOpts(
+                                                                        id = "brush_fad1a3a",
+                                                                        resetOnNew = TRUE
+                                                                      )),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
                                   
                                   plotOutput("fad_zoom_winter_a3a")
                                 )),
                             
                             div(id = "fad_map_b3a",
-                                splitLayout(plotOutput("fad_summer_map_a3a",
-                                                       brush = brushOpts(
-                                                         id = "brush_fad1b3a",
-                                                         resetOnNew = TRUE
-                                                       )),
-                                            plotOutput("fad_zoom_summer_a3a")
+                                splitLayout(
+                                  withSpinner(ui_element = plotOutput("fad_summer_map_a3a",
+                                                                                brush = brushOpts(
+                                                                                  id = "brush_fad1b3a",
+                                                                                  resetOnNew = TRUE
+                                                                                )),
+                                               image = spinner_image,
+                                               image.width = spinner_width,
+                                               image.height = spinner_height),
+                                  
+                                  plotOutput("fad_zoom_summer_a3a")
                                 )),
 
                             )),
@@ -2837,22 +2886,30 @@ ui <- navbarPage(id = "nav1",
                             div(id = "fad_map_a3b",
                                 h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
-                                  plotOutput("fad_winter_map_a3b",
-                                             brush = brushOpts(
-                                               id = "brush_fad1a3b",
-                                               resetOnNew = TRUE
-                                             )),
+                                  withSpinner(ui_element = plotOutput("fad_winter_map_a3b",
+                                                                      brush = brushOpts(
+                                                                        id = "brush_fad1a3b",
+                                                                        resetOnNew = TRUE
+                                                                      )),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
                                   
                                   plotOutput("fad_zoom_winter_a3b")
                                 )),
                             
                             div(id = "fad_map_b3b",
-                                splitLayout(plotOutput("fad_summer_map_a3b",
-                                                       brush = brushOpts(
-                                                         id = "brush_fad1b3b",
-                                                         resetOnNew = TRUE
-                                                       )),
-                                            plotOutput("fad_zoom_summer_a3b")
+                                splitLayout(
+                                  withSpinner(ui_element = plotOutput("fad_summer_map_a3b",
+                                                                      brush = brushOpts(
+                                                                        id = "brush_fad1b3b",
+                                                                        resetOnNew = TRUE
+                                                                      )),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
+                                  
+                                  plotOutput("fad_zoom_summer_a3b")
                                 )),
 
                             )),
@@ -3310,15 +3367,27 @@ ui <- navbarPage(id = "nav1",
              ### Independent / dependent variable ----
              tabPanel("Variables", br(),
                       h4("Independent variable"),
-                      plotOutput("plot_iv", height = "auto"),
+                      withSpinner(ui_element = plotOutput("plot_iv", height = "auto"),
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
                       h4("Dependent variable"),
-                      plotOutput("plot_dv", height = "auto")
+                      withSpinner(ui_element = plotOutput("plot_dv", height = "auto"),
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
              ),
              
              ### Regression time series and summary----
              tabPanel("Regression time series",
-                      plotOutput("plot_reg_ts1"),
-                      plotOutput("plot_reg_ts2"),
+                      withSpinner(ui_element = plotOutput("plot_reg_ts1"),
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
+                      withSpinner(ui_element = plotOutput("plot_reg_ts2"),
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
                       br(),
                       div(id = "reg1",
                           fluidRow(
@@ -3355,7 +3424,10 @@ ui <- navbarPage(id = "nav1",
                                   label    = "Choose a variable:",
                                   choices  = NULL,
                                   selected = NULL),
-                      plotOutput("plot_reg_coeff", height = "auto", brush = brushOpts(id = "map_brush4_coeff",resetOnNew = TRUE)),
+                      withSpinner(ui_element = plotOutput("plot_reg_coeff", height = "auto", brush = brushOpts(id = "map_brush4_coeff",resetOnNew = TRUE)),
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
                       br(),
                       div(id = "reg2",
                           fluidRow(
@@ -3375,7 +3447,10 @@ ui <- navbarPage(id = "nav1",
                                   label    = "Choose a variable:",
                                   choices  = NULL,
                                   selected = NULL),
-                      plotOutput("plot_reg_pval", height = "auto",brush = brushOpts(id = "map_brush4_pvalue",resetOnNew = TRUE)),
+                      withSpinner(ui_element = plotOutput("plot_reg_pval", height = "auto",brush = brushOpts(id = "map_brush4_pvalue",resetOnNew = TRUE)),
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
                       br(),
                       div(id = "reg3",
                           fluidRow(
@@ -3400,7 +3475,10 @@ ui <- navbarPage(id = "nav1",
                                  min = 1422,
                                  max = 2008)),
                       ),
-                      plotOutput("plot_reg_resi", height = "auto",brush = brushOpts(id = "map_brush4_resi",resetOnNew = TRUE)),
+                      withSpinner(ui_element = plotOutput("plot_reg_resi", height = "auto",brush = brushOpts(id = "map_brush4_resi",resetOnNew = TRUE)),
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
                       br(),
                       div(id = "reg4",
                           fluidRow(
@@ -3443,21 +3521,29 @@ ui <- navbarPage(id = "nav1",
                             div(id = "fad_map_a4a",
                                 h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
-                                  plotOutput("fad_winter_map_a4a",
-                                             brush = brushOpts(
-                                               id = "brush_fad1a4a",
-                                               resetOnNew = TRUE
-                                             )),
+                                  withSpinner(ui_element =plotOutput("fad_winter_map_a4a",
+                                                                      brush = brushOpts(
+                                                                        id = "brush_fad1a4a",
+                                                                        resetOnNew = TRUE
+                                                                      )),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
                                   
                                   plotOutput("fad_zoom_winter_a4a")
                                 )),
                             
                             div(id = "fad_map_b4a",
-                                splitLayout(plotOutput("fad_summer_map_a4a",
-                                                       brush = brushOpts(
-                                                         id = "brush_fad1b4a",
-                                                         resetOnNew = TRUE
-                                                       )),
+                                splitLayout(
+                                  withSpinner(ui_element = plotOutput("fad_summer_map_a4a",
+                                                                      brush = brushOpts(
+                                                                        id = "brush_fad1b4a",
+                                                                        resetOnNew = TRUE
+                                                                      )),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
+                                  
                                             plotOutput("fad_zoom_summer_a4a")
                                 )),
                         )),
@@ -3490,22 +3576,30 @@ ui <- navbarPage(id = "nav1",
                             div(id = "fad_map_a4b",
                                 h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
-                                  plotOutput("fad_winter_map_a4b",
-                                             brush = brushOpts(
-                                               id = "brush_fad1a4b",
-                                               resetOnNew = TRUE
-                                             )),
+                                  withSpinner(ui_element = plotOutput("fad_winter_map_a4b",
+                                                                      brush = brushOpts(
+                                                                        id = "brush_fad1a4b",
+                                                                        resetOnNew = TRUE
+                                                                      )),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
                                   
                                   plotOutput("fad_zoom_winter_a4b")
                                 )),
                             
                             div(id = "fad_map_b4b",
-                                splitLayout(plotOutput("fad_summer_map_a4b",
-                                                       brush = brushOpts(
-                                                         id = "brush_fad1b4b",
-                                                         resetOnNew = TRUE
-                                                       )),
-                                            plotOutput("fad_zoom_summer_a4b")
+                                splitLayout(
+                                  withSpinner(ui_element = plotOutput("fad_summer_map_a4b",
+                                                                      brush = brushOpts(
+                                                                        id = "brush_fad1b4b",
+                                                                        resetOnNew = TRUE
+                                                                      )),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
+                                  
+                                  plotOutput("fad_zoom_summer_a4b")
                                 )),
 
                         )),
@@ -3746,7 +3840,12 @@ ui <- navbarPage(id = "nav1",
            mainPanel(tabsetPanel(id = "tabset5",
              
              ### TS plot START ----
-             tabPanel("Time series", plotOutput("timeseries5", click = "ts_click5",dblclick = "ts_dblclick5",brush = brushOpts(id = "ts_brush5",resetOnNew = TRUE)),
+             tabPanel("Time series", 
+                      withSpinner(ui_element = plotOutput("timeseries5", click = "ts_click5",dblclick = "ts_dblclick5",brush = brushOpts(id = "ts_brush5",resetOnNew = TRUE)),
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
+                     
                         #### Customization panels START ----       
                         fluidRow(
                         #### Time series customization ----
@@ -4039,21 +4138,29 @@ ui <- navbarPage(id = "nav1",
                       
                       div(id = "fad_map_a5",
                           splitLayout(
-                            plotOutput("fad_winter_map_a5",
-                                       brush = brushOpts(
-                                         id = "brush_fad1a5",
-                                         resetOnNew = TRUE
-                                       )),
+                            withSpinner(ui_element = plotOutput("fad_winter_map_a5",
+                                                                brush = brushOpts(
+                                                                  id = "brush_fad1a5",
+                                                                  resetOnNew = TRUE
+                                                                )),
+                                        image = spinner_image,
+                                        image.width = spinner_width,
+                                        image.height = spinner_height),
                             
                             plotOutput("fad_zoom_winter_a5")
                           )),
                       
                       div(id = "fad_map_b5",
-                          splitLayout(plotOutput("fad_summer_map_a5",
-                                                 brush = brushOpts(
-                                                   id = "brush_fad1b5",
-                                                   resetOnNew = TRUE
-                                                 )),
+                          splitLayout(
+                            withSpinner(ui_element = plotOutput("fad_summer_map_a5",
+                                                                brush = brushOpts(
+                                                                  id = "brush_fad1b5",
+                                                                  resetOnNew = TRUE
+                                                                )),
+                                        image = spinner_image,
+                                        image.width = spinner_width,
+                                        image.height = spinner_height),
+                            
                                       plotOutput("fad_zoom_summer_a5")
                           )),
                       
@@ -4069,7 +4176,7 @@ ui <- navbarPage(id = "nav1",
 
 
      
-# Define server logic ----
+  # Define server logic ----
 server <- function(input, output, session) {
   #Preparations in the Server (Hidden options) ----
   track_usage(storage_mode = store_rds(path = "logs/"))
@@ -11417,7 +11524,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$point_size
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size", value = 1)
@@ -11438,7 +11545,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$point_size2
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size2", value = 1)
@@ -11459,7 +11566,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$point_size3
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size3", value = 1)
@@ -11480,7 +11587,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$point_size_ts
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size_ts", value = 1)
@@ -11501,7 +11608,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$point_size_ts2
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size_ts2", value = 1)
@@ -11522,7 +11629,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$point_size_ts3
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size_ts3", value = 1)
@@ -11543,7 +11650,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$percentage_sign_match
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "percentage_sign_match", value = 1)
@@ -11564,7 +11671,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$percentage_sign_match2
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "percentage_sign_match2", value = 1)
@@ -11585,7 +11692,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$percentage_sign_match2
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "percentage_sign_match2", value = 1)
@@ -11606,7 +11713,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$hidden_SD_ratio
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "hidden_SD_ratio", value = 0)
@@ -11627,7 +11734,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$hidden_SD_ratio2
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "hidden_SD_ratio2", value = 0)
@@ -11648,7 +11755,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$year_moving_ts
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "year_moving_ts", value = 3)
@@ -11669,7 +11776,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$year_moving_ts3
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "year_moving_ts3", value = 3)
@@ -11690,7 +11797,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a", value = 1422)
@@ -11711,7 +11818,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a2
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a2", value = 1422)
@@ -11732,7 +11839,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a3a
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a3a", value = 1422)
@@ -11753,7 +11860,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a3b
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a3b", value = 1422)
@@ -11774,7 +11881,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a4a
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a4a", value = 1422)
@@ -11795,7 +11902,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a4b
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a4b", value = 1422)
@@ -11816,7 +11923,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a5
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a5", value = 1422)
@@ -11837,7 +11944,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$prior_years2
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "prior_years2", value = 1)
@@ -11858,7 +11965,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$reg_resi_year
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "reg_resi_year", value = 1422)
@@ -11878,9 +11985,9 @@ server <- function(input, output, session) {
     
     observe({
       input_values <- input$range_years_sg
-      
-      delay(1000, {
-        if (is.null(input_values) || is.na(input_values)) {         
+
+      delay(2000, {
+        if (is.null(input_values) || is.na(input_values)) {
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "range_years_sg", value = 1422)
         } else {
@@ -11891,7 +11998,7 @@ server <- function(input, output, session) {
               updateNumericInput(inputId = "range_years_sg", value = 2008)
             }
           }
-          
+
           update_value(input_values)
         }
       })
@@ -11900,7 +12007,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg", value = 1422)
@@ -11921,7 +12028,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg2
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg2", value = 1422)
@@ -11942,7 +12049,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg_v1
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
@@ -11963,7 +12070,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$range_years_sg3
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "range_years_sg3", value = 1422)
@@ -11985,7 +12092,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg_v2
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
@@ -12006,7 +12113,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg_iv
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
@@ -12027,7 +12134,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$range_years_sg4
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "range_years_sg4", value = 1422)
@@ -12048,7 +12155,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg_dv
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
@@ -12069,7 +12176,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg5
       
-      delay(1000, {
+      delay(2000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg5", value = 1422)
@@ -12682,5 +12789,10 @@ server <- function(input, output, session) {
     
 }
 
-# Run the app ----
-shinyApp(ui = ui, server = server)
+ # Run the app ----
+app <- shinyApp(ui = ui, server = server)
+  # Run the app normally
+  runApp(app)
+   # Run the app with profiling
+  #profvis({runApp(app)})
+
