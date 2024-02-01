@@ -136,7 +136,7 @@ ui <- navbarPage(id = "nav1",
             h5(helpText("V. Valler, J. Franke, Y. Brugnara, E. Samakinwa, R. Hand, E. Lundstad, A.-M. Burgdorf, L. Lipfert, A. R. Friedman, S. Br\u00F6nnimann: ModE-RA: a global monthly paleo-reanalysis of the modern era 1421 to 2008. Scientific Data 11 (2024).")),
             h5(helpText("R. Hand, E. Samakinwa, L. Lipfert, and S. Br\u00F6nnimann: ModE-Sim – a medium-sized atmospheric general circulation model (AGCM) ensemble to study climate variability during the modern era (1420 to 2009). GMD 16 (2023).")),
             h6(helpText("PALAEO-RA: H2020/ERC grant number 787574")),
-            h6(helpText("DEBTS: SNFS grant number PZ00P1_201953")),
+            h6(helpText("DEBTS: SNSF grant number PZ00P1_201953")),
             h6(helpText("VolCOPE: SERI contract number MB22.00030")),
             ),
             #### Tab Usage Notes ----
