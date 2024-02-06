@@ -39,7 +39,7 @@ addResourcePath(prefix = 'pics', directoryPath = "www")
 my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")
 
 # Spinner configurations
-spinner_image = "https://github.com/ClimeApp/ClimeApp_development/blob/main/www/ClimeApp_Loading_V2.gif?raw=true"
+spinner_image = "pics/ClimeApp_Loading_V2.gif"
 spinner_width = 310
 spinner_height = 200
 
@@ -1103,6 +1103,7 @@ rewrite_tstable = function(tstable,variable){
 ##           year = a single user selected or default year
 ##           season = "summer" or "winter"
 ##           labs = TRUE or FALSE (TRUE = non-zoomed plot)
+##           Same goes for feedback data
 
 plot_modera_sources = function(year,season,lon_range,lat_range,labs){
   
@@ -1155,6 +1156,18 @@ plot_modera_sources = function(year,season,lon_range,lat_range,labs){
     guides(shape = FALSE, color = FALSE) +
     theme_classic()+
     theme(panel.border = element_rect(colour = "black", fill=NA))  }
+}
+
+download_feedback_data = function(year, season, lon_range, lat_range) {
+  # Load data
+  feedback_data = read.csv(paste0("data/feedback_archive/", season, year, ".csv"))
+  
+  # Subset data based on lon and lat range
+  subset_data = feedback_data[(feedback_data$LON > lon_range[1]) & (feedback_data$LON < lon_range[2]) &
+                                (feedback_data$LAT > lat_range[1]) & (feedback_data$LAT < lat_range[2]), ]
+  
+  # Remove the first three columns
+  subset_data = subset_data[, -c(1:3)]
 }
 
 
