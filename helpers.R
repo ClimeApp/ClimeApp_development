@@ -17,7 +17,7 @@ library(ggplot2)
 library(sf)
 library(shinylogs)
 library(shinycssloaders)
-
+library(profvis)
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
@@ -38,7 +38,12 @@ addResourcePath(prefix = 'pics', directoryPath = "www")
 # Choosing theme and making colouring changes
 my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")
 
-# Load pre-processed data
+# Spinner configurations
+spinner_image = "pics/ClimeApp_Loading_V2.gif"
+spinner_width = 310
+spinner_height = 200
+
+## Load pre-processed data
 annual_temp_nc = nc_open("data/ModE-RA/Annual/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_year.nc")
 DJF_temp_nc = nc_open("data/ModE-RA/DJF/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_djf.nc")
 MAM_temp_nc = nc_open("data/ModE-RA/MAM/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_mam.nc")
@@ -380,7 +385,7 @@ load_ModE_data = function(dataset,variable){
                     "Precipitation" = "totprec",
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
-    
+
     data_nc = nc_open(paste0("data/ModE-SIM/Monthly/ModE-Sim_ensmean_",vname,"_abs_1420-2009.nc"))
     
     # extract data and convert units if necessary                  
@@ -1071,6 +1076,7 @@ rewrite_tstable = function(tstable,variable){
 ##           year = a single user selected or default year
 ##           season = "summer" or "winter"
 ##           labs = TRUE or FALSE (TRUE = non-zoomed plot)
+##           Same goes for feedback data
 
 plot_modera_sources = function(year,season,lon_range,lat_range,labs){
   
@@ -1123,6 +1129,18 @@ plot_modera_sources = function(year,season,lon_range,lat_range,labs){
       guides(shape = FALSE, color = FALSE) +
       theme_classic()+
       theme(panel.border = element_rect(colour = "black", fill=NA))  }
+}
+
+download_feedback_data = function(year, season, lon_range, lat_range) {
+  # Load data
+  feedback_data = read.csv(paste0("data/feedback_archive/", season, year, ".csv"))
+  
+  # Subset data based on lon and lat range
+  subset_data = feedback_data[(feedback_data$LON > lon_range[1]) & (feedback_data$LON < lon_range[2]) &
+                                (feedback_data$LAT > lat_range[1]) & (feedback_data$LAT < lat_range[2]), ]
+  
+  # Remove the first three columns
+  subset_data = subset_data[, -c(1:3)]
 }
 
 
@@ -1313,13 +1331,15 @@ create_sdratio_data = function(data_input,tab,variable,subset_lon_IDs,subset_lat
 
 ## (Plot Features) CREATE STATISTICAL HIGHLIGHTS DATA - creates a dataframe for
 ##                 adding dots to an anomaly map to mark points which match a certain
-##                 stat_highlight = "None","% sign match", "SD ratio"
+##                 criteria
 ##                 data_input = any subset_to_anomaly ModE-RA data
 ##                 sd_data = output from create_sdratio_data
 ##                 tab = "general" or "composites"
 ##                 add_stat_highlight = TRUE or FALSE
+##                 criteria = "% sign match" or "SD ratio" 
 ##                 sdratio = any numeric value from 0 to 1
 ##                 percent = any numeric value from 1 to 100
+
 
 create_stat_highlights_data = function(data_input,sd_data,stat_highlight,sdratio,
                                        percent,subset_lon_IDs,subset_lat_IDs){
@@ -1347,6 +1367,7 @@ create_stat_highlights_data = function(data_input,sd_data,stat_highlight,sdratio
     }
     
     else if (stat_highlight == "SD ratio"){
+
       # Mean data:
       SD_data3 = apply(sd_data,c(1,2),mean)
       
