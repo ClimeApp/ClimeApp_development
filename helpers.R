@@ -2134,10 +2134,10 @@ extract_shared_lonlat = function(variable1_type,variable2_type,
                                  variable2_lon_range,variable2_lat_range){
   
   # If variable 1 is a timeseries:
-  if (variable1_type == "Time series"){
+  if (variable1_type == "Timeseries"){
     shared_lon_range = variable2_lon_range
     shared_lat_range = variable2_lat_range
-  } else if (variable2_type == "Time series"){
+  } else if (variable2_type == "Timeseries"){
     shared_lon_range = variable1_lon_range
     shared_lat_range = variable1_lat_range
   } else{
@@ -2156,7 +2156,7 @@ extract_shared_lonlat = function(variable1_type,variable2_type,
 #### Correlation Functions  ####
 
 ## Special Input required:
-## variable1/2_type = "Time series" or "Field" ("Time series" by default)
+## variable1/2_type = "Timeseries" or "Field" ("Timeseries" by default)
 ##                    Choice appears, and selection is updated to "Field" IF
 ##                    variable is ModE-RA AND length(subset_lon & subset_lat) > 2 
 ##                    (i.e. NOT a single point)
@@ -2194,7 +2194,7 @@ plot_user_timeseries = function(data_input,color){
 ##                                             TS_title, Map_title,Download_title
 ##             variable_source = "ModE-RA" or "User Data"
 ##             variable = user or ModE-RA variable name
-##             variable_type = "Time series" or "Field"
+##             variable_type = "Timeseries" or "Field"
 ##             variable_mode = "Absolute" or "Anomaly"
 ##             method = "pearson" or "spearman" ("pearson" by default)
 
@@ -2253,7 +2253,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     # Generate titles
     V1_axis_label = paste(title_months1,variable1,variable1_mode,V1_unit)
     V1_TS_title = paste(variable1_dataset,title_months1,variable1,variable1_mode,V1_lonlat)
-    if (variable1_type == "Time series"){
+    if (variable1_type == "Timeseries"){
       V1_Map_title = paste(variable1_dataset,title_months1,variable1,variable1_mode,V1_lonlat)
     } else {
       V1_Map_title = paste(variable1_dataset,title_months1,variable1,variable1_mode)
@@ -2304,7 +2304,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     # Generate titles
     V2_axis_label = paste(title_months2,variable2,variable2_mode,V2_unit)
     V2_TS_title = paste(variable2_dataset,title_months2,variable2,variable2_mode,V2_lonlat)
-    if (variable2_type == "Time series"){
+    if (variable2_type == "Timeseries"){
       V2_Map_title = paste(variable2_dataset,title_months2,variable2,variable2_mode,V2_lonlat)
     } else {
       V2_Map_title = paste(variable2_dataset,title_months2,variable2,variable2_mode)
@@ -2431,14 +2431,14 @@ generate_correlation_map_data = function(variable1_data, variable2_data, method,
   my_cor = function(a,b){cor(a,b,method=method,use = "complete.obs")}
   
   # If variable 1 is a timeseries:
-  if (variable1_type == "Time series"){
+  if (variable1_type == "Timeseries"){
     x = lon[subset_lon_IDs2]
     y = rev(lat[subset_lat_IDs2])
     plotfield = apply(variable2_data,c(1,2),my_cor,variable1_data[,2])
     z = plotfield[,rev(1:length(subset_lat_IDs2))]
   }
   # If variable 2 is a timeseries:
-  else if (variable2_type == "Time series"){
+  else if (variable2_type == "Timeseries"){
     x = lon[subset_lon_IDs1]
     y = rev(lat[subset_lat_IDs1])
     plotfield = apply(variable1_data,c(1,2),my_cor,variable2_data[,2])

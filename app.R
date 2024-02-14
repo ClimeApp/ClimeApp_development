@@ -197,8 +197,8 @@ ui <- navbarPage(id = "nav1",
                     sidebarPanel(fluidRow(
                     #Method Title and Pop Over
                     popover(
-                    h3(HTML("Anomalies <sup><i class='fas fa-question-circle'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
-                    "Analyzing averages involves calculating the mean of a dataset, providing a central tendency measure. Anomalies are deviations from this mean. In climate research, comparing monthly or yearly averages helps identify trends. Analyzing anomalies, the differences from long-term averages, reveals unusual patterns, aiding in detecting climate changes and anomalies such as El Niño or global warming impacts.",
+                    h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+                    "Analyzing averages",br(), "involves calculating the mean of a dataset, providing a central tendency measure. Anomalies are deviations from this mean. In climate research, comparing monthly or yearly averages helps identify trends. Analyzing anomalies, the differences from long-term averages, reveals unusual patterns, aiding in detecting climate changes and anomalies such as El Niño or global warming impacts.",
                     title = "What are anomalies?",
                     id = "pop_anomalies",
                     placement = "right",
@@ -1010,7 +1010,7 @@ ui <- navbarPage(id = "nav1",
                     sidebarPanel(fluidRow(
                       #Method Title and Pop Over
                       popover(
-                        h3(HTML("Composites <sup><i class='fas fa-question-circle'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+                        h3(HTML("Composites <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
                         "Composite analysis in climate research involves averaging variables over specific conditions, such as extreme events. By grouping and averaging data during these conditions, researchers can identify patterns and anomalies, providing insights into the atmospheric or climatic responses associated with certain events.",
                         title = "What are composites?",
                         id = "pop_composites",
@@ -1866,7 +1866,7 @@ ui <- navbarPage(id = "nav1",
                    sidebarPanel(fluidRow(
                      #Method Title and Pop Over
                      popover(
-                       h3(HTML("Correlation <sup><i class='fas fa-question-circle'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+                       h3(HTML("Correlation <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
                        "Correlation measures the strength and direction of a linear relationship between two variables. A correlation coefficient, like Pearsons r, ranges from -1 to 1. Positive values indicate a positive correlation, negative values a negative correlation, and 0 suggests no linear relationship. Correlation is a statistical tool to assess the degree of association between variables.",
                        title = "What is correlation?",
                        id = "pop_correlation",
@@ -2986,7 +2986,7 @@ ui <- navbarPage(id = "nav1",
                
                #Method Title and Pop Over
                popover(
-                 h3(HTML("Regression <sup><i class='fas fa-question-circle'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+                 h3(HTML("Regression <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
                  "Regression analyzes the relationship between dependent and independent variables. It fits a mathematical model to data, estimating the impact of independent variables on the dependent one. In climate reconstructions, regression helps identify patterns and derive equations to predict past climate conditions using proxy data.",
                  title = "What is regression?",
                  id = "pop_regression",
@@ -3708,7 +3708,7 @@ ui <- navbarPage(id = "nav1",
                
                #Method Title and Pop Over
                popover(
-                 h3(HTML("Monthly timeseries <sup><i class='fas fa-question-circle'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+                 h3(HTML("Monthly timeseries <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
                  "Analyzing monthly timeseries involves examining data over consecutive months. Researchers can identify trends, seasonality, and anomalies in climate variables like temperature or precipitation. Statistical techniques, such as moving averages or seasonal decomposition, help reveal patterns and variations in monthly data, aiding in climate research and trend identification.",
                  title = "What is the monthly timeseries method?",
                  id = "pop_monthly_ts",
@@ -8770,7 +8770,7 @@ server <- function(input, output, session) {
     })
     
   #Processing and Plotting ----
-    ## GENERAL data processing and plotting ----  
+  ## GENERAL data processing and plotting ----  
     #Preparation
     
     month_range <- reactive({
@@ -8946,7 +8946,7 @@ server <- function(input, output, session) {
     output$ref_map <- renderPlot({ref_map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
     
     
-    #Plotting the data (time series)
+    #Plotting the data (timeseries)
     timeseries_data <- reactive({
       #Plot normal timeseries if year range is > 1 year
       if (input$range_years[1] != input$range_years[2]){
@@ -8983,7 +8983,7 @@ server <- function(input, output, session) {
       pagingType = "numbers"
     ))
     
-    #Plotting the time series
+    #Plotting the timeseries
     timeseries_plot <- function(){
       #Plot normal timeseries if year range is > 1 year
       if (input$range_years[1] != input$range_years[2]){
@@ -9262,7 +9262,7 @@ server <- function(input, output, session) {
                                                             file.remove(paste("user_ncdf/netcdf_",netcdf_ID,".nc", sep=""))
                                                           })
  
-    ## COMPOSITE data processing and plotting ----      
+  ## COMPOSITE data processing and plotting ----      
     
     ##Preparation
     
@@ -9469,7 +9469,7 @@ server <- function(input, output, session) {
     output$ref_map2 <- renderPlot({ref_map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
     
     
-    #Plotting the data (time series)
+    #Plotting the data (timeseries)
     timeseries_data_2 <- reactive({
       #Plot normal timeseries if year set is > 1 year
       if (length(year_set_comp()) > 1){    
@@ -9515,7 +9515,7 @@ server <- function(input, output, session) {
       pagingType = "numbers"
     ))
     
-    #Plotting the time series
+    #Plotting the timeseries
     timeseries_plot_2 <- function(){
       #Plot normal timeseries if year set is > 1 year
       if (length(year_set_comp()) > 1){  
@@ -9816,7 +9816,7 @@ server <- function(input, output, session) {
                                                          }})
     
  
-    ## CORRELATION data processing and plotting ----
+  ## CORRELATION data processing and plotting ----
     
     # Find shared lonlat
     
@@ -10068,7 +10068,7 @@ server <- function(input, output, session) {
     
     ME_map_plot_v2 <- function(){plot_default_map(map_data_v2(), input$ME_variable_v2, input$mode_selected_v2, plot_titles_v2(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame())}
     
-    # Generate time series data & plotting function
+    # Generate timeseries data & plotting function
     timeseries_data_v2 <- reactive({
       ts_data1_v2 <- create_timeseries_datatable(data_output4_v2(), input$range_years3, "range", subset_lons_v2(), subset_lats_v2())
       return(ts_data1_v2)
@@ -10081,7 +10081,7 @@ server <- function(input, output, session) {
     
     # Generate plot dimensions
     plot_dimensions_v1 <- reactive({
-      if (input$type_v1 == "Time series"){
+      if (input$type_v1 == "Timeseries"){
         map_dims_v1 = c(session$clientData$output_plot_v1_width,400)
       } else {
         map_dims_v1 = generate_map_dimensions(subset_lons_v1(), subset_lats_v1(), session$clientData$output_plot_v1_width, (input$dimension[2]), FALSE)
@@ -10090,7 +10090,7 @@ server <- function(input, output, session) {
     })
     
     plot_dimensions_v2 <- reactive({
-      if (input$type_v2 == "Time series"){
+      if (input$type_v2 == "Timeseries"){
         map_dims_v2 = c(session$clientData$output_plot_v2_width,400)
       } else {
         map_dims_v2 = generate_map_dimensions(subset_lons_v2(), subset_lats_v2(), session$clientData$output_plot_v2_width, (input$dimension[2]), FALSE)
@@ -10102,7 +10102,7 @@ server <- function(input, output, session) {
     output$plot_v1 <- renderPlot({
       if (input$source_v1 == "User Data"){
         plot_user_timeseries(user_subset_v1(),"darkorange2")
-      } else if (input$type_v1 == "Time series"){
+      } else if (input$type_v1 == "Timeseries"){
         ME_timeseries_plot_v1()
       } else{
         ME_map_plot_v1()
@@ -10113,7 +10113,7 @@ server <- function(input, output, session) {
     output$plot_v2 <- renderPlot({
       if (input$source_v2 == "User Data"){
         plot_user_timeseries(user_subset_v2(),"saddlebrown")
-      } else if (input$type_v2 == "Time series"){
+      } else if (input$type_v2 == "Timeseries"){
         ME_timeseries_plot_v2()
       } else{
         ME_map_plot_v2()
@@ -10884,7 +10884,7 @@ server <- function(input, output, session) {
     
     ME_timeseries_plot_iv = function(){plot_default_timeseries(ME_ts_data_iv(),"general",input$ME_variable_iv[1],plot_titles_iv(),"Default",NA)}
     
-    # Generate time series data for dv
+    # Generate Timeseries data for dv
     timeseries_data_dv <- reactive({
       ts_data1_dv <- create_timeseries_datatable(data_output4_dv(), input$range_years4, "range", subset_lons_dv(), subset_lats_dv())
       return(ts_data1_dv)
@@ -12349,10 +12349,12 @@ server <- function(input, output, session) {
           updateNumericInput(inputId = "range_years_sg", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "range_years_sg", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "range_years_sg", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "range_years_sg", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "range_years_sg", value = 2008)
+              }
             }
           }
 
@@ -12370,10 +12372,12 @@ server <- function(input, output, session) {
           updateNumericInput(inputId = "ref_period_sg", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg", value = 2008)
+              }
             }
           }
           
@@ -12391,10 +12395,12 @@ server <- function(input, output, session) {
           updateNumericInput(inputId = "ref_period_sg2", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg2", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg2", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg2", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg2", value = 2008)
+              }
             }
           }
           
@@ -12412,10 +12418,12 @@ server <- function(input, output, session) {
           updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg_v1", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg_v1", value = 2008)
+              }
             }
           }
           
@@ -12433,10 +12441,12 @@ server <- function(input, output, session) {
           updateNumericInput(inputId = "range_years_sg3", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "range_years_sg3", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "range_years_sg3", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "range_years_sg3", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "range_years_sg3", value = 2008)
+              }
             }
           }
           
@@ -12455,10 +12465,12 @@ server <- function(input, output, session) {
           updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg_v2", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg_v2", value = 2008)
+              }
             }
           }
           
@@ -12476,10 +12488,12 @@ server <- function(input, output, session) {
           updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg_iv", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg_iv", value = 2008)
+              }
             }
           }
           
@@ -12497,10 +12511,12 @@ server <- function(input, output, session) {
           updateNumericInput(inputId = "range_years_sg4", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "range_years_sg4", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "range_years_sg4", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "range_years_sg4", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "range_years_sg4", value = 2008)
+              }
             }
           }
           
@@ -12518,10 +12534,12 @@ server <- function(input, output, session) {
           updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg_dv", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg_dv", value = 2008)
+              }
             }
           }
           
@@ -12539,10 +12557,12 @@ server <- function(input, output, session) {
           updateNumericInput(inputId = "ref_period_sg5", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg5", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg5", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg5", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg5", value = 2008)
+              }
             }
           }
           
@@ -13158,4 +13178,5 @@ app <- shinyApp(ui = ui, server = server)
   #profvis({runApp(app)})
 
 
+  
   
