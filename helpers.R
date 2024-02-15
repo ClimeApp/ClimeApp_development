@@ -43,38 +43,7 @@ spinner_image = "pics/ClimeApp_Loading_V2.gif"
 spinner_width = 310
 spinner_height = 200
 
-# Load data 
-temp_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_mon.nc")
-prec_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_mon.nc")
-SLP_nc    <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_mon.nc")
-Z500_nc   <- nc_open("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_geopoth_50000_abs_1420-2009_mon.nc")
-
-# Data from the NetcDF file
-data_start_year = 1422 
-data_time_step = 1 # in months, so for annual data would = 12
-
-## Extract variables, units time, lat and lon
-temp_data = ncvar_get(temp_nc,varid="temp2")-273.15
-prec_data = ncvar_get(prec_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month
-SLP_data  = ncvar_get(SLP_nc,varid="slp")/100
-Z500_data = ncvar_get(Z500_nc,varid="geopotential_height")/100
-
-time <- temp_nc$dim[[1]]$vals # Units = months since 1421-01-15 00:00:00
-lon  <- temp_nc$dim[[2]]$vals
-lat  <- temp_nc$dim[[3]]$vals
-
-temp_units <- "\u00B0C"
-prec_units <- "mm"
-SLP_units  <- "hPa"
-Z500_units <- "hPa" 
-
-## Close netcdf files (to prevent accidental editing)
-nc_close(temp_nc)
-nc_close(prec_nc)
-nc_close(SLP_nc)
-nc_close(Z500_nc)
-
-## Load pre-processed yearly data
+# Load pre-processed data
 annual_temp_nc = nc_open("data/ModE-RA/Annual/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_year.nc")
 DJF_temp_nc = nc_open("data/ModE-RA/DJF/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_djf.nc")
 MAM_temp_nc = nc_open("data/ModE-RA/MAM/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_mam.nc")
@@ -125,6 +94,10 @@ pp_data[[4]][[2]] = ncvar_get(SON_prec_nc,varid="totprec")*2629756.8 # Multiply 
 pp_data[[4]][[3]] = ncvar_get(SON_slp_nc,varid="slp")/100
 #pp_data[[4]][[4]] = ncvar_get(SON_nc,varid="geopotential_height")
 
+# Extract list of longitudes/latitudes
+lon = annual_temp_nc$dim[[3]]$vals
+lat = annual_temp_nc$dim[[4]]$vals
+
 ## Close pre-processed netCDF files
 nc_close(annual_temp_nc)
 nc_close(DJF_temp_nc)
@@ -144,7 +117,6 @@ nc_close(MAM_slp_nc)
 nc_close(JJA_slp_nc)
 nc_close(SON_slp_nc)
 
-
 ## Create dataframe of continent lon/lats and Set initial latlon values
 Europe = c(-30,40,30,75) 
 Asia = c(25,170,5,80)
@@ -152,12 +124,11 @@ Australasia = c(90,180,-55,20)
 Africa = c(-25,55,-40,40)
 N_America = c(-175,-10,5,85)
 S_America = c(-90,-30,-60,15)
-Global = c(-180,180,-90,90)
 
-continent_lonlat_values = data.frame(Global,Europe,Asia,Australasia,Africa,N_America,S_America)
+continent_lonlat_values = data.frame(Europe,Asia,Australasia,Africa,N_America,S_America)
 row.names(continent_lonlat_values) = c("lon_min","lon_max","lat_min","lat_max")
 
-random_map = sample(1:7,1)
+random_map = sample(1:6,1)
 
 initial_lon_values = continent_lonlat_values[1:2,random_map]
 initial_lat_values = continent_lonlat_values[3:4,random_map]
@@ -373,50 +344,66 @@ generate_map_dimensions = function(subset_lon_IDs,subset_lat_IDs,output_width,
 }
 
 
-## (General) GENERATE PREPROCESSED DATA ID
-##           Creates a vector with the reference numbers for preprocessed data:
-##           c(season number,variable number) or c(NA,NA) if there is no pp data 
-##           data_set = "ModE-RA","ModE-Sim","ModE-RAclim"
+## (General) GENERATE DATA ID
+##           Creates a vector with the reference numbers for ModE data:
+##           c(pre-processed data?,dataset,variable,season)
+##           data_set = "ModE-RA","ModE-Sim","ModE-RAclim" or "SD Ratio"
 
-generate_pp_data_ID = function(dataset,variable,month_range){
+generate_data_ID = function(dataset,variable,month_range){
   
+  # Generate dataset reference
+  if (dataset == "ModE-RA"){
+    dataset_ref = 1
+  } else if (dataset == "ModE-Sim"){
+    dataset_ref = 2
+  } else if (dataset == "ModE-RAclim"){
+    dataset_ref = 3
+  } else { # dataset == "Sd Ratio"
+    dataset_ref = 4   
+  }
+  
+  # generate variable reference
+  if (variable == "Temperature"){
+    variable_ref = 1      
+  } else if (variable == "Precipitation"){
+    variable_ref = 2
+  } else if (variable == "SLP"){
+    variable_ref = 3
+  } else { # (variable == "Z500")
+    variable_ref = 4
+  }
+  
+  # Check for pp data and add season reference
   if (dataset == "ModE-RA" & variable != "Z500"){
     # generate season reference
     if (identical(month_range,c(1,12))){
       season_ref = 5
+      pp_available = 1
     } else if (identical(month_range,c(0,2))){
       season_ref = 1
+      pp_available = 1
     } else if (identical(month_range,c(3,5))){
       season_ref = 2
+      pp_available = 1
     } else if (identical(month_range,c(6,8))){
       season_ref = 3
+      pp_available = 1
     } else if (identical(month_range,c(9,11))){
       season_ref = 4
+      pp_available = 1
     } else {
       season_ref = NA
-    }
-    
-    # generate variable reference
-    if (is.na(season_ref)){
-      variable_ref = NA
-    } else if (variable == "Temperature"){
-      variable_ref = 1      
-    } else if (variable == "Precipitation"){
-      variable_ref = 2
-    } else if (variable == "SLP"){
-      variable_ref = 3
-    } else {
-      variable_ref = 4
-    }
-    
-    pp_ref = c(season_ref,variable_ref)
-  }
-  else {
-    pp_ref = c(NA,NA)
+      pp_available = 0
+    } 
+  } else {
+    pp_available = 0
+    season_ref = NA
   }
   
+  # Create data reference
+  data_ref = c(pp_available,dataset_ref,variable_ref,season_ref)
   
-  return (pp_ref)
+  return (data_ref)
 }        
 
 
@@ -427,11 +414,27 @@ generate_pp_data_ID = function(dataset,variable,month_range){
 load_ModE_data = function(dataset,variable){
   # Mod E-RA
   if (dataset == "ModE-RA"){
-      data_output <-   switch(variable,
-                         "Temperature"   = temp_data,
-                         "Precipitation" = prec_data,
-                         "SLP"           = SLP_data,
-                         "Z500"          = Z500_data)
+    # get variable name and open file
+    vname =  switch(variable,
+                    "Temperature"   = "temp2",
+                    "Precipitation" = "totprec",
+                    "SLP"           = "slp",
+                    "Z500"          = "geopoth_50000")
+    
+    data_nc = nc_open(paste0("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_",vname,"_abs_1420-2009_mon.nc"))
+    
+    # extract data and convert units if necessary                  
+    if (variable == "Temperature"){
+      data_output = ncvar_get(data_nc,varid="temp2")-273.15 
+    } else if (variable == "Precipitation"){
+      data_output = ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
+    } else if (variable == "SLP"){
+      data_output = ncvar_get(data_nc,varid="slp")/100 
+    } else {
+      data_output = ncvar_get(data_nc,varid="geopotential_height")/100
+    }
+    
+    nc_close(data_nc)
   } 
   # ModE-SIM
   else if (dataset == "ModE-Sim"){
@@ -441,6 +444,7 @@ load_ModE_data = function(dataset,variable){
                     "Precipitation" = "totprec",
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
+    
     data_nc = nc_open(paste0("data/ModE-SIM/Monthly/ModE-Sim_ensmean_",vname,"_abs_1420-2009.nc"))
     
     # extract data and convert units if necessary                  
@@ -468,7 +472,7 @@ load_ModE_data = function(dataset,variable){
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
     data_nc = nc_open(paste0("data/ModE-RAclim/Monthly/ModE-RAclim_ensmean_",vname,"_anom_1421-2008_mon.nc"))
-
+    
     # extract data and convert units if necessary                  
     if (variable == "Temperature"){
       data_output = ncvar_get(data_nc,varid="temp2") 
@@ -492,7 +496,7 @@ load_ModE_data = function(dataset,variable){
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
     data_nc = nc_open(paste0("data/ModE-RA/Monthly/SDratio/ModE-RA_lowres_20mem_Set_1420-3_1850-1_sdratio_",vname,"_anom_wrt_1901-2000_1421-2008_mon.nc"))
-
+    
     # extract data and convert units if necessary                  
     if (variable == "Temperature"){
       data_output = ncvar_get(data_nc,varid="temp2") 
@@ -513,12 +517,13 @@ load_ModE_data = function(dataset,variable){
 
 
 ## (General) CREATE GEOGRAPHIC SUBSET - returns a new dataset with a reduced geographic area
-##           data_input = any ModE-RA variable (temp_data/prec_data/SlP_data etc.)  
+##           data_input = any ModE-RA variable (temp_data/prec_data/SlP_data etc.)
+##                        (this should already be assigned as "custom_data()")
 
-create_latlon_subset = function(data_input,pp_data_ID,subset_lon_IDs,subset_lat_IDs){
-  if (!is.na(pp_data_ID[1])){
+create_latlon_subset = function(data_input,data_ID,subset_lon_IDs,subset_lat_IDs){
+  if (data_ID[1] == 1){
     # subset preprocessed data
-    data_subset = pp_data[[pp_data_ID[1]]][[pp_data_ID[2]]][subset_lon_IDs,subset_lat_IDs,]
+    data_subset = pp_data[[data_ID[4]]][[data_ID[3]]][subset_lon_IDs,subset_lat_IDs,]
   } else {
     # subset base data
     data_subset = data_input[subset_lon_IDs,subset_lat_IDs,]
@@ -531,9 +536,9 @@ create_latlon_subset = function(data_input,pp_data_ID,subset_lon_IDs,subset_lat_
 ##                                        within a reduced time range
 ##           data_input = any create_latlon_subset data
 
-create_yearly_subset = function(data_input,pp_data_ID,year_range,month_range){
+create_yearly_subset = function(data_input,data_ID,year_range,month_range){
   # Check for preprocessed subset
-  if (!is.na(pp_data_ID[1])){
+  if (data_ID[1] == 1){
     year_IDs = (year_range[1]-1420):(year_range[2]-1420) 
     data_subset = data_input[,,year_IDs]
   } 
@@ -557,47 +562,20 @@ create_yearly_subset = function(data_input,pp_data_ID,year_range,month_range){
 
 ## (General) CONVERT ABSOLUTE YEARLY SUBSET TO ANOMALIES
 ##           data_input = any create_yearly_subset data
-##           ref_data = corresponding create_latlon_subset data that yearly_subset
-##                      was generated from
+##           ref_data = averaged create_yearly_subset data for the ref period
 
-convert_subset_to_anomalies = function(data_input,ref_data,pp_data_ID,month_range,baseline_range){
+convert_subset_to_anomalies = function(data_input,ref_data){
   
   # find dimensions of the reference data
   dim_data = dim(data_input)
   
-  # check for pre-processed reference data
-  if (!is.na(pp_data_ID[1])){
-    # Add a time dimensions for 1 year pp data
-    if(is.na(dim_data[3])){
-      dim_data = c(dim_data,1)
-      dim(data_input) = c(dim(data_input),1)
-    }
-    # calculate baseline from reference data
-    year_IDs = (baseline_range[1]-1421):(baseline_range[length(baseline_range)]-1421)
-    baseline_data = ref_data[,,year_IDs]
-  } 
-  # calculate reference data
-  else {
-    if(length(baseline_range) == 2) {
-      years = baseline_range[1]:baseline_range[2]
-    }
-    else {
-      years = baseline_range
-    }
-    
-    baseline_data = array(NA,dim=c(dim_data[1],dim_data[2], length(years)))
-    
-    # Calculate yearly baseline data for chosen months
-    for (i in 1:length(years)){
-      Y = years[i]
-      M1 = ((12*(Y-1421))+month_range[1]) ; M2 = ((12*(Y-1421))+month_range[2]) 
-      baseline_data[,,i] = apply(ref_data[,,M1:M2],c(1:2),mean)
-    }
-  }  
-  
-  # Average yearly data
-  baseline = apply(baseline_data,c(1:2),mean)
-  baseline_array = array(baseline,dim= c(dim_data[1],dim_data[2], dim_data[3]))
+  # Repeat ref data if year range > 1 year
+  if (length(dim_data) == 2){ 
+    baseline_array = ref_data
+  } else {
+    # duplicate into an array
+    baseline_array = array(ref_data,dim= c(dim_data[1],dim_data[2], dim_data[3]))
+  }
   
   # Take baseline data from absolute data to calculate anomalies
   anomaly_data = data_input-baseline_array
@@ -657,8 +635,8 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
   
   # Reference period titles
   else if (tab=="reference"){
-      map_title1 = paste(dataset," ",title_months," ",variable," Absolute values (Reference years)", sep = "")
-      map_title2 = ""
+    map_title1 = paste(dataset," ",title_months," ",variable," Absolute values (Reference years)", sep = "")
+    map_title2 = ""
   }
   
   # SD ratio titles
@@ -671,7 +649,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
       map_title2 = "" 
     }
   }
-
+  
   # Create Timeseries title 
   ts_title = paste(substr(map_title1, 1, nchar(map_title1) - 10),
                    " [",lon_range[1],":",lon_range[2],"\u00B0E, ",lat_range[1],":",lat_range[2],"\u00B0N]", sep = "")
@@ -721,16 +699,16 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
 ##           mode = "Absolute" or "Anomalies"
 
 set_axis_values = function(data_input,mode){
-
-    if (mode == "Absolute"){
-      minmax = c(min(data_input),max(data_input))  
-    } else {
-      z_max = max(abs(data_input))
-      minmax = c(-z_max,z_max)
-    }
   
-    minmax = signif(minmax,digits = 3)
-
+  if (mode == "Absolute"){
+    minmax = c(min(data_input),max(data_input))  
+  } else {
+    z_max = max(abs(data_input))
+    minmax = c(-z_max,z_max)
+  }
+  
+  minmax = signif(minmax,digits = 3)
+  
   return(minmax)
 }
 
@@ -1090,7 +1068,7 @@ plot_default_timeseries = function(data_input,tab,variable, titles, title_mode, 
     plot(x, y, type = "p", col = v_col, xaxs="i",
          xlab = "Year", ylab = titles$ts_axis)
   }
-
+  
   
   # Add titles
   title(titles$ts_title,adj = 0, line = 0.5)
@@ -1163,7 +1141,6 @@ rewrite_tstable = function(tstable,variable){
 ##           year = a single user selected or default year
 ##           season = "summer" or "winter"
 ##           labs = TRUE or FALSE (TRUE = non-zoomed plot)
-##           Same goes for feedback data
 
 plot_modera_sources = function(year,season,lon_range,lat_range,labs){
   
@@ -1195,39 +1172,27 @@ plot_modera_sources = function(year,season,lon_range,lat_range,labs){
   
   # Plot
   if(labs == TRUE) {
-  ggplot() + geom_polygon(data=world, aes(x=long, y=lat, group=group), fill="grey", color = "darkgrey") + 
-    geom_sf() + coord_sf(xlim = lon_range, ylim = lat_range, crs = st_crs(4326)) +
-    geom_point(data=feedback_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
-    labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
-         subtitle = paste0("Total Sources = ",total_sources), x = "", y = "") +
-    scale_shape_manual(values = named_shapes) +
-    scale_colour_manual(values = named_colors) +
-    guides() + 
-    theme_classic()+
-    theme(panel.border = element_rect(colour = "black", fill=NA))  }
+    ggplot() + geom_polygon(data=world, aes(x=long, y=lat, group=group), fill="grey", color = "darkgrey") + 
+      geom_sf() + coord_sf(xlim = lon_range, ylim = lat_range, crs = st_crs(4326)) +
+      geom_point(data=feedback_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
+      labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
+           subtitle = paste0("Total Sources = ",total_sources), x = "", y = "") +
+      scale_shape_manual(values = named_shapes) +
+      scale_colour_manual(values = named_colors) +
+      guides() + 
+      theme_classic()+
+      theme(panel.border = element_rect(colour = "black", fill=NA))  }
   else {
-  ggplot() + geom_polygon(data=world, aes(x=long, y=lat, group=group), fill="grey", color = "darkgrey") + 
-    geom_sf() + coord_sf(xlim = lon_range, ylim = lat_range, crs = st_crs(4326)) +
-    geom_point(data=feedback_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
-    labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
-         subtitle = paste0("Zoomed Subplot"), x = "", y = "") +
-    scale_shape_manual(values = named_shapes) +
-    scale_colour_manual(values = named_colors) +
-    guides(shape = FALSE, color = FALSE) +
-    theme_classic()+
-    theme(panel.border = element_rect(colour = "black", fill=NA))  }
-}
-
-download_feedback_data = function(year, season, lon_range, lat_range) {
-  # Load data
-  feedback_data = read.csv(paste0("data/feedback_archive/", season, year, ".csv"))
-  
-  # Subset data based on lon and lat range
-  subset_data = feedback_data[(feedback_data$LON > lon_range[1]) & (feedback_data$LON < lon_range[2]) &
-                                (feedback_data$LAT > lat_range[1]) & (feedback_data$LAT < lat_range[2]), ]
-  
-  # Remove the first three columns
-  subset_data = subset_data[, -c(1:3)]
+    ggplot() + geom_polygon(data=world, aes(x=long, y=lat, group=group), fill="grey", color = "darkgrey") + 
+      geom_sf() + coord_sf(xlim = lon_range, ylim = lat_range, crs = st_crs(4326)) +
+      geom_point(data=feedback_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
+      labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
+           subtitle = paste0("Zoomed Subplot"), x = "", y = "") +
+      scale_shape_manual(values = named_shapes) +
+      scale_colour_manual(values = named_colors) +
+      guides(shape = FALSE, color = FALSE) +
+      theme_classic()+
+      theme(panel.border = element_rect(colour = "black", fill=NA))  }
 }
 
 
@@ -1256,27 +1221,41 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
       variable_data = data_input
     } else {
       
-      # Generate pp_data_ID for new variable
-      pp_ref = generate_pp_data_ID(dataset,i,month_range)
+      # Generate data_ID for new variable
+      data_ref = generate_data_ID(dataset,i,month_range)
       
-      # Access variable base data
-      data1 = load_ModE_data(dataset,i)
+      # Access variable base data (if pp data not available)
+      if (data_ref[1]==0){
+        data1 = load_ModE_data(dataset,i)
+      } else {
+        data1 = NA
+      }
       # Generate latlon subset data
-      data2 =  create_latlon_subset(data1, pp_ref, subset_lon_IDs, subset_lat_IDs)
+      data2 =  create_latlon_subset(data1, data_ref, subset_lon_IDs, subset_lat_IDs)
       # Generate yearly subset data
       if (tab == "general"){
-        data3 = create_yearly_subset(data2, pp_ref, year_range, month_range)
+        data3 = create_yearly_subset(data2, data_ref, year_range, month_range)
       }
       else if (tab == "composites"){
-        data3 =  create_yearly_subset_composite(data2, pp_ref, year_range, month_range) 
+        data3 =  create_yearly_subset_composite(data2, data_ref, year_range, month_range) 
       }
-      # Generate absolute/anomalies data
-      if (mode == "Absolute"){
+      # Generate reference data 
+      if (tab == "general"){
+        refd = create_yearly_subset(data2, data_ref, baseline_range, month_range)
+        data4 = apply(refd,c(1:2),mean)
+      }
+      else if (tab == "composites"){ # TBC if used for COMPOSITES!
+        refd =  create_yearly_subset_composite(data2, data_ref, baseline_range, month_range) 
+        data4 = apply(refd,c(1:2),mean)
+      }
+      
+      # Generate anomalies data
+      if (mode == "Absolute"){ # TBC
         variable_data = data3
-      } else if (mode == "Anomaly_yrs_prior"){
-        variable_data = convert_composite_to_anomalies(data3,data2,pp_ref,year_range,month_range,baseline_years_before)
+      } else if (mode == "Anomaly_yrs_prior"){ #TBC
+        variable_data = convert_composite_to_anomalies(data3,data2,data_ref,year_range,month_range,baseline_years_before)
       } else {
-        variable_data = convert_subset_to_anomalies(data3,data2,pp_ref,month_range,baseline_range)
+        variable_data = convert_subset_to_anomalies(data3,data4)
       }
     }
     # Save variable data
@@ -1380,22 +1359,42 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
 #                              "triangle" = 17,
 #                              "square" = 15)
 
+## (Plot Features) CREATE SD RATIO DATA - creates SD ratio data for the current 
+##                 year/season/region selected
+##                 data_input = custom_sd_data() (for the moment - update to use pp_data later)
+##                 tab = "general" or "composites"
+##                 year_range = year range or year set
+
+create_sdratio_data = function(data_input,tab,variable,subset_lon_IDs,subset_lat_IDs,
+                               month_range,year_range){
+  
+  # Lat/lon subset:
+  SD_data1 = create_latlon_subset(data_input,c(0,NA,NA,NA),subset_lon_IDs, subset_lat_IDs)  
+  # Yearly subset:
+  if (tab == "general"){
+    SD_data2 = create_yearly_subset(SD_data1, c(0,NA,NA,NA), year_range, month_range)
+  } else {
+    SD_data2 = create_yearly_subset_composite(SD_data1, c(0,NA,NA,NA), year_range, month_range)
+  }
+  
+  return(SD_data2)
+}
+
 
 ## (Plot Features) CREATE STATISTICAL HIGHLIGHTS DATA - creates a dataframe for
-##                 adding dots to an anomaly map to mark points which match a certain
-##                 criteria
+##                 adding dots to an anomaly map to mark points which match a certain criteria
+##                 stat_highlight = "None","% sign match", "SD ratio"
 ##                 data_input = any subset_to_anomaly ModE-RA data
+##                 sd_data = output from create_sdratio_data
 ##                 tab = "general" or "composites"
 ##                 add_stat_highlight = TRUE or FALSE
-##                 criteria = "% sign match" or "SD ratio" 
 ##                 sdratio = any numeric value from 0 to 1
 ##                 percent = any numeric value from 1 to 100
 
-create_stat_highlights_data = function(data_input,tab,add_stat_highlight,criteria,sdratio,
-                                       percent,variable,subset_lon_IDs,subset_lat_IDs,
-                                       month_range,year_range){
-  if (add_stat_highlight == TRUE){
-    if (criteria == "% sign match"){
+create_stat_highlights_data = function(data_input,sd_data,stat_highlight,sdratio,
+                                       percent,subset_lon_IDs,subset_lat_IDs){
+  if (stat_highlight != "None"){
+    if (stat_highlight == "% sign match"){
       # Create sign_check function
       matching_sign_check = function(anom_data,chosen_p){
         pos = sum(anom_data>0)
@@ -1417,20 +1416,9 @@ create_stat_highlights_data = function(data_input,tab,add_stat_highlight,criteri
       criteria_vals = c(apply(data_input, c(1:2),matching_sign_check,percent))
     }
     
-    else if (criteria == "SD ratio"){
-      # Load & process SD data
-      SD_data0 = load_ModE_data("SD Ratio",variable)
-      # Lat/lon subset:
-      SD_data1 = create_latlon_subset(SD_data0, c(NA,NA), subset_lon_IDs, subset_lat_IDs)  
-      # Yearly subset:
-      if (tab == "general"){
-        SD_data2 = create_yearly_subset(SD_data1, c(NA,NA), year_range, month_range)
-      } else {
-        SD_data2 = create_yearly_subset_composite(SD_data1, c(NA,NA), year_range, month_range)
-      }
-
+    else if (stat_highlight == "SD ratio"){
       # Mean data:
-      SD_data3 = apply(SD_data2,c(1,2),mean)
+      SD_data3 = apply(sd_data,c(1,2),mean)
       
       # SD ratio check:
       sd_ratio_check = function(sd_data,chosen_sdr){
@@ -1446,16 +1434,16 @@ create_stat_highlights_data = function(data_input,tab,add_stat_highlight,criteri
       criteria_vals = c(apply(SD_data3,c(1,2),sd_ratio_check,sdratio))
     }
     
-  # Create vectors of x and y values
-  x = lon[subset_lon_IDs]
-  y = lat[subset_lat_IDs]
+    # Create vectors of x and y values
+    x = lon[subset_lon_IDs]
+    y = lat[subset_lat_IDs]
     
-  x_vals = c(array(rep(x,length(y)),dim = c(length(x),length(y)))) 
-  y_vals = c(t(array(y,dim = c(length(y),length(x)))))
+    x_vals = c(array(rep(x,length(y)),dim = c(length(x),length(y)))) 
+    y_vals = c(t(array(y,dim = c(length(y),length(x)))))
     
-  # Combine into dataframe
-  S_H_data = data.frame(x_vals,y_vals,criteria_vals)  
-  
+    # Combine into dataframe
+    S_H_data = data.frame(x_vals,y_vals,criteria_vals)  
+    
   }
   
   else {
@@ -1703,7 +1691,7 @@ add_correlation_timeseries = function(data_input1,data_input2,variable1,variable
   par(new = TRUE)
   
   # Plot variable 1
-
+  
   plot(x,y1,type = "l", col = v_col1, lwd=2, xaxs="i", axes = FALSE, bty = "n", xlab = "", ylab = "")
   if ("Moving_Average" %in% cnames){
     lines(x,data_input1$Moving_Average,lwd = 3.5,col = "black")
@@ -1721,7 +1709,7 @@ add_correlation_timeseries = function(data_input1,data_input2,variable1,variable
   }
   # Reset original graphical parameters
   par(old.par)
-
+  
 }
 
 
@@ -1767,7 +1755,7 @@ add_custom_points = function(data_input){
 add_TS_key = function(key_position,data_highlights,data_lines,variable,month_range,add_moving_average,
                       moving_average_range,add_percentiles,percentiles,secondary_variable,secondary_month_range,
                       show_primary_variable){
-
+  
   ## Generate "variable" legend parameters:
   # label
   if (month_range[1]==1 & month_range[2]==12){
@@ -1804,7 +1792,7 @@ add_TS_key = function(key_position,data_highlights,data_lines,variable,month_ran
   ## Generate second variable legend parameters:
   # label
   if (!is.na(secondary_variable)){
-      if (secondary_month_range[1]==1 & secondary_month_range[2]==12){
+    if (secondary_month_range[1]==1 & secondary_month_range[2]==12){
       title_months = "Annual"
     } else {
       month_letters  = c("D","J","F","M","A","M","J","J","A","S","O","N","D")
@@ -1824,9 +1812,9 @@ add_TS_key = function(key_position,data_highlights,data_lines,variable,month_ran
         color = "green2"
       } else {
         color = "saddlebrown"
-          label = secondary_variable
+        label = secondary_variable
       }
-
+      
     } else {
       if (secondary_variable == "Temperature"){
         color = "red3" 
@@ -1841,7 +1829,7 @@ add_TS_key = function(key_position,data_highlights,data_lines,variable,month_ran
         label = secondary_variable
       }
     }
-
+    
     
     # line parameters
     lwd = 2 ; lty = "solid"
@@ -2028,10 +2016,10 @@ read_composite_data = function(data_input_manual,data_input_filepath,year_input_
 ##             year_set = set of years to be composited (format c(1422,1457,...))
 ##                        as generated by read_composite_data  
 
-create_yearly_subset_composite = function(data_input,pp_data_ID,year_set,month_range){
+create_yearly_subset_composite = function(data_input,data_ID,year_set,month_range){
   
   # Check for preprocessed subset
-  if (!is.na(pp_data_ID[1])){
+  if (data_ID[1] == 1){
     year_IDs = year_set-1420 
     data_subset = data_input[,,year_IDs]
   } 
@@ -2060,7 +2048,7 @@ create_yearly_subset_composite = function(data_input,pp_data_ID,year_set,month_r
 ##             baseline_years_before = number of years before to calculate each anomaly
 ##                                     w.r.t. (i.e 5 for a mean of the 5 preceding years)
 
-convert_composite_to_anomalies = function(data_input,ref_data,pp_data_ID,year_set,month_range,baseline_year_before){
+convert_composite_to_anomalies = function(data_input,ref_data,data_ID,year_set,month_range,baseline_year_before){
   
   # Remove years where year_set - baseline_years_before < 1422
   subset_year_IDs = which(year_set-baseline_year_before >= 1422)
@@ -2072,7 +2060,7 @@ convert_composite_to_anomalies = function(data_input,ref_data,pp_data_ID,year_se
   baseline_array = array(NA,dim=c(dim_data[1],dim_data[2], length(subset_year_set)))
   
   # Use PP data to calculate baselines
-  if (!is.na(pp_data_ID[1])){
+  if (data_ID[1]==1){
     for (i in 1:length(subset_year_set)){
       year_list = c()
       for (j in 1:baseline_year_before){ # Note: years_before COULD be a chosen range (i.e.10-20 years before)
@@ -2204,7 +2192,7 @@ create_user_data_subset = function(data_input,variable,year_range){
 extract_shared_lonlat = function(variable1_type,variable2_type,
                                  variable1_lon_range,variable1_lat_range,
                                  variable2_lon_range,variable2_lat_range){
-
+  
   # If variable 1 is a timeseries:
   if (variable1_type == "Timeseries"){
     shared_lon_range = variable2_lon_range
@@ -2223,7 +2211,7 @@ extract_shared_lonlat = function(variable1_type,variable2_type,
   
   return(shared_lonlat)
 }
- 
+
 
 #### Correlation Functions  ####
 
@@ -2665,27 +2653,32 @@ create_ME_timeseries_data = function(dataset,variables,subset_lon_IDs,subset_lat
   
   # Cycle through each variable
   for (i in variables){
-      
-    # Generate pp_data_ID for new variable
-    pp_ref = generate_pp_data_ID(dataset,i,month_range)
-      
-    # Access variable base data
-    data1 = load_ModE_data(dataset,i)
     
-    # Generate latlon subset data
-    data2 =  create_latlon_subset(data1, pp_ref, subset_lon_IDs, subset_lat_IDs)
-    # Generate yearly subset data
-    data3 = create_yearly_subset(data2, pp_ref, year_range, month_range)
+    # Generate data_ID for new variable
+    data_ref = generate_data_ID(dataset,i,month_range)
     
-    # Generate absolute/anomalies data
-    if (mode == "Absolute"){
-      data4 = data3
+    # Access variable base data (if pp data not available)
+    if (data_ref[1]==0){
+      data1 = load_ModE_data(dataset,i)
     } else {
-      data4 = convert_subset_to_anomalies(data3,data2,pp_ref,month_range,baseline_range)
+      data1 = NA
+    }
+    # Generate latlon subset data
+    data2 =  create_latlon_subset(data1, data_ref, subset_lon_IDs, subset_lat_IDs)
+    # Generate yearly subset data
+    data3 = create_yearly_subset(data2, data_ref, year_range, month_range)
+    # Generate reference data 
+    refd = create_yearly_subset(data2, data_ref, baseline_range, month_range)
+    data4 = apply(refd,c(1:2),mean)
+    # Generate anomalies data
+    if (mode == "Absolute"){ # TBC
+      data5 = data3
+    } else {
+      data5 = convert_subset_to_anomalies(data3,data4)
     }
     
     # Weight yearly means
-    data_weighted = apply(data4,c(3),weight_function, t(latlon_weights_reduced))
+    data_weighted = apply(data5,c(3),weight_function, t(latlon_weights_reduced))
     
     # Create TS data
     variable_ts_data = data.frame(apply(data_weighted,c(2),sum)) 
@@ -2698,13 +2691,13 @@ create_ME_timeseries_data = function(dataset,variables,subset_lon_IDs,subset_lat
   colnames(MEts_data) = c("Year",variables)
   
   #if (variable == "Residuals"){
-    # Weight yearly means
-    #data_weighted = apply(data_input,c(1),weight_function, t(latlon_weights_reduced))
-    
-    # Create TS data
-    #ts_data = data.frame(apply(data_weighted,c(2),sum))
+  # Weight yearly means
+  #data_weighted = apply(data_input,c(1),weight_function, t(latlon_weights_reduced))
+  
+  # Create TS data
+  #ts_data = data.frame(apply(data_weighted,c(2),sum))
   #} 
-   
+  
   return(MEts_data)
 }
 
@@ -3134,7 +3127,7 @@ monthly_ts_starter_data = function(){
 ## (Annual cycles) CREATE ANNUAL CYCLES DATA - creates a data.frame where each row is one 
 ##              year (or an averaged period) of monthly data. 
 ##              Uses create_subset_lat/lon_IDs functions
-##              data_input = any ModE-RA variable (temp_data/prec_data/SlP_data etc.)
+##              data_input = custom_data()
 ##              years = either one year "1483", a set of years "1483,1812"
 ##                      or a range of years "1483-1489"
 ##              type = "Average" or "Individual years"
@@ -3179,7 +3172,7 @@ create_monthly_TS_data = function(data_input,dataset,variable,years,lon_range,la
     } else {
       ref_years = baseline_range
     }
-
+    
     for (Y in ref_years){
       year_data = c()
       for (M in 1:12){
@@ -3193,7 +3186,7 @@ create_monthly_TS_data = function(data_input,dataset,variable,years,lon_range,la
     ref_df = as.data.frame(lapply(ref_df,mean))
     year_df = sweep(year_df,2,as.matrix(ref_df)[1,]) 
   }
-
+  
   # Round and add colnames to year_df
   year_df = round(year_df,digits = 2)
   colnames(year_df) = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
@@ -3298,35 +3291,35 @@ plot_monthly_timeseries = function(data_input,custom_title,title_mode,key_positi
   if (plot_mode == "base"){ # plot default plot
     # Generate y axis label
     y_label = paste0(data_input$Variable[1]," [",data_input$Unit[1],"]")
-  
+    
     # Generate legend labels
     legend_labels = c()
-  
+    
     for (i in 1:n_o_rows){
       label = paste0(data_input$Dataset[i]," ",data_input$Years[i]," [",data_input$Coordinates[i],"]")
       legend_labels = c(legend_labels,label)
     }
-  
+    
     # Find min/max values
     y_min = min(data_input[,5:16])  
     y_max = max(data_input[,5:16])
     y_space = 0.02*(y_max-y_min)
-  
+    
     # Plot
     plot(1:12,data_input[1,5:16],type = "l",col=color_set[1], lwd=lwd_set[1],
          ylim = c((y_min-y_space),(y_max+y_space)),
          xlab = "Month", ylab = y_label, xaxt = "n", xaxs="i")
     axis(1, at = 1:12, labels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
-  
-   for (i in 2:n_o_rows){
+    
+    for (i in 2:n_o_rows){
       lines(1:12,data_input[i,5:16],col = color_set[i],lwd = lwd_set[i])
-   }
-  
+    }
+    
     # Add title (if custom is selected)
     if (title_mode == "Custom"){
       title(custom_title,adj = 0)
     }
-  
+    
     # Add legend
     legend(key_position, inset = c(0.008,0.03),
            legend=legend_labels,
