@@ -454,7 +454,7 @@ ui <- navbarPage(id = "nav1",
                                        placeholder = "Custom title"))),
                              
                              checkboxInput(inputId = "hide_borders",
-                                           label   = "Hide country borders",
+                                           label   = "Show country borders",
                                            value   = TRUE),
                              
                              )),
@@ -8869,268 +8869,254 @@ server <- function(input, output, session) {
   ## GENERAL data processing and plotting ----  
   #Preparation
   
-  month_range <- reactive({
-    #Creating Numeric Vector for Month Range
-    mr = create_month_range(input$range_months) #Between 0-12  
+    month_range <- reactive({
+      #Creating Numeric Vector for Month Range
+      mr = create_month_range(input$range_months) #Between 0-12  
+      
+      return(mr)
+    })
     
-    return(mr)
-  })
-  
-  subset_lons <- eventReactive(lonlat_vals(), {
+    subset_lons <- eventReactive(lonlat_vals(), {
+      
+      slons = create_subset_lon_IDs(lonlat_vals()[1:2]) 
+      
+      return(slons)
+    })
     
-    slons = create_subset_lon_IDs(lonlat_vals()[1:2]) 
+    subset_lats <- eventReactive(lonlat_vals(), {
+      
+      slats = create_subset_lat_IDs(lonlat_vals()[3:4]) 
+      
+      return(slats)
+    })
     
-    return(slons)
-  })
-  
-  subset_lats <- eventReactive(lonlat_vals(), {
+    #Generating data ID - c(pre-processed data?,dataset,variable,season)
+    data_id <- reactive({
+      
+      dat_id = generate_data_ID(input$dataset_selected,input$variable_selected, month_range())
+      
+      return(dat_id)
+    })
     
-    slats = create_subset_lat_IDs(lonlat_vals()[3:4]) 
+    # Update custom_data if required
+    observeEvent(data_id(),{
+      if (data_id()[1] == 0){ # Only updates when new custom data is required...
+        if (!identical(custom_data_ID()[2:3],data_id()[2:3])){ # ....i.e. changed variable or dataset
+          custom_data(load_ModE_data(input$dataset_selected,input$variable_selected)) # load new custom data
+          custom_data_ID(data_id()) # update custom data ID
+        }
+      }
+    })
     
-    return(slats)
-  })
-  
-  #Generating data ID - c(pre-processed data?,dataset,variable,season)
-  data_id <- reactive({
+    # Update SD ratio data when required
+    observe({
+      if((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")){
+        if (input$nav1 == "tab1"){ # check current tab
+          if (!identical(SDratio_data_ID()[3],data_id()[3])){ # check to see if currently loaded variable is the same
+            SDratio_data(load_ModE_data("SD Ratio",input$variable_selected)) # load new SD data
+            SDratio_data_ID(data_id()) # update custom data ID
+          } 
+        }
+      }
+    })
     
-    dat_id = generate_data_ID(input$dataset_selected,input$variable_selected, month_range())
+    # Processed SD data
+    SDratio_subset = reactive({
+      
+      req(((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")))
+      
+      new_SD_data = create_sdratio_data(SDratio_data(),"general",input$variable_selected,subset_lons(),subset_lats(),
+                                        month_range(),input$range_years)
+      return(new_SD_data)
+    })
     
-    return(dat_id)
-  })
-  
-  # Update custom_data if required
-  observeEvent(data_id(),{
-    if (data_id()[1] == 0){ # Only updates when new custom data is required...
-      if (!identical(custom_data_ID()[2:3],data_id()[2:3])){ # ....i.e. changed variable or dataset
-        custom_data(load_ModE_data(input$dataset_selected,input$variable_selected)) # load new custom data
-        custom_data_ID(data_id()) # update custom data ID
+    #Geographic Subset
+    data_output1 <- reactive({
+      
+      #Geographic Subset Function
+      processed_data  <- create_latlon_subset(custom_data(), data_id(), subset_lons(), subset_lats())                
+      
+      return(processed_data)
+    })
+    
+    #Creating yearly subset
+    data_output2 <- reactive({
+      #Creating a reduced time range  
+      processed_data2 <- create_yearly_subset(data_output1(), data_id(), input$range_years, month_range())              
+      
+      return(processed_data2)  
+    })
+    
+    # Create reference yearly subset & convert to mean
+    data_output3 <- reactive({
+      # Create annual reference data
+      ref1 <- create_yearly_subset(data_output1(), data_id(), input$ref_period, month_range())   
+      ref2 = apply(ref1,c(1:2),mean)
+      
+      return(ref2)  
+    })
+    
+    #Converting absolutes to anomalies
+    data_output4 <- reactive({
+      
+      processed_data4 <- convert_subset_to_anomalies(data_output2(), data_output3())
+      
+      return(processed_data4)
+    })
+    
+    #Map customization (statistics and map titles)
+    
+    plot_titles <- reactive({
+      
+      my_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Anomaly", input$title_mode,input$title_mode_ts,
+                                  month_range(), input$range_years, input$ref_period, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
+                                  input$title1_input, input$title2_input,input$title1_input_ts)
+      
+      return(my_title)
+    })
+    
+    map_statistics = reactive({
+      
+      my_stats = create_stat_highlights_data(data_output4(),SDratio_subset(),
+                                             input$custom_statistic,input$sd_ratio,
+                                             NA,subset_lons(),subset_lats())
+      
+      return(my_stats)
+    })
+    
+    #Plotting the Data (Maps)
+    map_data <- function(){create_map_datatable(data_output4(), subset_lons(), subset_lats())}
+    
+    output$data1 <- renderTable({map_data()}, rownames = TRUE)
+    
+    #Plotting the Map
+    map_dimensions <- reactive({
+      
+      m_d = generate_map_dimensions(subset_lons(), subset_lats(), session$clientData$output_map_width, input$dimension[2], input$hide_axis)
+      
+      return(m_d)  
+    })
+    
+    map_plot <- function(){plot_default_map(map_data(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders)}
+    
+    output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
+    # code line below sets height as a function of the ratio of lat/lon 
+    
+    
+    #Ref/Absolute/SD ratio Map
+    ref_map_data <- function(){
+      if (input$ref_map_mode == "Absolute Values"){
+        create_map_datatable(data_output2(), subset_lons(), subset_lats())
+      } else if (input$ref_map_mode == "Reference Values"){
+        create_map_datatable(data_output3(), subset_lons(), subset_lats())
+      } else if (input$ref_map_mode == "SD Ratio"){
+        create_map_datatable(SDratio_subset(), subset_lons(), subset_lats())
+      }
+    }    
+    
+    ref_map_titles = reactive({
+      if (input$ref_map_mode == "Absolute Values"){
+        rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
+                                    month_range(), input$range_years, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
+                                    input$title1_input, input$title2_input,input$title1_input_ts)
+      } else if (input$ref_map_mode == "Reference Values"){
+        rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
+                                    month_range(), input$ref_period, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
+                                    input$title1_input, input$title2_input,input$title1_input_ts)
+      } else if (input$ref_map_mode == "SD Ratio"){
+        rm_title <- generate_titles("sdratio",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
+                                    month_range(), input$range_years, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
+                                    input$title1_input, input$title2_input,input$title1_input_ts)
+      }
+    })  
+    
+    ref_map_plot <- function(){
+      if (input$ref_map_mode == "Absolute Values" | input$ref_map_mode == "Reference Values" ){
+        plot_default_map(ref_map_data(), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders)
+      } else if(input$ref_map_mode == "SD Ratio"){
+        plot_default_map(ref_map_data(), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders)
       }
     }
-  })
-  
-  # Update SD ratio data when required
-  observe({
-    if((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")){
-      if (input$nav1 == "tab1"){ # check current tab
-        if (!identical(SDratio_data_ID()[3],data_id()[3])){ # check to see if currently loaded variable is the same
-          SDratio_data(load_ModE_data("SD Ratio",input$variable_selected)) # load new SD data
-          SDratio_data_ID(data_id()) # update custom data ID
-        } 
+    
+    output$ref_map <- renderPlot({ref_map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
+    
+    
+    #Plotting the data (timeseries)
+    timeseries_data <- reactive({
+      #Plot normal timeseries if year range is > 1 year
+      if (input$range_years[1] != input$range_years[2]){
+        ts_data1 <- create_timeseries_datatable(data_output4(), input$range_years, "range", subset_lons(), subset_lats())
+        
+        ts_data2 = add_stats_to_TS_datatable(ts_data1,input$custom_average_ts,input$year_moving_ts,
+                                             "center",input$custom_percentile_ts,input$percentile_ts,input$moving_percentile_ts)
+      } 
+      # Plot monthly TS if year range = 1 year
+      else {
+        ts_data1 = load_ModE_data(input$dataset_selected,input$variable_selected)
+        
+        ts_data2 = create_monthly_TS_data(ts_data1,input$dataset_selected,input$variable_selected,
+                                          input$range_years[1],input$range_longitude,
+                                          input$range_latitude,"Anomaly",
+                                          "Individual years",input$ref_period)
       }
-    }
-  })
-  
-  # Processed SD data
-  SDratio_subset = reactive({
+      return(ts_data2)
+    })
     
-    req(((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")))
-    
-    new_SD_data = create_sdratio_data(SDratio_data(),"general",input$variable_selected,subset_lons(),subset_lats(),
-                                      month_range(),input$range_years)
-    return(new_SD_data)
-  })
-  
-  #Geographic Subset
-  data_output1 <- reactive({
-    
-    #Combining Shiny Input with ModeRa Data
-    data_input <-   load_ModE_data(input$dataset_selected,input$variable_selected)
-    
-    #Geographic Subset Function
-    processed_data  <- create_latlon_subset(data_input, pp_id(), subset_lons(), subset_lats())                
-    
-    return(processed_data)
-  })
-  
-  #Creating yearly subset
-  data_output2 <- reactive({
-    #Creating a reduced time range  
-    processed_data2 <- create_yearly_subset(data_output1(), pp_id(), input$range_years, month_range())              
-    
-    return(processed_data2)  
-  })
-  
-  #Converting absolutes to anomalies
-  data_output3 <- reactive({
-    
-    processed_data3 <- convert_subset_to_anomalies(data_output2(), data_output1(), pp_id(), month_range(), input$ref_period)
-  
-    return(processed_data3)
-  })
-  
-  # Calculating Ref data for plotting
-  data_output4 <- reactive({
-    
-    processed_data4 <- data_output2()-data_output3()
-    
-    return(processed_data4)
-  })
-  
-  #Map customization (statistics and map titles)
-  
-  plot_titles <- reactive({
-    
-    my_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Anomaly", input$title_mode,input$title_mode_ts,
-                                 month_range(), input$range_years, input$ref_period, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                 input$title1_input, input$title2_input,input$title1_input_ts)
-    
-    return(my_title)
-  })
-  
-  map_statistics = reactive({
-    
-    my_stats = create_stat_highlights_data(data_output3(),"general",
-                                           input$custom_statistic,input$sd_ratio,
-                                           NA,input$variable_selected,
-                                           subset_lons(),subset_lats(),month_range(),input$range_years)
-    
-    return(my_stats)
-  })
-  
-  #Plotting the Data (Maps)
-  map_data <- function(){create_map_datatable(data_output3(), subset_lons(), subset_lats())}
-  
-  output$data1 <- renderTable({map_data()}, rownames = TRUE)
-  
-  #Plotting the Map
-  map_dimensions <- reactive({
-    
-    m_d = generate_map_dimensions(subset_lons(), subset_lats(), session$clientData$output_map_width, input$dimension[2], input$hide_axis)
-  
-    return(m_d)  
-  })
-  
-  map_plot <- function(){plot_default_map(map_data(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders)}
-  
-  output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
-  # code line below sets height as a function of the ratio of lat/lon 
-  
-  #Ref/Absolute/SD ratio Map
-  ref_map_data <- function(){
-    if (input$ref_map_mode == "Absolute Values"){
-      create_map_datatable(data_output2(), subset_lons(), subset_lats())
-    } else if (input$ref_map_mode == "Reference Values"){
-      create_map_datatable(data_output4(), subset_lons(), subset_lats())
-    } else if (input$ref_map_mode == "SD Ratio"){
-      # Generate SD data for a single year
-      SD_data0 = load_ModE_data("SD Ratio",input$variable_selected)
-      
-      ## SD Data is going to need to be preprocessed
-      
-      # Lat/lon subset:
-      SD_data1 = create_latlon_subset(SD_data0, c(NA,NA), subset_lons(), subset_lats())  
-      # Yearly subset:
-      SD_data2 = create_yearly_subset(SD_data1, c(NA,NA), input$range_years, month_range())
-      # Map data:
-      SD_map_data = create_map_datatable(SD_data2, subset_lons(), subset_lats())
-      
-      return(SD_map_data)
-    }
-  }    
-  
-  ref_map_titles = reactive({
-    if (input$ref_map_mode == "Absolute Values"){
-      rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
-                                  month_range(), input$range_years, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                  input$title1_input, input$title2_input,input$title1_input_ts)
-    } else if (input$ref_map_mode == "Reference Values"){
-      rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
-                                  month_range(), input$ref_period, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                  input$title1_input, input$title2_input,input$title1_input_ts)
-    } else if (input$ref_map_mode == "SD Ratio"){
-      rm_title <- generate_titles("sdratio",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
-                                  month_range(), input$range_years, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                  input$title1_input, input$title2_input,input$title1_input_ts)
-    }
-  })  
-  
-  ref_map_plot <- function(){
-    if (input$ref_map_mode == "Absolute Values" | input$ref_map_mode == "Reference Values" ){
-      plot_default_map(ref_map_data(), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders)
-    } else if(input$ref_map_mode == "SD Ratio"){
-      plot_default_map(ref_map_data(), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders)
-    }
-  }
-  
-  output$ref_map <- renderPlot({ref_map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
-  
-  
-  #Plotting the data (timeseries)
-  timeseries_data <- reactive({
-    #Plot normal timeseries if year range is > 1 year
-    if (input$range_years[1] != input$range_years[2]){
-      ts_data1 <- create_timeseries_datatable(data_output3(), input$range_years, "range", subset_lons(), subset_lats())
-      
-      ts_data2 = add_stats_to_TS_datatable(ts_data1,input$custom_average_ts,input$year_moving_ts,
-                                           "center",input$custom_percentile_ts,input$percentile_ts,input$moving_percentile_ts)
-    } 
-    # Plot annual cycles if year range = 1 year
-    else {
-      ts_data1 = load_ModE_data(input$dataset_selected,input$variable_selected)
-      
-      ts_data2 = create_monthly_TS_data(ts_data1,input$dataset_selected,input$variable_selected,
-                             input$range_years[1],input$range_longitude,
-                             input$range_latitude,"Anomaly",
-                             "Individual years",input$ref_period)
-    }
-    return(ts_data2)
-  })
-  
-  timeseries_data_output = reactive({
-    if (input$range_years[1] != input$range_years[2]){
-      output_ts_table = rewrite_tstable(timeseries_data(),input$variable_selected)
-    } else {
-      output_ts_table = timeseries_data()
-    }
-    return(output_ts_table) 
-  })
-  
-  output$data2 <- renderDataTable({timeseries_data_output()}, rownames = FALSE, options = list(
-    autoWidth = TRUE, 
-    searching = FALSE,
-    paging = TRUE,
-    pagingType = "numbers"
-  ))
-  
-  #Plotting the timeseries
-  timeseries_plot <- function(){
-    #Plot normal timeseries if year range is > 1 year
-    if (input$range_years[1] != input$range_years[2]){
-      # Generate NA or reference mean
-      if(input$show_ref_ts == TRUE){
-        ref_ts = signif(mean(data_output4()),3)
+    timeseries_data_output = reactive({
+      if (input$range_years[1] != input$range_years[2]){
+        output_ts_table = rewrite_tstable(timeseries_data(),input$variable_selected)
       } else {
-        ref_ts = NA
+        output_ts_table = timeseries_data()
       }
-      
-      plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
-      add_highlighted_areas(ts_highlights_data())
-      add_percentiles(timeseries_data())
-      add_custom_lines(ts_lines_data())
-      add_timeseries(timeseries_data(),"general",input$variable_selected)
-      add_boxes(ts_highlights_data())
-      add_custom_points(ts_points_data())
-      if (input$show_key_ts == TRUE){
-        add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range(),
-                   input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
-      }
-    } 
-    # Plot annual cycles if year range = 1 year
-    else {
-      plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","base")
-      add_highlighted_areas(ts_highlights_data())
-      add_custom_lines(ts_lines_data())
-      plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","lines")
-      add_boxes(ts_highlights_data())
-      add_custom_points(ts_points_data())
-      if (input$show_key_ts == TRUE){
-        add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range(),
-                   input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+      return(output_ts_table) 
+    })
+    
+    output$data2 <- renderDataTable({timeseries_data_output()}, rownames = FALSE, options = list(
+      autoWidth = TRUE, 
+      searching = FALSE,
+      paging = TRUE,
+      pagingType = "numbers"
+    ))
+    
+    #Plotting the timeseries
+    timeseries_plot <- function(){
+      #Plot normal timeseries if year range is > 1 year
+      if (input$range_years[1] != input$range_years[2]){
+        # Generate NA or reference mean
+        if(input$show_ref_ts == TRUE){
+          ref_ts = signif(mean(data_output3()),3)
+        } else {
+          ref_ts = NA
+        }
+        
+        plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
+        add_highlighted_areas(ts_highlights_data())
+        add_percentiles(timeseries_data())
+        add_custom_lines(ts_lines_data())
+        add_timeseries(timeseries_data(),"general",input$variable_selected)
+        add_boxes(ts_highlights_data())
+        add_custom_points(ts_points_data())
+        if (input$show_key_ts == TRUE){
+          add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range(),
+                     input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+        }
+      } 
+      # Plot monthly TS if year range = 1 year
+      else {
+        plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","base")
+        add_highlighted_areas(ts_highlights_data())
+        add_custom_lines(ts_lines_data())
+        plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","lines")
+        add_boxes(ts_highlights_data())
+        add_custom_points(ts_points_data())
+        if (input$show_key_ts == TRUE){
+          add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range(),
+                     input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+        }
       }
     }
-  }
-  
-  output$timeseries <- renderPlot({timeseries_plot()}, height = 400)
+    
+    output$timeseries <- renderPlot({timeseries_plot()}, height = 400)
   
     ### ModE-RA sources ----
     #ModE-RA sources
