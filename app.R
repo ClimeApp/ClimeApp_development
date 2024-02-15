@@ -2,7 +2,6 @@
 
 # Source for helpers ----
 source("helpers.R")
-#Test
 
 # Define UI ----
 
@@ -205,7 +204,7 @@ ui <- navbarPage(id = "nav1",
                     #Method Title and Pop Over
                     popover(
                     h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
-                    "Analyzing averages involves calculating the mean of a dataset, providing a central tendency measure. Anomalies are deviations from this mean. In climate research, comparing monthly or yearly averages helps identify trends. Analyzing anomalies, the differences from long-term averages, reveals unusual patterns, aiding in detecting climate changes and anomalies such as El Niño or global warming impacts.",
+                    "Analyzing averages",br(), "involves calculating the mean of a dataset, providing a central tendency measure. Anomalies are deviations from this mean. In climate research, comparing monthly or yearly averages helps identify trends. Analyzing anomalies, the differences from long-term averages, reveals unusual patterns, aiding in detecting climate changes and anomalies such as El Niño or global warming impacts.",
                     title = "What are anomalies?",
                     id = "pop_anomalies",
                     placement = "right",
@@ -601,7 +600,8 @@ ui <- navbarPage(id = "nav1",
                                                     label  = "SD ratio < ",
                                                     value  = 0.2,
                                                     min    = 0,
-                                                    max    = 1)
+                                                    max    = 1,
+                                                    step   = 0.1)
                                    ),
                               ),
                       ),
@@ -1471,31 +1471,32 @@ ui <- navbarPage(id = "nav1",
                                            value   = FALSE),
                              
                              shinyjs::hidden(
-                             div(id = "hidden_custom_statistics2",
-                                 h5(helpText("Choose custom statistic:")),
-                                 
-                                 radioButtons(inputId      = "custom_statistic2",
-                                              label        = NULL,
-                                              inline       = TRUE,
-                                              choices      = c("None","SD ratio","% sign match")),
-                            
-                               div(id = "hidden_sign_match2",  
-                                   numericInput(inputId = "percentage_sign_match2",
-                                                label  = "% of years in range with matching sign:",
-                                                value  = 90,
-                                                min    = 1,
-                                                max    = 100)
+                               div(id = "hidden_custom_statistics2",
+                                   h5(helpText("Choose custom statistic:")),
+                                   
+                                   radioButtons(inputId      = "custom_statistic2",
+                                                label        = NULL,
+                                                inline       = TRUE,
+                                                choices      = c("None","SD ratio","% sign match")),
+                                   
+                                   div(id = "hidden_sign_match2",  
+                                       numericInput(inputId = "percentage_sign_match2",
+                                                    label  = "% of years in range with matching sign:",
+                                                    value  = 90,
+                                                    min    = 1,
+                                                    max    = 100)
                                    ),
-                               
-                               div(id = "hidden_SD_ratio2",  
-                                   numericInput(inputId = "sd_ratio2",
-                                                label  = "SD ratio < ",
-                                                value  = 0.2,
-                                                min    = 0,
-                                                max    = 1)
-                               ),
-                               
-                             )),
+                                   
+                                   div(id = "hidden_SD_ratio2",  
+                                       numericInput(inputId = "sd_ratio2",
+                                                    label  = "SD ratio < ",
+                                                    value  = 0.2,
+                                                    min    = 0,
+                                                    max    = 1,
+                                                    step = 0.1)
+                                   ),
+                                   
+                               )),
                       ),
                       #### Customization panels END ----
                       ),
@@ -4301,7 +4302,7 @@ ui <- navbarPage(id = "nav1",
 
              ## Main Panel END ----
            ), width = 8),
-# Annual cycles END ----  
+# Annual cycles END ---- 
          )),
 
 # END ----
@@ -4309,8 +4310,18 @@ ui <- navbarPage(id = "nav1",
 
 
      
-  # Define server logic ----
+# Define server logic ----
 server <- function(input, output, session) {
+  # Set up custom data and SDratio reactive variables ----
+  custom_data = reactiveVal()
+  custom_data_ID = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current custom data
+  
+  custom_data2 = reactiveVal()                 # custom data 2 is only used for variable 2 in correlation
+  custom_data_ID2 = reactiveVal(c(NA,NA,NA,NA)) 
+  
+  SDratio_data = reactiveVal()
+  SDratio_data_ID = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current SD data
+  
   #Preparations in the Server (Hidden options) ----
   track_usage(storage_mode = store_rds(path = "logs/"))
   
@@ -8422,12 +8433,18 @@ server <- function(input, output, session) {
     # Add new data and update related inputs
     observeEvent(input$add_monthly_ts, {
       
-      #Combining Shiny Input with ModeRa Data
-      data_full <-  load_ModE_data(input$dataset_selected5,input$variable_selected5)
+      # Generate data ID
+      monthly_ts_data_ID = generate_data_ID(input$dataset_selected5,input$variable_selected5,c(NA,NA))
       
+      # Update custom_data if required
+      if (!identical(custom_data_ID()[2:3],monthly_ts_data_ID[2:3])){ # ....i.e. changed variable or dataset
+        custom_data(load_ModE_data(input$dataset_selected5,input$variable_selected5)) # load new custom data
+        custom_data_ID(monthly_ts_data_ID) # update custom data ID
+      }
+
       # Replace starter data if tracker = 1
       if (monthly_ts_tracker() == 1){
-        monthly_ts_data(create_monthly_TS_data(data_full,input$dataset_selected5,input$variable_selected5,
+        monthly_ts_data(create_monthly_TS_data(custom_data(),input$dataset_selected5,input$variable_selected5,
                                                input$range_years5,input$range_longitude5,
                                                input$range_latitude5,input$mode_selected5,
                                                input$type_selected5,input$ref_period5))
@@ -8444,7 +8461,7 @@ server <- function(input, output, session) {
       } 
       # Otherwise, add to dataframe
       else {
-        new_rows = create_monthly_TS_data(data_full,input$dataset_selected5,input$variable_selected5,
+        new_rows = create_monthly_TS_data(custom_data(),input$dataset_selected5,input$variable_selected5,
                                                input$range_years5,input$range_longitude5,
                                                input$range_latitude5,input$mode_selected5,
                                                input$type_selected5,input$ref_period5)
@@ -8873,12 +8890,44 @@ server <- function(input, output, session) {
     return(slats)
   })
   
-  pp_id <- reactive({
+  #Generating data ID - c(pre-processed data?,dataset,variable,season)
+  data_id <- reactive({
     
-    #Generating Pre Processed Data
-    ppid = generate_pp_data_ID(input$dataset_selected,input$variable_selected, month_range())
+    dat_id = generate_data_ID(input$dataset_selected,input$variable_selected, month_range())
     
-    return(ppid)
+    return(dat_id)
+  })
+  
+  # Update custom_data if required
+  observeEvent(data_id(),{
+    if (data_id()[1] == 0){ # Only updates when new custom data is required...
+      if (!identical(custom_data_ID()[2:3],data_id()[2:3])){ # ....i.e. changed variable or dataset
+        custom_data(load_ModE_data(input$dataset_selected,input$variable_selected)) # load new custom data
+        custom_data_ID(data_id()) # update custom data ID
+      }
+    }
+  })
+  
+  # Update SD ratio data when required
+  observe({
+    if((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")){
+      if (input$nav1 == "tab1"){ # check current tab
+        if (!identical(SDratio_data_ID()[3],data_id()[3])){ # check to see if currently loaded variable is the same
+          SDratio_data(load_ModE_data("SD Ratio",input$variable_selected)) # load new SD data
+          SDratio_data_ID(data_id()) # update custom data ID
+        } 
+      }
+    }
+  })
+  
+  # Processed SD data
+  SDratio_subset = reactive({
+    
+    req(((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")))
+    
+    new_SD_data = create_sdratio_data(SDratio_data(),"general",input$variable_selected,subset_lons(),subset_lats(),
+                                      month_range(),input$range_years)
+    return(new_SD_data)
   })
   
   #Geographic Subset
@@ -9305,16 +9354,16 @@ server <- function(input, output, session) {
                                                               dev.off()
                                                             }})
     
-   output$download_data_fad_wa       <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a, "-modera_source_data.",input$file_type_data_modera_source_a, sep = "")},
-                                                        content  = function(file) {
-                                                          if (input$file_type_data_modera_source_a == "csv"){
-                                                            write.csv(fad_wa_data(), file,
-                                                                      row.names = FALSE)
-                                                          } else {
-                                                            write.xlsx(fad_wa_data(), file,
-                                                                       col.names = TRUE,
-                                                                       row.names = FALSE)
-                                                          }})
+    output$download_data_fad_wa       <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a, "-modera_source_data.",input$file_type_data_modera_source_a, sep = "")},
+                                                          content  = function(file) {
+                                                            if (input$file_type_data_modera_source_a == "csv"){
+                                                              write.csv(fad_wa_data(), file,
+                                                                        row.names = FALSE)
+                                                            } else {
+                                                              write.xlsx(fad_wa_data(), file,
+                                                                         col.names = TRUE,
+                                                                         row.names = FALSE)
+                                                            }})
     
     output$download_data_fad_sa      <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a, "-modera_source_data.",input$file_type_data_modera_source_b, sep = "")},
                                                         content  = function(file) {
@@ -9326,361 +9375,383 @@ server <- function(input, output, session) {
                                                                        col.names = TRUE,
                                                                        row.names = FALSE)
                                                           }})
-      
+    
     output$download_netcdf             <- downloadHandler(filename = function() {paste(plot_titles()$netcdf_title, ".nc", sep = "")},
                                                           content  = function(file) {
                                                             netcdf_ID = sample(1:1000000,1)
-                                                            generate_custom_netcdf (data_output3(), "general",input$dataset_selected,netcdf_ID, input$variable_selected, input$netcdf_variables, "Anomaly", subset_lons(), subset_lats(), month_range(), input$range_years, input$ref_period, NA)
+                                                            generate_custom_netcdf (data_output4(), "general",input$dataset_selected,netcdf_ID, input$variable_selected, input$netcdf_variables, "Anomaly", subset_lons(), subset_lats(), month_range(), input$range_years, input$ref_period, NA)
                                                             file.copy(paste("user_ncdf/netcdf_",netcdf_ID,".nc", sep=""),file)
                                                             file.remove(paste("user_ncdf/netcdf_",netcdf_ID,".nc", sep=""))
                                                           })
  
   ## COMPOSITE data processing and plotting ----      
-  
-  ##Preparation
-  
-  month_range_2 <- reactive({
-    #Creating Numeric Vector for Month Range
-    mr2 = create_month_range(input$range_months2) #Between 0-12  
     
-    return(mr2)
-  })
-  
-  subset_lons_2 <- eventReactive(lonlat_vals2(), {
+    ##Preparation
     
-    slons2 = create_subset_lon_IDs(lonlat_vals2()[1:2]) 
-    
-    return(slons2)
-  })
-  
-  subset_lats_2 <- eventReactive(lonlat_vals2(), {
-    
-    slats2 = create_subset_lat_IDs(lonlat_vals2()[3:4]) 
-    
-    return(slats2)
-  })
-  
-  pp_id_2 <- reactive({
-    
-    ppid2 = generate_pp_data_ID(input$dataset_selected2,input$variable_selected2, month_range_2())
-    
-    return(ppid2)
-  })      
-  
-  year_set_comp <- reactive({
-    
-    #Creating a year set for composite
-    ysc = read_composite_data(input$range_years2, input$upload_file2$datapath, input$enter_upload2)
-    
-    return(ysc)
-  })
-  
-  #List of custom anomaly years (from read Composite) as reference data
-  
-  year_set_comp_ref <- reactive({
-    
-    yscr = read_composite_data(input$range_years2a, input$upload_file2a$datapath, input$enter_upload2a)
+    month_range_2 <- reactive({
+      #Creating Numeric Vector for Month Range
+      mr2 = create_month_range(input$range_months2) #Between 0-12  
       
-    return(yscr)  
+      return(mr2)
+    })
     
-  })
-  
-  #Geographic Subset
-  data_output1_2 <- reactive({
-    
-    #Combining Shiny Input with ModeRa Data
-    data_input_2 <-   load_ModE_data(input$dataset_selected2,input$variable_selected2)
-    
-    #Geographic Subset Function
-    processed_data_2  <- create_latlon_subset(data_input_2, pp_id_2(), subset_lons_2(), subset_lats_2())                
-    
-    return(processed_data_2)
-  })
-  
-  #Creating yearly subset for Composites
-  data_output2_2 <- reactive({
-    
-    #Creating a reduced time range
-    processed_data2_2 <- create_yearly_subset_composite(data_output1_2(), pp_id_2(), year_set_comp(), month_range_2())              
-    
-    return(processed_data2_2)  
-  })
-  
-  #Converting Composite to anomalies either fixed period or X years prior or list of years
-  data_output3_2 <- reactive({
-    
-    #Calculate two ways of anomalies (if selected)
-    if (input$mode_selected2 == "Fixed reference"){
-      processed_data3_2 <- convert_subset_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), month_range_2(), input$ref_period2)
-    } else if (input$mode_selected2 == "Compared to X years prior"){
-      processed_data3_2 <- convert_composite_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), year_set_comp(), month_range_2(), input$prior_years2)
-    } else {
-      processed_data3_2 <- convert_subset_to_anomalies(data_output2_2(), data_output1_2(), pp_id_2(), month_range_2(), year_set_comp_ref())
-    }
-
-    return(processed_data3_2)
-  })
-
-  # Calculating Ref data for plotting
-  data_output4_2 <- reactive({
-    
-    processed_data4_2 <- data_output2_2()-data_output3_2()
-    
-    return(processed_data4_2)
-  })
-    
-  #Map customization (statistics and map titles)
-  
-  plot_titles_2 <- reactive({
-    
-    my_title <- generate_titles ("composites", input$dataset_selected2, input$variable_selected2, input$mode_selected2, input$title_mode2,input$title_mode_ts2,
-                                 month_range_2(), input$range_years2, input$ref_period2, input$prior_years2,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                 input$title1_input2, input$title2_input2,input$title1_input_ts2)
-    
-    return(my_title)
-  })
-  
-  
-  map_statistics_2 = reactive({
-    
-    my_stats = create_stat_highlights_data(data_output3_2(),"composites",
-                                           input$custom_statistic2,input$sd_ratio2,
-                                           input$percentage_sign_match2,input$variable_selected2,
-                                           subset_lons_2(),subset_lats_2(),month_range_2(),year_set_comp())
-    
-    return(my_stats)
-  })
-  
-  #Plotting the Data (Maps)
-  map_data_2 <- function(){create_map_datatable(data_output3_2(), subset_lons_2(), subset_lats_2())}
-  
-  output$data3 <- renderTable({map_data_2()}, rownames = TRUE)
-  
-  #Plotting the Map
-  map_dimensions_2 <- reactive({
-    
-    m_d_2 = generate_map_dimensions(subset_lons_2(), subset_lats_2(), session$clientData$output_map2_width, input$dimension[2]*0.85, input$hide_axis2)
-    
-    return(m_d_2)
-  })
-  
-  map_plot_2 <- function(){plot_default_map(map_data_2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2)}
-  
-  output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
-  # code line below sets height as a function of the ratio of lat/lon 
-  
-  
-  #Ref/Absolute Map
-  ref_map_data_2 <- function(){
-    if (input$ref_map_mode2 == "Absolute Values"){
-      create_map_datatable(data_output2_2(), subset_lons_2(), subset_lats_2())
-    } else if (input$ref_map_mode2 == "Reference Values"){
-      create_map_datatable(data_output4_2(), subset_lons_2(), subset_lats_2())
-    } else if (input$ref_map_mode2 == "SD Ratio"){
-      # Generate SD data for a single year
-      SD_data0_2 = load_ModE_data("SD Ratio",input$variable_selected2)
+    subset_lons_2 <- eventReactive(lonlat_vals2(), {
       
-      ## SD Data is going to need to be preprocessed
+      slons2 = create_subset_lon_IDs(lonlat_vals2()[1:2]) 
       
-      # Lat/lon subset:
-      SD_data1_2 = create_latlon_subset(SD_data0_2, c(NA,NA), subset_lons_2(), subset_lats_2())  
-      # Yearly subset:
-      SD_data2_2 = create_yearly_subset_composite(SD_data1_2, c(NA,NA), year_set_comp(), month_range_2())
-      # Map data:
-      SD_map_data_2 = create_map_datatable(SD_data2_2, subset_lons_2(), subset_lats_2())
+      return(slons2)
+    })
+    
+    subset_lats_2 <- eventReactive(lonlat_vals2(), {
       
-      return(SD_map_data_2)
-    }
-  }    
-  
-  ref_map_titles_2 = reactive({
-    if (input$ref_map_mode2 == "Absolute Values"){
-      rm_title2 <- generate_titles("composites",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
-                                  month_range_2(), year_set_comp(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                  input$title1_input2, input$title2_input2,input$title1_input_ts2)
-    } else if (input$ref_map_mode2 == "Reference Values"){
-      rm_title2 <- generate_titles("reference",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
-                                  month_range_2(), year_set_comp_ref(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                  input$title1_input2, input$title2_input2,input$title1_input_ts2)
-    } else if (input$ref_map_mode2 == "SD Ratio"){
-      rm_title2 <- generate_titles("sdratio",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
-                                  month_range_2(), c(NA,NA), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                  input$title1_input2, input$title2_input2,input$title1_input_ts2)
-    }
-  })  
-  
-  ref_map_plot_2 <- function(){
-    if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Values" ){
-      plot_default_map(ref_map_data_2(), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2)
-    } else if (input$ref_map_mode2 == "SD Ratio"){
-      plot_default_map(ref_map_data_2(), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2)
-    }
-  }
-  
-  output$ref_map2 <- renderPlot({ref_map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
-  
-  
-  #Plotting the data (timeseries)
-  timeseries_data_2 <- reactive({
-    #Plot normal timeseries if year set is > 1 year
-    if (length(year_set_comp()) > 1){    
-      ts_data1 <- create_timeseries_datatable(data_output3_2(), year_set_comp(), "set", subset_lons_2(), subset_lats_2())
+      slats2 = create_subset_lat_IDs(lonlat_vals2()[3:4]) 
       
-      ts_data2 = add_stats_to_TS_datatable(ts_data1,FALSE,NA,NA,input$custom_percentile_ts2,
-                                           input$percentile_ts2,FALSE)
-    } 
-    # Plot annual cycles if year range = 1 year
-    else {
-      ts_data1 = load_ModE_data(input$dataset_selected2,input$variable_selected2)
+      return(slats2)
+    })
+    
+    data_id_2 <- reactive({
       
-      # Generate ref years
+      dat_id2 = generate_data_ID(input$dataset_selected2,input$variable_selected2, month_range_2())
+      
+      return(dat_id2)
+    })      
+    
+    # Update custom_data if required
+    observeEvent(data_id_2(),{
+      if (data_id_2()[1] == 0){ # Only updates when new custom data is required...
+        if (!identical(custom_data_ID()[2:3],data_id_2()[2:3])){ # ....i.e. changed variable or dataset
+          custom_data(load_ModE_data(input$dataset_selected2,input$variable_selected2)) # load new custom data
+          custom_data_ID(data_id_2()) # update custom data ID
+        }
+      }
+    })
+    
+    year_set_comp <- reactive({
+      
+      #Creating a year set for composite
+      ysc = read_composite_data(input$range_years2, input$upload_file2$datapath, input$enter_upload2)
+      
+      return(ysc)
+    })
+    
+    #List of custom anomaly years (from read Composite) as reference data
+    
+    year_set_comp_ref <- reactive({
+      
+      yscr = read_composite_data(input$range_years2a, input$upload_file2a$datapath, input$enter_upload2a)
+      
+      return(yscr)  
+      
+    })
+    
+    # Update SD ratio data when required
+    observe({
+      if((input$ref_map_mode2 == "SD Ratio")|(input$custom_statistic2 == "SD ratio")){
+        if (input$nav1 == "tab2"){ # check current tab
+          if (!identical(SDratio_data_ID()[3],data_id_2()[3])){ # check to see if currently loaded variable is the same
+            SDratio_data(load_ModE_data("SD Ratio",input$variable_selected2)) # load new SD data
+            SDratio_data_ID(data_id_2()) # update custom data ID
+          } 
+        }
+      }
+    })
+    
+    # Processed SD data
+    SDratio_subset_2 = reactive({
+      
+      req(((input$ref_map_mode2 == "SD Ratio")|(input$custom_statistic2 == "SD ratio")))
+      
+      new_SD_data2 = create_sdratio_data(SDratio_data(),"composites",input$variable_selected2,
+                                         subset_lons_2(),subset_lats_2(),month_range_2(),year_set_comp())
+      return(new_SD_data2)
+    })
+    
+    
+    #Geographic Subset
+    data_output1_2 <- reactive({
+      
+      #Geographic Subset Function
+      processed_data_2  <- create_latlon_subset(custom_data(), data_id_2(), subset_lons_2(), subset_lats_2())                
+      
+      return(processed_data_2)
+    })
+    
+    #Creating yearly subset for Composites
+    data_output2_2 <- reactive({
+      
+      #Creating a reduced time range
+      processed_data2_2 <- create_yearly_subset_composite(data_output1_2(), data_id_2(), year_set_comp(), month_range_2())              
+      
+      return(processed_data2_2)  
+    })
+    
+    # Create composite reference yearly subset & convert to mean
+    data_output3_2 = reactive({
+      
       if (input$mode_selected2 == "Fixed reference"){
-        ref_years = input$ref_period2
-      } else if (input$mode_selected2 == "Compared to X years prior"){
-        ref_years = c((year_set_comp()-input$prior_years2),year_set_comp()-1)
+        ref_2 <- create_yearly_subset(data_output1_2(), data_id_2(), input$ref_period2, month_range_2())   
+        processed_data3_2 <- apply(ref_2,c(1:2),mean)
+      } else if (input$mode_selected2 == "Custom reference") {
+        ref_2 <- create_yearly_subset_composite(data_output1_2(), data_id_2(), year_set_comp_ref(), month_range_2()) 
+        processed_data3_2 <- apply(ref_2,c(1:2),mean)
       } else {
-        ref_years = year_set_comp_ref()
+        processed_data3_2 <- NA
       }
       
-      ts_data2 = create_monthly_TS_data(ts_data1,input$dataset_selected2,input$variable_selected2,
-                                        year_set_comp(),input$range_longitude2,
-                                        input$range_latitude2,"Anomaly",
-                                        "Individual years",ref_years)
-    }
-    return(ts_data2)
-  })
-  
-  timeseries_data_output_2 = reactive({
-    if (length(year_set_comp()) > 1){ 
-      output_ts_table = rewrite_tstable(timeseries_data_2(),input$variable_selected2)
-    } else {
-      output_ts_table = timeseries_data_2()
-    }
-    return(output_ts_table) 
-  })
-  
-  output$data4 <- renderDataTable({timeseries_data_output_2()}, rownames = FALSE, options = list(
-    autoWidth = TRUE, 
-    searching = FALSE,
-    paging = TRUE,
-    pagingType = "numbers"
-  ))
-  
-  #Plotting the timeseries
-  timeseries_plot_2 <- function(){
-    #Plot normal timeseries if year set is > 1 year
-    if (length(year_set_comp()) > 1){  
-      # Generate NA or reference mean
-      if(input$show_ref_ts2 == TRUE){
-        ref_ts2 = signif(mean(data_output4_2()),3)
+      return(processed_data3_2)
+    })
+    
+    #Converting Composite to anomalies either fixed/custom period or X years prior 
+    data_output4_2 <- reactive({
+      if (input$mode_selected2 == "Compared to X years prior"){
+        processed_data4_2 <- convert_composite_to_anomalies(data_output2_2(), data_output1_2(), data_id_2(), year_set_comp(), month_range_2(), input$prior_years2)
       } else {
-        ref_ts2 = NA
+        processed_data4_2 <- convert_subset_to_anomalies(data_output2_2(), data_output3_2())
       }
-  
-      plot_default_timeseries(timeseries_data_2(),"composites",input$variable_selected2,plot_titles_2(),input$title_mode_ts2,ref_ts2)
-      add_highlighted_areas(ts_highlights_data2())
-      add_percentiles(timeseries_data_2())
-      add_custom_lines(ts_lines_data2())
-      add_timeseries(timeseries_data_2(),"composites",input$variable_selected2)
-      add_boxes(ts_highlights_data2())
-      add_custom_points(ts_points_data2())
-      if (input$show_key_ts2 == TRUE){
-        add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_2(),
-                   FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
+      
+      return(processed_data4_2)
+    })
+    
+    #Map customization (statistics and map titles)
+    
+    plot_titles_2 <- reactive({
+      
+      my_title <- generate_titles ("composites", input$dataset_selected2, input$variable_selected2, input$mode_selected2, input$title_mode2,input$title_mode_ts2,
+                                   month_range_2(), input$range_years2, input$ref_period2, input$prior_years2,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
+                                   input$title1_input2, input$title2_input2,input$title1_input_ts2)
+      
+      return(my_title)
+    })
+    
+    
+    map_statistics_2 = reactive({
+      
+      my_stats = create_stat_highlights_data(data_output4_2(),SDratio_subset_2(),
+                                             input$custom_statistic2,input$sd_ratio2,
+                                             input$percentage_sign_match2,
+                                             subset_lons_2(),subset_lats_2())
+      
+      return(my_stats)
+    })
+    
+    #Plotting the Data (Maps)
+    map_data_2 <- function(){create_map_datatable(data_output4_2(), subset_lons_2(), subset_lats_2())}
+    
+    output$data3 <- renderTable({map_data_2()}, rownames = TRUE)
+    
+    #Plotting the Map
+    map_dimensions_2 <- reactive({
+      
+      m_d_2 = generate_map_dimensions(subset_lons_2(), subset_lats_2(), session$clientData$output_map2_width, input$dimension[2]*0.85, input$hide_axis2)
+      
+      return(m_d_2)
+    })
+    
+    map_plot_2 <- function(){plot_default_map(map_data_2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2)}
+    
+    output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
+    # code line below sets height as a function of the ratio of lat/lon 
+    
+    
+    #Ref/Absolute Map
+    ref_map_data_2 <- function(){
+      if (input$ref_map_mode2 == "Absolute Values"){
+        create_map_datatable(data_output2_2(), subset_lons_2(), subset_lats_2())
+      } else if (input$ref_map_mode2 == "Reference Values"){
+        create_map_datatable(data_output3_2(), subset_lons_2(), subset_lats_2())
+      } else if (input$ref_map_mode2 == "SD Ratio"){
+        create_map_datatable(SDratio_subset_2(), subset_lons_2(), subset_lats_2())
+      }
+    }    
+    
+    ref_map_titles_2 = reactive({
+      if (input$ref_map_mode2 == "Absolute Values"){
+        rm_title2 <- generate_titles("composites",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
+                                     month_range_2(), year_set_comp(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
+                                     input$title1_input2, input$title2_input2,input$title1_input_ts2)
+      } else if (input$ref_map_mode2 == "Reference Values"){
+        rm_title2 <- generate_titles("reference",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
+                                     month_range_2(), year_set_comp_ref(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
+                                     input$title1_input2, input$title2_input2,input$title1_input_ts2)
+      } else if (input$ref_map_mode2 == "SD Ratio"){
+        rm_title2 <- generate_titles("sdratio",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
+                                     month_range_2(), c(NA,NA), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
+                                     input$title1_input2, input$title2_input2,input$title1_input_ts2)
+      }
+    })  
+    
+    ref_map_plot_2 <- function(){
+      if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Values" ){
+        plot_default_map(ref_map_data_2(), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2)
+      } else if (input$ref_map_mode2 == "SD Ratio"){
+        plot_default_map(ref_map_data_2(), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2)
       }
     }
-    # Plot annual cycles if year range = 1 year
-    else {
-      plot_monthly_timeseries(timeseries_data_2(),plot_titles_2()$ts_title,"Custom","topright","base")
-      add_highlighted_areas(ts_highlights_data2())
-      add_custom_lines(ts_lines_data2())
-      plot_monthly_timeseries(timeseries_data_2(),plot_titles_2()$ts_title,"Custom","topright","lines")
-      add_boxes(ts_highlights_data2())
-      add_custom_points(ts_points_data2())
-      if (input$show_key_ts2 == TRUE){
-        add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_2(),
-                   FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
+    
+    output$ref_map2 <- renderPlot({ref_map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
+    
+    
+    #Plotting the data (timeseries)
+    timeseries_data_2 <- reactive({
+      #Plot normal timeseries if year set is > 1 year
+      if (length(year_set_comp()) > 1){    
+        ts_data1 <- create_timeseries_datatable(data_output4_2(), year_set_comp(), "set", subset_lons_2(), subset_lats_2())
+        
+        ts_data2 = add_stats_to_TS_datatable(ts_data1,FALSE,NA,NA,input$custom_percentile_ts2,
+                                             input$percentile_ts2,FALSE)
+      } 
+      # Plot monthly TS if year range = 1 year
+      else {
+        ts_data1 = load_ModE_data(input$dataset_selected2,input$variable_selected2)
+        
+        # Generate ref years
+        if (input$mode_selected2 == "Fixed reference"){
+          ref_years = input$ref_period2
+        } else if (input$mode_selected2 == "Compared to X years prior"){
+          ref_years = c((year_set_comp()-input$prior_years2),year_set_comp()-1)
+        } else {
+          ref_years = year_set_comp_ref()
+        }
+        
+        ts_data2 = create_monthly_TS_data(ts_data1,input$dataset_selected2,input$variable_selected2,
+                                          year_set_comp(),input$range_longitude2,
+                                          input$range_latitude2,"Anomaly",
+                                          "Individual years",ref_years)
+      }
+      return(ts_data2)
+    })
+    
+    timeseries_data_output_2 = reactive({
+      if (length(year_set_comp()) > 1){ 
+        output_ts_table = rewrite_tstable(timeseries_data_2(),input$variable_selected2)
+      } else {
+        output_ts_table = timeseries_data_2()
+      }
+      return(output_ts_table) 
+    })
+    
+    output$data4 <- renderDataTable({timeseries_data_output_2()}, rownames = FALSE, options = list(
+      autoWidth = TRUE, 
+      searching = FALSE,
+      paging = TRUE,
+      pagingType = "numbers"
+    ))
+    
+    #Plotting the timeseries
+    timeseries_plot_2 <- function(){
+      #Plot normal timeseries if year set is > 1 year
+      if (length(year_set_comp()) > 1){  
+        # Generate NA or reference mean
+        if(input$show_ref_ts2 == TRUE){
+          ref_ts2 = signif(mean(data_output3_2()),3)
+        } else {
+          ref_ts2 = NA
+        }
+        
+        plot_default_timeseries(timeseries_data_2(),"composites",input$variable_selected2,plot_titles_2(),input$title_mode_ts2,ref_ts2)
+        add_highlighted_areas(ts_highlights_data2())
+        add_percentiles(timeseries_data_2())
+        add_custom_lines(ts_lines_data2())
+        add_timeseries(timeseries_data_2(),"composites",input$variable_selected2)
+        add_boxes(ts_highlights_data2())
+        add_custom_points(ts_points_data2())
+        if (input$show_key_ts2 == TRUE){
+          add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_2(),
+                     FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
+        }
+      }
+      # Plot monthly TS if year range = 1 year
+      else {
+        plot_monthly_timeseries(timeseries_data_2(),plot_titles_2()$ts_title,"Custom","topright","base")
+        add_highlighted_areas(ts_highlights_data2())
+        add_custom_lines(ts_lines_data2())
+        plot_monthly_timeseries(timeseries_data_2(),plot_titles_2()$ts_title,"Custom","topright","lines")
+        add_boxes(ts_highlights_data2())
+        add_custom_points(ts_points_data2())
+        if (input$show_key_ts2 == TRUE){
+          add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_2(),
+                     FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
+        }
       }
     }
-  }
-  
-  output$timeseries2 <- renderPlot({timeseries_plot_2()}, height = 400)
-  
-  #List of chosen composite years (upload or manual) to plot
-  output$text_years2 <- renderText("Chosen composite years:")
-  output$years2 <- renderText({year_set_comp()})
-  output$text_years2b <- renderText("Chosen composite years:")
-  output$years2b <- renderText({year_set_comp()})
-  
-  output$text_custom_years2  <- renderText("Chosen reference years:")
-  output$custom_years2       <- renderText({year_set_comp_ref()})
-  output$text_custom_years2b <- renderText("Chosen reference years:")
-  output$custom_years2b      <- renderText({year_set_comp_ref()})
-
+    
+    output$timeseries2 <- renderPlot({timeseries_plot_2()}, height = 400)
+    
+    #List of chosen composite years (upload or manual) to plot
+    output$text_years2 <- renderText("Chosen composite years:")
+    output$years2 <- renderText({year_set_comp()})
+    output$text_years2b <- renderText("Chosen composite years:")
+    output$years2b <- renderText({year_set_comp()})
+    
+    output$text_custom_years2  <- renderText("Chosen reference years:")
+    output$custom_years2       <- renderText({year_set_comp_ref()})
+    output$text_custom_years2b <- renderText("Chosen reference years:")
+    output$custom_years2b      <- renderText({year_set_comp_ref()})
+    
     ### ModE-RA sources ----
     
-  ranges_2  <- reactiveValues(x = NULL, y = NULL)
-  ranges2_2 <- reactiveValues(x = NULL, y = NULL)
-  
-  fad_wa2 <- function(labs) {
-    labs = labs
-    plot_modera_sources(input$fad_year_a2, "winter", lonlat_vals2()[1:2], lonlat_vals2()[3:4], labs)}
-  fad_sa2 <- function(labs) {
-    labs = labs
-    plot_modera_sources(input$fad_year_a2, "summer", lonlat_vals2()[1:2], lonlat_vals2()[3:4], labs)}
-  
-  # Upper map (Original)
-  output$fad_winter_map_a2 <- renderPlot({
-    if ((month_range_2()[1] >= 4) && (month_range_2()[2] <= 9)) {
-      plot_data <- fad_sa2(labs = TRUE)
-    } else {
-      plot_data <- fad_wa2(labs = TRUE)
-    }
+    ranges_2  <- reactiveValues(x = NULL, y = NULL)
+    ranges2_2 <- reactiveValues(x = NULL, y = NULL)
     
-    # Render the "Original Map" with no fixed aspect ratio
-    plot_data
-  })
-  
-  # Upper map (Zoom)
-  output$fad_zoom_winter_a2 <- renderPlot({
-    if ((month_range_2()[1] >= 4) && (month_range_2()[2] <= 9)) {
-      plot_data <- fad_sa2(labs = FALSE)
-    } else {
-      plot_data <- fad_wa2(labs = FALSE)
-    }
+    fad_wa2 <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a2, "winter", lonlat_vals2()[1:2], lonlat_vals2()[3:4], labs)}
+    fad_sa2 <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a2, "summer", lonlat_vals2()[1:2], lonlat_vals2()[3:4], labs)}
     
-    # Apply coord_sf to the entire map with adjusted limits
-    plot_data <- plot_data + coord_sf(xlim = ranges_2$x, ylim = ranges_2$y, crs = st_crs(4326))
+    # Upper map (Original)
+    output$fad_winter_map_a2 <- renderPlot({
+      if ((month_range_2()[1] >= 4) && (month_range_2()[2] <= 9)) {
+        plot_data <- fad_sa2(labs = TRUE)
+      } else {
+        plot_data <- fad_wa2(labs = TRUE)
+      }
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
+    })
     
-    plot_data
-  })
-  
-  # Lower map (Original)
-  output$fad_summer_map_a2 <- renderPlot({
-    if ((month_range_2()[1] >= 4 && month_range_2()[2] <= 9) | (month_range_2()[2] <= 3)) {
-      NULL
-    } else {
-      plot_data <- fad_sa2(labs = TRUE)  
-    } 
+    # Upper map (Zoom)
+    output$fad_zoom_winter_a2 <- renderPlot({
+      if ((month_range_2()[1] >= 4) && (month_range_2()[2] <= 9)) {
+        plot_data <- fad_sa2(labs = FALSE)
+      } else {
+        plot_data <- fad_wa2(labs = FALSE)
+      }
+      
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = ranges_2$x, ylim = ranges_2$y, crs = st_crs(4326))
+      
+      plot_data
+    })
     
-    # Render the "Original Map" with no fixed aspect ratio
-    plot_data
-  })
-  
-  # Lower map (Zoom)
-  output$fad_zoom_summer_a2 <- renderPlot({
-    if ((month_range_2()[1] >= 4 && month_range_2()[2] <= 9) || (month_range_2()[2] <= 3)) {
-      NULL
-    } else {
-      plot_data <- fad_sa2(labs = FALSE)
-    }
+    # Lower map (Original)
+    output$fad_summer_map_a2 <- renderPlot({
+      if ((month_range_2()[1] >= 4 && month_range_2()[2] <= 9) | (month_range_2()[2] <= 3)) {
+        NULL
+      } else {
+        plot_data <- fad_sa2(labs = TRUE)  
+      } 
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
+    })
     
-    # Apply coord_sf to the entire map with adjusted limits
-    plot_data <- plot_data + coord_sf(xlim = ranges2_2$x, ylim = ranges2_2$y, crs = st_crs(4326))
+    # Lower map (Zoom)
+    output$fad_zoom_summer_a2 <- renderPlot({
+      if ((month_range_2()[1] >= 4 && month_range_2()[2] <= 9) || (month_range_2()[2] <= 3)) {
+        NULL
+      } else {
+        plot_data <- fad_sa2(labs = FALSE)
+      }
+      
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = ranges2_2$x, ylim = ranges2_2$y, crs = st_crs(4326))
+      
+      plot_data
+    })
     
-    plot_data
-  })
-  
     #Update Modera source year input and Update Brush Input
     
     first_value <- reactive({
@@ -9923,24 +9994,24 @@ server <- function(input, output, session) {
     
     # Subset v1 data to year_range and chosen variable
     user_subset_v1 = reactive({
-
+      
       req(user_data_v1(),input$user_variable_v1)
-
+      
       usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3)
-
+      
       return(usr_ss1)
     })
-
+    
     # Subset v2 data to year_range and chosen variable
     user_subset_v2 = reactive({
-
+      
       req(user_data_v2(),input$user_variable_v2)
-
+      
       usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3)
-
+      
       return(usr_ss2)
     })
-
+    
     year_range_cor = reactive({
       
       result <- tryCatch(
@@ -9986,32 +10057,48 @@ server <- function(input, output, session) {
     })
     
     # Generate pp ID
-    pp_id_v1 <- reactive({
-      ppid_v1 = generate_pp_data_ID(input$dataset_selected_v1,input$ME_variable_v1, month_range_v1())
-      return(ppid_v1)
+    data_id_v1 <- reactive({
+      dat_id_v1 = generate_data_ID(input$dataset_selected_v1,input$ME_variable_v1, month_range_v1())
+      return(dat_id_v1)
+    })
+    
+    # Update custom_data if required
+    observeEvent(data_id_v1(),{
+      if (data_id_v1()[1] == 0){ # Only updates when new custom data is required...
+        if (!identical(custom_data_ID()[2:3],data_id_v1()[2:3])){ # ....i.e. changed variable or dataset
+          custom_data(load_ModE_data(input$dataset_selected_v1,input$ME_variable_v1)) # load new custom data
+          custom_data_ID(data_id_v1()) # update custom data ID
+        }
+      }
     })
     
     #Geographic Subset
     data_output1_v1 <- reactive({ 
-      data_input_v1 <-   load_ModE_data(input$dataset_selected_v1,input$ME_variable_v1)
-      processed_data_v1  <- create_latlon_subset(data_input_v1, pp_id_v1(), subset_lons_v1(), subset_lats_v1())                
+      processed_data_v1  <- create_latlon_subset(custom_data(), data_id_v1(), subset_lons_v1(), subset_lats_v1())                
       return(processed_data_v1)
     })
     
     #Creating yearly subset
     data_output2_v1 <- reactive({ 
-      processed_data2_v1 <- create_yearly_subset(data_output1_v1(), pp_id_v1(), input$range_years3, month_range_v1())              
+      processed_data2_v1 <- create_yearly_subset(data_output1_v1(), data_id_v1(), input$range_years3, month_range_v1())              
       return(processed_data2_v1)  
     })
     
+    # Create reference subset & average over time
+    data_output3_v1 <- reactive({ 
+      ref_v1 <- create_yearly_subset(data_output1_v1(), data_id_v1(), input$ref_period_v1, month_range_v1())
+      processed_data3_v1 = apply(ref_v1,c(1:2),mean)
+      return(processed_data3_v1)  
+    })
+    
     #Converting absolutes to anomalies
-    data_output3_v1 <- reactive({
+    data_output4_v1 <- reactive({
       if (input$mode_selected_v1 == "Absolute"){
-        processed_data3_v1 <- data_output2_v1()
+        processed_data4_v1 <- data_output2_v1()
       } else {
-        processed_data3_v1 <- convert_subset_to_anomalies(data_output2_v1(), data_output1_v1(), pp_id_v1(), month_range_v1(), input$ref_period_v1)
+        processed_data4_v1 <- convert_subset_to_anomalies(data_output2_v1(), data_output3_v1())
       }
-      return(processed_data3_v1)
+      return(processed_data4_v1)
     })
     
     #Map titles
@@ -10024,13 +10111,13 @@ server <- function(input, output, session) {
     }) 
     
     # Generate Map data & plotting function
-    map_data_v1 <- function(){create_map_datatable(data_output3_v1(), subset_lons_v1(), subset_lats_v1())}
+    map_data_v1 <- function(){create_map_datatable(data_output4_v1(), subset_lons_v1(), subset_lats_v1())}
     
     ME_map_plot_v1 <- function(){plot_default_map(map_data_v1(), input$ME_variable_v1, input$mode_selected_v1, plot_titles_v1(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE)}
     
     # Generate timeseries data & plotting function
     timeseries_data_v1 <- reactive({
-      ts_data1_v1 <- create_timeseries_datatable(data_output3_v1(), input$range_years3, "range", subset_lons_v1(), subset_lats_v1())
+      ts_data1_v1 <- create_timeseries_datatable(data_output4_v1(), input$range_years3, "range", subset_lons_v1(), subset_lats_v1())
       return(ts_data1_v1)
     })
     
@@ -10057,32 +10144,48 @@ server <- function(input, output, session) {
     })
     
     # Generate pp ID
-    pp_id_v2 <- reactive({
-      ppid_v2 = generate_pp_data_ID(input$dataset_selected_v2,input$ME_variable_v2, month_range_v2())
-      return(ppid_v2)
+    data_id_v2 <- reactive({
+      dat_id_v2 = generate_data_ID(input$dataset_selected_v2,input$ME_variable_v2, month_range_v2())
+      return(dat_id_v2)
+    })
+    
+    # Update custom_data if required
+    observeEvent(data_id_v2(),{
+      if (data_id_v2()[1] == 0){ # Only updates when new custom data is required...
+        if (!identical(custom_data_ID2()[2:3],data_id_v2()[2:3])){ # ....i.e. changed variable or dataset
+          custom_data2(load_ModE_data(input$dataset_selected_v2,input$ME_variable_v2)) # load new custom data
+          custom_data_ID2(data_id_v2()) # update custom data ID
+        }
+      }
     })
     
     #Geographic Subset
     data_output1_v2 <- reactive({ 
-      data_input_v2 <- load_ModE_data(input$dataset_selected_v2,input$ME_variable_v2)
-      processed_data_v2  <- create_latlon_subset(data_input_v2, pp_id_v2(), subset_lons_v2(), subset_lats_v2())                
+      processed_data_v2  <- create_latlon_subset(custom_data2(), data_id_v2(), subset_lons_v2(), subset_lats_v2())                
       return(processed_data_v2)
     })
     
     #Creating yearly subset
     data_output2_v2 <- reactive({ 
-      processed_data2_v2 <- create_yearly_subset(data_output1_v2(), pp_id_v2(), input$range_years3, month_range_v2())              
+      processed_data2_v2 <- create_yearly_subset(data_output1_v2(), data_id_v2(), input$range_years3, month_range_v2())              
       return(processed_data2_v2)  
     })
     
+    # Create reference subset & average over time
+    data_output3_v2 <- reactive({ 
+      ref_v2 <- create_yearly_subset(data_output1_v2(), data_id_v2(), input$ref_period_v2, month_range_v2())
+      processed_data3_v2 = apply(ref_v2,c(1:2),mean)
+      return(processed_data3_v2)  
+    })
+    
     #Converting absolutes to anomalies
-    data_output3_v2 <- reactive({
+    data_output4_v2 <- reactive({
       if (input$mode_selected_v2 == "Absolute"){
-        processed_data3_v2 <- data_output2_v2()
+        processed_data4_v2 <- data_output2_v2()
       } else {
-        processed_data3_v2 <- convert_subset_to_anomalies(data_output2_v2(), data_output1_v2(), pp_id_v2(), month_range_v2(), input$ref_period_v2)
+        processed_data4_v2 <- convert_subset_to_anomalies(data_output2_v2(), data_output3_v2())
       }
-      return(processed_data3_v2)
+      return(processed_data4_v2)
     })
     
     #Map titles
@@ -10095,13 +10198,13 @@ server <- function(input, output, session) {
     }) 
     
     # Generate Map data & plotting function
-    map_data_v2 <- function(){create_map_datatable(data_output3_v2(), subset_lons_v2(), subset_lats_v2())}
+    map_data_v2 <- function(){create_map_datatable(data_output4_v2(), subset_lons_v2(), subset_lats_v2())}
     
     ME_map_plot_v2 <- function(){plot_default_map(map_data_v2(), input$ME_variable_v2, input$mode_selected_v2, plot_titles_v2(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE)}
     
     # Generate timeseries data & plotting function
     timeseries_data_v2 <- reactive({
-      ts_data1_v2 <- create_timeseries_datatable(data_output3_v2(), input$range_years3, "range", subset_lons_v2(), subset_lats_v2())
+      ts_data1_v2 <- create_timeseries_datatable(data_output4_v2(), input$range_years3, "range", subset_lons_v2(), subset_lats_v2())
       return(ts_data1_v2)
     })
     
@@ -10248,309 +10351,293 @@ server <- function(input, output, session) {
     
     ### Plot correlation map
     
-      # Pick out relevant v1/v2 data:
-      correlation_map_data_v1 = reactive({
-        if (input$type_v1 == "Field"){
-          cmd_v1 = data_output3_v1()
-        } else if (input$source_v1 == "User Data"){
-          cmd_v1 = user_subset_v1()
-        } else {
-          cmd_v1 = timeseries_data_v1()
-        } 
-      })
+    # Pick out relevant v1/v2 data:
+    correlation_map_data_v1 = reactive({
+      if (input$type_v1 == "Field"){
+        cmd_v1 = data_output4_v1()
+      } else if (input$source_v1 == "User Data"){
+        cmd_v1 = user_subset_v1()
+      } else {
+        cmd_v1 = timeseries_data_v1()
+      } 
+    })
+    
+    correlation_map_data_v2 = reactive({
+      if (input$type_v2 == "Field"){
+        cmd_v2 = data_output4_v2()
+      } else if (input$source_v2 == "User Data"){
+        cmd_v2 = user_subset_v2()
+      } else {
+        cmd_v2 = timeseries_data_v2()
+      } 
+    })
+    
+    # Generate correlation map data
+    correlation_map_data = reactive({
+      corrmd = generate_correlation_map_data(correlation_map_data_v1(),correlation_map_data_v2(),input$cor_method_map,
+                                             input$type_v1,input$type_v2,lonlat_vals_v1()[1:2],lonlat_vals_v2()[1:2],
+                                             lonlat_vals_v1()[3:4],lonlat_vals_v2()[3:4])
+      return(corrmd)
+    })
+    
+    # Generate plot dimensions
+    correlation_map_dimensions <- reactive({
+      c_m_d = generate_map_dimensions(correlation_map_data()[[1]], correlation_map_data()[[2]], session$clientData$output_correlation_map_width, input$dimension[2], FALSE)
       
-      correlation_map_data_v2 = reactive({
-        if (input$type_v2 == "Field"){
-          cmd_v2 = data_output3_v2()
-        } else if (input$source_v2 == "User Data"){
-          cmd_v2 = user_subset_v2()
-        } else {
-          cmd_v2 = timeseries_data_v2()
-        } 
-      })
-      
-      # Generate correlation map data
-      correlation_map_data = reactive({
-        corrmd = generate_correlation_map_data(correlation_map_data_v1(),correlation_map_data_v2(),input$cor_method_map,
-                                      input$type_v1,input$type_v2,lonlat_vals_v1()[1:2],lonlat_vals_v2()[1:2],
-                                      lonlat_vals_v1()[3:4],lonlat_vals_v2()[3:4])
-        return(corrmd)
-      })
-      
-      # Generate plot dimensions
-      correlation_map_dimensions <- reactive({
-        c_m_d = generate_map_dimensions(correlation_map_data()[[1]], correlation_map_data()[[2]], session$clientData$output_correlation_map_width, input$dimension[2], FALSE)
-        
-        return(c_m_d)
-      })
-      
-      # Plot
-      
-      corr_m1 = function(){
-        if ((input$type_v1 == "Field") | (input$type_v2 == "Field")){
-          plot_correlation_map(correlation_map_data(),plot_titles_cor(),input$axis_input3,
-                               input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame(),TRUE)
-        }
+      return(c_m_d)
+    })
+    
+    # Plot
+    
+    corr_m1 = function(){
+      if ((input$type_v1 == "Field") | (input$type_v2 == "Field")){
+        plot_correlation_map(correlation_map_data(),plot_titles_cor(),input$axis_input3,
+                             input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame(),TRUE)
       }
-
-      output$correlation_map = renderPlot({corr_m1()},width = function(){correlation_map_dimensions()[1]},height = function(){correlation_map_dimensions()[2]})
-      
+    }
+    
+    output$correlation_map = renderPlot({corr_m1()},width = function(){correlation_map_dimensions()[1]},height = function(){correlation_map_dimensions()[2]})
+    
     ### Data tables & Downloads 
     
-      # Create output ts_data
-      correlation_ts_datatable = reactive({
-        
-        if (input$source_v1 == "ModE-"){
-          variable_v1 = input$ME_variable_v1
-        } else {
-          variable_v1 = input$user_variable_v1
-        }
-        
-        if (input$source_v2 == "ModE-"){
-          variable_v2 = input$ME_variable_v2
-        } else {
-          variable_v2 = input$user_variable_v2
-        }
-        
-        # Create v1/v2 datatables
-        ctd_v1 = rewrite_tstable(ts_data_v1(),variable_v1)
-        ctd_v2 = rewrite_tstable(ts_data_v2(),variable_v2)
-        
-        # Combine into dataframe
-        ctd = data.frame(ctd_v1,ctd_v2[-1])
-        
-        # Add Var1/2 to names
-        colnames(ctd) = c("Year",paste("Var1_",colnames(ctd_v1)[-1], sep = ""),paste("Var2_",colnames(ctd_v2)[-1], sep = ""))
-        
-        return(ctd)
-      })
+    # Create output ts_data
+    correlation_ts_datatable = reactive({
       
-      output$correlation_ts_data = renderDataTable({correlation_ts_datatable()}, rownames = FALSE, options = list(
-        autoWidth = TRUE, 
-        searching = FALSE,
-        paging = TRUE,
-        pagingType = "numbers"
-      ))
+      if (input$source_v1 == "ModE-"){
+        variable_v1 = input$ME_variable_v1
+      } else {
+        variable_v1 = input$user_variable_v1
+      }
       
-      # Create output map data
-      correlation_map_datatable = reactive({
-        
-        corrmada = generate_correlation_map_datatable(correlation_map_data())
-        
-        return(corrmada)
-      })
+      if (input$source_v2 == "ModE-"){
+        variable_v2 = input$ME_variable_v2
+      } else {
+        variable_v2 = input$user_variable_v2
+      }
       
-      output$correlation_map_data <- renderTable({correlation_map_datatable()}, rownames = TRUE)
+      # Create v1/v2 datatables
+      ctd_v1 = rewrite_tstable(ts_data_v1(),variable_v1)
+      ctd_v2 = rewrite_tstable(ts_data_v2(),variable_v2)
       
+      # Combine into dataframe
+      ctd = data.frame(ctd_v1,ctd_v2[-1])
+      
+      # Add Var1/2 to names
+      colnames(ctd) = c("Year",paste("Var1_",colnames(ctd_v1)[-1], sep = ""),paste("Var2_",colnames(ctd_v2)[-1], sep = ""))
+      
+      return(ctd)
+    })
+    
+    output$correlation_ts_data = renderDataTable({correlation_ts_datatable()}, rownames = FALSE, options = list(
+      autoWidth = TRUE, 
+      searching = FALSE,
+      paging = TRUE,
+      pagingType = "numbers"
+    ))
+    
+    # Create output map data
+    correlation_map_datatable = reactive({
+      
+      corrmada = generate_correlation_map_datatable(correlation_map_data())
+      
+      return(corrmada)
+    })
+    
+    output$correlation_map_data <- renderTable({correlation_map_datatable()}, rownames = TRUE)
+    
     ### ModE-RA sources ----
-      #ModE-RA sources Variable 1
+    #ModE-RA sources Variable 1
+    
+    ranges_3a  <- reactiveValues(x = NULL, y = NULL)
+    ranges2_3a <- reactiveValues(x = NULL, y = NULL)
+    
+    fad_wa3a <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a3a, "winter", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4], labs)}
+    fad_sa3a <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a3a, "summer", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4], labs)}
+    
+    # Upper map (Original)
+    output$fad_winter_map_a3a <- renderPlot({
+      if ((month_range_v1()[1] >= 4) && (month_range_v1()[2] <= 9)) {
+        plot_data <- fad_sa3a(labs = TRUE)
+      } else {
+        plot_data <- fad_wa3a(labs = TRUE)
+      }
       
-      ranges_3a  <- reactiveValues(x = NULL, y = NULL)
-      ranges2_3a <- reactiveValues(x = NULL, y = NULL)
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
+    })
+    
+    # Upper map (Zoom)
+    output$fad_zoom_winter_a3a <- renderPlot({
+      if ((month_range_v1()[1] >= 4) && (month_range_v1()[2] <= 9)) {
+        plot_data <- fad_sa3a(labs = FALSE)
+      } else {
+        plot_data <- fad_wa3a(labs = FALSE)
+      }
       
-      fad_wa3a <- function(labs) {
-        labs = labs
-        plot_modera_sources(input$fad_year_a3a, "winter", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4], labs)}
-      fad_sa3a <- function(labs) {
-        labs = labs
-        plot_modera_sources(input$fad_year_a3a, "summer", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4], labs)}
-
-      # Upper map (Original)
-      output$fad_winter_map_a3a <- renderPlot({
-        if ((month_range_v1()[1] >= 4) && (month_range_v1()[2] <= 9)) {
-          plot_data <- fad_sa3a(labs = TRUE)
-        } else {
-          plot_data <- fad_wa3a(labs = TRUE)
-        }
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = ranges_3a$x, ylim = ranges_3a$y, crs = st_crs(4326))
+      
+      plot_data
+    })
+    
+    # Lower map (Original)
+    output$fad_summer_map_a3a <- renderPlot({
+      if ((month_range_v1()[1] >= 4 && month_range_v1()[2] <= 9) | (month_range_v1()[2] <= 3)) {
+        NULL
+      } else {
+        plot_data <- fad_sa3a(labs = TRUE)  
+      } 
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
+    })
+    
+    # Lower map (Zoom)
+    output$fad_zoom_summer_a3a <- renderPlot({
+      if ((month_range_v1()[1] >= 4 && month_range_v1()[2] <= 9) || (month_range_v1()[2] <= 3)) {
+        NULL
+      } else {
+        plot_data <- fad_sa3a(labs = FALSE)
+      }
+      
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = ranges2_3a$x, ylim = ranges2_3a$y, crs = st_crs(4326))
+      
+      plot_data
+    })
+    
+    #ModE-RA sources Variable 2
+    
+    ranges_3b  <- reactiveValues(x = NULL, y = NULL)
+    ranges2_3b <- reactiveValues(x = NULL, y = NULL)
+    
+    fad_wa3b <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a3b, "winter", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4], labs)}
+    fad_sa3b <- function(labs) {
+      labs = labs
+      plot_modera_sources(input$fad_year_a3b, "summer", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4], labs)}
+    
+    # Upper map (Original)
+    output$fad_winter_map_a3b <- renderPlot({
+      if ((month_range_v2()[1] >= 4) && (month_range_v2()[2] <= 9)) {
+        plot_data <- fad_sa3b(labs = TRUE)
+      } else {
+        plot_data <- fad_wa3b(labs = TRUE)
+      }
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
+    })
+    
+    # Upper map (Zoom)
+    output$fad_zoom_winter_a3b <- renderPlot({
+      if ((month_range_v2()[1] >= 4) && (month_range_v2()[2] <= 9)) {
+        plot_data <- fad_sa3b(labs = FALSE)
+      } else {
+        plot_data <- fad_wa3b(labs = FALSE)
+      }
+      
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = ranges_3b$x, ylim = ranges_3b$y, crs = st_crs(4326))
+      
+      plot_data
+    })
+    
+    # Lower map (Original)
+    output$fad_summer_map_a3b <- renderPlot({
+      if ((month_range_v2()[1] >= 4 && month_range_v2()[2] <= 9) | (month_range_v2()[2] <= 3)) {
+        NULL
+      } else {
+        plot_data <- fad_sa3b(labs = TRUE)  
+      } 
+      
+      # Render the "Original Map" with no fixed aspect ratio
+      plot_data
+    })
+    
+    # Lower map (Zoom)
+    output$fad_zoom_summer_a3b <- renderPlot({
+      if ((month_range_v2()[1] >= 4 && month_range_v2()[2] <= 9) || (month_range_v2()[2] <= 3)) {
+        NULL
+      } else {
+        plot_data <- fad_sa3b(labs = FALSE)
+      }
+      
+      # Apply coord_sf to the entire map with adjusted limits
+      plot_data <- plot_data + coord_sf(xlim = ranges2_3b$x, ylim = ranges2_3b$y, crs = st_crs(4326))
+      
+      plot_data
+    })
+    
+    #Update Modera source year input and update brushes
+    
+    observeEvent(input$range_years3[1], {
+      updateNumericInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "fad_year_a3a",
+        value = input$range_years3[1])
+    })
+    
+    observeEvent(input$range_years3[1], {
+      updateNumericInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "fad_year_a3b",
+        value = input$range_years3[1])
+    })
+    
+    observe({
+      brush_v1a <- input$brush_fad1a3a
+      if (!is.null(brush_v1a)) {
+        ranges_3a$x <- c(brush_v1a$xmin, brush_v1a$xmax)
+        ranges_3a$y <- c(brush_v1a$ymin, brush_v1a$ymax)
         
-        # Render the "Original Map" with no fixed aspect ratio
-        plot_data
-      })
-      
-      # Upper map (Zoom)
-      output$fad_zoom_winter_a3a <- renderPlot({
-        if ((month_range_v1()[1] >= 4) && (month_range_v1()[2] <= 9)) {
-          plot_data <- fad_sa3a(labs = FALSE)
-        } else {
-          plot_data <- fad_wa3a(labs = FALSE)
-        }
+      } else {
+        ranges_3a$x <- lonlat_vals_v1()[1:2]
+        ranges_3a$y <- lonlat_vals_v1()[3:4]
+      }
+    })
+    
+    observe({
+      brush_v1a2 <- input$brush_fad1b3a
+      if (!is.null(brush_v1a2)) {
+        ranges2_3a$x <- c(brush_v1a2$xmin, brush_v1a2$xmax)
+        ranges2_3a$y <- c(brush_v1a2$ymin, brush_v1a2$ymax)
         
-        # Apply coord_sf to the entire map with adjusted limits
-        plot_data <- plot_data + coord_sf(xlim = ranges_3a$x, ylim = ranges_3a$y, crs = st_crs(4326))
+      } else {
+        ranges2_3a$x <- lonlat_vals_v1()[1:2]
+        ranges2_3a$y <- lonlat_vals_v1()[3:4]
+      }
+    })
+    
+    observe({
+      brush_v2a <- input$brush_fad1a3b
+      if (!is.null(brush_v2a)) {
+        ranges_3b$x <- c(brush_v2a$xmin, brush_v2a$xmax)
+        ranges_3b$y <- c(brush_v2a$ymin, brush_v2a$ymax)
         
-        plot_data
-      })
-      
-      # Lower map (Original)
-      output$fad_summer_map_a3a <- renderPlot({
-        if ((month_range_v1()[1] >= 4 && month_range_v1()[2] <= 9) | (month_range_v1()[2] <= 3)) {
-          NULL
-        } else {
-          plot_data <- fad_sa3a(labs = TRUE)  
-        } 
+      } else {
+        ranges_3b$x <- lonlat_vals_v2()[1:2]
+        ranges_3b$y <- lonlat_vals_v2()[3:4]
+      }
+    })
+    
+    observe({
+      brush_v2a2 <- input$brush_fad1b3b
+      if (!is.null(brush_v2a2)) {
+        ranges2_3b$x <- c(brush_v2a2$xmin, brush_v2a2$xmax)
+        ranges2_3b$y <- c(brush_v2a2$ymin, brush_v2a2$ymax)
         
-        # Render the "Original Map" with no fixed aspect ratio
-        plot_data
-      })
-      
-      # Lower map (Zoom)
-      output$fad_zoom_summer_a3a <- renderPlot({
-        if ((month_range_v1()[1] >= 4 && month_range_v1()[2] <= 9) || (month_range_v1()[2] <= 3)) {
-          NULL
-        } else {
-          plot_data <- fad_sa3a(labs = FALSE)
-        }
-        
-        # Apply coord_sf to the entire map with adjusted limits
-        plot_data <- plot_data + coord_sf(xlim = ranges2_3a$x, ylim = ranges2_3a$y, crs = st_crs(4326))
-        
-        plot_data
-      })
-      
-      #Data ModE-RA sources
-      fad_wa_data3a <- function() {
-        
-        download_feedback_data(input$fad_year_a3a, "winter", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4])}
-      fad_sa_data3a <- function() {
-        
-        download_feedback_data(input$fad_year_a3a, "summer", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4])}
-
-      #ModE-RA sources Variable 2
-      
-      ranges_3b  <- reactiveValues(x = NULL, y = NULL)
-      ranges2_3b <- reactiveValues(x = NULL, y = NULL)
-      
-      fad_wa3b <- function(labs) {
-        labs = labs
-        plot_modera_sources(input$fad_year_a3b, "winter", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4], labs)}
-      fad_sa3b <- function(labs) {
-        labs = labs
-        plot_modera_sources(input$fad_year_a3b, "summer", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4], labs)}
-
-      # Upper map (Original)
-      output$fad_winter_map_a3b <- renderPlot({
-        if ((month_range_v2()[1] >= 4) && (month_range_v2()[2] <= 9)) {
-          plot_data <- fad_sa3b(labs = TRUE)
-        } else {
-          plot_data <- fad_wa3b(labs = TRUE)
-        }
-        
-        # Render the "Original Map" with no fixed aspect ratio
-        plot_data
-      })
-      
-      # Upper map (Zoom)
-      output$fad_zoom_winter_a3b <- renderPlot({
-        if ((month_range_v2()[1] >= 4) && (month_range_v2()[2] <= 9)) {
-          plot_data <- fad_sa3b(labs = FALSE)
-        } else {
-          plot_data <- fad_wa3b(labs = FALSE)
-        }
-        
-        # Apply coord_sf to the entire map with adjusted limits
-        plot_data <- plot_data + coord_sf(xlim = ranges_3b$x, ylim = ranges_3b$y, crs = st_crs(4326))
-        
-        plot_data
-      })
-      
-      # Lower map (Original)
-      output$fad_summer_map_a3b <- renderPlot({
-        if ((month_range_v2()[1] >= 4 && month_range_v2()[2] <= 9) | (month_range_v2()[2] <= 3)) {
-          NULL
-        } else {
-          plot_data <- fad_sa3b(labs = TRUE)  
-        } 
-        
-        # Render the "Original Map" with no fixed aspect ratio
-        plot_data
-      })
-      
-      # Lower map (Zoom)
-      output$fad_zoom_summer_a3b <- renderPlot({
-        if ((month_range_v2()[1] >= 4 && month_range_v2()[2] <= 9) || (month_range_v2()[2] <= 3)) {
-          NULL
-        } else {
-          plot_data <- fad_sa3b(labs = FALSE)
-        }
-
-        # Apply coord_sf to the entire map with adjusted limits
-        plot_data <- plot_data + coord_sf(xlim = ranges2_3b$x, ylim = ranges2_3b$y, crs = st_crs(4326))
-        
-        plot_data
-      })
-      
-      #Data ModE-RA sources
-      fad_wa_data3b <- function() {
-        
-        download_feedback_data(input$fad_year_a3b, "winter", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4])}
-      fad_sa_data3b <- function() {
-        
-        download_feedback_data(input$fad_year_a3b, "summer", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4])}
-                  
-      #Update Modera source year input and update brushes
-      
-      observeEvent(input$range_years3[1], {
-        updateNumericInput(
-          session = getDefaultReactiveDomain(),
-          inputId = "fad_year_a3a",
-          value = input$range_years3[1])
-      })
-      
-      observeEvent(input$range_years3[1], {
-        updateNumericInput(
-          session = getDefaultReactiveDomain(),
-          inputId = "fad_year_a3b",
-          value = input$range_years3[1])
-      })
-      
-      observe({
-        brush_v1a <- input$brush_fad1a3a
-        if (!is.null(brush_v1a)) {
-          ranges_3a$x <- c(brush_v1a$xmin, brush_v1a$xmax)
-          ranges_3a$y <- c(brush_v1a$ymin, brush_v1a$ymax)
-          
-        } else {
-          ranges_3a$x <- lonlat_vals_v1()[1:2]
-          ranges_3a$y <- lonlat_vals_v1()[3:4]
-        }
-      })
-      
-      observe({
-        brush_v1a2 <- input$brush_fad1b3a
-        if (!is.null(brush_v1a2)) {
-          ranges2_3a$x <- c(brush_v1a2$xmin, brush_v1a2$xmax)
-          ranges2_3a$y <- c(brush_v1a2$ymin, brush_v1a2$ymax)
-          
-        } else {
-          ranges2_3a$x <- lonlat_vals_v1()[1:2]
-          ranges2_3a$y <- lonlat_vals_v1()[3:4]
-        }
-      })
-      
-      observe({
-        brush_v2a <- input$brush_fad1a3b
-        if (!is.null(brush_v2a)) {
-          ranges_3b$x <- c(brush_v2a$xmin, brush_v2a$xmax)
-          ranges_3b$y <- c(brush_v2a$ymin, brush_v2a$ymax)
-          
-        } else {
-          ranges_3b$x <- lonlat_vals_v2()[1:2]
-          ranges_3b$y <- lonlat_vals_v2()[3:4]
-        }
-      })
-      
-      observe({
-        brush_v2a2 <- input$brush_fad1b3b
-        if (!is.null(brush_v2a2)) {
-          ranges2_3b$x <- c(brush_v2a2$xmin, brush_v2a2$xmax)
-          ranges2_3b$y <- c(brush_v2a2$ymin, brush_v2a2$ymax)
-          
-        } else {
-          ranges2_3b$x <- lonlat_vals_v2()[1:2]
-          ranges2_3b$y <- lonlat_vals_v2()[3:4]
-        }
-      })
-
+      } else {
+        ranges2_3b$x <- lonlat_vals_v2()[1:2]
+        ranges2_3b$y <- lonlat_vals_v2()[3:4]
+      }
+    })
+    
     ### Downloads ----
       # Downloads
       
@@ -10739,231 +10826,246 @@ server <- function(input, output, session) {
  
   ## REGRESSION data processing and plotting ----
     ### Independent and dependent variable ----  
-      ### User data processing
+    ### User data processing
+    
+    # Load in user data for independent variable
+    user_data_iv = reactive({
       
-      # Load in user data for independent variable
-      user_data_iv = reactive({
-        
-        req(input$user_file_iv)
-        
-        if (input$source_iv == "User Data"){
-          new_data1 = read_regcomp_data(input$user_file_iv$datapath)      
-          return(new_data1)
-        }
-        else{
+      req(input$user_file_iv)
+      
+      if (input$source_iv == "User Data"){
+        new_data1 = read_regcomp_data(input$user_file_iv$datapath)      
+        return(new_data1)
+      }
+      else{
+        return(NULL)
+      }
+    })
+    
+    # Load in user data for dependent variable
+    user_data_dv = reactive({
+      
+      req(input$user_file_dv)
+      
+      if (input$source_dv == "User Data"){
+        new_data2 = read_regcomp_data(input$user_file_dv$datapath)      
+        return(new_data2)
+      }
+      else{
+        return(NULL)
+      }
+    })
+    
+    # Subset iv data to year_range and chosen variable
+    user_subset_iv = reactive({
+      
+      req(user_data_iv(),input$user_variable_iv)
+      
+      usr_ss1 = create_user_data_subset(user_data_iv(),input$user_variable_iv,input$range_years4)
+      
+      return(usr_ss1)
+    }) 
+    
+    # Subset dv data to year_range and chosen variable
+    user_subset_dv = reactive({
+      
+      req(user_data_dv(),input$user_variable_dv)
+      
+      usr_ss2 = create_user_data_subset(user_data_dv(),input$user_variable_dv,input$range_years4)
+      
+      return(usr_ss2)
+    }) 
+    
+    
+    year_range_reg = reactive({
+      
+      result <- tryCatch(
+        {
+          return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath))
+        },
+        error = function(e) {
+          showModal(
+            # Add modal dialog for warning message
+            modalDialog(
+              title = "Error",
+              "There was an error in processing your uploaded data. 
+                \nPlease check if the file has the correct format.",
+              easyClose = FALSE,
+              footer = tagList(modalButton("OK"))
+            ))
           return(NULL)
         }
-      })
-      
-      # Load in user data for dependent variable
-      user_data_dv = reactive({
-        
-        req(input$user_file_dv)
-        
-        if (input$source_dv == "User Data"){
-          new_data2 = read_regcomp_data(input$user_file_dv$datapath)      
-          return(new_data2)
+      )
+      return(result)
+    }) 
+    
+    
+    ### Generate ModE-RA data   
+    
+    ## for independent variable:
+    
+    # Calculate Month range
+    month_range_iv <- reactive({
+      mr_iv = create_month_range(input$range_months_iv) #Between 0-12  
+      return(mr_iv)
+    })
+    
+    # Subset lon/lats
+    subset_lons_iv <- eventReactive(lonlat_vals_iv(), {
+      slons_iv = create_subset_lon_IDs(lonlat_vals_iv()[1:2]) 
+      return(slons_iv)
+    })
+    
+    subset_lats_iv <- eventReactive(lonlat_vals_iv(), {
+      slats_iv = create_subset_lat_IDs(lonlat_vals_iv()[3:4]) 
+      return(slats_iv)
+    })
+    
+    
+    
+    ## for dependent variable:
+    
+    # Calculate Month range
+    month_range_dv <- reactive({
+      mr_dv = create_month_range(input$range_months_dv) #Between 0-12  
+      return(mr_dv)
+    })
+    
+    # Subset lon/lats
+    subset_lons_dv <- eventReactive(lonlat_vals_dv(), {
+      slons_dv = create_subset_lon_IDs(lonlat_vals_dv()[1:2]) 
+      return(slons_dv)
+    })
+    
+    subset_lats_dv <- eventReactive(lonlat_vals_dv(), {
+      slats_dv = create_subset_lat_IDs(lonlat_vals_dv()[3:4]) 
+      return(slats_dv)
+    })
+    
+    # Generate pp ID
+    data_id_dv <- reactive({
+      dat_id_dv = generate_data_ID(input$dataset_selected_dv,input$ME_variable_dv, month_range_dv())
+      return(dat_id_dv)
+    })
+    
+    # Update custom_data if required
+    observeEvent(data_id_dv(),{
+      if (data_id_dv()[1] == 0){ # Only updates when new custom data is required...
+        if (!identical(custom_data_ID()[2:3],data_id_dv()[2:3])){ # ....i.e. changed variable or dataset
+          custom_data(load_ModE_data(input$dataset_selected_dv,input$ME_variable_dv)) # load new custom data
+          custom_data_ID(data_id_dv()) # update custom data ID
         }
-        else{
-          return(NULL)
-        }
-      })
+      }
+    })
+    
+    #Geographic Subset
+    data_output1_dv <- reactive({ 
+      processed_data_dv  <- create_latlon_subset(custom_data(), data_id_dv(), subset_lons_dv(), subset_lats_dv())                
+      return(processed_data_dv)
+    })
+    
+    #Creating yearly subset
+    data_output2_dv <- reactive({ 
+      processed_data2_dv <- create_yearly_subset(data_output1_dv(), data_id_dv(), input$range_years3, month_range_dv())              
+      return(processed_data2_dv)  
+    })
+    
+    # Create reference subset & average over time
+    data_output3_dv <- reactive({ 
+      ref_dv <- create_yearly_subset(data_output1_dv(), data_id_dv(), input$ref_period_dv, month_range_dv())
+      processed_data3_dv = apply(ref_dv,c(1:2),mean)
+      return(processed_data3_dv)  
+    })
+    
+    #Converting absolutes to anomalies
+    data_output4_dv <- reactive({
+      if (input$mode_selected_dv == "Absolute"){
+        processed_data4_dv <- data_output2_dv()
+      } else {
+        processed_data4_dv <- convert_subset_to_anomalies(data_output2_dv(), data_output3_dv())
+      }
+      return(processed_data4_dv)
+    })
+    
+    ## ModE-RA map plots and titles:
+    
+    #Map titles
+    plot_titles_dv <- reactive({
+      my_title_dv <- generate_titles ("general",input$dataset_selected_dv, input$ME_variable_dv, input$mode_selected_dv,
+                                      "Default","Default", month_range_dv(),input$range_years4,
+                                      input$ref_period_dv, NA,lonlat_vals_dv()[1:2],lonlat_vals_dv()[3:4],
+                                      NA, NA, NA)
+      return(my_title_dv)
+    }) 
+    
+    plot_titles_iv <- reactive({
+      my_title_iv <- generate_titles ("general",input$dataset_selected_iv, input$ME_variable_iv[1], input$mode_selected_iv,
+                                      "Default","Default", month_range_iv(),input$range_years4,
+                                      input$ref_period_iv, NA,lonlat_vals_iv()[1:2],lonlat_vals_iv()[3:4],
+                                      NA, NA, NA)
+      return(my_title_iv)
+    }) 
+    
+    # Generate Map data & plotting function for dv
+    map_data_dv <- function(){create_map_datatable(data_output4_dv(), subset_lons_dv(), subset_lats_dv())}
+    
+    ME_map_plot_dv <- function(){plot_default_map(map_data_dv(), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE)}
+    
+    # Generate timeseries data & plotting function for iv
+    ME_ts_data_iv <- reactive({
+      me_tsd_iv = create_ME_timeseries_data(input$dataset_selected_dv,input$ME_variable_iv,subset_lons_iv(),subset_lats_iv(),
+                                            input$mode_selected_iv,month_range_iv(),input$range_years4,
+                                            input$ref_period_iv)
+      return(me_tsd_iv)
+    })
+    
+    
+    ME_timeseries_plot_iv = function(){plot_default_timeseries(ME_ts_data_iv(),"general",input$ME_variable_iv[1],plot_titles_iv(),"Default",NA)}
+    
+    # Generate Timeseries data for dv
+    timeseries_data_dv <- reactive({
+      ts_data1_dv <- create_timeseries_datatable(data_output4_dv(), input$range_years4, "range", subset_lons_dv(), subset_lats_dv())
+      return(ts_data1_dv)
+    })
+    
+    #ME_timeseries_plot_dv = function(){plot_default_timeseries(timeseries_data_dv(),"general",input$ME_variable_dv,plot_titles_dv(),"Default")}
+    
+    
+    ### Plot iv/dv plots
+    
+    # Generate plot dimensions
+    plot_dimensions_iv <- reactive({
+      p_d_iv = map_dims_iv = c(session$clientData$output_plot_iv_width,400)
       
-      # Subset iv data to year_range and chosen variable
-      user_subset_iv = reactive({
-        
-        req(user_data_iv(),input$user_variable_iv)
-        
-        usr_ss1 = create_user_data_subset(user_data_iv(),input$user_variable_iv,input$range_years4)
-        
-        return(usr_ss1)
-      }) 
-      
-      # Subset dv data to year_range and chosen variable
-      user_subset_dv = reactive({
-        
-        req(user_data_dv(),input$user_variable_dv)
-        
-        usr_ss2 = create_user_data_subset(user_data_dv(),input$user_variable_dv,input$range_years4)
-        
-        return(usr_ss2)
-      }) 
-      
-      
-      year_range_reg = reactive({
-        
-        result <- tryCatch(
-          {
-            return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath))
-          },
-          error = function(e) {
-            showModal(
-              # Add modal dialog for warning message
-              modalDialog(
-                title = "Error",
-                "There was an error in processing your uploaded data. 
-                  \nPlease check if the file has the correct format.",
-                easyClose = FALSE,
-                footer = tagList(modalButton("OK"))
-              ))
-            return(NULL)
-          }
-        )
-        return(result)
-      }) 
-      
-      
-      ### Generate ModE-RA data   
-      
-      ## for independent variable:
-      
-      # Calculate Month range
-      month_range_iv <- reactive({
-        mr_iv = create_month_range(input$range_months_iv) #Between 0-12  
-        return(mr_iv)
-      })
-      
-      # Subset lon/lats
-      subset_lons_iv <- eventReactive(lonlat_vals_iv(), {
-        slons_iv = create_subset_lon_IDs(lonlat_vals_iv()[1:2]) 
-        return(slons_iv)
-      })
-      
-      subset_lats_iv <- eventReactive(lonlat_vals_iv(), {
-        slats_iv = create_subset_lat_IDs(lonlat_vals_iv()[3:4]) 
-        return(slats_iv)
-      })
-
-
-      
-      ## for dependent variable:
-      
-      # Calculate Month range
-      month_range_dv <- reactive({
-        mr_dv = create_month_range(input$range_months_dv) #Between 0-12  
-        return(mr_dv)
-      })
-      
-      # Subset lon/lats
-      subset_lons_dv <- eventReactive(lonlat_vals_dv(), {
-        slons_dv = create_subset_lon_IDs(lonlat_vals_dv()[1:2]) 
-        return(slons_dv)
-      })
-      
-      subset_lats_dv <- eventReactive(lonlat_vals_dv(), {
-        slats_dv = create_subset_lat_IDs(lonlat_vals_dv()[3:4]) 
-        return(slats_dv)
-      })
-      
-      # Generate pp ID
-      pp_id_dv <- reactive({
-        ppid_dv = generate_pp_data_ID(input$dataset_selected_dv,input$ME_variable_dv, month_range_dv())
-        return(ppid_dv)
-      })
-      
-      #Geographic Subset
-      data_output1_dv <- reactive({ 
-        data_input_dv <-   load_ModE_data(input$dataset_selected_dv,input$ME_variable_dv)
-        processed_data_dv  <- create_latlon_subset(data_input_dv, pp_id_dv(), subset_lons_dv(), subset_lats_dv())                
-        return(processed_data_dv)
-      })
-      
-      #Creating yearly subset
-      data_output2_dv <- reactive({ 
-        processed_data2_dv <- create_yearly_subset(data_output1_dv(), pp_id_dv(), input$range_years4, month_range_dv())              
-        return(processed_data2_dv)  
-      })
-      
-      #Converting absolutes to anomalies
-      data_output3_dv <- reactive({
-        if (input$mode_selected_dv == "Absolute"){
-          processed_data3_dv <- data_output2_dv()
-        } else {
-          processed_data3_dv <- convert_subset_to_anomalies(data_output2_dv(), data_output1_dv(), pp_id_dv(), month_range_dv(), input$ref_period_dv)
-        }
-        return(processed_data3_dv)
-      })
-      
-      
-      ## ModE-RA map plots and titles:
-      
-      #Map titles
-      plot_titles_dv <- reactive({
-        my_title_dv <- generate_titles ("general",input$dataset_selected_dv, input$ME_variable_dv, input$mode_selected_dv,
-                                        "Default","Default", month_range_dv(),input$range_years4,
-                                        input$ref_period_dv, NA,lonlat_vals_dv()[1:2],lonlat_vals_dv()[3:4],
-                                        NA, NA, NA)
-        return(my_title_dv)
-      }) 
-      
-      plot_titles_iv <- reactive({
-        my_title_iv <- generate_titles ("general",input$dataset_selected_iv, input$ME_variable_iv[1], input$mode_selected_iv,
-                                        "Default","Default", month_range_iv(),input$range_years4,
-                                        input$ref_period_iv, NA,lonlat_vals_iv()[1:2],lonlat_vals_iv()[3:4],
-                                        NA, NA, NA)
-        return(my_title_iv)
-      }) 
-      
-      # Generate Map data & plotting function for dv
-      map_data_dv <- function(){create_map_datatable(data_output3_dv(), subset_lons_dv(), subset_lats_dv())}
-      
-      ME_map_plot_dv <- function(){plot_default_map(map_data_dv(), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE)}
-      
-      # Generate timeseries data & plotting function for iv
-      ME_ts_data_iv <- reactive({
-        me_tsd_iv = create_ME_timeseries_data(input$dataset_selected_dv,input$ME_variable_iv,subset_lons_iv(),subset_lats_iv(),
-                                  input$mode_selected_iv,month_range_iv(),input$range_years4,
-                                  input$ref_period_iv)
-        return(me_tsd_iv)
-      })
-      
-      
-      ME_timeseries_plot_iv = function(){plot_default_timeseries(ME_ts_data_iv(),"general",input$ME_variable_iv[1],plot_titles_iv(),"Default",NA)}
-      
-      # Generate timeseries data for dv
-      timeseries_data_dv <- reactive({
-        ts_data1_dv <- create_timeseries_datatable(data_output3_dv(), input$range_years4, "range", subset_lons_dv(), subset_lats_dv())
-        return(ts_data1_dv)
-      })
-      
-      #ME_timeseries_plot_dv = function(){plot_default_timeseries(timeseries_data_dv(),"general",input$ME_variable_dv,plot_titles_dv(),"Default")}
-      
-      
-      ### Plot iv/dv plots
-      
-      # Generate plot dimensions
-      plot_dimensions_iv <- reactive({
-          p_d_iv = map_dims_iv = c(session$clientData$output_plot_iv_width,400)
-          
-          return(p_d_iv)
-      })
-      
-      plot_dimensions_dv <- reactive({
-        if (input$source_dv == "User Data"){
-          map_dims_dv = c(session$clientData$output_plot_dv_width,400)
-        } else {
-          map_dims_dv = generate_map_dimensions(subset_lons_dv(), subset_lats_dv(), session$clientData$output_plot_dv_width, (input$dimension[2]), FALSE)
-        }
-        return(map_dims_dv)  
-      })
-      
-      # Plot 
-      output$plot_iv <- renderPlot({
-        if (input$source_iv == "User Data"){
-          plot_user_timeseries(user_subset_iv(),"darkorange2")
-        } else {
-          ME_timeseries_plot_iv()
-        } 
-      },height = 400)  
-      
-      output$plot_dv <- renderPlot({
-        if (input$source_dv == "User Data"){
-          plot_user_timeseries(user_subset_dv(),"saddlebrown")
-        } else{
-          ME_map_plot_dv()
-        }
-      },width = function(){plot_dimensions_dv()[1]},height = function(){plot_dimensions_dv()[2]})  
-      
+      return(p_d_iv)
+    })
+    
+    plot_dimensions_dv <- reactive({
+      if (input$source_dv == "User Data"){
+        map_dims_dv = c(session$clientData$output_plot_dv_width,400)
+      } else {
+        map_dims_dv = generate_map_dimensions(subset_lons_dv(), subset_lats_dv(), session$clientData$output_plot_dv_width, (input$dimension[2]), FALSE)
+      }
+      return(map_dims_dv)  
+    })
+    
+    # Plot 
+    output$plot_iv <- renderPlot({
+      if (input$source_iv == "User Data"){
+        plot_user_timeseries(user_subset_iv(),"darkorange2")
+      } else {
+        ME_timeseries_plot_iv()
+      } 
+    },height = 400)  
+    
+    output$plot_dv <- renderPlot({
+      if (input$source_dv == "User Data"){
+        plot_user_timeseries(user_subset_dv(),"saddlebrown")
+      } else{
+        ME_map_plot_dv()
+      }
+    },width = function(){plot_dimensions_dv()[1]},height = function(){plot_dimensions_dv()[2]})  
+    
     ### Regression plots and data ----
     
     ## Preparation
@@ -10977,16 +11079,16 @@ server <- function(input, output, session) {
       }
       return(v_iv)
     })
-      
+    
     variable_dv = reactive({
       if (input$source_dv == "ModE-"){
         v_dv = input$ME_variable_dv
       } else {
         v_dv = input$user_variable_dv
-        }
+      }
       return(v_dv)
     })
-      
+    
     # Generate regression titles    
     plot_titles_reg = reactive({
       
@@ -10994,30 +11096,30 @@ server <- function(input, output, session) {
                                        input$dataset_selected_iv,input$dataset_selected_dv,
                                        input$ME_variable_dv,
                                        input$mode_selected_iv, input$mode_selected_dv,
-                                  month_range_iv(),month_range_dv(),lonlat_vals_iv()[1:2],
-                                  lonlat_vals_dv()[1:2],lonlat_vals_iv()[3:4],
-                                  lonlat_vals_dv()[3:4],input$range_years4)
+                                       month_range_iv(),month_range_dv(),lonlat_vals_iv()[1:2],
+                                       lonlat_vals_dv()[1:2],lonlat_vals_iv()[3:4],
+                                       lonlat_vals_dv()[3:4],input$range_years4)
       return(ptr)
     })
     
     # Select variable timeseries data
-      ts_data_iv = reactive({
-        if (input$source_iv == "ModE-"){
-          tsd_iv = ME_ts_data_iv()
-        } else {
-          tsd_iv = user_subset_iv()
-        }  
-        return(tsd_iv)
-      })
-      
-      ts_data_dv = reactive({
-        if (input$source_dv == "ModE-"){
-          tsd_dv = timeseries_data_dv()
-        } else {
-          tsd_dv = user_subset_dv()
-        }  
-        return(tsd_dv)
-      })
+    ts_data_iv = reactive({
+      if (input$source_iv == "ModE-"){
+        tsd_iv = ME_ts_data_iv()
+      } else {
+        tsd_iv = user_subset_iv()
+      }  
+      return(tsd_iv)
+    })
+    
+    ts_data_dv = reactive({
+      if (input$source_dv == "ModE-"){
+        tsd_dv = timeseries_data_dv()
+      } else {
+        tsd_dv = user_subset_dv()
+      }  
+      return(tsd_dv)
+    })
     
     # Generate plot dimension
     plot_dimensions_reg = reactive({
@@ -11026,7 +11128,7 @@ server <- function(input, output, session) {
       
       return(p_d_r)
     })
-      
+    
     ## Regression Summary data 
     
     regression_summary_data = reactive({
@@ -11039,14 +11141,14 @@ server <- function(input, output, session) {
     reg_sd = function(){
       req(regression_summary_data())
       summary(regression_summary_data())}
-      
+    
     output$regression_summary_data = renderPrint({reg_sd()})  
     
     ## Regression coefficient plot
     
     regression_coeff_data = reactive({
       
-      reg_cd = create_regression_coeff_data(ts_data_iv(), data_output3_dv(), variables_iv())
+      reg_cd = create_regression_coeff_data(ts_data_iv(), data_output4_dv(), variables_iv())
       
       return(reg_cd)
     })
@@ -11080,7 +11182,7 @@ server <- function(input, output, session) {
     ## Regression pvalue plot
     
     regression_pvalue_data = reactive({
-      rpvd = create_regression_pvalue_data(ts_data_iv(), data_output3_dv(), variables_iv())
+      rpvd = create_regression_pvalue_data(ts_data_iv(), data_output4_dv(), variables_iv())
       
       return(rpvd)
     })
@@ -11113,7 +11215,7 @@ server <- function(input, output, session) {
     ## Regression residuals plot
     
     regression_residuals_data = reactive({
-      rresd = create_regression_residuals(ts_data_iv(), data_output3_dv(), variables_iv())
+      rresd = create_regression_residuals(ts_data_iv(), data_output4_dv(), variables_iv())
       
       return(rresd)
     })
@@ -11147,12 +11249,12 @@ server <- function(input, output, session) {
     
     output$data_reg_resi = renderTable({reg_res_2()},rownames = TRUE)
     
-      
+    
     ## Regression timeseries plot
     
     regression_ts_data = reactive({
       rtsd = create_regression_timeseries_datatable(ts_data_dv(),regression_summary_data(),
-                                             plot_titles_reg())
+                                                    plot_titles_reg())
       return(rtsd)
     })
     
@@ -11176,10 +11278,10 @@ server <- function(input, output, session) {
       paging = TRUE,
       pagingType = "numbers"
     ))
-      
+    
     ### ModE-RA sources ----
     #ModE-RA sources independent variable
-
+    
     ranges_4a  <- reactiveValues(x = NULL, y = NULL)
     ranges2_4a <- reactiveValues(x = NULL, y = NULL)
     
@@ -11209,7 +11311,7 @@ server <- function(input, output, session) {
       } else {
         plot_data <- fad_wa4a(labs = FALSE)
       }
-
+      
       # Apply coord_sf to the entire map with adjusted limits
       plot_data <- plot_data + coord_sf(xlim = ranges_4a$x, ylim = ranges_4a$y, crs = st_crs(4326))
       
@@ -11944,7 +12046,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$point_size
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size", value = 1)
@@ -11965,7 +12067,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$point_size2
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size2", value = 1)
@@ -11986,7 +12088,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$point_size3
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size3", value = 1)
@@ -12007,7 +12109,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$point_size_ts
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size_ts", value = 1)
@@ -12028,7 +12130,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$point_size_ts2
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size_ts2", value = 1)
@@ -12049,7 +12151,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$point_size_ts3
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "point_size_ts3", value = 1)
@@ -12070,7 +12172,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$percentage_sign_match
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "percentage_sign_match", value = 1)
@@ -12091,7 +12193,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$percentage_sign_match2
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "percentage_sign_match2", value = 1)
@@ -12112,7 +12214,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$percentage_sign_match2
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "percentage_sign_match2", value = 1)
@@ -12133,7 +12235,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$hidden_SD_ratio
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "hidden_SD_ratio", value = 0)
@@ -12154,7 +12256,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$hidden_SD_ratio2
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "hidden_SD_ratio2", value = 0)
@@ -12175,7 +12277,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$year_moving_ts
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "year_moving_ts", value = 3)
@@ -12196,7 +12298,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$year_moving_ts3
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "year_moving_ts3", value = 3)
@@ -12217,7 +12319,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a", value = 1422)
@@ -12238,7 +12340,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a2
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a2", value = 1422)
@@ -12259,7 +12361,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a3a
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a3a", value = 1422)
@@ -12280,7 +12382,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a3b
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a3b", value = 1422)
@@ -12301,7 +12403,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a4a
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a4a", value = 1422)
@@ -12322,7 +12424,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a4b
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a4b", value = 1422)
@@ -12343,7 +12445,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$fad_year_a5
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "fad_year_a5", value = 1422)
@@ -12364,7 +12466,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$prior_years2
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "prior_years2", value = 1)
@@ -12385,7 +12487,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$reg_resi_year
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "reg_resi_year", value = 1422)
@@ -12406,16 +12508,18 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$range_years_sg
 
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "range_years_sg", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "range_years_sg", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "range_years_sg", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "range_years_sg", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "range_years_sg", value = 2008)
+              }
             }
           }
 
@@ -12427,16 +12531,18 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg", value = 2008)
+              }
             }
           }
           
@@ -12448,16 +12554,18 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg2
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg2", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg2", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg2", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg2", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg2", value = 2008)
+              }
             }
           }
           
@@ -12469,16 +12577,18 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg_v1
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg_v1", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg_v1", value = 2008)
+              }
             }
           }
           
@@ -12490,16 +12600,18 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$range_years_sg3
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "range_years_sg3", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "range_years_sg3", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "range_years_sg3", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "range_years_sg3", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "range_years_sg3", value = 2008)
+              }
             }
           }
           
@@ -12512,16 +12624,18 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg_v2
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg_v2", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg_v2", value = 2008)
+              }
             }
           }
           
@@ -12533,16 +12647,18 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg_iv
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg_iv", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg_iv", value = 2008)
+              }
             }
           }
           
@@ -12554,16 +12670,18 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$range_years_sg4
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "range_years_sg4", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "range_years_sg4", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "range_years_sg4", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "range_years_sg4", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "range_years_sg4", value = 2008)
+              }
             }
           }
           
@@ -12575,16 +12693,18 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg_dv
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg_dv", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg_dv", value = 2008)
+              }
             }
           }
           
@@ -12596,16 +12716,18 @@ server <- function(input, output, session) {
     observe({
       input_values <- input$ref_period_sg5
       
-      delay(2000, {
+      delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = "ref_period_sg5", value = 1422)
         } else {
           update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "ref_period_sg5", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "ref_period_sg5", value = 2008)
+            if (nchar(as.integer(input_values))>3){
+              if (val < 1422) {
+                updateNumericInput(inputId = "ref_period_sg5", value = 1422)
+              } else if (val > 2008) {
+                updateNumericInput(inputId = "ref_period_sg5", value = 2008)
+              }
             }
           }
           
@@ -13207,12 +13329,19 @@ server <- function(input, output, session) {
       }
     })
     
+    # Stop App on end of session
+    session$onSessionEnded(function() {
+      stopApp()
+    })  
 }
 
-  # Run the app ----
-  app <- shinyApp(ui = ui, server = server)
-  # Run the app normally
-    runApp(app)
-  # Run the app with profiling
-    #profvis({runApp(app)})
+# Run the app ----
+app <- shinyApp(ui = ui, server = server)
+# Run the app normally
+  runApp(app)
+# Run the app with profiling
+  #profvis({runApp(app)})
 
+
+  
+  
