@@ -219,6 +219,65 @@ add_map_points_and_highlights = function(CP_data,CH_data,SH_data){
 }
 
 
+## GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE
+## data input = Input form Plot Customization or NA
+
+generate_metadata <- function(axis_mode, axis_input, hide_axis, title_mode, title1_input, title2_input, 
+                              custom_statistic, sd_ratio, hide_borders, map_points_data, map_highlights_data) {
+  
+  # Replace NA or NULL values with a placeholder value
+  replace_na_null <- function(x) {
+    if (is.na(x) || is.null(x)) {
+      return("NA")
+    } else {
+      return(x)
+    }
+  }
+  
+  # Apply the replace_na_null function to each input
+  axis_mode <- replace_na_null(axis_mode)
+  axis_input <- replace_na_null(axis_input)
+  hide_axis <- replace_na_null(hide_axis)
+  title_mode <- replace_na_null(title_mode)
+  title1_input <- replace_na_null(title1_input)
+  title2_input <- replace_na_null(title2_input)
+  custom_statistic <- replace_na_null(custom_statistic)
+  sd_ratio <- replace_na_null(sd_ratio)
+  hide_borders <- replace_na_null(hide_borders)
+  
+  # Create the metadata data frame
+  meta_input <- data.frame(
+    axis_mode = axis_mode, 
+    axis_input = axis_input, 
+    hide_axis = hide_axis, 
+    title_mode = title_mode, 
+    title1_input = title1_input, 
+    title2_input = title2_input,
+    custom_statistic = custom_statistic, 
+    sd_ratio = sd_ratio, 
+    hide_borders = hide_borders
+  )
+  
+  # Extract values from reactive values
+  map_points <- map_points_data()
+  map_highlights <- map_highlights_data()
+  
+  # Combine data frames
+  metadata <- rbind(meta_input, map_points, map_highlights)
+  
+  return(metadata)
+}
+
+## UPLOAD METADATA FORM CSV FILE
+## data input = Input from correctly structured CSV
+
+read_metadata_csv <- function(file_path) {
+  metadata <- read.csv(file_path, stringsAsFactors = FALSE)
+  
+  return(metadata)
+}
+
+
 
 #### General Functions ####
 
@@ -687,7 +746,7 @@ set_axis_values = function(data_input,mode){
 ##                available/used
 
 plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axis,
-                            points_data, highlights_data,stat_highlights_data){
+                            points_data, highlights_data,stat_highlights_data,c_borders){
   
   ## Create x, y & z values
   x_str = colnames(data_input)
@@ -719,7 +778,7 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
     if(is.null(axis_range[1])){
       # Absolute 
       if (mode == "Absolute"){
-        filled.contour(x,y,z, color.palette = v_col, plot.axes={map("world",interior=T,add=T)
+        filled.contour(x,y,z, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
           axis(1, seq(-170, 180, by = 10))
           axis(2, seq(-90, 90, by = 10))
           add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)},
@@ -730,7 +789,7 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
       else {
         z_max = max(abs(z))
         
-        filled.contour(x,y,z, zlim = c(-z_max,z_max), color.palette = v_col, plot.axes={map("world",interior=T,add=T)
+        filled.contour(x,y,z, zlim = c(-z_max,z_max), color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
           axis(1, seq(-170, 180, by = 10))
           axis(2, seq(-90, 90, by = 10))
           add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)},
@@ -739,7 +798,7 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
     } 
     # Plot with custom axis
     else {
-      filled.contour(x,y,z, zlim = axis_range, color.palette = v_col, plot.axes={map("world",interior=T,add=T)
+      filled.contour(x,y,z, zlim = axis_range, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
         axis(1, seq(-180, 180, by = 10))
         axis(2, seq(-90, 90, by = 10))
         add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)},
@@ -785,7 +844,7 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
                       col=v_col(length(mylevs)-1))
     }
     # Add world map and side axes
-    plot.axes=map("world",interior=T,add=T)
+    plot.axes=map("world",interior=c_borders,add=T)
     axis(1, seq(-180, 180, by = 10))
     axis(2, seq(-90, 90, by = 10))
     axis(3,c(-180, 180), label=FALSE, tcl=0, las=1)
@@ -1062,15 +1121,16 @@ rewrite_maptable = function(maptable,subset_lon_IDs,subset_lat_IDs){
     
     maptable1 = rbind(as.numeric(substr(cnames, 1, nchar(cnames) - 1)),as.matrix(maptable))
     maptable2 = cbind(c("Lat/Lon", as.numeric(substr(rnames, 1, nchar(rnames) - 1))), maptable1)
-    colnames(maptable2)<-NULL
+    colnames(maptable2)<- NULL
     
   } else {
     maptable1 = rbind(round(lon[subset_lon_IDs],digits = 3),as.matrix(maptable))
     maptable2 = cbind(c("Lat/Lon", round(lat[subset_lat_IDs],digits = 3)), maptable1)
   }
-
+  
   return(maptable2)
 }
+
 
 
 ## (General) REWRITE TS TABLE - rewites ts_datatable to round values and add units
@@ -1089,7 +1149,7 @@ rewrite_tstable = function(tstable,variable){
     v_unit = ""
   }
   
-  newnames = paste(colnames(tstable)," ",v_unit, sep = "")
+  newnames = paste(colnames(tstable),"",v_unit, sep = "")
   colnames(tstable) = c("Year",newnames[-1])
   
   new_tstable = round(tstable, 2)
@@ -1702,7 +1762,7 @@ add_custom_points = function(data_input){
 ##                 add_percentiles = TRUE of FALSE
 ##                 percentiles = a vector of percentile values c(0.9,0.95 or 0.99)
 ##                 secondary variable = variable name or NA if not used
-##                 show_primary_variable = TRUE or FALSE (only false for monthly TS)
+##                 show_primary_variable = TRUE or FALSE (only false for annual cycles)
 
 add_TS_key = function(key_position,data_highlights,data_lines,variable,month_range,add_moving_average,
                       moving_average_range,add_percentiles,percentiles,secondary_variable,secondary_month_range,
@@ -2146,10 +2206,10 @@ extract_shared_lonlat = function(variable1_type,variable2_type,
                                  variable2_lon_range,variable2_lat_range){
 
   # If variable 1 is a timeseries:
-  if (variable1_type == "Time series"){
+  if (variable1_type == "Timeseries"){
     shared_lon_range = variable2_lon_range
     shared_lat_range = variable2_lat_range
-  } else if (variable2_type == "Time series"){
+  } else if (variable2_type == "Timeseries"){
     shared_lon_range = variable1_lon_range
     shared_lat_range = variable1_lat_range
   } else{
@@ -2168,7 +2228,7 @@ extract_shared_lonlat = function(variable1_type,variable2_type,
 #### Correlation Functions  ####
 
 ## Special Input required:
-## variable1/2_type = "Time series" or "Field" ("Time series" by default)
+## variable1/2_type = "Timeseries" or "Field" ("Timeseries" by default)
 ##                    Choice appears, and selection is updated to "Field" IF
 ##                    variable is ModE-RA AND length(subset_lon & subset_lat) > 2 
 ##                    (i.e. NOT a single point)
@@ -2206,7 +2266,7 @@ plot_user_timeseries = function(data_input,color){
 ##                                             TS_title, Map_title,Download_title
 ##             variable_source = "ModE-RA" or "User Data"
 ##             variable = user or ModE-RA variable name
-##             variable_type = "Time series" or "Field"
+##             variable_type = "Timeseries" or "Field"
 ##             variable_mode = "Absolute" or "Anomaly"
 ##             method = "pearson" or "spearman" ("pearson" by default)
 
@@ -2265,7 +2325,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     # Generate titles
     V1_axis_label = paste(title_months1,variable1,variable1_mode,V1_unit)
     V1_TS_title = paste(variable1_dataset,title_months1,variable1,variable1_mode,V1_lonlat)
-    if (variable1_type == "Time series"){
+    if (variable1_type == "Timeseries"){
       V1_Map_title = paste(variable1_dataset,title_months1,variable1,variable1_mode,V1_lonlat)
     } else {
       V1_Map_title = paste(variable1_dataset,title_months1,variable1,variable1_mode)
@@ -2316,7 +2376,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     # Generate titles
     V2_axis_label = paste(title_months2,variable2,variable2_mode,V2_unit)
     V2_TS_title = paste(variable2_dataset,title_months2,variable2,variable2_mode,V2_lonlat)
-    if (variable2_type == "Time series"){
+    if (variable2_type == "Timeseries"){
       V2_Map_title = paste(variable2_dataset,title_months2,variable2,variable2_mode,V2_lonlat)
     } else {
       V2_Map_title = paste(variable2_dataset,title_months2,variable2,variable2_mode)
@@ -2443,14 +2503,14 @@ generate_correlation_map_data = function(variable1_data, variable2_data, method,
   my_cor = function(a,b){cor(a,b,method=method,use = "complete.obs")}
   
   # If variable 1 is a timeseries:
-  if (variable1_type == "Time series"){
+  if (variable1_type == "Timeseries"){
     x = lon[subset_lon_IDs2]
     y = rev(lat[subset_lat_IDs2])
     plotfield = apply(variable2_data,c(1,2),my_cor,variable1_data[,2])
     z = plotfield[,rev(1:length(subset_lat_IDs2))]
   }
   # If variable 2 is a timeseries:
-  else if (variable2_type == "Time series"){
+  else if (variable2_type == "Timeseries"){
     x = lon[subset_lon_IDs1]
     y = rev(lat[subset_lat_IDs1])
     plotfield = apply(variable1_data,c(1,2),my_cor,variable2_data[,2])
@@ -2495,7 +2555,7 @@ generate_correlation_map_data = function(variable1_data, variable2_data, method,
 ##                  available/used
 
 plot_correlation_map = function(data_input, correlation_titles,axis_range,
-                                hide_axis,points_data, highlights_data,stat_highlights_data){
+                                hide_axis,points_data, highlights_data,stat_highlights_data,c_borders){
   
   # Set up variables
   x = data_input[[1]]
@@ -2511,7 +2571,7 @@ plot_correlation_map = function(data_input, correlation_titles,axis_range,
   if (hide_axis == FALSE){
     # Plot with default axis
     if(is.null(axis_range[1])){
-      filled.contour(x,y,z, zlim = minmax, color.palette = v_col, plot.axes={map("world",interior=T,add=T)
+      filled.contour(x,y,z, zlim = minmax, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
         axis(1, seq(-170, 180, by = 10))
         axis(2, seq(-90, 90, by = 10))
         add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)},
@@ -2519,7 +2579,7 @@ plot_correlation_map = function(data_input, correlation_titles,axis_range,
     } 
     # Plot with custom axis
     else {
-      filled.contour(x,y,z, zlim = axis_range, color.palette = v_col, plot.axes={map("world",interior=T,add=T)
+      filled.contour(x,y,z, zlim = axis_range, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
         axis(1, seq(-180, 180, by = 10))
         axis(2, seq(-90, 90, by = 10))
         add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)},
@@ -2550,7 +2610,7 @@ plot_correlation_map = function(data_input, correlation_titles,axis_range,
                       col=v_col(length(mylevs)-1))
     }
     # Add world map and side axes
-    plot.axes=map("world",interior=T,add=T)
+    plot.axes=map("world",interior=c_borders,add=T)
     axis(1, seq(-180, 180, by = 10))
     axis(2, seq(-90, 90, by = 10))
     axis(3,c(-180, 180), label=FALSE, tcl=0, las=1)
@@ -2848,7 +2908,7 @@ create_regression_map_datatable = function(data_input,subset_lon_IDs,subset_lat_
 
 plot_regression_coefficients = function(data_input,independent_variables,independent_variable_number,
                                         dependent_variable,regression_titles,
-                                        subset_lon_IDs_d,subset_lat_IDs_d){
+                                        subset_lon_IDs_d,subset_lat_IDs_d,c_borders){
   
   # Create x, y & z values
   x = lon[subset_lon_IDs_d]
@@ -2871,7 +2931,7 @@ plot_regression_coefficients = function(data_input,independent_variables,indepen
                      sep = "")
   
   # Plot
-  filled.contour(x,y,z, color.palette = v_col, plot.axes={map("world",interior=T,add=T)
+  filled.contour(x,y,z, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
     axis(1, seq(-180, 180, by = 10))
     axis(2, seq(-90, 90, by = 10)) },
     key.title = title(main = "Coefficients",cex.main = 0.8))
@@ -2887,7 +2947,7 @@ plot_regression_coefficients = function(data_input,independent_variables,indepen
 
 plot_regression_pvalues = function(data_input,independent_variables,independent_variable_number,
                                    dependent_variable, regression_titles,
-                                   subset_lon_IDs_d,subset_lat_IDs_d){
+                                   subset_lon_IDs_d,subset_lat_IDs_d,c_borders){
   # Create x, y & z values
   x = lon[subset_lon_IDs_d]
   y = rev(lat[subset_lat_IDs_d])
@@ -2926,7 +2986,7 @@ plot_regression_pvalues = function(data_input,independent_variables,independent_
                      sep = "")
   
   # Plot
-  filled.contour(x,y,z_rewrite, col = v_col,levels = c(1:6), plot.axes={map("world",interior=T,add=T)
+  filled.contour(x,y,z_rewrite, col = v_col,levels = c(1:6), plot.axes={map("world",interior=c_borders,add=T)
     axis(1, seq(-180, 180, by = 10))
     axis(2, seq(-90, 90, by = 10)) },
     key.axes = axis(4,at=c(1:6),labels=v_lev),
@@ -2942,7 +3002,7 @@ plot_regression_pvalues = function(data_input,independent_variables,independent_
 
 plot_regression_residuals = function(data_input,year_selected,year_range,
                                      independent_variables,dependent_variable,
-                                     regression_titles,subset_lon_IDs_d,subset_lat_IDs_d){
+                                     regression_titles,subset_lon_IDs_d,subset_lat_IDs_d,c_borders){
   
   # Find ID of year selected
   year_selected_ID = (year_selected-year_range[1])+1
@@ -2977,7 +3037,7 @@ plot_regression_residuals = function(data_input,year_selected,year_range,
   # Plot
   z_max = max(abs(z))
   
-  filled.contour(x,y,z, zlim = c(-z_max,z_max), color.palette = v_col, plot.axes={map("world",interior=T,add=T)
+  filled.contour(x,y,z, zlim = c(-z_max,z_max), color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
     axis(1, seq(-180, 180, by = 10))
     axis(2, seq(-90, 90, by = 10)) },
     key.title = title(main = title_axis,cex.main = 0.95))
@@ -3050,9 +3110,9 @@ plot_regression_timeseries = function(data_input,plot_type,regression_titles,
 }
 
 
-#### Monthly TS Functions ----
+#### Annual cycles Functions ----
 
-## (Monthly TS) Monthly TS starter data - Bern,1815  
+## (Annual cycles) Annual cycles starter data - Bern,1815  
 monthly_ts_starter_data = function(){
   Dataset = "ModE-RA"
   Years = "1815" ; Variable = "Temperature" ; Unit = "\u00B0C"
@@ -3071,7 +3131,7 @@ monthly_ts_starter_data = function(){
 }
 
 
-## (Monthly TS) CREATE MONTHLY TS DATA - creates a data.frame where each row is one 
+## (Annual cycles) CREATE ANNUAL CYCLES DATA - creates a data.frame where each row is one 
 ##              year (or an averaged period) of monthly data. 
 ##              Uses create_subset_lat/lon_IDs functions
 ##              data_input = any ModE-RA variable (temp_data/prec_data/SlP_data etc.)
@@ -3205,8 +3265,8 @@ create_monthly_TS_data = function(data_input,dataset,variable,years,lon_range,la
 }
 
 
-## (Monthly TS) PLOT MONTHLY TS DATA - plots monthly TS data or Adds lines to graph
-##              data_input = monthly TS data dataframe
+## (Annual cycles) PLOT ANNUAL CYCLES DATA - plots annual cycles data or Adds lines to graph
+##              data_input = annual cycles data dataframe
 ##              title_mode = "Default" or "Custom"
 ##              plot_mode = "base" or "lines" - base plots the default plot, lines just adds lines to existing graph
 
