@@ -9,7 +9,8 @@ ui <- navbarPage(id = "nav1",
           ## Configs for navbarPage: theme, images (Header and Footer) ----
           title = div(style = "display: inline;",
                       uiOutput("logo_output", inline = TRUE),
-                      img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"), "(Beta v0.5)",
+                      #img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"),
+                      "(Beta v0.6)",
                       #Preparation to use Tracking ShinyJS and CSS
                       shinyjs::useShinyjs(),
                       use_tracking(),
@@ -150,6 +151,11 @@ ui <- navbarPage(id = "nav1",
             #### Tab Version History ----
             tabPanel("Version history",
                      br(), br(), 
+                     h4(helpText("Beta v0.6 (15.02.2024)")),
+                     h6(helpText("- Improved UI (i.e. Hide/Show country borders, Rearranged download sections")),
+                     h6(helpText("- Switch to Annual Cycle when a single year is selected")),
+                     h6(helpText("- Download ModE-RA srouce data as table")),
+                     br(), br(), 
                      h4(helpText("Beta v0.5 (22.12.2023)")),
                      h6(helpText("- Download NetCDF files")),
                      h6(helpText("- Version History")),
@@ -164,7 +170,7 @@ ui <- navbarPage(id = "nav1",
                      br(), br(), 
                      h4(helpText("Beta v0.2 (10.11.2023)")),
                      h6(helpText("- Use ModE-Sim and ModE-RAclim data")),
-                     h6(helpText("- Create monthly timeseries")),
+                     h6(helpText("- Create annual cycles method")),
                      h6(helpText("- View ModE-RA sources")),
                      h6(helpText("- Download ModE-RA sources maps as image")),
                      h6(helpText("- Upload User data for correlation and regression")),
@@ -482,7 +488,12 @@ ui <- navbarPage(id = "nav1",
                                        label       = "Custom map subtitle (e.g. Ref-Period)",
                                        value       = NA,
                                        width       = NULL,
-                                       placeholder = "Custom title")))
+                                       placeholder = "Custom title"))),
+                             
+                             checkboxInput(inputId = "hide_borders",
+                                           label   = "Show country borders",
+                                           value   = TRUE),
+                             
                              )),
                          ),
                       
@@ -676,14 +687,19 @@ ui <- navbarPage(id = "nav1",
                       ),
                       
                       #### Download map ----
-                      h4(helpText("Download map and NETcdf")),
+                      h4(helpText("Download map")),
                       fluidRow(
                         column(2, radioButtons(inputId = "file_type_map", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                         column(3, downloadButton(outputId = "download_map", label = "Download map")),
-                      #NETcdf download pickerInput checkboxGroupInput
-                        column(3, pickerInput(inputId = "netcdf_variables", label = "Choose one or multiple variables:", choices = NULL, selected = NULL, inline = TRUE, multiple = TRUE,)),
-                        column(3, downloadButton(outputId = "download_netcdf", label = "Download NETcdf"))
                       ),
+                      
+                      ### Upload Meta data ----
+                      # h4(helpText("Download / Upload metadata")),
+                      # fluidRow(
+                      #   column(3, downloadButton(outputId = "download_metadata", label = "Download metadata")),
+                      #   column(4, fileInput(inputId= "upload_metadata", label = "Upload metadata as .csv", accept = ".csv")),
+                      #   column(2, actionButton(inputId = "update_metadata", label = "Update upload inputs")),
+                      # ),
 
                       #### Abs/Ref Map plot START ----
                       h4(helpText("Reference map",
@@ -1023,6 +1039,12 @@ ui <- navbarPage(id = "nav1",
                              ),
                              
                              br(), column(width = 3, dataTableOutput("data2"))),
+                    
+                    tabPanel("Download NETcdf data",
+                             br(), h4(helpText("Download NETcdf with one or more variable")),
+                             #NETcdf download pickerInput checkboxGroupInput
+                             column(3, pickerInput(inputId = "netcdf_variables", label = "Choose one or multiple variables:", choices = NULL, selected = NULL, inline = TRUE, multiple = TRUE,)),
+                             column(3, downloadButton(outputId = "download_netcdf", label = "Download NETcdf"))),
                     
                     ### Feedback archive documentation (FAD) ----
                     tabPanel("ModE-RA sources", br(),
@@ -1411,7 +1433,12 @@ ui <- navbarPage(id = "nav1",
                                             label       = "Custom map subtitle (e.g. Ref-Period):",
                                             value       = NA,
                                             width       = NULL,
-                                            placeholder = "Custom title")))
+                                            placeholder = "Custom title"))),
+                          
+                          checkboxInput(inputId = "hide_borders2",
+                                        label   = "Show country borders",
+                                        value   = TRUE),
+                          
                         )),
                       ),
                     
@@ -2414,7 +2441,7 @@ ui <- navbarPage(id = "nav1",
                ## Sidebar Panels END ----
                )),
                  
-               ## Main Panel START ---- ----
+               ## Main Panel START ----
                mainPanel(tabsetPanel(id = "tabset3",
                    ### v1, v2 plot: ----
                    tabPanel("Variables", br(),
@@ -2424,10 +2451,10 @@ ui <- navbarPage(id = "nav1",
                                         image.width = spinner_width,
                                         image.height = spinner_height),
                             h4("Variable 2"),
-                            withSpinner(ui_element = plotOutput("plot_v2", height = "auto")),
+                            withSpinner(ui_element = plotOutput("plot_v2", height = "auto"),
                                         image = spinner_image,
                                         image.width = spinner_width,
-                                        image.height = spinner_height),
+                                        image.height = spinner_height)),
                    
                    ### Shared TS plot: START ----
                    tabPanel("Timeseries", br(),
@@ -2751,7 +2778,12 @@ ui <- navbarPage(id = "nav1",
                                                    label       = "Custom map title:", 
                                                    value       = NA,
                                                    width       = NULL,
-                                                   placeholder = "Custom title")))
+                                                   placeholder = "Custom title"))),
+                                   
+                                   checkboxInput(inputId = "hide_borders3",
+                                                 label   = "Hide country borders",
+                                                 value   = TRUE),
+                                   
                                )),
                       ),
                       
@@ -3526,7 +3558,7 @@ ui <- navbarPage(id = "nav1",
              
            ## Sidebar Panels END ----
            )),
-           ## Main Panel START ---- ----
+           ## Main Panel START ----
            mainPanel(tabsetPanel(id = "tabset4",
              ### Independent / dependent variable ----
              tabPanel("Variables", br(),
@@ -3795,8 +3827,8 @@ ui <- navbarPage(id = "nav1",
 # Regression END ----
          )),
 
-# Monthly timeseries START ----                             
-  tabPanel("Monthly Timeseries", value = "tab5",
+# Annual cycles START ----                             
+  tabPanel("Annual Cycles", value = "tab5",
          shinyjs::useShinyjs(),
          sidebarLayout(
            
@@ -3808,16 +3840,16 @@ ui <- navbarPage(id = "nav1",
                
                #Method Title and Pop Over
                popover(
-                 h3(HTML("Monthly timeseries <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
-                 "Analyzing monthly timeseries involves examining data over consecutive months. Researchers can identify trends, seasonality, and anomalies in climate variables like temperature or precipitation. Statistical techniques, such as moving averages or seasonal decomposition, help reveal patterns and variations in monthly data, aiding in climate research and trend identification.",
-                 title = "What is the monthly timeseries method?",
+                 h3(HTML("Annual cycles <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+                 "Analyzing annual cycles involves examining data over consecutive months. Researchers can identify trends, seasonality, and anomalies in climate variables like temperature or precipitation. Statistical techniques, such as moving averages or seasonal decomposition, help reveal patterns and variations in monthly data, aiding in climate research and trend identification.",
+                 title = "What is the annual cycles method?",
                  id = "pop_monthly_ts",
                  placement = "right",
                ), 
                br(),
                
                #Short description of the General Panel        
-               h4(helpText("Creating monthly timeseries")),
+               h4(helpText("Creating annual cycles")),
                
                #Choose one of three datasets (Select)                
                selectInput(inputId  = "dataset_selected5",
@@ -4370,7 +4402,7 @@ ui <- navbarPage(id = "nav1",
 
              ## Main Panel END ----
            ), width = 8),
-# Monthly timeseries END ----  
+# Annual cycles END ---- 
          )),
 
 # END ----
@@ -4399,11 +4431,11 @@ server <- function(input, output, session) {
   current_month_day <- format(Sys.Date(), "%m-%d")
   
   # Default logo
-  logo_src <- 'pics/Logo_ClimeApp_V2_210623.png'
+  logo_src <- 'pics/Logo_ClimeApp_Weiss_Font1.png'
   logo_id <- "ClimeApp"
   logo_height <- "75px"
-  logo_width <- "75px"
-  logo_style <- "margin-right: -10px; display: inline"
+  logo_width <- "110px"
+  logo_style <- "margin-right: 5px; display: inline"
   
   # Check for special occasions
   if (current_month_day >= "12-01" && current_month_day <= "12-31") {
@@ -4470,6 +4502,44 @@ server <- function(input, output, session) {
         // Hide the tabPanel
         tabPanelToHide.hide();
       ')
+      shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+
+        // Hide the tabPanel
+        tabPanelToHide.hide();
+      ')
+      
+    } else if (input$type_v1 == "Field" && input$type_v2 == "Field") {
+      # Get the range values
+      range_lon_v1 <- input$range_longitude_v1
+      range_lat_v1 <- input$range_latitude_v1
+      range_lon_v2 <- input$range_longitude_v2
+      range_lat_v2 <- input$range_latitude_v2
+      
+      # Check for overlap
+      
+      overlap_lon <- !(range_lon_v1[2] < range_lon_v2[1] || range_lon_v1[1] > range_lon_v2[2])
+      overlap_lat <- !(range_lat_v1[2] < range_lat_v2[1] || range_lat_v1[1] > range_lat_v2[2])
+      
+      # Return the result
+      if (overlap_lon && overlap_lat) {
+        shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+        // Show the tabPanel
+        tabPanelToHide.show();
+      ')
+      } else {
+        shinyjs::runjs('
+        // Get the tabPanel element by ID
+        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+        // Hide the tabPanel
+        tabPanelToHide.hide();
+      ')
+      }
     } else {
       shinyjs::runjs('
         // Get the tabPanel element by ID
@@ -4478,19 +4548,6 @@ server <- function(input, output, session) {
         // Show the tabPanel
         tabPanelToHide.show();
       ')
-    }
-  })
-  
-  observe({
-    if (input$type_v1 == "Timeseries" && input$type_v2 == "Timeseries") {
-      shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
-
-        // Hide the tabPanel
-        tabPanelToHide.hide();
-      ')
-    } else {
       shinyjs::runjs('
         // Get the tabPanel element by ID
         var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
@@ -4501,36 +4558,10 @@ server <- function(input, output, session) {
     }
   })
   
+
   #Same based on Lon Lat Values
   observe({
-    # Get the range values
-    range_lon_v1 <- input$range_longitude_v1
-    range_lat_v1 <- input$range_latitude_v1
-    range_lon_v2 <- input$range_longitude_v2
-    range_lat_v2 <- input$range_latitude_v2
     
-    # Check for overlap
-    overlap_lon <- !(range_lon_v1[2] < range_lon_v2[1] || range_lon_v1[1] > range_lon_v2[2])
-    overlap_lat <- !(range_lat_v1[2] < range_lat_v2[1] || range_lat_v1[1] > range_lat_v2[2])
-    
-    # Return the result
-    if (overlap_lon && overlap_lat) {
-      shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
-
-        // Show the tabPanel
-        tabPanelToHide.show();
-      ')
-    } else {
-      shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
-
-        // Hide the tabPanel
-        tabPanelToHide.hide();
-      ')
-    }
   })
   
   observe({
@@ -5454,7 +5485,7 @@ server <- function(input, output, session) {
                     condition = input$source_dv == "ModE-",
                     asis = FALSE)
     
-    # Monthly TS
+    # Annual cycles
     
     shinyjs::toggle(id = "optional5",
                     anim = TRUE,
@@ -6324,6 +6355,71 @@ server <- function(input, output, session) {
     
     observeEvent(input$remove_all_lines_ts, {
       ts_lines_data(data.frame())
+    })
+    
+    ### Generate Metadata for map customization ----
+    
+    #Download
+    metadata_input <- reactive({
+      
+      metadata = generate_metadata(input$axis_mode,
+                                   input$axis_input,
+                                   input$hide_axis,
+                                   input$title_mode,
+                                   input$title1_input,
+                                   input$title2_input,
+                                   input$custom_statistic,
+                                   input$sd_ratio,
+                                   input$hide_borders,
+                                   map_points_data(),
+                                   map_highlights_data())
+      
+      return(metadata)  
+    })
+    
+    output$download_metadata <- downloadHandler(
+      filename = function() {"custom_metadata.csv"},
+      content  = function(file) {
+        write.csv(metadata_input(), file, row.names = FALSE)
+      }
+    )
+    
+    #Upload
+    # Reactive value to store uploaded metadata
+    uploaded_metadata <- reactiveVal(NULL)
+    
+    # Function to read uploaded CSV and update inputs
+    process_uploaded_file <- function(file_path) {
+      metadata <- read_metadata_csv(input$upload_metadata)
+      
+      # Update inputs based on metadata
+      updateRadioButtons(session, "title_mode", selected = metadata$title_mode)
+      updateTextInput(session, "title1_input", value = metadata$title1_input)
+      updateTextInput(session, "title2_input", value = metadata$title2_input)
+      updateTextInput(session, "point_label", value = metadata$point_label)
+      updateNumericInput(session, "point_location_x", value = metadata$point_location_x)
+      updateNumericInput(session, "point_location_y", value = metadata$point_location_y)
+      updateRadioButtons(session, "point_shape", selected = metadata$point_shape)
+      updateColourInput(session, "point_colour", value = metadata$point_colour)
+      updateNumericInput(session, "point_size", value = metadata$point_size)
+      updateRadioButtons(session, "highlight_x_values", selected = metadata$highlight_x_values)
+      updateRadioButtons(session, "highlight_y_values", selected = metadata$highlight_y_values)
+      updateColourInput(session, "highlight_colour", value = metadata$highlight_colour)
+      updateRadioButtons(session, "highlight_type", selected = metadata$highlight_type)
+      updateRadioButtons(session, "custom_statistic", selected = metadata$custom_statistic)
+      updateNumericInput(session, "sd_ratio", value = metadata$sd_ratio)
+      updateCheckboxInput(session, "hide_borders", value = metadata$hide_borders)
+
+      # Store uploaded metadata
+      uploaded_metadata(metadata)
+    }
+    
+    # Event handler for upload button
+    observeEvent(input$update_metadata, {
+      req(input$upload_metadata)
+      process_uploaded_file(input$upload_metadata$datapath)
+      updateActionButton(session, "add_point")
+      updateActionButton(session, "add_highlight")
     })
     
     
@@ -8426,7 +8522,7 @@ server <- function(input, output, session) {
     })
     
     
-  ## MONTHLY TIMESERIES observe, update & interactive controls----
+  ## ANNUAL CYCLES observe, update & interactive controls----
     ### Initialise and update timeseries dataframe ----
     
     # Add in initial data
@@ -8871,8 +8967,8 @@ server <- function(input, output, session) {
     
   #Processing and Plotting ----
   ## GENERAL data processing and plotting ----  
-    #Preparation
-    
+  #Preparation
+  
     month_range <- reactive({
       #Creating Numeric Vector for Month Range
       mr = create_month_range(input$range_months) #Between 0-12  
@@ -8933,7 +9029,6 @@ server <- function(input, output, session) {
                                         month_range(),input$range_years)
       return(new_SD_data)
     })
-    
     
     #Geographic Subset
     data_output1 <- reactive({
@@ -9002,7 +9097,7 @@ server <- function(input, output, session) {
       return(m_d)  
     })
     
-    map_plot <- function(){plot_default_map(map_data(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics())}
+    map_plot <- function(){plot_default_map(map_data(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders)}
     
     output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
     # code line below sets height as a function of the ratio of lat/lon 
@@ -9037,9 +9132,9 @@ server <- function(input, output, session) {
     
     ref_map_plot <- function(){
       if (input$ref_map_mode == "Absolute Values" | input$ref_map_mode == "Reference Values" ){
-        plot_default_map(ref_map_data(), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame())
+        plot_default_map(ref_map_data(), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders)
       } else if(input$ref_map_mode == "SD Ratio"){
-        plot_default_map(ref_map_data(), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame())
+        plot_default_map(ref_map_data(), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders)
       }
     }
     
@@ -9122,13 +9217,13 @@ server <- function(input, output, session) {
     }
     
     output$timeseries <- renderPlot({timeseries_plot()}, height = 400)
-    
+  
     ### ModE-RA sources ----
     #ModE-RA sources
     
     ranges  <- reactiveValues(x = NULL, y = NULL)
     ranges2 <- reactiveValues(x = NULL, y = NULL)
-    
+  
     fad_wa <- function(labs) {
       labs = labs
       plot_modera_sources(input$fad_year_a, "winter", lonlat_vals()[1:2], lonlat_vals()[3:4], labs)}
@@ -9161,7 +9256,7 @@ server <- function(input, output, session) {
       
       plot_data
     })
-    
+      
     
     # Lower map (Original)
     output$fad_summer_map_a <- renderPlot({
@@ -9170,7 +9265,7 @@ server <- function(input, output, session) {
       } else {
         plot_data <- fad_sa(labs = TRUE)  
       } 
-      
+    
       # Render the "Original Map" with no fixed aspect ratio
       plot_data
     })
@@ -9189,7 +9284,7 @@ server <- function(input, output, session) {
       plot_data
     })
     
-    
+
     #Update Modera source year input and Brushes when Double Click happens
     
     observeEvent(input$range_years[1], {
@@ -9204,7 +9299,7 @@ server <- function(input, output, session) {
       if (!is.null(brush)) {
         ranges$x <- c(brush$xmin, brush$xmax)
         ranges$y <- c(brush$ymin, brush$ymax)
-        
+
       } else {
         ranges$x <- lonlat_vals()[1:2]
         ranges$y <- lonlat_vals()[3:4]
@@ -9216,12 +9311,21 @@ server <- function(input, output, session) {
       if (!is.null(brush_b)) {
         ranges2$x <- c(brush_b$xmin, brush_b$xmax)
         ranges2$y <- c(brush_b$ymin, brush_b$ymax)
-        
+
       } else {
         ranges2$x <- lonlat_vals()[1:2]
         ranges2$y <- lonlat_vals()[3:4]
       }
     })
+    
+    #Data ModE-RA sources
+    fad_wa_data <- function() {
+
+      download_feedback_data(input$fad_year_a, "winter", lonlat_vals()[1:2], lonlat_vals()[3:4])}
+    fad_sa_data <- function() {
+
+      download_feedback_data(input$fad_year_a, "summer", lonlat_vals()[1:2], lonlat_vals()[3:4])}
+    
     
     ### Downloads ----
     #Downloading General data
@@ -9273,26 +9377,30 @@ server <- function(input, output, session) {
                                                            dev.off()
                                                          }}) 
     
-    output$download_map_data        <- downloadHandler(filename = function(){paste(plot_titles()$file_title, "-mapdata.",input$file_type_map_data, sep = "")},
-                                                       content  = function(file) {
-                                                         if (input$file_type_map_data == "csv"){
-                                                           write.csv(rewrite_maptable(map_data(), subset_lons(), subset_lats()), file,
-                                                                     row.names = FALSE)
-                                                         } else {
-                                                           write.xlsx(rewrite_maptable(map_data(), subset_lons(), subset_lats()), file,
-                                                                      row.names = FALSE,
-                                                                      col.names = FALSE)
-                                                         }})
+    output$download_map_data        <- downloadHandler(filename = function() {paste(plot_titles()$file_title, "-mapdata.", input$file_type_map_data, sep = "")},
+                                                        content = function(file) {
+                                                          if (input$file_type_map_data == "csv"){
+                                                            map_data_new <- rewrite_maptable(map_data(), subset_lons(), subset_lats())
+                                                            colnames(map_data_new) <- NULL
+                                                            
+                                                            write.csv(map_data_new, file,
+                                                                      row.names = FALSE)
+                                                          } else {
+                                                            write.xlsx(rewrite_maptable(map_data(), subset_lons(), subset_lats()), file,
+                                                                       row.names = FALSE,
+                                                                       col.names = FALSE)
+                                                          }})
     
     output$download_timeseries_data  <- downloadHandler(filename = function(){paste(plot_titles()$file_title, "-tsdata.",input$file_type_timeseries_data, sep = "")},
                                                         content  = function(file) {
                                                           if (input$file_type_timeseries_data == "csv"){
                                                             write.csv(timeseries_data_output(), file,
-                                                                      row.names = FALSE)
+                                                                      row.names = FALSE,
+                                                                      fileEncoding = "latin1")
                                                           } else {
                                                             write.xlsx(timeseries_data_output(), file,
                                                                        row.names = FALSE,
-                                                                       col.names = FALSE)
+                                                                       col.names = TRUE)
                                                           }})
     
     output$download_fad_sa             <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a, "-modera_source.",input$file_type_modera_source_b, sep = "")},
@@ -9332,27 +9440,27 @@ server <- function(input, output, session) {
                                                               dev.off()
                                                             }})
     
-  output$download_data_fad_wa       <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a, "-modera_source_data.",input$file_type_data_modera_source_a, sep = "")},
+    output$download_data_fad_wa       <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a, "-modera_source_data.",input$file_type_data_modera_source_a, sep = "")},
+                                                          content  = function(file) {
+                                                            if (input$file_type_data_modera_source_a == "csv"){
+                                                              write.csv(fad_wa_data(), file,
+                                                                        row.names = FALSE)
+                                                            } else {
+                                                              write.xlsx(fad_wa_data(), file,
+                                                                         col.names = TRUE,
+                                                                         row.names = FALSE)
+                                                            }})
+    
+    output$download_data_fad_sa      <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a, "-modera_source_data.",input$file_type_data_modera_source_b, sep = "")},
                                                         content  = function(file) {
-                                                          if (input$file_type_data_modera_source_a == "csv"){
-                                                            write.csv(fad_wa_data(), file,
+                                                          if (input$file_type_data_modera_source_b == "csv"){
+                                                            write.csv(fad_sa_data(), file,
                                                                       row.names = FALSE)
                                                           } else {
-                                                            write.xlsx(fad_wa_data(), file,
+                                                            write.xlsx(fad_sa_data(), file,
                                                                        col.names = TRUE,
                                                                        row.names = FALSE)
                                                           }})
-    
-    output$download_data_fad_sa     <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a, "-modera_source_data.",input$file_type_data_modera_source_b, sep = "")},
-                                                      content  = function(file) {
-                                                        if (input$file_type_data_modera_source_b == "csv"){
-                                                          write.csv(fad_sa_data(), file,
-                                                                    row.names = FALSE)
-                                                        } else {
-                                                          write.xlsx(fad_sa_data(), file,
-                                                                     col.names = TRUE,
-                                                                     row.names = FALSE)
-                                                        }})
     
     output$download_netcdf             <- downloadHandler(filename = function() {paste(plot_titles()$netcdf_title, ".nc", sep = "")},
                                                           content  = function(file) {
@@ -9525,7 +9633,7 @@ server <- function(input, output, session) {
       return(m_d_2)
     })
     
-    map_plot_2 <- function(){plot_default_map(map_data_2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2())}
+    map_plot_2 <- function(){plot_default_map(map_data_2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2)}
     
     output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
     # code line below sets height as a function of the ratio of lat/lon 
@@ -9560,9 +9668,9 @@ server <- function(input, output, session) {
     
     ref_map_plot_2 <- function(){
       if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Values" ){
-        plot_default_map(ref_map_data_2(), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame())
+        plot_default_map(ref_map_data_2(), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2)
       } else if (input$ref_map_mode2 == "SD Ratio"){
-        plot_default_map(ref_map_data_2(), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame())
+        plot_default_map(ref_map_data_2(), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2)
       }
     }
     
@@ -9782,7 +9890,15 @@ server <- function(input, output, session) {
       }
     })
     
+    #Data ModE-RA sources
+    fad_wa_data2 <- function() {
+      
+      download_feedback_data(input$fad_year_a2, "winter", lonlat_vals2()[1:2], lonlat_vals2()[3:4])}
+    fad_sa_data2 <- function() {
+      
+      download_feedback_data(input$fad_year_a2, "summer", lonlat_vals2()[1:2], lonlat_vals2()[3:4])}
     
+
     ### Downloads ----
     #Downloading General data
     output$download_map2             <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title,"-map.",input$file_type_map2, sep = "")},
@@ -9836,7 +9952,10 @@ server <- function(input, output, session) {
     output$download_map_data2        <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title, "-mapdata.",input$file_type_map_data2, sep = "")},
                                                         content  = function(file) {
                                                           if (input$file_type_map_data2 == "csv"){
-                                                            write.csv(rewrite_maptable(map_data_2(), subset_lons_2(), subset_lats_2()), file,
+                                                            map_data_new_2 <- rewrite_maptable(map_data_2(), subset_lons_2(), subset_lats_2())
+                                                            colnames(map_data_new_2) <- NULL
+                                                            
+                                                            write.csv(map_data_new_2, file,
                                                                       row.names = FALSE)
                                                           } else {
                                                             write.xlsx(rewrite_maptable(map_data_2(), subset_lons_2(), subset_lats_2()), file,
@@ -9848,7 +9967,8 @@ server <- function(input, output, session) {
                                                          content  = function(file) {
                                                            if (input$file_type_timeseries_data2 == "csv"){
                                                              write.csv(timeseries_data_output_2(), file,
-                                                                       row.names = FALSE)
+                                                                       row.names = FALSE,
+                                                                       fileEncoding = "latin1")
                                                            } else {
                                                              write.xlsx(timeseries_data_output_2(), file,
                                                                         row.names = FALSE,
@@ -9925,7 +10045,7 @@ server <- function(input, output, session) {
                             input$range_latitude_v1,input$range_longitude_v2,
                             input$range_latitude_v2)
     })
-    
+
     
     ### Variable 1 and 2 ----
     ### User data processing
@@ -10079,7 +10199,7 @@ server <- function(input, output, session) {
     # Generate Map data & plotting function
     map_data_v1 <- function(){create_map_datatable(data_output4_v1(), subset_lons_v1(), subset_lats_v1())}
     
-    ME_map_plot_v1 <- function(){plot_default_map(map_data_v1(), input$ME_variable_v1, input$mode_selected_v1, plot_titles_v1(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame())}
+    ME_map_plot_v1 <- function(){plot_default_map(map_data_v1(), input$ME_variable_v1, input$mode_selected_v1, plot_titles_v1(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE)}
     
     # Generate timeseries data & plotting function
     timeseries_data_v1 <- reactive({
@@ -10166,7 +10286,7 @@ server <- function(input, output, session) {
     # Generate Map data & plotting function
     map_data_v2 <- function(){create_map_datatable(data_output4_v2(), subset_lons_v2(), subset_lats_v2())}
     
-    ME_map_plot_v2 <- function(){plot_default_map(map_data_v2(), input$ME_variable_v2, input$mode_selected_v2, plot_titles_v2(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame())}
+    ME_map_plot_v2 <- function(){plot_default_map(map_data_v2(), input$ME_variable_v2, input$mode_selected_v2, plot_titles_v2(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE)}
     
     # Generate timeseries data & plotting function
     timeseries_data_v2 <- reactive({
@@ -10358,7 +10478,7 @@ server <- function(input, output, session) {
     corr_m1 = function(){
       if ((input$type_v1 == "Field") | (input$type_v2 == "Field")){
         plot_correlation_map(correlation_map_data(),plot_titles_cor(),input$axis_input3,
-                             input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame())
+                             input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame(),TRUE)
       }
     }
     
@@ -10643,7 +10763,8 @@ server <- function(input, output, session) {
                                                            content  = function(file) {
                                                              if (input$file_type_timeseries_data3 == "csv"){
                                                                write.csv(correlation_ts_datatable(), file,
-                                                                         row.names = FALSE)
+                                                                         row.names = FALSE,
+                                                                         fileEncoding = "latin1")
                                                              } else {
                                                                write.xlsx(correlation_ts_datatable(), file,
                                                                           row.names = FALSE,
@@ -10653,7 +10774,10 @@ server <- function(input, output, session) {
       output$download_map_data3        <- downloadHandler(filename = function(){paste(plot_titles_cor()$Download_title, "-mapdata.",input$file_type_map_data3, sep = "")},
                                                           content  = function(file) {
                                                             if (input$file_type_map_data3 == "csv"){
-                                                              write.csv(rewrite_maptable(correlation_map_datatable(),NA,NA), file,
+                                                              map_data_new_3 <- rewrite_maptable(correlation_map_datatable(),NA,NA)
+                                                              colnames(map_data_new_3) <- NULL
+                                                              
+                                                              write.csv(map_data_new_3, file,
                                                                         row.names = FALSE)
                                                             } else {
                                                               write.xlsx(rewrite_maptable(correlation_map_datatable(),NA,NA), file,
@@ -10971,7 +11095,7 @@ server <- function(input, output, session) {
     # Generate Map data & plotting function for dv
     map_data_dv <- function(){create_map_datatable(data_output4_dv(), subset_lons_dv(), subset_lats_dv())}
     
-    ME_map_plot_dv <- function(){plot_default_map(map_data_dv(), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame())}
+    ME_map_plot_dv <- function(){plot_default_map(map_data_dv(), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE)}
     
     # Generate timeseries data & plotting function for iv
     ME_ts_data_iv <- reactive({
@@ -11118,7 +11242,7 @@ server <- function(input, output, session) {
     reg_coef_1 = function(){
       req(input$coeff_variable)
       plot_regression_coefficients(regression_coeff_data(),variables_iv(),match(input$coeff_variable,variables_iv()),
-                                   variable_dv(),plot_titles_reg(),subset_lons_dv(),subset_lats_dv())
+                                   variable_dv(),plot_titles_reg(),subset_lons_dv(),subset_lats_dv(),TRUE)
     }
     
     output$plot_reg_coeff = renderPlot({reg_coef_1()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
@@ -11152,7 +11276,7 @@ server <- function(input, output, session) {
     reg_pval_1 = function(){
       req(input$pvalue_variable)
       plot_regression_pvalues(regression_pvalue_data(),variables_iv(),match(input$pvalue_variable,variables_iv()),
-                              variable_dv(),plot_titles_reg(),subset_lons_dv(),subset_lats_dv())
+                              variable_dv(),plot_titles_reg(),subset_lons_dv(),subset_lats_dv(),TRUE)
     }
     
     output$plot_reg_pval = renderPlot({reg_pval_1()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
@@ -11193,7 +11317,7 @@ server <- function(input, output, session) {
     reg_res_1 = function(){
       plot_regression_residuals(regression_residuals_data(),reg_resi_year_val(),input$range_years4,
                                 variables_iv(),variable_dv(),plot_titles_reg(),
-                                subset_lons_dv(),subset_lats_dv())
+                                subset_lons_dv(),subset_lats_dv(),TRUE)
       
     }
     
@@ -11299,12 +11423,20 @@ server <- function(input, output, session) {
       } else {
         plot_data <- fad_sa4a(labs = FALSE)
       }
-      
+
       # Apply coord_sf to the entire map with adjusted limits
       plot_data <- plot_data + coord_sf(xlim = ranges2_4a$x, ylim = ranges2_4a$y, crs = st_crs(4326))
       
       plot_data
     })
+    
+    #Data ModE-RA sources
+    fad_wa_data4a <- function() {
+      
+      download_feedback_data(input$fad_year_a4a, "winter", lonlat_vals_iv()[1:2], lonlat_vals_iv()[3:4])}
+    fad_sa_data4a <- function() {
+      
+      download_feedback_data(input$fad_year_a4a, "summer", lonlat_vals_iv()[1:2], lonlat_vals_iv()[3:4])}
     
     #ModE-RA sources dependent variable
     
@@ -11369,6 +11501,14 @@ server <- function(input, output, session) {
       
       plot_data
     })
+    
+    #Data ModE-RA sources
+    fad_wa_data4b <- function() {
+      
+      download_feedback_data(input$fad_year_a4b, "winter", lonlat_vals_dv()[1:2], lonlat_vals_dv()[3:4])}
+    fad_sa_data4b <- function() {
+      
+      download_feedback_data(input$fad_year_a4b, "summer", lonlat_vals_dv()[1:2], lonlat_vals_dv()[3:4])}
     
     #Update Modera source year input and update brushes
     
@@ -11473,7 +11613,8 @@ server <- function(input, output, session) {
                                                          content  = function(file) {
                                                            if (input$reg_ts_plot_data_type == "csv"){
                                                              write.csv(regression_ts_data(), file,
-                                                                       row.names = FALSE)
+                                                                       row.names = FALSE,
+                                                                       fileEncoding = "latin1")
                                                            } else {
                                                              write.xlsx(regression_ts_data(), file,
                                                                         row.names = FALSE,
@@ -11508,15 +11649,18 @@ server <- function(input, output, session) {
                                                           }})
     
     output$download_reg_coe_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-mapdata.",input$reg_coe_plot_data_type, sep = "")},
-                                                        content  = function(file) {
-                                                          if (input$reg_coe_plot_data_type == "csv"){
-                                                            write.csv(reg_coef_2(), file,
-                                                                      row.names = FALSE)
-                                                          } else {
-                                                            write.xlsx(reg_coef_2(), file,
-                                                                       row.names = FALSE,
-                                                                       col.names = FALSE)
-                                                          }})
+                                                                content  = function(file) {
+                                                                  if (input$reg_coe_plot_data_type == "csv"){
+                                                                    map_data_new_4a <- rewrite_maptable(reg_coef_2(),NA,NA)
+                                                                    colnames(map_data_new_4a) <- NULL
+                                                                    
+                                                                    write.csv(map_data_new_4a, file,
+                                                                              row.names = FALSE)
+                                                                  } else {
+                                                                    write.xlsx(rewrite_maptable(reg_coef_2(),NA,NA), file,
+                                                                               row.names = FALSE,
+                                                                               col.names = FALSE)
+                                                                  }})
     
     output$download_reg_pval_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title,"-map.",input$reg_pval_plot_type, sep = "")},
                                                          content  = function(file) {
@@ -11537,10 +11681,13 @@ server <- function(input, output, session) {
     output$download_reg_pval_plot_data       <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-mapdata.",input$reg_pval_plot_data_type, sep = "")},
                                                                 content  = function(file) {
                                                                   if (input$reg_pval_plot_data_type == "csv"){
-                                                                    write.csv(reg_pval_2(), file,
+                                                                    map_data_new_4b <- rewrite_maptable(reg_pval_2(),NA,NA)
+                                                                    colnames(map_data_new_4b) <- NULL
+                                                                    
+                                                                    write.csv(map_data_new_4b, file,
                                                                               row.names = FALSE)
                                                                   } else {
-                                                                    write.xlsx(reg_pval_2(), file,
+                                                                    write.xlsx(rewrite_maptable(reg_pval_2(),NA,NA), file,
                                                                                row.names = FALSE,
                                                                                col.names = FALSE)
                                                                   }})
@@ -11564,10 +11711,13 @@ server <- function(input, output, session) {
     output$download_reg_res_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-mapdata.",input$reg_res_plot_data_type, sep = "")},
                                                                 content  = function(file) {
                                                                   if (input$reg_res_plot_data_type == "csv"){
-                                                                    write.csv(reg_res_2(), file,
+                                                                    map_data_new_4c <- rewrite_maptable(reg_res_2(),NA,NA)
+                                                                    colnames(map_data_new_4c) <- NULL
+                                                                    
+                                                                    write.csv(map_data_new_4c, file,
                                                                               row.names = FALSE)
                                                                   } else {
-                                                                    write.xlsx(reg_res_2(), file,
+                                                                    write.xlsx(rewrite_maptable(reg_res_2(),NA,NA), file,
                                                                                row.names = FALSE,
                                                                                col.names = FALSE)
                                                                   }})
@@ -11698,7 +11848,7 @@ server <- function(input, output, session) {
                                                            }})
 
     
-  ## MONTHLY TS data processing and plotting ----
+  ## ANNUAL CYCLES data processing and plotting ----
     ### Plot timeseries & data ----
     
     # Plot Timeseries
@@ -11885,7 +12035,7 @@ server <- function(input, output, session) {
         value = last_coordinates()[3:4])
     })
     
-    ### Downloading Monthly TS data ----
+    ### Downloading Annual cycles data ----
     
     output$download_timeseries5      <- downloadHandler(filename = function(){paste("monthly-ts.",input$file_type_timeseries5, sep = "")},
                                                        content  = function(file) {
@@ -11908,7 +12058,8 @@ server <- function(input, output, session) {
                                                         content  = function(file) {
                                                           if (input$file_type_timeseries_data5 == "csv"){
                                                             write.csv(monthly_ts_data(), file,
-                                                                      row.names = FALSE)
+                                                                      row.names = FALSE,
+                                                                      fileEncoding = "latin1")
                                                           } else {
                                                             write.xlsx(monthly_ts_data(), file,
                                                                        row.names = FALSE,
