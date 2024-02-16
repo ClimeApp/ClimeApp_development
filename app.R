@@ -197,16 +197,37 @@ ui <- navbarPage(id = "nav1",
                     sidebarPanel(fluidRow(
                     #Method Title and Pop Over
                     popover(
-                    h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
-                    "Analyzing averages",br(), "involves calculating the mean of a dataset, providing a central tendency measure. Anomalies are deviations from this mean. In climate research, comparing monthly or yearly averages helps identify trends. Analyzing anomalies, the differences from long-term averages, reveals unusual patterns, aiding in detecting climate changes and anomalies such as El Niño or global warming impacts.",
-                    title = "What are anomalies?",
-                    id = "pop_anomalies",
-                    placement = "right",
+                      h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+                      "Anomalies show how a selected time period differs from a reference time period:",em("Anomalies = Absolute Values – Reference Values"),br(),br(),
+                      "The Anomalies map shows the average anomaly across all years in the range of years.",br(),br(),
+                      "The Anomalies timeseries shows the average anomaly across your selected geographic area for each year in the range of years.",br(),br(),  
+                      "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
+                      title = "What are anomalies?",
+                      id = "pop_anomalies",
+                      placement = "right",
                     ), 
                     br(),
           
                     #Short description of the selection options        
-                    h4(helpText("Select dataset and variable")),
+                    h4(helpText("Select dataset and variable",
+                      popover(
+                        HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+                        "Select between the three ModE datasets:", br(), 
+                        "- ModE-RA – the full reanalysis (recommended)", br(),
+                        "- ModE-Sim – an ensemble of bounded climate models", br(),
+                        "- ModE-RAclim – ModE-RA without centennial-scale variability or forcings",br(),br(),
+                        "And select a climate variable:",br(),
+                        "- Temperature - air temperature at 2m [°C]",br(),
+                        "- Precipitation - total monthly precipitation [mm]",br(),
+                        "- SLP - sea level pressure [hPa]",br(),
+                        "- Z500 - pressure at 500 hPa geopotential height [hPa]",br(),br(),
+                        "See",em("ModE data"),"tab on the Welcome page for more information.",
+                        id = "pop_anomalies_datvar",
+                        placement = "right",
+                      ),             
+                    )),
+
+                    br(),
                     
                     #Choose one of three datasets (Select)                
                     selectInput(inputId  = "dataset_selected",
@@ -226,7 +247,15 @@ ui <- navbarPage(id = "nav1",
                     sidebarPanel(fluidRow(
                       
                     #Short description of the temporal selection        
-                    h4(helpText("Plot average anomalies for a selected time period")),
+                    h4(helpText("Select a year range, season and reference period",
+                      popover(
+                        HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+                        "Choose the range of years you would like to view anomalies for and select the season you are interested in. Use the",em("Custom"),"option to enter your own range of months. You can view the absolute values for your selection by selecting",em("Absolute Values"),"under the Reference map selection below the main map.",br(),br(),
+                        "Then choose the reference period you would like your selected year range compared to. You can view the absolute means for your reference period by selecting",em("Reference Values"),"under the",em("Reference map"),"selection below the main map.",
+                        id = "pop_anomalies_time",
+                        placement = "right",
+                      ),           
+                    )),
             
                     #Choose your year of interest        
                     hidden(
@@ -397,7 +426,15 @@ ui <- navbarPage(id = "nav1",
                       fluidRow(
                       #### Map customization ----       
                       column(width = 4,
-                             h4(helpText("Customize your map")),  
+                             h4(helpText("Customize your map",
+                               popover(
+                                 HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+                                 "Edit the titles and axes displayed on your map.",br(),br(),
+                                 "You can view and adjust the limits of the map colour axis by selecting",em("Fixed"),"under",em("Axis customization"),". These limits will stay fixed even after a plot has been changed. Select",em("Automatic"),"to allow the axis to adjust automatically again.",
+                                 id = "pop_anomalies_cusmap",
+                                 placement = "right",
+                               ),   
+                             )),  
                             
                              checkboxInput(inputId = "custom_map",
                                            label   = "Map customization",
@@ -451,7 +488,14 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Add Custom features (points and highlights) ----                        
                       column(width = 4,
-                             h4(helpText("Custom features")),
+                             h4(helpText("Custom features",
+                               popover(
+                                 HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+                                 "Add labelled points or rectangular highlights (a box or a hashed area) to your map.",
+                                 id = "pop_anomalies_mapfeat",
+                                 placement = "right",
+                               ),           
+                             )),
                              
                              checkboxInput(inputId = "custom_features",
                                            label   = "Enable custom features",
@@ -466,7 +510,17 @@ ui <- navbarPage(id = "nav1",
                                
                                #Custom Points
                                div(id = "hidden_custom_points",
-                                   h5(helpText("Add custom points")),
+                                   h5(helpText("Add custom points",
+                                     popover(
+                                       HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+                                       "To add a point, double click on the map or search for location. This will automatically set the",em("Point longitude"),"and",em("Point latitude"),"(enter multiple values here, separated by commas if you want to plot multiple points simultaneously). Then type a",em("Point label"),"(if required) and choose a",em("Point shape, Point colour"),"and",em("Point size."),"Finally, click",em("Add point"),"to add your point to the map.",br(),br(), 
+                                       "Points can be removed from the map using the",em("Remove last point"),"and",em("Remove all points"),"buttons.",
+
+                                       id = "pop_anomalies_mappoint",
+                                       placement = "right",
+                                     ),             
+                                   )),
+                                   
                                    h6(helpText("Enter location/coordinates or double click on map")),
                                    
                                    textInput(inputId = "location", 
@@ -528,7 +582,15 @@ ui <- navbarPage(id = "nav1",
                                
                                #Custom Highlights
                                div(id = "hidden_custom_highlights",
-                                   h5(helpText("Add custom highlights")),
+                                   h5(helpText("Add custom highlights",
+                                     popover(
+                                       HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+                                       "To add a highlight, draw a box on the map or manually enter a",em("Longitude"),"and",em("Latitude"),"range. Then select a",em("Highlight colour"),"and",em("Highlight type"),"and click",em("Add highlight"),"to add your highlight to the map.",br(),br(),
+                                       "Highlights can be removed from the map using the",em("Remove last highlight"),"and",em("Remove all highlights"),"buttons.",
+                                       id = "pop_anomalies_maphl",
+                                       placement = "right",
+                                     ),       
+                                   )),
                                    h6(helpText("Enter coordinate or draw a box on map")),
                                    
                                    numericRangeInput(inputId = "highlight_x_values",
@@ -569,7 +631,14 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Custom statistics ----
                       column(width = 4,
-                             h4(helpText("Custom statistics")),
+                             h4(helpText("Custom statistics",
+                               popover(
+                                 HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+                                 "Add stipples to the map to show where data points match a certain criteria.",
+                                 id = "pop_anomalies_mapstat",
+                                 placement = "right",
+                               ),      
+                             )),
                              
                              checkboxInput(inputId = "enable_custom_statistics",
                                            label   = "Enable custom statistics",
@@ -577,7 +646,15 @@ ui <- navbarPage(id = "nav1",
                              
                              
                                div(id = "hidden_custom_statistics",
-                                   h5(helpText("Choose custom statistic:")),
+                                   h5(helpText("Choose custom statistic:",
+                                     popover(
+                                       HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+                                       "The",em("SD ratio"),"option will show points on the map where the SD ratio (averaged over your selected years) is less than a chosen value. The SD ratio shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",br(),br(),
+                                       "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
+                                       id = "pop_anomalies_choosestat",
+                                       placement = "right",
+                                     ),               
+                                   )),
                                    
                                    radioButtons(inputId      = "custom_statistic",
                                                 label        = NULL,
@@ -609,7 +686,17 @@ ui <- navbarPage(id = "nav1",
                       ),
 
                       #### Abs/Ref Map plot START ----
-                      h4(helpText("Reference map")), 
+                      h4(helpText("Reference map",
+                        popover(
+                          HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+                          "Plot and download a reference map for your data.",br(),br(), 
+                          em("Absolute Values"),"shows the average for your selected month and year range prior to subtracting the reference values. Note that the reanalysis method makes absolute values potentially unreliable – this  is solved by using anomalies.",br(),br(),
+                          em("Reference Values"),"are the absolute means for your reference period.",br(),br(), 
+                          em("SD Ratio"),"shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",
+                          id = "pop_anomalies_refmap",
+                          placement = "right",
+                        ),     
+                      )), 
                       
                       radioButtons(inputId  = "ref_map_mode",
                                    label    = NULL,
@@ -783,7 +870,7 @@ ui <- navbarPage(id = "nav1",
                                                  choiceValues = c("Fill","Box","Hatched")),
                                     
                                     checkboxInput(inputId = "show_highlight_on_legend_ts",
-                                                  label   = "Show on legend",
+                                                  label   = "Show on key",
                                                   value   = FALSE),
                                     
                                     hidden(
@@ -830,7 +917,7 @@ ui <- navbarPage(id = "nav1",
                                                  choices = c("solid", "dashed")),
                                     
                                     checkboxInput(inputId = "show_line_on_legend_ts",
-                                                  label   = "Show on legend",
+                                                  label   = "Show on key",
                                                   value   = FALSE),
                                     
                                     hidden(
@@ -940,32 +1027,28 @@ ui <- navbarPage(id = "nav1",
                     ### Feedback archive documentation (FAD) ----
                     tabPanel("ModE-RA sources", br(),
                              fluidRow(
-                               
-                               column(width=4,
-                                      numericInput(
-                                        inputId  = "fad_year_a",
-                                        label   =  "Year",
-                                        value = 1422,
-                                        min = 1422,
-                                        max = 2008)),
+                               column(width=4,                               
+                                # Title & help pop up
+                                 popover(
+                                   h3(HTML("Plot ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+                                   "These plots show location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
+                                   em("Assimilated Observations – Oct. to Mar."),"shows sources that were used to produce the monthly reconstruction between October and March, while",em("Assimilated Observations – Apr. to Sept."),"shows sources that were used to produce the reconstruction between April and September.",br(),br(),
+                                   "The",em("VARIABLE"),"designation refers to the value that was directly measured, so for example a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.", br(),br(),
+                                   "See",em("ModE data"),"tab on the Welcome page for more information.",
+                                   id = "pop_anomalies_mesource",
+                                   placement = "right",
+                                 ), 
+                                
+                                 # Year entry
+                                 numericInput(
+                                  inputId  = "fad_year_a",
+                                  label   =  "Year",
+                                  value = 1422,
+                                  min = 1422,
+                                  max = 2008)
+                                ),
                              ),
-                             #Download
-                             h4(helpText("Download maps")),
-                             fluidRow(
-                               column(2, radioButtons(inputId = "file_type_modera_source_a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_fad_wa", label = "Download Oct. - Mar.")),
-                               column(2, radioButtons(inputId = "file_type_modera_source_b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_fad_sa", label = "Download Apr. - Sep."))
-                             ),
-                             
-                             h4(helpText("Download data")),
-                             fluidRow(
-                               column(2, radioButtons(inputId = "file_type_data_modera_source_a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_data_fad_wa", label = "Download Oct. - Mar.")),
-                               column(2, radioButtons(inputId = "file_type_data_modera_source_b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_data_fad_sa", label = "Download Apr. - Sep."))
-                             ),
-                             
+
                              h4(helpText("Draw a box on the left map to use zoom function")),
                              
                              div(id = "fad_map_a",
@@ -993,6 +1076,23 @@ ui <- navbarPage(id = "nav1",
                                
                                          plotOutput("fad_zoom_summer_a")
                                          )),
+                             
+                             #Download
+                             h4(helpText("Download maps")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_modera_source_a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_fad_wa", label = "Download Oct. - Mar.")),
+                               column(2, radioButtons(inputId = "file_type_modera_source_b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_fad_sa", label = "Download Apr. - Sep."))
+                             ),
+                             
+                             h4(helpText("Download data")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_data_modera_source_a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_data_fad_wa", label = "Download Oct. - Mar.")),
+                               column(2, radioButtons(inputId = "file_type_data_modera_source_b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_data_fad_sa", label = "Download Apr. - Sep."))
+                             ),
                     ),
                 ## Main Panel END ----
                 ), width = 8),
@@ -1039,7 +1139,7 @@ ui <- navbarPage(id = "nav1",
                     sidebarPanel(fluidRow(
                       
                       #Short description of the temporal selection        
-                      h4(helpText("Plot composite anomalies for a selected time period")),
+                      h4(helpText("Select a year range, season and reference period")),
                      
                      #Type in your year of interest OR upload a file
                      radioButtons(inputId  = "enter_upload2",
@@ -1663,7 +1763,7 @@ ui <- navbarPage(id = "nav1",
                                                       choiceValues = c("Fill","Box","Hatched")),
                                          
                                          checkboxInput(inputId = "show_highlight_on_legend_ts2",
-                                                       label   = "Show on legend",
+                                                       label   = "Show on key",
                                                        value   = FALSE),
                                          
                                          hidden(
@@ -1710,7 +1810,7 @@ ui <- navbarPage(id = "nav1",
                                                       choices = c("solid", "dashed")),
                                          
                                          checkboxInput(inputId = "show_line_on_legend_ts2",
-                                                       label   = "Show on legend",
+                                                       label   = "Show on key",
                                                        value   = FALSE),
                                          
                                          hidden(
@@ -2481,7 +2581,7 @@ ui <- navbarPage(id = "nav1",
                                                       choiceValues = c("Fill","Box","Hatched")),
                                          
                                          checkboxInput(inputId = "show_highlight_on_legend_ts3",
-                                                       label   = "Show on legend",
+                                                       label   = "Show on key",
                                                        value   = FALSE),
                                          
                                          hidden(
@@ -2528,7 +2628,7 @@ ui <- navbarPage(id = "nav1",
                                                       choices = c("solid", "dashed")),
                                          
                                          checkboxInput(inputId = "show_line_on_legend_ts3",
-                                                       label   = "Show on legend",
+                                                       label   = "Show on key",
                                                        value   = FALSE),
                                          
                                          hidden(
@@ -4088,7 +4188,7 @@ ui <- navbarPage(id = "nav1",
                                                         choiceValues = c("Fill","Box","Hatched")),
                                            
                                            checkboxInput(inputId = "show_highlight_on_legend_ts5",
-                                                         label   = "Show on legend",
+                                                         label   = "Show on key",
                                                          value   = FALSE),
                                            
                                            hidden(
@@ -4134,7 +4234,7 @@ ui <- navbarPage(id = "nav1",
                                                         choices = c("solid", "dashed")),
                                            
                                            checkboxInput(inputId = "show_line_on_legend_ts5",
-                                                         label   = "Show on legend",
+                                                         label   = "Show on key",
                                                          value   = FALSE),
                                            
                                            hidden(
