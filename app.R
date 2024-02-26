@@ -155,7 +155,7 @@ ui <- navbarPage(id = "nav1",
                      h4(helpText("Beta v0.6 (15.02.2024)")),
                      h6(helpText("- Improved UI (i.e. Hide/Show country borders, Rearranged download sections")),
                      h6(helpText("- Switch to Annual Cycle when a single year is selected")),
-                     h6(helpText("- Download ModE-RA srouce data as table")),
+                     h6(helpText("- Download ModE-RA source data as table")),
                      br(), br(), 
                      h4(helpText("Beta v0.5 (22.12.2023)")),
                      h6(helpText("- Download NetCDF files")),
@@ -972,7 +972,7 @@ ui <- navbarPage(id = "nav1",
                     ### Feedback archive documentation (FAD) ----
                     tabPanel("ModE-RA sources", br(),
                              fluidRow(
-                               column(width=4,                               
+                               column(width=5,                               
                                 # Title & help pop up
                                 MEsource_popover("pop_anomalies_mesource"),
   
@@ -1853,7 +1853,7 @@ ui <- navbarPage(id = "nav1",
                     ### Feedback archive documentation (FAD) ----
                    tabPanel("ModE-RA sources", br(),
                             fluidRow(
-                              column(width=4,                               
+                              column(width=5,                               
                                      # Title & help pop up
                                      MEsource_popover("pop_composite_mesource"),
                                      
@@ -2927,7 +2927,7 @@ ui <- navbarPage(id = "nav1",
                    ### Feedback archive documentation (FAD) ----
                    tabPanel("ModE-RA sources", br(),
                             
-                            # Title & help pop up
+                            # Title & help pop up 
                             MEsource_popover("pop_correlation_mesource"),
 
                             shinyjs::hidden(
