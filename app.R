@@ -10,7 +10,7 @@ ui <- navbarPage(id = "nav1",
           title = div(style = "display: inline;",
                       uiOutput("logo_output", inline = TRUE),
                       #img(src = 'pics/Font_ClimeApp_Vers3_weiss.png', id = "ClimeApp2", height = "75px", width = "225px", style = "align-left: -10px"),
-                      "(Beta v0.6)",
+                      "(v1.0)",
                       #Preparation to use Tracking ShinyJS and CSS
                       shinyjs::useShinyjs(),
                       use_tracking(),
@@ -45,6 +45,7 @@ ui <- navbarPage(id = "nav1",
                        ),
           theme = my_theme,
           position = c("fixed-top"),
+          windowTitle = "Rich, Nik and Noé are awesome!",
 
 # Welcome START ----                             
   tabPanel("Welcome", value = "tab0",
@@ -616,13 +617,13 @@ ui <- navbarPage(id = "nav1",
                         column(3, downloadButton(outputId = "download_map", label = "Download map")),
                       ),
                       
-                      ### Upload Meta data ----
-                      # h4(helpText("Download / Upload metadata")),
-                      # fluidRow(
-                      #   column(3, downloadButton(outputId = "download_metadata", label = "Download metadata")),
-                      #   column(4, fileInput(inputId= "upload_metadata", label = "Upload metadata as .csv", accept = ".csv")),
-                      #   column(2, actionButton(inputId = "update_metadata", label = "Update upload inputs")),
-                      # ),
+                      #### Upload Meta data ----
+                      h4(helpText("Download / Upload metadata (.xlsx)")),
+                      fluidRow(
+                        column(3, downloadButton(outputId = "download_metadata", label = "Download metadata")),
+                        column(4, fileInput(inputId= "upload_metadata", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                        column(2, actionButton(inputId = "update_metadata", label = "Update upload inputs")),
+                      ),
 
                       #### Abs/Ref Map plot START ----
                       h4(helpText("Reference map")), 
@@ -925,6 +926,14 @@ ui <- navbarPage(id = "nav1",
                        fluidRow(
                          column(2, radioButtons(inputId = "file_type_timeseries", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                          column(3, downloadButton(outputId = "download_timeseries", label = "Download timeseries"))
+                       ),
+                     
+                      #### Upload Meta data ----
+                       h4(helpText("Download / Upload metadata (.xlsx)")),
+                       fluidRow(
+                         column(3, downloadButton(outputId = "download_metadata_ts", label = "Download metadata")),
+                         column(4, fileInput(inputId= "upload_metadata_ts", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                         column(2, actionButton(inputId = "update_metadata_ts", label = "Update upload inputs")),
                        ),
                      
                     ### TS plot END ----       
@@ -1508,6 +1517,14 @@ ui <- navbarPage(id = "nav1",
                        column(3, downloadButton(outputId = "download_map2", label = "Download map"))
                      ),
                      
+                     #### Upload Meta data ----
+                     h4(helpText("Download / Upload metadata (.xlsx)")),
+                     fluidRow(
+                       column(3, downloadButton(outputId = "download_metadata2", label = "Download metadata")),
+                       column(4, fileInput(inputId= "upload_metadata2", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                       column(2, actionButton(inputId = "update_metadata2", label = "Update upload inputs")),
+                     ),
+                     
                      #### Abs/Ref Map plot START ----
                      h4(helpText("Reference map")), 
                      
@@ -1791,6 +1808,14 @@ ui <- navbarPage(id = "nav1",
                        fluidRow(
                          column(2, radioButtons(inputId = "file_type_timeseries2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                          column(3, downloadButton(outputId = "download_timeseries2", label = "Download timeseries"))
+                       ),
+                      
+                      #### Upload Meta data ----
+                       h4(helpText("Download / Upload metadata (.xlsx)")),
+                       fluidRow(
+                         column(3, downloadButton(outputId = "download_metadata_ts2", label = "Download metadata")),
+                         column(4, fileInput(inputId= "upload_metadata_ts2", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                         column(2, actionButton(inputId = "update_metadata_ts2", label = "Update upload inputs")),
                        ),
              
                     ### Composite TS plot END ----
@@ -2618,6 +2643,14 @@ ui <- navbarPage(id = "nav1",
                         column(3, downloadButton(outputId = "download_timeseries3", label = "Download timeseries"))
                       ),
                     
+                      #### Upload Meta data ----
+                      h4(helpText("Download / Upload metadata (.xlsx)")),
+                      fluidRow(
+                        column(3, downloadButton(outputId = "download_metadata_ts3", label = "Download metadata")),
+                        column(4, fileInput(inputId= "upload_metadata_ts3", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                        column(2, actionButton(inputId = "update_metadata_ts3", label = "Update upload inputs")),
+                      ),
+                    
                    ### Shared TS plot: End ----          
                   ),
                    
@@ -2681,7 +2714,7 @@ ui <- navbarPage(id = "nav1",
                                                    placeholder = "Custom title"))),
                                    
                                    checkboxInput(inputId = "hide_borders3",
-                                                 label   = "Hide country borders",
+                                                 label   = "Show country borders",
                                                  value   = TRUE),
                                    
                                )),
@@ -2841,6 +2874,14 @@ ui <- navbarPage(id = "nav1",
                       fluidRow(
                         column(2, radioButtons(inputId = "file_type_map3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                         column(3, downloadButton(outputId = "download_map3", label = "Download map"))
+                      ),
+                    
+                      #### Upload Meta data ----
+                      h4(helpText("Download / Upload metadata (.xlsx)")),
+                      fluidRow(
+                        column(3, downloadButton(outputId = "download_metadata3", label = "Download metadata")),
+                        column(4, fileInput(inputId= "upload_metadata3", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                        column(2, actionButton(inputId = "update_metadata3", label = "Update upload inputs")),
                       ),
                     
                    ### Map plot: END ----        
@@ -4323,7 +4364,7 @@ server <- function(input, output, session) {
   SDratio_data_ID = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current SD data
   
   #Preparations in the Server (Hidden options) ----
-  track_usage(storage_mode = store_rds(path = "logs/"))
+  track_usage(storage_mode = store_json(path = "logs/"))
   
   #Easter Eggs
   
@@ -4396,19 +4437,19 @@ server <- function(input, output, session) {
   observe({
     if (input$type_v1 == "Timeseries" && input$type_v2 == "Timeseries") {
       shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+      // Get the tabPanel element by ID
+      var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
 
-        // Hide the tabPanel
-        tabPanelToHide.hide();
-      ')
+      // Hide the tabPanel
+      tabPanelToHide.hide();
+    ')
       shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+      // Get the tabPanel element by ID
+      var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
 
-        // Hide the tabPanel
-        tabPanelToHide.hide();
-      ')
+      // Hide the tabPanel
+      tabPanelToHide.hide();
+    ')
       
     } else if (input$type_v1 == "Field" && input$type_v2 == "Field") {
       # Get the range values
@@ -4418,80 +4459,58 @@ server <- function(input, output, session) {
       range_lat_v2 <- input$range_latitude_v2
       
       # Check for overlap
-      
       overlap_lon <- !(range_lon_v1[2] < range_lon_v2[1] || range_lon_v1[1] > range_lon_v2[2])
       overlap_lat <- !(range_lat_v1[2] < range_lat_v2[1] || range_lat_v1[1] > range_lat_v2[2])
       
       # Return the result
       if (overlap_lon && overlap_lat) {
         shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+      // Get the tabPanel element by ID
+      var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
 
-        // Show the tabPanel
-        tabPanelToHide.show();
-      ')
+      // Show the tabPanel
+      tabPanelToHide.show();
+    ')
+        shinyjs::runjs('
+      // Get the tabPanel element by ID
+      var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+
+      // Show the tabPanel
+      tabPanelToHide.show();
+    ')
+        
       } else {
         shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+      // Get the tabPanel element by ID
+      var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
 
-        // Hide the tabPanel
-        tabPanelToHide.hide();
-      ')
+      // Hide the tabPanel
+      tabPanelToHide.hide();
+    ')
+        
+        shinyjs::runjs('
+      // Get the tabPanel element by ID
+      var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+
+      // Hide the tabPanel
+      tabPanelToHide.hide();
+    ')
       }
-    } else {
+    } else if ((input$type_v1 == "Field" && input$type_v2 == "Timeseries") || (input$type_v1 == "Timeseries" && input$type_v2 == "Field")) {
       shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+      // Get the tabPanel element by ID
+      var tabPanelToShow = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
 
-        // Show the tabPanel
-        tabPanelToHide.show();
-      ')
+      // Show the tabPanel
+      tabPanelToShow.show();
+    ')
       shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+      // Get the tabPanel element by ID
+      var tabPanelToShow = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
 
-        // Show the tabPanel
-        tabPanelToHide.show();
-      ')
-    }
-  })
-  
-
-  #Same based on Lon Lat Values
-  observe({
-    
-  })
-  
-  observe({
-    # Get the range values
-    range_lon_v1 <- input$range_longitude_v1
-    range_lat_v1 <- input$range_latitude_v1
-    range_lon_v2 <- input$range_longitude_v2
-    range_lat_v2 <- input$range_latitude_v2
-    
-    # Check for overlap
-    overlap_lon <- !(range_lon_v1[2] < range_lon_v2[1] || range_lon_v1[1] > range_lon_v2[2])
-    overlap_lat <- !(range_lat_v1[2] < range_lat_v2[1] || range_lat_v1[1] > range_lat_v2[2])
-    
-    # Return the result
-    if (overlap_lon && overlap_lat) {
-      shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
-
-        // Show the tabPanel
-        tabPanelToHide.show();
-      ')
-    } else {
-      shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
-
-        // Hide the tabPanel
-        tabPanelToHide.hide();
-      ')
+      // Show the tabPanel
+      tabPanelToShow.show();
+    ')
     }
   })
   
@@ -6194,6 +6213,8 @@ server <- function(input, output, session) {
       map_points_data(data.frame())
     })
     
+    
+    
     # Map Highlights
     observeEvent(input$add_highlight, {
       map_highlights_data(rbind(map_highlights_data(),
@@ -6259,7 +6280,7 @@ server <- function(input, output, session) {
     
     ### Generate Metadata for map customization ----
     
-    #Download
+    #Download Plot data
     metadata_input <- reactive({
       
       metadata = generate_metadata(input$axis_mode,
@@ -6270,58 +6291,248 @@ server <- function(input, output, session) {
                                    input$title2_input,
                                    input$custom_statistic,
                                    input$sd_ratio,
-                                   input$hide_borders,
-                                   map_points_data(),
-                                   map_highlights_data())
+                                   input$hide_borders)
       
       return(metadata)  
     })
     
+    plot_gen_input <- reactive({
+      
+      plot_gen = generate_metadata_plot(input$dataset_selected,
+                                        input$variable_selected,
+                                        input$range_years,
+                                        input$single_year,
+                                        input$range_years_sg,
+                                        input$season_selected,
+                                        input$range_months,
+                                        input$ref_period,
+                                        input$ref_single_year,
+                                        input$ref_period_sg,
+                                        input$range_longitude,
+                                        input$range_latitude,
+                                        lonlat_vals())
+      
+      return(plot_gen)
+    })
+    
     output$download_metadata <- downloadHandler(
-      filename = function() {"custom_metadata.csv"},
+      filename = function() {"metadata.xlsx"},
       content  = function(file) {
-        write.csv(metadata_input(), file, row.names = FALSE)
+        wb <- openxlsx::createWorkbook()
+        openxlsx::addWorksheet(wb, "custom_map")
+        openxlsx::addWorksheet(wb, "custom_points")
+        openxlsx::addWorksheet(wb, "custom_highlights")
+        openxlsx::addWorksheet(wb, "plot_gen")
+        openxlsx::writeData(wb, "custom_map", metadata_input())
+        openxlsx::writeData(wb, "custom_points", map_points_data())
+        openxlsx::writeData(wb, "custom_highlights", map_highlights_data())
+        openxlsx::writeData(wb, "plot_gen", plot_gen_input())
+        openxlsx::saveWorkbook(wb, file)
       }
     )
     
-    #Upload
-    # Reactive value to store uploaded metadata
-    uploaded_metadata <- reactiveVal(NULL)
-    
-    # Function to read uploaded CSV and update inputs
-    process_uploaded_file <- function(file_path) {
-      metadata <- read_metadata_csv(input$upload_metadata)
-      
-      # Update inputs based on metadata
-      updateRadioButtons(session, "title_mode", selected = metadata$title_mode)
-      updateTextInput(session, "title1_input", value = metadata$title1_input)
-      updateTextInput(session, "title2_input", value = metadata$title2_input)
-      updateTextInput(session, "point_label", value = metadata$point_label)
-      updateNumericInput(session, "point_location_x", value = metadata$point_location_x)
-      updateNumericInput(session, "point_location_y", value = metadata$point_location_y)
-      updateRadioButtons(session, "point_shape", selected = metadata$point_shape)
-      updateColourInput(session, "point_colour", value = metadata$point_colour)
-      updateNumericInput(session, "point_size", value = metadata$point_size)
-      updateRadioButtons(session, "highlight_x_values", selected = metadata$highlight_x_values)
-      updateRadioButtons(session, "highlight_y_values", selected = metadata$highlight_y_values)
-      updateColourInput(session, "highlight_colour", value = metadata$highlight_colour)
-      updateRadioButtons(session, "highlight_type", selected = metadata$highlight_type)
-      updateRadioButtons(session, "custom_statistic", selected = metadata$custom_statistic)
-      updateNumericInput(session, "sd_ratio", value = metadata$sd_ratio)
-      updateCheckboxInput(session, "hide_borders", value = metadata$hide_borders)
+    #Upload plot data
 
-      # Store uploaded metadata
-      uploaded_metadata(metadata)
+    process_uploaded_file <- function() {
+      metadata <- openxlsx::read.xlsx(input$upload_metadata$datapath, sheet = "custom_map")
+      
+      # Update inputs based on metadata sheet custom_map
+      updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode", selected = metadata[1, "axis_mode"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input", value = metadata[1:2, "axis_input"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis", value = metadata[1, "hide_axis"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode", selected = metadata[1, "title_mode"])
+      updateTextInput(session = getDefaultReactiveDomain(), "title1_input", value = metadata[1, "title1_input"])
+      updateTextInput(session = getDefaultReactiveDomain(), "title2_input", value = metadata[1, "title2_input"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "custom_statistic", selected = metadata[1, "custom_statistic"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "sd_ratio", value = metadata[1, "sd_ratio"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders", value = metadata[1, "hide_borders"])
+      
+      # Read metadata from "custom_points" sheet
+      metadata_points <- openxlsx::read.xlsx(input$upload_metadata$datapath, sheet = "custom_points")
+      
+      # Update map points data if metadata_points is not empty
+      if (!is.null(metadata_points) && nrow(metadata_points) > 0) {
+        map_points_data(metadata_points)
+      }
+      
+      # Read metadata from "custom_highlights" sheet
+      metadata_highlights <- openxlsx::read.xlsx(input$upload_metadata$datapath, sheet = "custom_highlights")
+      
+      # Update map highlights data if metadata_highlights is not empty
+      if (!is.null(metadata_highlights) && nrow(metadata_highlights) > 0) {
+        map_highlights_data(metadata_highlights)
+      }
+      
+      # Update plot generation
+      plot_data <- openxlsx::read.xlsx(input$upload_metadata$datapath, sheet = "plot_gen")
+      
+      # Update inputs based on metadata sheet plot_gen
+      updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected", selected = plot_data[1, "dataset"])
+      updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected", selected = plot_data[1, "variable"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years", value = plot_data[1:2, "range_years"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "single_year", value = plot_data[1, "select_sg_year"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "range_years_sg", value = plot_data[1, "sg_year"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected", selected = plot_data[1, "season_sel"])
+      updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months", selected = plot_data[1:2, "range_months"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period", value = plot_data[1:2, "ref_period"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year", value = plot_data[1, "select_sg_ref"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg", value = plot_data[1, "sg_ref"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude", value = plot_data[1:2, "lon_range"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude", value = plot_data[1:2, "lat_range"])
+      # Update Lon Lat Vals
+      lonlat_vals(plot_data[1:4, "lonlat_vals"])
     }
+    
     
     # Event handler for upload button
     observeEvent(input$update_metadata, {
       req(input$upload_metadata)
-      process_uploaded_file(input$upload_metadata$datapath)
-      updateActionButton(session, "add_point")
-      updateActionButton(session, "add_highlight")
+      file_path <- input$upload_metadata$datapath
+      
+      # Read the first sheet name from the uploaded Excel file
+      first_sheet_name <- tryCatch({
+        available_sheets <- getSheetNames(file_path)
+        available_sheets[[1]]
+      }, error = function(e) {
+        NULL
+      })
+      
+      # Check if the correct first sheet name is present
+      if (!is.null(first_sheet_name) && first_sheet_name == "custom_map") {
+        # Correct first sheet name is present, proceed with processing the file
+        process_uploaded_file()
+      } else {
+        # Incorrect or missing first sheet name, show an error message
+        showModal(modalDialog(
+          title = "Error",
+          easyClose = TRUE,
+          size = "s",
+          "Please upload the correct Metadata!"
+        ))
+      }
     })
     
+    #Download TS data
+    metadata_input_ts <- reactive({
+      
+      metadata_ts = generate_metadata_ts(input$title_mode_ts,
+                                         input$title1_input_ts,
+                                         input$show_key_ts,
+                                         input$key_position_ts,
+                                         input$show_ref_ts,
+                                         input$custom_average_ts,
+                                         input$year_moving_ts,
+                                         input$percentile_ts,
+                                         input$moving_percentile_ts)
+      
+      return(metadata_ts)  
+    })
+    
+    output$download_metadata_ts <- downloadHandler(
+      filename = function() {"metadata_ts.xlsx"},
+      content  = function(file) {
+        wb <- openxlsx::createWorkbook()
+        openxlsx::addWorksheet(wb, "custom_map_ts")
+        openxlsx::addWorksheet(wb, "custom_points_ts")
+        openxlsx::addWorksheet(wb, "custom_highlights_ts")
+        openxlsx::addWorksheet(wb, "custom_lines_ts")
+        openxlsx::addWorksheet(wb, "plot_gen")
+        openxlsx::writeData(wb, "custom_map_ts", metadata_input_ts())
+        openxlsx::writeData(wb, "custom_points_ts", ts_points_data())
+        openxlsx::writeData(wb, "custom_highlights_ts", ts_highlights_data())
+        openxlsx::writeData(wb, "custom_lines_ts", ts_lines_data())
+        openxlsx::writeData(wb, "plot_gen", plot_gen_input())
+        openxlsx::saveWorkbook(wb, file)
+      }
+    )
+    
+    #Upload TS data
+    process_uploaded_file_ts <- function() {
+      metadata_ts <- openxlsx::read.xlsx(input$upload_metadata_ts$datapath, sheet = "custom_map_ts")
+      
+      # Update inputs based on metadata_ts sheet custom_map_ts
+      updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_ts", selected = metadata_ts[1, "title_mode_ts"])
+      updateTextInput(session = getDefaultReactiveDomain(), "title1_input_ts", value = metadata_ts[1, "title1_input_ts"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "show_key_ts", value = metadata_ts[1, "show_key_ts"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "key_position_ts", selected = metadata_ts[1, "key_position_ts"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "show_ref_ts", value = metadata_ts[1, "show_ref_ts"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "custom_average_ts", value = metadata_ts[1, "custom_average_ts"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "year_moving_ts", value = metadata_ts[1, "year_moving_ts"])
+      updateCheckboxGroupInput(session = getDefaultReactiveDomain(), "percentile_ts", selected = metadata_ts[1, "percentile_ts"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "moving_percentile_ts", value = metadata_ts[1, "moving_percentile_ts"])
+      
+      # Read metadata from "custom_points_ts" sheet
+      metadata_points_ts <- openxlsx::read.xlsx(input$upload_metadata_ts$datapath, sheet = "custom_points_ts")
+      
+      # Update map points data if metadata_points_ts is not empty
+      if (!is.null(metadata_points_ts) && nrow(metadata_points_ts) > 0) {
+        ts_points_data(metadata_points_ts)
+      }
+      
+      # Read metadata from "custom_highlights_ts" sheet
+      metadata_highlights_ts <- openxlsx::read.xlsx(input$upload_metadata_ts$datapath, sheet = "custom_highlights_ts")
+      
+      # Update map highlights data if metadata_highlights_ts is not empty
+      if (!is.null(metadata_highlights_ts) && nrow(metadata_highlights_ts) > 0) {
+        ts_highlights_data(metadata_highlights_ts)
+      }
+      
+      # Read metadata from "custom_lines_ts" sheet
+      metadata_lines_ts <- openxlsx::read.xlsx(input$upload_metadata_ts$datapath, sheet = "custom_lines_ts")
+      
+      # Update map lines data if metadata_lines_ts is not empty
+      if (!is.null(metadata_lines_ts) && nrow(metadata_lines_ts) > 0) {
+        ts_lines_data(metadata_lines_ts)
+      }
+      
+      # Update plot generation
+      plot_data <- openxlsx::read.xlsx(input$upload_metadata_ts$datapath, sheet = "plot_gen")
+      
+      # Update inputs based on metadata sheet plot_gen
+      updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected", selected = plot_data[1, "dataset"])
+      updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected", selected = plot_data[1, "variable"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years", value = plot_data[1:2, "range_years"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "single_year", value = plot_data[1, "select_sg_year"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "range_years_sg", value = plot_data[1, "sg_year"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected", selected = plot_data[1, "season_sel"])
+      updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months", selected = plot_data[1:2, "range_months"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period", value = plot_data[1:2, "ref_period"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year", value = plot_data[1, "select_sg_ref"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg", value = plot_data[1, "sg_ref"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude", value = plot_data[1:2, "lon_range"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude", value = plot_data[1:2, "lat_range"])
+      # Update Lon Lat Vals
+      lonlat_vals(plot_data[1:4, "lonlat_vals"])
+    }
+    
+    
+    # Event handler for upload button
+    observeEvent(input$update_metadata_ts, {
+      req(input$upload_metadata_ts)
+      file_path <- input$upload_metadata_ts$datapath
+      
+      # Read the first sheet name from the uploaded Excel file
+      first_sheet_name <- tryCatch({
+        available_sheets <- getSheetNames(file_path)
+        available_sheets[[1]]
+      }, error = function(e) {
+        NULL
+      })
+      
+      # Check if the correct first sheet name is present
+      if (!is.null(first_sheet_name) && first_sheet_name == "custom_map_ts") {
+        # Correct first sheet name is present, proceed with processing the file
+        process_uploaded_file_ts()
+      } else {
+        # Incorrect or missing first sheet name, show an error message
+        showModal(modalDialog(
+          title = "Error",
+          easyClose = TRUE,
+          size = "s",
+          "Please upload the correct Metadata!"
+        ))
+      }
+    })
     
   ## COMPOSITES observe, update & interactive controls ----
   
@@ -6887,6 +7098,260 @@ server <- function(input, output, session) {
     
     observeEvent(input$remove_all_lines_ts2, {
       ts_lines_data2(data.frame())
+    })
+    
+    ### Generate Metadata for map customization ----
+    
+    #Download Plot data 
+    metadata_input2 <- reactive({
+      
+      metadata2 = generate_metadata_comp(input$axis_mode2,
+                                         input$axis_input2,
+                                         input$hide_axis2,
+                                         input$title_mode2,
+                                         input$title1_input2,
+                                         input$title2_input2,
+                                         input$custom_statistic2,
+                                         input$percentage_sign_match2,
+                                         input$sd_ratio2,
+                                         input$hide_borders2)
+      
+      return(metadata2)  
+    })
+    
+    plot_gen_input2 <- reactive({
+      
+      plot_gen2 = generate_metadata_plot_comp(input$dataset_selected2,
+                                              input$variable_selected2,
+                                              input$range_years2,
+                                              input$season_selected2,
+                                              input$range_months2,
+                                              input$ref_period2,
+                                              input$ref_single_year2,
+                                              input$ref_period_sg2,
+                                              input$prior_years2,
+                                              input$range_years2a,
+                                              input$range_longitude2,
+                                              input$range_latitude2,
+                                              lonlat_vals2())
+      
+      return(plot_gen2)
+    })
+    
+    output$download_metadata2 <- downloadHandler(
+      filename = function() {"metadata_comp.xlsx"},
+      content  = function(file) {
+        wb <- openxlsx::createWorkbook()
+        openxlsx::addWorksheet(wb, "custom_map2")
+        openxlsx::addWorksheet(wb, "custom_points2")
+        openxlsx::addWorksheet(wb, "custom_highlights2")
+        openxlsx::addWorksheet(wb, "plot_gen2")
+        openxlsx::writeData(wb, "custom_map2", metadata_input2())
+        openxlsx::writeData(wb, "custom_points2", map_points_data2())
+        openxlsx::writeData(wb, "custom_highlights2", map_highlights_data2())
+        openxlsx::writeData(wb, "plot_gen2", plot_gen_input2())
+        openxlsx::saveWorkbook(wb, file)
+      }
+    )
+    
+    #Upload plot data
+    
+    process_uploaded_file2 <- function() {
+      metadata2 <- openxlsx::read.xlsx(input$upload_metadata2$datapath, sheet = "custom_map2")
+      
+      # Update inputs based on metadata2 sheet custom_map2
+      updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode2", selected = metadata2[1, "axis_mode2"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input2", value = metadata2[1:2, "axis_input2"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis2", value = metadata2[1, "hide_axis2"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode2", selected = metadata2[1, "title_mode2"])
+      updateTextInput(session = getDefaultReactiveDomain(), "title1_input2", value = metadata2[1, "title1_input2"])
+      updateTextInput(session = getDefaultReactiveDomain(), "title2_input2", value = metadata2[1, "title2_input2"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "custom_statistic2", selected = metadata2[1, "custom_statistic2"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "percentage_sign_match2", value = metadata2[1, "percentage_sign_match2"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "sd_ratio2", value = metadata2[1, "sd_ratio2"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders2", value = metadata2[1, "hide_borders2"])
+      
+      # Read metadata from "custom_points2" sheet
+      metadata_points2 <- openxlsx::read.xlsx(input$upload_metadata2$datapath, sheet = "custom_points2")
+      
+      # Update map points data if metadata_points2 is not empty
+      if (!is.null(metadata_points2) && nrow(metadata_points2) > 0) {
+        map_points_data2(metadata_points2)
+      }
+      
+      # Read metadata2 from "custom_highlights2" sheet
+      metadata_highlights2 <- openxlsx::read.xlsx(input$upload_metadata2$datapath, sheet = "custom_highlights2")
+      
+      # Update map highlights data if metadata_highlights2 is not empty
+      if (!is.null(metadata_highlights2) && nrow(metadata_highlights2) > 0) {
+        map_highlights_data2(metadata_highlights2)
+      }
+      
+      # Update plot generation
+      plot_data2 <- openxlsx::read.xlsx(input$upload_metadata2$datapath, sheet = "plot_gen2")
+      
+      # Update inputs based on metadata2 sheet plot_gen2
+      updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected2", selected = plot_data2[1, "dataset2"])
+      updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected2", selected = plot_data2[1, "variable2"])
+      updateTextInput(session = getDefaultReactiveDomain(), "range_years2", value = plot_data2[1, "range_years2"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected2", selected = plot_data2[1, "season_sel2"])
+      updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months2", selected = plot_data2[1:2, "range_months2"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period2", value = plot_data2[1:2, "ref_period2"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year2", value = plot_data2[1, "select_sg_ref2"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg2", value = plot_data2[1, "sg_ref2"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "prior_years2", value = plot_data2[1, "prior_years2"])
+      updateTextInput(session = getDefaultReactiveDomain(), "range_years2a", value = plot_data2[1, "range_years2a"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude2", value = plot_data2[1:2, "lon_range2"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude2", value = plot_data2[1:2, "lat_range2"])
+      # Update Lon Lat Vals
+      lonlat_vals2(plot_data2[1:4, "lonlat_vals2"])
+    }
+    
+    
+    # Event handler for upload button
+    observeEvent(input$update_metadata2, {
+      req(input$upload_metadata2)
+      file_path <- input$upload_metadata2$datapath
+      
+      # Read the first sheet name from the uploaded Excel file
+      first_sheet_name <- tryCatch({
+        available_sheets <- getSheetNames(file_path)
+        available_sheets[[1]]
+      }, error = function(e) {
+        NULL
+      })
+      
+      # Check if the correct first sheet name is present
+      if (!is.null(first_sheet_name) && first_sheet_name == "custom_map2") {
+        # Correct first sheet name is present, proceed with processing the file
+        process_uploaded_file2()
+      } else {
+        # Incorrect or missing first sheet name, show an error message
+        showModal(modalDialog(
+          title = "Error",
+          easyClose = TRUE,
+          size = "s",
+          "Please upload the correct Metadata!"
+        ))
+      }
+    })
+    
+    #Download TS data
+    metadata_input_ts2 <- reactive({
+      
+      metadata_ts2 = generate_metadata_ts_comp(input$title_mode_ts2,
+                                               input$title1_input_ts2,
+                                               input$show_key_ts2,
+                                               input$key_position_ts2,
+                                               input$show_ref_ts2,
+                                               input$custom_percentile_ts2,
+                                               input$percentile_ts2)
+      
+      return(metadata_ts2)  
+    })
+    
+    output$download_metadata_ts2 <- downloadHandler(
+      filename = function() {"metadata_ts2.xlsx"},
+      content  = function(file) {
+        wb <- openxlsx::createWorkbook()
+        openxlsx::addWorksheet(wb, "custom_map_ts2")
+        openxlsx::addWorksheet(wb, "custom_points_ts2")
+        openxlsx::addWorksheet(wb, "custom_highlights_ts2")
+        openxlsx::addWorksheet(wb, "custom_lines_ts2")
+        openxlsx::addWorksheet(wb, "plot_gen2")
+        openxlsx::writeData(wb, "custom_map_ts2", metadata_input_ts2())
+        openxlsx::writeData(wb, "custom_points_ts2", ts_points_data2())
+        openxlsx::writeData(wb, "custom_highlights_ts2", ts_highlights_data2())
+        openxlsx::writeData(wb, "custom_lines_ts2", ts_lines_data2())
+        openxlsx::writeData(wb, "plot_gen2", plot_gen_input2())
+        openxlsx::saveWorkbook(wb, file)
+      }
+    )
+    
+    #Upload TS data
+    process_uploaded_file_ts2 <- function() {
+      metadata_ts2 <- openxlsx::read.xlsx(input$upload_metadata_ts2$datapath, sheet = "custom_map_ts2")
+      
+      # Update inputs based on metadata_ts2 sheet custom_map_ts2
+      updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_ts2", selected = metadata_ts2[1, "title_mode_ts2"])
+      updateTextInput(session = getDefaultReactiveDomain(), "title1_input_ts2", value = metadata_ts2[1, "title1_input_ts2"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "show_key_ts2", value = metadata_ts2[1, "show_key_ts2"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "key_position_t2", selected = metadata_ts2[1, "key_position_ts2"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "show_ref_ts2", value = metadata_ts2[1, "show_ref_ts2"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "custom_percentile_ts2", value = metadata_ts2[1, "custom_percentile_ts2"])
+      updateCheckboxGroupInput(session = getDefaultReactiveDomain(), "percentile_ts2", selected = metadata_ts2[1, "percentile_ts2"])
+
+      # Read metadata from "custom_points_ts2" sheet
+      metadata_points_ts2 <- openxlsx::read.xlsx(input$upload_metadata_ts2$datapath, sheet = "custom_points_ts2")
+      
+      # Update map points data if metadata_points_ts2 is not empty
+      if (!is.null(metadata_points_ts2) && nrow(metadata_points_ts2) > 0) {
+        ts_points_data2(metadata_points_ts2)
+      }
+      
+      # Read metadata from "custom_highlights_ts2" sheet
+      metadata_highlights_ts2 <- openxlsx::read.xlsx(input$upload_metadata_ts2$datapath, sheet = "custom_highlights_ts2")
+      
+      # Update map highlights data if metadata_highlights_ts2 is not empty
+      if (!is.null(metadata_highlights_ts2) && nrow(metadata_highlights_ts2) > 0) {
+        ts_highlights_data2(metadata_highlights_ts2)
+      }
+      
+      # Read metadata from "custom_lines_ts2" sheet
+      metadata_lines_ts2 <- openxlsx::read.xlsx(input$upload_metadata_ts2$datapath, sheet = "custom_lines_ts2")
+      
+      # Update map lines data if metadata_lines_ts2 is not empty
+      if (!is.null(metadata_lines_ts2) && nrow(metadata_lines_ts2) > 0) {
+        ts_lines_data2(metadata_lines_ts2)
+      }
+      
+      # Update plot generation
+      plot_data2 <- openxlsx::read.xlsx(input$upload_metadata2$datapath, sheet = "plot_gen2")
+      
+      # Update inputs based on metadata2 sheet plot_gen2
+      updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected2", selected = plot_data2[1, "dataset2"])
+      updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected2", selected = plot_data2[1, "variable2"])
+      updateTextInput(session = getDefaultReactiveDomain(), "range_years2", value = plot_data2$range_years2)
+      updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected2", selected = plot_data2[1, "season_sel2"])
+      updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months2", selected = plot_data2[1:2, "range_months2"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period2", value = plot_data2[1:2, "ref_period2"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year2", value = plot_data2[1, "select_sg_ref2"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg2", value = plot_data2[1, "sg_ref2"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "prior_years2", value = plot_data2[1, "prior_years2"])
+      updateTextInput(session = getDefaultReactiveDomain(), "range_years2a", value = plot_data2$range_years2a)
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude2", value = plot_data2[1:2, "lon_range2"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude2", value = plot_data2[1:2, "lat_range2"])
+      # Update Lon Lat Vals
+      lonlat_vals2(plot_data2[1:4, "lonlat_vals2"])
+    }
+    
+    
+    # Event handler for upload button
+    observeEvent(input$update_metadata_ts2, {
+      req(input$upload_metadata_ts2)
+      file_path <- input$upload_metadata_ts2$datapath
+      
+      # Read the first sheet name from the uploaded Excel file
+      first_sheet_name <- tryCatch({
+        available_sheets <- getSheetNames(file_path)
+        available_sheets[[1]]
+      }, error = function(e) {
+        NULL
+      })
+      
+      # Check if the correct first sheet name is present
+      if (!is.null(first_sheet_name) && first_sheet_name == "custom_map_ts2") {
+        # Correct first sheet name is present, proceed with processing the file
+        process_uploaded_file_ts2()
+      } else {
+        # Incorrect or missing first sheet name, show an error message
+        showModal(modalDialog(
+          title = "Error",
+          easyClose = TRUE,
+          size = "s",
+          "Please upload the correct Metadata!"
+        ))
+      }
     })
     
     
@@ -7783,6 +8248,337 @@ server <- function(input, output, session) {
     
     observeEvent(input$remove_all_lines_ts3, {
       ts_lines_data3(data.frame())
+    })
+    
+    ### Generate Metadata for map customization ----
+    
+    #Download Plot data 
+    metadata_input3 <- reactive({
+      
+      metadata3 = generate_metadata_corr(input$axis_mode3,
+                                         input$axis_input3,
+                                         input$hide_axis3,
+                                         input$title_mode3,
+                                         input$title1_input3,
+                                         input$hide_borders3,
+                                         input$cor_method_map)
+      
+      return(metadata3)  
+    })
+    
+    plot_gen_input_v1 <- reactive({
+      
+      plot_gen_v1 = generate_metadata_plot_corr(input$dataset_selected_v1,
+                                                input$ME_variable_v1,
+                                                input$type_v1,
+                                                input$mode_selected_v1,
+                                                input$season_selected_v1,
+                                                input$range_months_v1,
+                                                input$ref_period_v1,
+                                                input$ref_single_year_v1,
+                                                input$ref_period_sg_v1,
+                                                input$range_longitude_v1,
+                                                input$range_latitude_v1,
+                                                lonlat_vals_v1())
+      
+      return(plot_gen_v1)
+    })
+    
+    plot_gen_input_v2 <- reactive({
+      
+      plot_gen_v2 = generate_metadata_plot_corr(input$dataset_selected_v2,
+                                                input$ME_variable_v2,
+                                                input$type_v2,
+                                                input$mode_selected_v2,
+                                                input$season_selected_v2,
+                                                input$range_months_v2,
+                                                input$ref_period_v2,
+                                                input$ref_single_year_v2,
+                                                input$ref_period_sg_v2,
+                                                input$range_longitude_v2,
+                                                input$range_latitude_v2,
+                                                lonlat_vals_v2())
+      
+      return(plot_gen_v2)
+    })
+    
+    metadata_yr3 <- reactive({
+      
+      year_range3 = generate_metadata_y_range_corr(input$range_years3,
+                                                   input$single_year3,
+                                                   input$range_years_sg3)
+      
+      return(year_range3)
+    })
+    
+    output$download_metadata3 <- downloadHandler(
+      filename = function() {"metadata_corr.xlsx"},
+      content  = function(file) {
+        wb <- openxlsx::createWorkbook()
+        openxlsx::addWorksheet(wb, "custom_map3")
+        openxlsx::addWorksheet(wb, "custom_points3")
+        openxlsx::addWorksheet(wb, "custom_highlights3")
+        openxlsx::addWorksheet(wb, "plot_gen_v1")
+        openxlsx::addWorksheet(wb, "plot_gen_v2")
+        openxlsx::addWorksheet(wb, "metadata_yr3")
+        openxlsx::writeData(wb, "custom_map3", metadata_input3())
+        openxlsx::writeData(wb, "custom_points3", map_points_data3())
+        openxlsx::writeData(wb, "custom_highlights3", map_highlights_data3())
+        openxlsx::writeData(wb, "plot_gen_v1", plot_gen_input_v1())
+        openxlsx::writeData(wb, "plot_gen_v2", plot_gen_input_v2())
+        openxlsx::writeData(wb, "metadata_yr3", metadata_yr3())
+        openxlsx::saveWorkbook(wb, file)
+      }
+    )
+    
+    #Upload plot data
+    
+    process_uploaded_file3 <- function() {
+      metadata3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "custom_map3")
+      
+      # Update inputs based on metadata3 sheet custom_map3
+      updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode3", selected = metadata3[1, "axis_mode3"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input3", value = metadata3[1:2, "axis_input3"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis3", value = metadata3[1, "hide_axis3"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode3", selected = metadata3[1, "title_mode3"])
+      updateTextInput(session = getDefaultReactiveDomain(), "title1_input3", value = metadata3[1, "title1_input3"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders3", value = metadata3[1, "hide_borders3"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "cor_method_map", value = metadata3[1, "cor_method_map3"])
+      
+      # Read metadata from "custom_points3" sheet
+      metadata_points3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "custom_points3")
+      
+      # Update map points data if metadata_points3 is not empty
+      if (!is.null(metadata_points3) && nrow(metadata_points3) > 0) {
+        map_points_data3(metadata_points3)
+      }
+      
+      # Read metadata3 from "custom_highlights3" sheet
+      metadata_highlights3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "custom_highlights3")
+      
+      # Update map highlights data if metadata_highlights3 is not empty
+      if (!is.null(metadata_highlights3) && nrow(metadata_highlights3) > 0) {
+        map_highlights_data3(metadata_highlights3)
+      }
+      
+      # Update plot generation
+      plot_data_v1 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "plot_gen_v1")
+      
+      # Update inputs based on plot_data_v1 sheet plot_gen_v1
+      updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_v1", selected = plot_data_v1[1, "dataset"])
+      updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected_v1", selected = plot_data_v1[1, "variable"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "type_v1", selected = plot_data_v1[1, "type"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_v1", selected = plot_data_v1[1, "mode"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_v1", selected = plot_data_v1[1, "season_sel"])
+      updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_v1", selected = plot_data_v1[1:2, "range_months"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_v1", value = plot_data_v1[1:2, "ref_period"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_v1", value = plot_data_v1[1, "select_sg_ref"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg_v1", value = plot_data_v1[1, "sg_ref"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_v1", value = plot_data_v1[1:2, "lon_range"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_v1", value = plot_data_v1[1:2, "lat_range"])
+      # Update Lon Lat Vals
+      lonlat_vals_v1(plot_data_v1[1:4, "lonlat_vals"])
+      
+      # Update plot generation
+      plot_data_v2 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "plot_gen_v2")
+      
+      # Update inputs based on plot_data_v1 sheet plot_gen_v2
+      updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_v2", selected = plot_data_v2[1, "dataset"])
+      updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected_v2", selected = plot_data_v2[1, "variable"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "type_v2", selected = plot_data_v2[1, "type"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_v2", selected = plot_data_v2[1, "mode"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_v2", selected = plot_data_v2[1, "season_sel"])
+      updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_v2", selected = plot_data_v2[1:2, "range_months"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_v2", value = plot_data_v2[1:2, "ref_period"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_v2", value = plot_data_v2[1, "select_sg_ref"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg_v2", value = plot_data_v2[1, "sg_ref"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_v2", value = plot_data_v2[1:2, "lon_range"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_v2", value = plot_data_v2[1:2, "lat_range"])
+      # Update Lon Lat Vals
+      lonlat_vals_v2(plot_data_v2[1:4, "lonlat_vals"])
+      
+      # Update plot generation
+      metadata_yr3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "metadata_yr3")
+      
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years3", value = metadata_yr3[1:2, "range_years3"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "single_year3", value = metadata_yr3[1, "single_year3"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "range_years_sg3", value = metadata_yr3[1, "range_years_sg3"])
+      
+    }
+    
+    
+    # Event handler for upload button
+    observeEvent(input$update_metadata3, {
+      req(input$upload_metadata3)
+      file_path <- input$upload_metadata3$datapath
+      
+      # Read the first sheet name from the uploaded Excel file
+      first_sheet_name <- tryCatch({
+        available_sheets <- getSheetNames(file_path)
+        available_sheets[[1]]
+      }, error = function(e) {
+        NULL
+      })
+      
+      # Check if the correct first sheet name is present
+      if (!is.null(first_sheet_name) && first_sheet_name == "custom_map3") {
+        # Correct first sheet name is present, proceed with processing the file
+        process_uploaded_file3()
+      } else {
+        # Incorrect or missing first sheet name, show an error message
+        showModal(modalDialog(
+          title = "Error",
+          easyClose = TRUE,
+          size = "s",
+          "Please upload the correct Metadata!"
+        ))
+      }
+    })
+    
+    #Download TS data
+    metadata_input_ts3 <- reactive({
+      
+      metadata_ts3 = generate_metadata_ts_corr(input$title_mode_ts3,
+                                               input$title1_input_ts3,
+                                               input$show_key_ts3,
+                                               input$key_position_ts3,
+                                               input$custom_average_ts3,
+                                               input$year_moving_ts3,
+                                               input$cor_method_ts)
+      
+      return(metadata_ts3)  
+    })
+    
+    output$download_metadata_ts3 <- downloadHandler(
+      filename = function() {"metadata_ts3.xlsx"},
+      content  = function(file) {
+        wb <- openxlsx::createWorkbook()
+        openxlsx::addWorksheet(wb, "custom_map_ts3")
+        openxlsx::addWorksheet(wb, "custom_points_ts3")
+        openxlsx::addWorksheet(wb, "custom_highlights_ts3")
+        openxlsx::addWorksheet(wb, "custom_lines_ts3")
+        openxlsx::addWorksheet(wb, "plot_gen_v1")
+        openxlsx::addWorksheet(wb, "plot_gen_v2")
+        openxlsx::addWorksheet(wb, "metadata_yr3")
+        openxlsx::writeData(wb, "custom_map_ts3", metadata_input_ts3())
+        openxlsx::writeData(wb, "custom_points_ts3", ts_points_data3())
+        openxlsx::writeData(wb, "custom_highlights_ts3", ts_highlights_data3())
+        openxlsx::writeData(wb, "custom_lines_ts3", ts_lines_data3())
+        openxlsx::writeData(wb, "plot_gen_v1", plot_gen_input_v1())
+        openxlsx::writeData(wb, "plot_gen_v2", plot_gen_input_v2())
+        openxlsx::writeData(wb, "metadata_yr3", metadata_yr3())
+        openxlsx::saveWorkbook(wb, file)
+      }
+    )
+    
+    #Upload TS data
+    process_uploaded_file_ts3 <- function() {
+      metadata_ts3 <- openxlsx::read.xlsx(input$upload_metadata_ts3$datapath, sheet = "custom_map_ts3")
+      
+      # Update inputs based on metadata_ts3 sheet custom_map_ts3
+      updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_ts3", selected = metadata_ts3[1, "title_mode_ts3"])
+      updateTextInput(session = getDefaultReactiveDomain(), "title1_input_ts3", value = metadata_ts3[1, "title1_input_ts3"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "show_key_ts3", value = metadata_ts3[1, "show_key_ts3"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "key_position_t3", selected = metadata_ts3[1, "key_position_ts3"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "custom_average_ts3", value = metadata_ts3[1, "custom_percentile_ts3"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "year_moving_ts3", value = metadata_ts3[1, "year_moving_ts3"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "cor_method_ts", value = metadata_ts3[1, "cor_method_ts3"])
+      
+      # Read metadata from "custom_points_ts3" sheet
+      metadata_points_ts3 <- openxlsx::read.xlsx(input$upload_metadata_ts3$datapath, sheet = "custom_points_ts3")
+      
+      # Update map points data if metadata_points_ts3 is not empty
+      if (!is.null(metadata_points_ts3) && nrow(metadata_points_ts3) > 0) {
+        ts_points_data3(metadata_points_ts3)
+      }
+      
+      # Read metadata from "custom_highlights_ts3" sheet
+      metadata_highlights_ts3 <- openxlsx::read.xlsx(input$upload_metadata_ts3$datapath, sheet = "custom_highlights_ts3")
+      
+      # Update map highlights data if metadata_highlights_ts3 is not empty
+      if (!is.null(metadata_highlights_ts3) && nrow(metadata_highlights_ts3) > 0) {
+        ts_highlights_data3(metadata_highlights_ts3)
+      }
+      
+      # Read metadata from "custom_lines_ts3" sheet
+      metadata_lines_ts3 <- openxlsx::read.xlsx(input$upload_metadata_ts3$datapath, sheet = "custom_lines_ts3")
+      
+      # Update map lines data if metadata_lines_ts3 is not empty
+      if (!is.null(metadata_lines_ts3) && nrow(metadata_lines_ts3) > 0) {
+        ts_lines_data3(metadata_lines_ts3)
+      }
+      
+      # Update plot generation
+      plot_data_v1 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "plot_gen_v1")
+      
+      # Update inputs based on plot_data_v1 sheet plot_gen_v1
+      updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_v1", selected = plot_data_v1[1, "dataset"])
+      updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected_v1", selected = plot_data_v1[1, "variable"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "type_v1", selected = plot_data_v1[1, "type"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_v1", selected = plot_data_v1[1, "mode"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_v1", selected = plot_data_v1[1, "season_sel"])
+      updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_v1", selected = plot_data_v1[1:2, "range_months"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_v1", value = plot_data_v1[1:2, "ref_period"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_v1", value = plot_data_v1[1, "select_sg_ref"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg_v1", value = plot_data_v1[1, "sg_ref"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_v1", value = plot_data_v1[1:2, "lon_range"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_v1", value = plot_data_v1[1:2, "lat_range"])
+      # Update Lon Lat Vals
+      lonlat_vals_v1(plot_data_v1[1:4, "lonlat_vals"])
+      
+      # Update plot generation
+      plot_data_v2 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "plot_gen_v2")
+      
+      # Update inputs based on plot_data_v1 sheet plot_gen_v2
+      updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_v2", selected = plot_data_v2[1, "dataset"])
+      updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected_v2", selected = plot_data_v2[1, "variable"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "type_v2", selected = plot_data_v2[1, "type"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_v2", selected = plot_data_v2[1, "mode"])
+      updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_v2", selected = plot_data_v2[1, "season_sel"])
+      updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_v2", selected = plot_data_v2[1:2, "range_months"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_v2", value = plot_data_v2[1:2, "ref_period"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_v2", value = plot_data_v2[1, "select_sg_ref"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg_v2", value = plot_data_v2[1, "sg_ref"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_v2", value = plot_data_v2[1:2, "lon_range"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_v2", value = plot_data_v2[1:2, "lat_range"])
+      # Update Lon Lat Vals
+      lonlat_vals_v2(plot_data_v2[1:4, "lonlat_vals"])
+      
+      # Update plot generation
+      metadata_yr3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "metadata_yr3")
+      
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years3", value = metadata_yr3[1:2, "range_years3"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "single_year3", value = metadata_yr3[1, "single_year3"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "range_years_sg3", value = metadata_yr3[1, "range_years_sg3"])
+    }
+    
+    
+    # Event handler for upload button
+    observeEvent(input$update_metadata_ts3, {
+      req(input$upload_metadata_ts3)
+      file_path <- input$upload_metadata_ts3$datapath
+      
+      # Read the first sheet name from the uploaded Excel file
+      first_sheet_name <- tryCatch({
+        available_sheets <- getSheetNames(file_path)
+        available_sheets[[1]]
+      }, error = function(e) {
+        NULL
+      })
+      
+      # Check if the correct first sheet name is present
+      if (!is.null(first_sheet_name) && first_sheet_name == "custom_map_ts3") {
+        # Correct first sheet name is present, proceed with processing the file
+        process_uploaded_file_ts3()
+      } else {
+        # Incorrect or missing first sheet name, show an error message
+        showModal(modalDialog(
+          title = "Error",
+          easyClose = TRUE,
+          size = "s",
+          "Please upload the correct Metadata!"
+        ))
+      }
     })
     
   ## REGRESSION observe, update & interactive controls ----
@@ -10378,7 +11174,7 @@ server <- function(input, output, session) {
     corr_m1 = function(){
       if ((input$type_v1 == "Field") | (input$type_v2 == "Field")){
         plot_correlation_map(correlation_map_data(),plot_titles_cor(),input$axis_input3,
-                             input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame(),TRUE)
+                             input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame(),input$hide_borders3)
       }
     }
     
@@ -12029,1289 +12825,176 @@ server <- function(input, output, session) {
   ## Concerning all modes (mainly updating Ui) ----
     
     #Updates Values outside of min / max (numericInput)
-    observe({
-      input_values <- input$point_size
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "point_size", value = 1)
-        } else {
-          update_value <- function(val) {
-            if (val < 1) {
-              updateNumericInput(inputId = "point_size", value = 1)
-            } else if (val > 10) {
-              updateNumericInput(inputId = "point_size", value = 10)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
     
-    observe({
-      input_values <- input$point_size2
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
+    updateNumericInputRange <- function(inputId, minValue, maxValue) {
+      observe({
+        input_values <- input[[inputId]]
+        
+        delay(3000, {
+          if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "point_size2", value = 1)
-        } else {
-          update_value <- function(val) {
-            if (val < 1) {
-              updateNumericInput(inputId = "point_size2", value = 1)
-            } else if (val > 10) {
-              updateNumericInput(inputId = "point_size2", value = 10)
+            updateNumericInput(inputId = inputId, value = minValue)
+          } else {
+            update_value <- function(val) {
+              if (val < minValue) {
+                updateNumericInput(inputId = inputId, value = minValue)
+              } else if (val > maxValue) {
+                updateNumericInput(inputId = inputId, value = maxValue)
+              }
             }
+            
+            update_value(input_values)
           }
-          
-          update_value(input_values)
-        }
+        })
       })
-    })
+    }
     
-    observe({
-      input_values <- input$point_size3
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
+    # Call the function for each input
+    updateNumericInputRange("point_size", 1, 10)
+    updateNumericInputRange("point_size2", 1, 10)
+    updateNumericInputRange("point_size3", 1, 10)
+    updateNumericInputRange("point_size_ts", 1, 10)
+    updateNumericInputRange("point_size_ts2", 1, 10)
+    updateNumericInputRange("point_size_ts3", 1, 10)
+    updateNumericInputRange("percentage_sign_match", 1, 100)
+    updateNumericInputRange("percentage_sign_match2", 1, 100)
+    updateNumericInputRange("hidden_SD_ratio", 0, 1)
+    updateNumericInputRange("hidden_SD_ratio2", 0, 1)
+    updateNumericInputRange("year_moving_ts", 3, 30)
+    updateNumericInputRange("year_moving_ts3", 3, 30)
+    updateNumericInputRange("prior_years2", 1, 50)
+    
+    
+    updateNumericInputRange <- function(inputId, minValue, maxValue) {
+      observe({
+        input_values <- input[[inputId]]
+        
+        delay(3000, {
+          if (is.null(input_values) || is.na(input_values)) {         
           } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "point_size3", value = 1)
-        } else {
-          update_value <- function(val) {
-            if (val < 1) {
-              updateNumericInput(inputId = "point_size3", value = 1)
-            } else if (val > 10) {
-              updateNumericInput(inputId = "point_size3", value = 10)
+            updateNumericInput(inputId = inputId, value = 1422)
+          } else {
+            update_value <- function(val) {
+              if (nchar(as.integer(input_values)) > 3){
+                if (val < minValue) {
+                  updateNumericInput(inputId = inputId, value = minValue)
+                } else if (val > maxValue) {
+                  updateNumericInput(inputId = inputId, value = maxValue)
+                }
+              }
             }
+            
+            update_value(input_values)
           }
-          
-          update_value(input_values)
-        }
+        })
       })
-    })
+    }
     
-    observe({
-      input_values <- input$point_size_ts
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "point_size_ts", value = 1)
-        } else {
-          update_value <- function(val) {
-            if (val < 1) {
-              updateNumericInput(inputId = "point_size_ts", value = 1)
-            } else if (val > 10) {
-              updateNumericInput(inputId = "point_size_ts", value = 10)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$point_size_ts2
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "point_size_ts2", value = 1)
-        } else {
-          update_value <- function(val) {
-            if (val < 1) {
-              updateNumericInput(inputId = "point_size_ts2", value = 1)
-            } else if (val > 10) {
-              updateNumericInput(inputId = "point_size_ts2", value = 10)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$point_size_ts3
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "point_size_ts3", value = 1)
-        } else {
-          update_value <- function(val) {
-            if (val < 1) {
-              updateNumericInput(inputId = "point_size_ts3", value = 1)
-            } else if (val > 10) {
-              updateNumericInput(inputId = "point_size_ts3", value = 10)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$percentage_sign_match
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "percentage_sign_match", value = 1)
-        } else {
-          update_value <- function(val) {
-            if (val < 1) {
-              updateNumericInput(inputId = "percentage_sign_match", value = 1)
-            } else if (val > 100) {
-              updateNumericInput(inputId = "percentage_sign_match", value = 100)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$percentage_sign_match2
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "percentage_sign_match2", value = 1)
-        } else {
-          update_value <- function(val) {
-            if (val < 1) {
-              updateNumericInput(inputId = "percentage_sign_match2", value = 1)
-            } else if (val > 100) {
-              updateNumericInput(inputId = "percentage_sign_match2", value = 100)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$percentage_sign_match2
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "percentage_sign_match2", value = 1)
-        } else {
-          update_value <- function(val) {
-            if (val < 1) {
-              updateNumericInput(inputId = "percentage_sign_match2", value = 1)
-            } else if (val > 100) {
-              updateNumericInput(inputId = "percentage_sign_match2", value = 100)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$hidden_SD_ratio
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "hidden_SD_ratio", value = 0)
-        } else {
-          update_value <- function(val) {
-            if (val < 0) {
-              updateNumericInput(inputId = "hidden_SD_ratio", value = 0)
-            } else if (val > 1) {
-              updateNumericInput(inputId = "hidden_SD_ratio", value = 1)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$hidden_SD_ratio2
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "hidden_SD_ratio2", value = 0)
-        } else {
-          update_value <- function(val) {
-            if (val < 0) {
-              updateNumericInput(inputId = "hidden_SD_ratio2", value = 0)
-            } else if (val > 1) {
-              updateNumericInput(inputId = "hidden_SD_ratio2", value = 1)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$year_moving_ts
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "year_moving_ts", value = 3)
-        } else {
-          update_value <- function(val) {
-            if (val < 3) {
-              updateNumericInput(inputId = "year_moving_ts", value = 3)
-            } else if (val > 30) {
-              updateNumericInput(inputId = "year_moving_ts", value = 30)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$year_moving_ts3
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "year_moving_ts3", value = 3)
-        } else {
-          update_value <- function(val) {
-            if (val < 3) {
-              updateNumericInput(inputId = "year_moving_ts3", value = 3)
-            } else if (val > 30) {
-              updateNumericInput(inputId = "year_moving_ts3", value = 30)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$fad_year_a
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "fad_year_a", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "fad_year_a", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "fad_year_a", value = 2008)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$fad_year_a2
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "fad_year_a2", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "fad_year_a2", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "fad_year_a2", value = 2008)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$fad_year_a3a
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "fad_year_a3a", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "fad_year_a3a", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "fad_year_a3a", value = 2008)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$fad_year_a3b
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "fad_year_a3b", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "fad_year_a3b", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "fad_year_a3b", value = 2008)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$fad_year_a4a
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "fad_year_a4a", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "fad_year_a4a", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "fad_year_a4a", value = 2008)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$fad_year_a4b
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "fad_year_a4b", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "fad_year_a4b", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "fad_year_a4b", value = 2008)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$fad_year_a5
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "fad_year_a5", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "fad_year_a5", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "fad_year_a5", value = 2008)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$prior_years2
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "prior_years2", value = 1)
-        } else {
-          update_value <- function(val) {
-            if (val < 1) {
-              updateNumericInput(inputId = "prior_years2", value = 1)
-            } else if (val > 50) {
-              updateNumericInput(inputId = "prior_years2", value = 50)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$reg_resi_year
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "reg_resi_year", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (val < 1422) {
-              updateNumericInput(inputId = "reg_resi_year", value = 1422)
-            } else if (val > 2008) {
-              updateNumericInput(inputId = "reg_resi_year", value = 2008)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$range_years_sg
+    # Call the function for each input
+    updateNumericInputRange("fad_year_a", 1422, 2008)
+    updateNumericInputRange("fad_year_a2", 1422, 2008)
+    updateNumericInputRange("fad_year_a3a", 1422, 2008)
+    updateNumericInputRange("fad_year_a3b", 1422, 2008)
+    updateNumericInputRange("fad_year_a4a", 1422, 2008)
+    updateNumericInputRange("fad_year_a4b", 1422, 2008)
+    updateNumericInputRange("fad_year_a5", 1422, 2008)
+    updateNumericInputRange("reg_resi_year", 1422, 2008)
+    updateNumericInputRange("range_years_sg", 1422, 2008)
+    updateNumericInputRange("ref_period_sg", 1422, 2008)
+    updateNumericInputRange("ref_period_sg2", 1422, 2008)
+    updateNumericInputRange("ref_period_sg_v1", 1422, 2008)
+    updateNumericInputRange("range_years_sg3", 1422, 2008)
+    updateNumericInputRange("ref_period_sg_v2", 1422, 2008)
+    updateNumericInputRange("ref_period_sg_iv", 1422, 2008)
+    updateNumericInputRange("range_years_sg4", 1422, 2008)
+    updateNumericInputRange("ref_period_sg_dv", 1422, 2008)
+    updateNumericInputRange("ref_period_sg5", 1422, 2008)
 
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "range_years_sg", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (nchar(as.integer(input_values))>3){
-              if (val < 1422) {
-                updateNumericInput(inputId = "range_years_sg", value = 1422)
-              } else if (val > 2008) {
-                updateNumericInput(inputId = "range_years_sg", value = 2008)
-              }
-            }
-          }
-
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$ref_period_sg
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "ref_period_sg", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (nchar(as.integer(input_values))>3){
-              if (val < 1422) {
-                updateNumericInput(inputId = "ref_period_sg", value = 1422)
-              } else if (val > 2008) {
-                updateNumericInput(inputId = "ref_period_sg", value = 2008)
-              }
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$ref_period_sg2
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "ref_period_sg2", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (nchar(as.integer(input_values))>3){
-              if (val < 1422) {
-                updateNumericInput(inputId = "ref_period_sg2", value = 1422)
-              } else if (val > 2008) {
-                updateNumericInput(inputId = "ref_period_sg2", value = 2008)
-              }
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$ref_period_sg_v1
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (nchar(as.integer(input_values))>3){
-              if (val < 1422) {
-                updateNumericInput(inputId = "ref_period_sg_v1", value = 1422)
-              } else if (val > 2008) {
-                updateNumericInput(inputId = "ref_period_sg_v1", value = 2008)
-              }
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$range_years_sg3
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "range_years_sg3", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (nchar(as.integer(input_values))>3){
-              if (val < 1422) {
-                updateNumericInput(inputId = "range_years_sg3", value = 1422)
-              } else if (val > 2008) {
-                updateNumericInput(inputId = "range_years_sg3", value = 2008)
-              }
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    
-    observe({
-      input_values <- input$ref_period_sg_v2
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (nchar(as.integer(input_values))>3){
-              if (val < 1422) {
-                updateNumericInput(inputId = "ref_period_sg_v2", value = 1422)
-              } else if (val > 2008) {
-                updateNumericInput(inputId = "ref_period_sg_v2", value = 2008)
-              }
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$ref_period_sg_iv
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (nchar(as.integer(input_values))>3){
-              if (val < 1422) {
-                updateNumericInput(inputId = "ref_period_sg_iv", value = 1422)
-              } else if (val > 2008) {
-                updateNumericInput(inputId = "ref_period_sg_iv", value = 2008)
-              }
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$range_years_sg4
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "range_years_sg4", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (nchar(as.integer(input_values))>3){
-              if (val < 1422) {
-                updateNumericInput(inputId = "range_years_sg4", value = 1422)
-              } else if (val > 2008) {
-                updateNumericInput(inputId = "range_years_sg4", value = 2008)
-              }
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$ref_period_sg_dv
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (nchar(as.integer(input_values))>3){
-              if (val < 1422) {
-                updateNumericInput(inputId = "ref_period_sg_dv", value = 1422)
-              } else if (val > 2008) {
-                updateNumericInput(inputId = "ref_period_sg_dv", value = 2008)
-              }
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
-    observe({
-      input_values <- input$ref_period_sg5
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
-          } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = "ref_period_sg5", value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (nchar(as.integer(input_values))>3){
-              if (val < 1422) {
-                updateNumericInput(inputId = "ref_period_sg5", value = 1422)
-              } else if (val > 2008) {
-                updateNumericInput(inputId = "ref_period_sg5", value = 2008)
-              }
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-    
     #Updates Values outside of min / max (numericRangeInput)
     
     observe({
-      range_values <- input$range_years
+      input_ids <- c("range_years", "range_years3", "range_years4", "ref_period", "ref_period2", "ref_period_v1", "ref_period_v2", "ref_period_iv", "ref_period_dv", "ref_period5")
       
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < 1422) {
-          updateNumericRangeInput(inputId = "range_years", value = c(1422, range_values[2]))
-        } else if (left > 2008) {
-          updateNumericRangeInput(inputId = "range_years", value = c(1422, range_values[2]))
+      for (input_id in input_ids) {
+        range_values <- input[[input_id]]
+        
+        update_values <- function(left, right) {
+          if (!is.numeric(left) || is.na(left) || left < 1422) {
+            updateNumericRangeInput(inputId = input_id, value = c(1422, range_values[2]))
+          } else if (left > 2008) {
+            updateNumericRangeInput(inputId = input_id, value = c(1422, range_values[2]))
+          }
+          
+          if (!is.numeric(right) || is.na(right) || right < 1422) {
+            updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 2008))
+          } else if (right > 2008) {
+            updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 2008))
+          }
         }
         
-        if (!is.numeric(right) || is.na(right) || right < 1422) {
-          updateNumericRangeInput(inputId = "range_years", value = c(range_values[1], 2008))
-        } else if (right > 2008) {
-          updateNumericRangeInput(inputId = "range_years", value = c(range_values[1], 2008))
-        }
+        update_values(range_values[1], range_values[2])
       }
+    })
+
+    observe({
+      input_ids <- c("range_longitude", "range_longitude2", "range_longitude_v1", "range_longitude_v2", "range_longitude_iv", "range_longitude_dv", "range_longitude5", "fad_longitude_a5")
       
-      update_values(range_values[1], range_values[2])
+      for (input_id in input_ids) {
+        range_values <- input[[input_id]]
+        
+        update_values <- function(left, right) {
+          if (!is.numeric(left) || is.na(left) || left < -180) {
+            updateNumericRangeInput(inputId = input_id, value = c(-180, range_values[2]))
+          } else if (left > 180) {
+            updateNumericRangeInput(inputId = input_id, value = c(-180, range_values[2]))
+          }
+          
+          if (!is.numeric(right) || is.na(right) || right < -180) {
+            updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 180))
+          } else if (right > 180) {
+            updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 180))
+          }
+        }
+        
+        update_values(range_values[1], range_values[2])
+      }
     })
     
     observe({
-      range_values <- input$range_years3
+      input_ids <- c("range_latitude", "range_latitude_v1", "range_latitude_v2", "range_latitude_iv", "range_latitude_dv", "range_latitude5", "fad_latitude_a5")
       
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < 1422) {
-          updateNumericRangeInput(inputId = "range_years3", value = c(1422, range_values[2]))
-        } else if (left > 2008) {
-          updateNumericRangeInput(inputId = "range_years3", value = c(1422, range_values[2]))
+      for (input_id in input_ids) {
+        range_values <- input[[input_id]]
+        
+        update_values <- function(left, right) {
+          if (!is.numeric(left) || is.na(left) || left < -90) {
+            updateNumericRangeInput(inputId = input_id, value = c(-90, range_values[2]))
+          } else if (left > 90) {
+            updateNumericRangeInput(inputId = input_id, value = c(-90, range_values[2]))
+          }
+          
+          if (!is.numeric(right) || is.na(right) || right < -90) {
+            updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 90))
+          } else if (right > 90) {
+            updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 90))
+          }
         }
         
-        if (!is.numeric(right) || is.na(right) || right < 1422) {
-          updateNumericRangeInput(inputId = "range_years3", value = c(range_values[1], 2008))
-        } else if (right > 2008) {
-          updateNumericRangeInput(inputId = "range_years3", value = c(range_values[1], 2008))
-        }
+        update_values(range_values[1], range_values[2])
       }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_years4
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < 1422) {
-          updateNumericRangeInput(inputId = "range_years4", value = c(1422, range_values[2]))
-        } else if (left > 2008) {
-          updateNumericRangeInput(inputId = "range_years4", value = c(1422, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < 1422) {
-          updateNumericRangeInput(inputId = "range_years4", value = c(range_values[1], 2008))
-        } else if (right > 2008) {
-          updateNumericRangeInput(inputId = "range_years4", value = c(range_values[1], 2008))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$ref_period
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < 1422) {
-          updateNumericRangeInput(inputId = "ref_period", value = c(1422, range_values[2]))
-        } else if (left > 2008) {
-          updateNumericRangeInput(inputId = "ref_period", value = c(1422, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < 1422) {
-          updateNumericRangeInput(inputId = "ref_period", value = c(range_values[1], 2008))
-        } else if (right > 2008) {
-          updateNumericRangeInput(inputId = "ref_period", value = c(range_values[1], 2008))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$ref_period2
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < 1422) {
-          updateNumericRangeInput(inputId = "ref_period2", value = c(1422, range_values[2]))
-        } else if (left > 2008) {
-          updateNumericRangeInput(inputId = "ref_period2", value = c(1422, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < 1422) {
-          updateNumericRangeInput(inputId = "ref_period2", value = c(range_values[1], 2008))
-        } else if (right > 2008) {
-          updateNumericRangeInput(inputId = "ref_period2", value = c(range_values[1], 2008))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$ref_period_v1
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < 1422) {
-          updateNumericRangeInput(inputId = "ref_period_v1", value = c(1422, range_values[2]))
-        } else if (left > 2008) {
-          updateNumericRangeInput(inputId = "ref_period_v1", value = c(1422, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < 1422) {
-          updateNumericRangeInput(inputId = "ref_period_v1", value = c(range_values[1], 2008))
-        } else if (right > 2008) {
-          updateNumericRangeInput(inputId = "ref_period_v1", value = c(range_values[1], 2008))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$ref_period_v2
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < 1422) {
-          updateNumericRangeInput(inputId = "ref_period_v2", value = c(1422, range_values[2]))
-        } else if (left > 2008) {
-          updateNumericRangeInput(inputId = "ref_period_v2", value = c(1422, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < 1422) {
-          updateNumericRangeInput(inputId = "ref_period_v2", value = c(range_values[1], 2008))
-        } else if (right > 2008) {
-          updateNumericRangeInput(inputId = "ref_period_v2", value = c(range_values[1], 2008))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$ref_period_iv
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < 1422) {
-          updateNumericRangeInput(inputId = "ref_period_iv", value = c(1422, range_values[2]))
-        } else if (left > 2008) {
-          updateNumericRangeInput(inputId = "ref_period_iv", value = c(1422, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < 1422) {
-          updateNumericRangeInput(inputId = "ref_period_iv", value = c(range_values[1], 2008))
-        } else if (right > 2008) {
-          updateNumericRangeInput(inputId = "ref_period_iv", value = c(range_values[1], 2008))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$ref_period_dv
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < 1422) {
-          updateNumericRangeInput(inputId = "ref_period_dv", value = c(1422, range_values[2]))
-        } else if (left > 2008) {
-          updateNumericRangeInput(inputId = "ref_period_dv", value = c(1422, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < 1422) {
-          updateNumericRangeInput(inputId = "ref_period_dv", value = c(range_values[1], 2008))
-        } else if (right > 2008) {
-          updateNumericRangeInput(inputId = "ref_period_dv", value = c(range_values[1], 2008))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$ref_period5
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < 1422) {
-          updateNumericRangeInput(inputId = "ref_period5", value = c(1422, range_values[2]))
-        } else if (left > 2008) {
-          updateNumericRangeInput(inputId = "ref_period5", value = c(1422, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < 1422) {
-          updateNumericRangeInput(inputId = "ref_period5", value = c(range_values[1], 2008))
-        } else if (right > 2008) {
-          updateNumericRangeInput(inputId = "ref_period5", value = c(range_values[1], 2008))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_longitude
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "range_longitude", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "range_longitude", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "range_longitude", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "range_longitude", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_longitude2
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "range_longitude2", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "range_longitude2", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "range_longitude2", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "range_longitude2", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_longitude_v1
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "range_longitude_v1", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_longitude_v2
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "range_longitude_v2", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_longitude_iv
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "range_longitude_iv", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_longitude_dv
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "range_longitude_dv", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_longitude5
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "range_longitude5", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "range_longitude5", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "range_longitude5", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "range_longitude5", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_latitude
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "range_latitude", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "range_latitude", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "range_latitude", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "range_latitude", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_latitude_v1
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "range_latitude_v1", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_latitude_v2
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "range_latitude_v2", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_latitude_iv
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "range_latitude_iv", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_latitude_dv
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "range_latitude_dv", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$range_latitude5
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "range_latitude5", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "range_latitude5", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "range_latitude5", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "range_latitude5", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$fad_latitude_a5
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = "fad_latitude_a5", value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    })
-    
-    observe({
-      range_values <- input$fad_longitude_a5
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = "fad_longitude_a5", value = c(range_values[1], 180))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
     })
     
     #Single Year inputs update
     observe({
-      if (!is.na(input$range_years_sg)) {
-        updateNumericRangeInput(
-          inputId = "range_years",
-          value   = c(input$range_years_sg, input$range_years_sg)
-        )
-      }
-    })
-    
-    observe({
-      if (!is.na(input$ref_period_sg)) {
-        updateNumericRangeInput(
-          inputId = "ref_period",
-          value   = c(input$ref_period_sg, input$ref_period_sg)
-        )
-      }
-    })
-    
-    observe({
-      if (!is.na(input$ref_period_sg2)) {
-        updateNumericRangeInput(
-          inputId = "ref_period2",
-          value   = c(input$ref_period_sg2, input$ref_period_sg2)
-        )
-      }
-    })
-    
-    observe({
-      if (!is.na(input$ref_period_sg_v1)) {
-        updateNumericRangeInput(
-          inputId = "ref_period_v1",
-          value   = c(input$ref_period_sg_v1, input$ref_period_sg_v1)
-        )
-      }
-    })
-    
-    observe({
-      if (!is.na(input$ref_period_sg_v2)) {
-        updateNumericRangeInput(
-          inputId = "ref_period_v2",
-          value   = c(input$ref_period_sg_v2, input$ref_period_sg_v2)
-        )
-      }
-    })
-    
-    observe({
-      if (!is.na(input$range_years_sg3)) {
-        updateNumericRangeInput(
-          inputId = "range_years3",
-          value   = c(input$range_years_sg3, input$range_years_sg3)
-        )
-      }
-    })
-    
-    observe({
-      if (!is.na(input$ref_period_sg_iv)) {
-        updateNumericRangeInput(
-          inputId = "ref_period_iv",
-          value   = c(input$ref_period_sg_iv, input$ref_period_sg_iv)
-        )
-      }
-    })
-    
-    observe({
-      if (!is.na(input$ref_period_sg_dv)) {
-        updateNumericRangeInput(
-          inputId = "ref_period_dv",
-          value   = c(input$ref_period_sg_dv, input$ref_period_sg_dv)
-        )
-      }
-    })
-    
-    observe({
-      if (!is.na(input$range_years_sg4)) {
-        updateNumericRangeInput(
-          inputId = "range_years4",
-          value   = c(input$range_years_sg4, input$range_years_sg4)
-        )
-      }
-    })
-    
-    observe({
-      if (!is.na(input$ref_period_sg5)) {
-        updateNumericRangeInput(
-          inputId = "ref_period5",
-          value   = c(input$ref_period_sg5, input$ref_period_sg5)
-        )
+      input_ids <- c("range_years_sg", "ref_period_sg", "ref_period_sg2", "ref_period_sg_v1", "ref_period_sg_v2", "range_years_sg3", "ref_period_sg_iv", "ref_period_sg_dv", "range_years_sg4", "ref_period_sg5")
+      
+      for (input_id in input_ids) {
+        if (!is.na(input[[input_id]])) {
+          updateNumericRangeInput(
+            inputId = sub("_sg.*", "", input_id),
+            value   = c(input[[input_id]], input[[input_id]])
+          )
+        }
       }
     })
     

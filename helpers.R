@@ -8,7 +8,6 @@ library(RColorBrewer)
 library(shinyjs)
 library(bslib)
 library(readxl)
-library(xlsx)
 library(DT)
 library(zoo)
 library(colourpicker)
@@ -18,6 +17,8 @@ library(sf)
 library(shinylogs)
 library(shinycssloaders)
 library(profvis)
+library(openxlsx) #Don't Change order!
+library(xlsx)
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
@@ -188,66 +189,6 @@ add_map_points_and_highlights = function(CP_data,CH_data,SH_data){
     }
   }  
 }
-
-
-## GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE
-## data input = Input form Plot Customization or NA
-
-generate_metadata <- function(axis_mode, axis_input, hide_axis, title_mode, title1_input, title2_input, 
-                              custom_statistic, sd_ratio, hide_borders, map_points_data, map_highlights_data) {
-  
-  # Replace NA or NULL values with a placeholder value
-  replace_na_null <- function(x) {
-    if (is.na(x) || is.null(x)) {
-      return("NA")
-    } else {
-      return(x)
-    }
-  }
-  
-  # Apply the replace_na_null function to each input
-  axis_mode <- replace_na_null(axis_mode)
-  axis_input <- replace_na_null(axis_input)
-  hide_axis <- replace_na_null(hide_axis)
-  title_mode <- replace_na_null(title_mode)
-  title1_input <- replace_na_null(title1_input)
-  title2_input <- replace_na_null(title2_input)
-  custom_statistic <- replace_na_null(custom_statistic)
-  sd_ratio <- replace_na_null(sd_ratio)
-  hide_borders <- replace_na_null(hide_borders)
-  
-  # Create the metadata data frame
-  meta_input <- data.frame(
-    axis_mode = axis_mode, 
-    axis_input = axis_input, 
-    hide_axis = hide_axis, 
-    title_mode = title_mode, 
-    title1_input = title1_input, 
-    title2_input = title2_input,
-    custom_statistic = custom_statistic, 
-    sd_ratio = sd_ratio, 
-    hide_borders = hide_borders
-  )
-  
-  # Extract values from reactive values
-  map_points <- map_points_data()
-  map_highlights <- map_highlights_data()
-  
-  # Combine data frames
-  metadata <- rbind(meta_input, map_points, map_highlights)
-  
-  return(metadata)
-}
-
-## UPLOAD METADATA FORM CSV FILE
-## data input = Input from correctly structured CSV
-
-read_metadata_csv <- function(file_path) {
-  metadata <- read.csv(file_path, stringsAsFactors = FALSE)
-  
-  return(metadata)
-}
-
 
 
 #### General Functions ####
@@ -1347,6 +1288,84 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
 ## (General) Load SDRATIO data
 
 
+## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR PLOT
+##           data input = Input form Plot Customization
+
+generate_metadata <- function(axis_mode, axis_input, hide_axis, title_mode, title1_input, title2_input, 
+                              custom_statistic, sd_ratio, hide_borders) {
+  
+  # Adjust axis_input based on axis_mode
+  if (axis_mode == "Automatic") {
+    axis_input <- NA
+  } else if (length(axis_input) == 2) {
+    axis_input <- paste(axis_input, collapse = ",")
+  }
+  
+  # Create the metadata data frame with explicit column names
+  meta_input <- data.frame(
+    axis_mode, 
+    axis_input, 
+    hide_axis, 
+    title_mode, 
+    title1_input, 
+    title2_input,
+    custom_statistic, 
+    sd_ratio, 
+    hide_borders
+  )
+  
+  return(meta_input)
+}
+
+## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR TS
+##           data input = Input form Plot Customization
+
+generate_metadata_ts <- function(title_mode_ts, title1_input_ts, show_key_ts, key_position_ts, show_ref_ts, custom_average_ts, year_moving_ts, percentile_ts, moving_percentile_ts) {
+  
+  
+  # Create the metadata data frame with explicit column names
+  meta_input_ts <- data.frame(
+    title_mode_ts, 
+    title1_input_ts, 
+    show_key_ts, 
+    key_position_ts, 
+    show_ref_ts, 
+    custom_average_ts,
+    year_moving_ts, 
+    percentile_ts, 
+    moving_percentile_ts
+  )
+  
+  return(meta_input_ts)
+}
+
+
+## (General) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
+##           data input = Generation plot inputs from side bar
+
+generate_metadata_plot <- function(dataset,variable,range_years,select_sg_year,sg_year,season_sel,range_months,
+                                   ref_period,select_sg_ref,sg_ref,lon_range,lat_range,lonlat_vals) {
+  
+  #Generate dataframe from plot inputs
+  plot_input <- data.frame(
+    dataset,
+    variable,
+    range_years,
+    select_sg_year,
+    sg_year,
+    season_sel,
+    range_months,
+    ref_period,
+    select_sg_ref,
+    sg_ref,
+    lon_range,
+    lat_range,
+    lonlat_vals
+  )
+  
+  return(plot_input)
+  
+}
 
 #### Plot Features Functions #### 
 
@@ -2088,6 +2107,83 @@ convert_composite_to_anomalies = function(data_input,ref_data,data_ID,year_set,m
   return(anomaly_data)
 }
 
+## (Composite) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR PLOT
+##             data input = Input form Plot Customization
+
+generate_metadata_comp <- function(axis_mode2, axis_input2, hide_axis2, title_mode2, title1_input2, title2_input2, 
+                              custom_statistic2, percentage_sign_match2, sd_ratio2, hide_borders2) {
+  
+  # Adjust axis_input based on axis_mode
+  if (axis_mode2 == "Automatic") {
+    axis_input2 <- NA
+  } else if (length(axis_input2) == 2) {
+    axis_input2 <- paste(axis_input2, collapse = ",")
+  }
+  
+  # Create the metadata data frame with explicit column names
+  meta_input2 <- data.frame(
+    axis_mode2, 
+    axis_input2, 
+    hide_axis2, 
+    title_mode2, 
+    title1_input2, 
+    title2_input2,
+    custom_statistic2,
+    percentage_sign_match2,
+    sd_ratio2, 
+    hide_borders2
+  )
+  
+  return(meta_input2)
+}
+
+## (Composite) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR TS
+##             data input = Input form Plot Customization
+
+generate_metadata_ts_comp <- function(title_mode_ts2, title1_input_ts2, show_key_ts2, key_position_ts2, show_ref_ts2, custom_percentile_ts2, percentile_ts2) {
+  
+  
+  # Create the metadata data frame with explicit column names
+  meta_input_ts2 <- data.frame(
+    title_mode_ts2, 
+    title1_input_ts2, 
+    show_key_ts2, 
+    key_position_ts2, 
+    show_ref_ts2, 
+    custom_percentile_ts2,
+    percentile_ts2 
+  )
+  
+  return(meta_input_ts2)
+}
+
+
+## (Composite) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
+##             data input = Generation plot inputs from side bar
+
+generate_metadata_plot_comp <- function(dataset2,variable2,range_years2,season_sel2,range_months2,ref_period2,
+                                        select_sg_ref2,sg_ref2,prior_years2,range_years2a,lon_range2,lat_range2,lonlat_vals2) {
+  
+  #Generate dataframe from plot inputs
+  plot_input2 <- data.frame(
+    dataset2, #selectInput
+    variable2, #selectInput
+    range_years2, #textInput
+    season_sel2, #radioButtons
+    range_months2, #radioButtons
+    ref_period2, #numericRangeInput
+    select_sg_ref2, #checkboxInput
+    sg_ref2, #numericInput
+    prior_years2, #numericInput
+    range_years2a, #textInput
+    lon_range2, #numericInput
+    lat_range2, #numericInput
+    lonlat_vals2 #VALUE
+  )
+  
+  return(plot_input2)
+  
+}
 
 
 #### Reg/Cor Functions ####
@@ -2631,7 +2727,93 @@ generate_correlation_map_datatable = function(data_input){
   return(zt)
 }
 
+## (Correlation) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR PLOT
+##               data input = Input form Plot Customization
 
+generate_metadata_corr <- function(axis_mode3, axis_input3, hide_axis3, title_mode3, title1_input3,
+                                   hide_borders3, cor_method_map3) {
+
+  # Adjust axis_input3 based on axis_mode3
+  if (axis_mode3 == "Automatic") {
+    axis_input3 <- NA
+  } else if (length(axis_input3) == 2) {
+    axis_input3 <- paste(axis_input3, collapse = ",")
+  }
+
+  # Create the metadata data frame with explicit column names
+  meta_input3 <- data.frame(
+    axis_mode3, #radioButtons
+    axis_input3, #numericRangeInput
+    hide_axis3, #checkboxInput
+    title_mode3, #radioButtons
+    title1_input3, #textInput
+    hide_borders3, #checkboxInput
+    cor_method_map3 #radioButtons
+  )
+
+  return(meta_input3)
+}
+
+## (Correlation) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR TS
+##               data input = Input form Plot Customization
+
+generate_metadata_ts_corr <- function(title_mode_ts3, title1_input_ts3, show_key_ts3,
+                                      key_position_ts3, custom_average_ts3, year_moving_ts3, cor_method_ts3) {
+
+  # Create the metadata data frame with explicit column names
+  meta_input_ts3 <- data.frame(
+    title_mode_ts3, #radioButtons
+    title1_input_ts3, #textInput
+    show_key_ts3, #checkboxInput
+    key_position_ts3, #radioButtons
+    custom_average_ts3, #checkboxInput
+    year_moving_ts3, #numericInput
+    cor_method_ts3 #radioButtons
+  )
+
+  return(meta_input_ts3)
+}
+
+
+## (Correlation) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
+##               data input = Generation plot inputs from side bar
+
+generate_metadata_plot_corr <- function(dataset,variable,type,mode,season_sel,range_months,
+                                        ref_period,select_sg_ref,sg_ref,lon_range,lat_range,lonlat_vals) {
+
+  #Generate dataframe from plot inputs
+  plot_input3 <- data.frame(
+    dataset, #selectInput
+    variable, #selectInput
+    type, #radioButtons
+    mode, #radioButtons
+    season_sel, #radioButtons
+    range_months, #sliderTextInput
+    ref_period, #numericRangeInput
+    select_sg_ref, #checkboxInput
+    sg_ref, #numericInput
+    lon_range, #numericRangeInput
+    lat_range, #numericRangeInput
+    lonlat_vals #VALUES
+  )
+
+  return(plot_input3)
+}
+
+## (Correlation) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
+##               data input = Generation plot inputs from side bar
+
+generate_metadata_y_range_corr <- function(range_years3, single_year3, range_years_sg3) {
+
+  #Generate dataframe from plot inputs
+  metadata_yr3 <- data.frame(
+    range_years3, #numericRangeInput
+    single_year3, #checkboxInput
+    range_years_sg3 #numericInput
+  )
+
+  return(metadata_yr3)
+}
 
 #### Regression Functions ####
 
