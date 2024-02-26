@@ -137,6 +137,263 @@ initial_lat_values = continent_lonlat_values[3:4,random_map]
 ## Load grid square weights for calculating means
 latlon_weights = as.matrix(read.csv("data/latlon_weights.csv"))
 
+
+#### Popovers ####
+
+## ANOMALIES SUMMARY
+## popover_IDs = pop_anomalies
+
+anomalies_summary_popover = function(popover_ID){
+  popover(
+    h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    "Anomalies show how a selected time period differs from a reference time period:",em("Anomalies = Absolute Values – Reference Values"),br(),br(),
+    "The Anomalies map shows the average anomaly across all years in the range of years.",br(),br(),
+    "The Anomalies timeseries shows the average anomaly across your selected geographic area for each year in the range of years.",br(),br(),  
+    "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
+    title = "What are anomalies?",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## DATASET & VARIABLE
+## popover_IDs = pop_anomalies_datvar
+
+dataset_variable_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Select between the three ModE datasets:", br(), 
+    "- ModE-RA – the full reanalysis (recommended)", br(),
+    "- ModE-Sim – an ensemble of bounded climate models", br(),
+    "- ModE-RAclim – ModE-RA without centennial-scale variability or forcings",br(),br(),
+    "And select a climate variable:",br(),
+    "- Temperature - air temperature at 2m [°C]",br(),
+    "- Precipitation - total monthly precipitation [mm]",br(),
+    "- SLP - sea level pressure [hPa]",br(),
+    "- Z500 - pressure at 500 hPa geopotential height [hPa]",br(),br(),
+    "See",em("ModE data"),"tab on the Welcome page for more information.",
+    id = popover_ID,
+    placement = "right",
+  )
+}
+
+## YEAR, SEASON & REFERENCE PERIOD
+## popover_IDs = pop_anomalies_time, pop_composites_time
+
+year_season_ref_popover = function(popover_ID){
+  # Anomalies popover
+  if (popover_ID == "pop_anomalies_time"){
+      popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Choose the range of years you would like to view anomalies for and select the season you are interested in. Use the",em("Custom"),"option to enter your own range of months. You can view the absolute values for your selection by selecting",em("Absolute Values"),"under the Reference map selection below the main map.",br(),br(),
+      "Then choose the reference period you would like your selected year range compared to. You can view the absolute means for your reference period by selecting",em("Reference Values"),"under the",em("Reference map"),"selection below the main map.",
+      id = popover_ID,
+      placement = "right",
+    )     
+  } else {
+  # Composites popover
+    
+  }
+}
+
+## MAP CUSTOMIZATION 
+## popover_IDs = pop_anomalies_cusmap
+
+map_customization_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Edit the titles, axes and borders displayed on your map.",br(),br(),
+    "You can view and adjust the limits of the map colour axis by selecting",em("Fixed"),"under",em("Axis customization"),". These limits will stay fixed even after a plot has been changed. Select",em("Automatic"),"to allow the axis to adjust automatically again.",
+    id = popover_ID,
+    placement = "right",
+  )
+}
+
+## CUSTOM MAP FEATURES
+## popover_IDs = pop_anomalies_mapfeat
+
+map_features_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Add labelled points or rectangular highlights (a box or a hashed area) to your map.",
+    id = popover_ID,
+    placement = "right",
+  )    
+}
+
+## CUSTOM MAP POINTS 
+## popover_IDs = pop_anomalies_mappoint
+
+map_points_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "To add a point, double click on the map or search for location. This will automatically set the",em("Point longitude"),"and",em("Point latitude"),"(enter multiple values here, separated by commas if you want to plot multiple points simultaneously). Then type a",em("Point label"),"(if required) and choose a",em("Point shape, Point colour"),"and",em("Point size."),"Finally, click",em("Add point"),"to add your point to the map.",br(),br(), 
+    "Points can be removed from the map using the",em("Remove last point"),"and",em("Remove all points"),"buttons.",
+    id = popover_ID,
+    placement = "right",
+  )
+}
+
+## CUSTOM MAP HIGHLIGHTS
+## popover_IDs = pop_anomalies_maphl
+
+map_highlights_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "To add a highlight, draw a box on the map or manually enter a",em("Longitude"),"and",em("Latitude"),"range. Then select a",em("Highlight colour"),"and",em("Highlight type"),"and click",em("Add highlight"),"to add your highlight to the map.",br(),br(),
+    "Highlights can be removed from the map using the",em("Remove last highlight"),"and",em("Remove all highlights"),"buttons.",
+    id = popover_ID,
+    placement = "right",
+  )  
+}
+
+## MAP STATISTICS
+## popover_IDs = pop_anomalies_mapstat
+
+map_statistics_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Add stipples to the map to show where data points match a certain criteria.",
+    id = popover_ID,
+    placement = "right",
+  )
+}
+
+## MAP CHOOSES STATISTIC 
+## popover_IDs = pop_anomalies_choosestat
+
+map_choose_statistic_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "The",em("SD ratio"),"option will show points on the map where the SD ratio (averaged over your selected years) is less than a chosen value. The SD ratio shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",br(),br(),
+    "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## REFERENCE MAP
+## popover_IDs = pop_anomalies_refmap
+
+reference_map_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Plot and download a reference map for your data.",br(),br(), 
+    em("Absolute Values"),"shows the average for your selected month and year range prior to subtracting the reference values. Note that the reanalysis method makes absolute values potentially unreliable – this  is solved by using anomalies.",br(),br(),
+    em("Reference Values"),"are the absolute means for your reference period.",br(),br(), 
+    em("SD Ratio"),"shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",
+    id = popover_ID,
+    placement = "right",
+  )     
+}
+
+## TIMESERIES CUSTOMIZATION
+## popover_IDs = pop_anomalies_custime
+
+timeseries_customization_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Edit the titles of your timeseries and add a key or reference line.",br(),br(),
+    "The",em("Show reference"),"option adds a line to the timeseries shows the mean for your selected reference period (i.e. the absolute value corresponding to an anomaly of 0).",
+    id = popover_ID,
+    placement = "right",
+  )     
+}
+
+## CUSTOM TIMESERIES FEATURES
+## popover_IDs = pop_anomalies_timefeat
+
+timeseries_features_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Add labelled points, rectangular highlights (a boxed, filled or hashed area) and horizontal/vertical lines to your timeseries.",
+    id = popover_ID,
+    placement = "right",
+  )  
+}
+
+## TIMESERIES POINTS
+## popover_IDs = pop_anomalies_timepoint
+
+timeseries_points_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "To add a point, click on the timeseries or manually enter an",em("x"),"and",em("y"),"position. Clicking will automatically set the",em("x position"),"and",em("y position"),"(enter multiple values here, separated by commas if you want to plot multiple points simultaneously). Then type a",em("Point label"),"(if required) and choose a",em("Point shape, Point colour"),"and",em("Point size."),"Finally, click",em("Add point"),"to add your point to the timeseries.",br(),br(),
+    "Points can be removed from the timeseries using the",em("Remove last point"),"and",em("Remove all points"),"buttons.",
+    id = popover_ID,
+    placement = "right",
+  )  
+}
+
+## TIMESERIES HIGHLIGHTS
+## popover_IDs = pop_anomalies_timehl
+
+timeseries_highlights_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "To add a highlight, draw a box on the timeseries or manually enter",em("X"),"and",em("Y"),"values. Then select a",em("Highlight colour"),"and",em("Highlight type"),"and click",em("Add highlight"),"to add your highlight to the timeseries. Select",em("Show on key"),"and type a",em("Label"), "to add your highlight to the key. Remember to select the",em("Show key"),"option under",em("Customize your timeseries"),"to show the key on your plot",br(),br(),
+    "Highlights can be removed from the timeseries using the",em("Remove last highlight"),"and",em("Remove all highlights"),"buttons.",
+    id = popover_ID,
+    placement = "right",
+  )  
+}
+
+## TIMESERIES LINES
+## popover_IDs = pop_anomalies_timelines
+
+timeseries_lines_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "To add a line, click or double click on the timeseries to set the lines",em("Orientation"),"and",em("Position"),". Single click for a vertical line, double click for a horizontal. Multiple lines can be added simultaneously by entering multiple",em("Position"),"values, separated by commas. Then select a",em("Line colour"),"and",em("Type"),"and click",em("Add line"),"to add your line to the timeseries. Select",em("Show on key"),"and type a",em("Label"), "to add your line to the key. Remember to select the",em("Show key"),"option under",em("Customize your timeseries"),"to show the key on your plot",br(),br(),
+    "Lines can be removed from the timeseries using the",em("Remove last line"),"and",em("Remove all lines"),"buttons.",
+    id = popover_ID,
+    placement = "right",
+  )  
+}
+
+## TIMESERIES CUSTOM STATISTICS
+## popover_IDs = pop_anomalies_timestats
+
+timeseries_statistics_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Add moving averages and percentiles to your timeseries.",br(),br(),
+    "A moving average shows the mean of a chosen number of years around each point on the timeseries. This is useful for ‘smoothing out’ short term variation.",br(),br(),
+    "Percentiles show where a percentage of points in the timeseries are above/below a given value. So, for the 0.95 percentile, 95% of points are between the two lines, 2.5% are above the upper line and 2.5% are below the lower line.",
+    id = popover_ID,
+    placement = "right",
+  )  
+}
+
+## NETCDF
+## popover_IDs = pop_anomalies_netcdf
+
+netcdf_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Download the full dataset of yearly anomalies for your selected year, month and geographic range. You can include multiple variables in the same NetCDF file by selecting them on the dropdown menu.",
+    id = popover_ID,
+    placement = "right",
+  )  
+}
+
+## MODE-RA SOURCES
+## popover_IDs = pop_anomalies_mesource, pop_composites_mesource, pop_correlation_mesource, pop_regression_mesource, pop_anncyc_mesource
+
+MEsource_popover = function(popover_ID){
+  popover(
+    h3(HTML("Plot ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    "These plots show location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
+    em("Assimilated Observations – Oct. to Mar."),"shows sources that were used to produce the monthly reconstruction between October and March, while",em("Assimilated Observations – Apr. to Sept."),"shows sources that were used to produce the reconstruction between April and September.",br(),br(),
+    em("VARIABLE"),"refers to the value that was directly measured, so for example a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.", br(),br(),
+    "See",em("ModE data"),"tab on the Welcome page for more information.",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+
+
 #### Internal Functions ####
 # (Functions used ONLY by other functions)
 
@@ -592,8 +849,14 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
   }
   
   # Create Timeseries title 
-  ts_title = paste(substr(map_title1, 1, nchar(map_title1) - 10),
-                   " [",lon_range[1],":",lon_range[2],"\u00B0E, ",lat_range[1],":",lat_range[2],"\u00B0N]", sep = "")
+  if (tab=="composites"){
+    ts_title = paste(substr(map_title1, 1, nchar(map_title1) - 18),
+                     " [",lon_range[1],":",lon_range[2],"\u00B0E, ",lat_range[1],":",lat_range[2],"\u00B0N]", sep = "")
+  } else {
+    ts_title = paste(substr(map_title1, 1, nchar(map_title1) - 10),
+                 " [",lon_range[1],":",lon_range[2],"\u00B0E, ",lat_range[1],":",lat_range[2],"\u00B0N]", sep = "")
+  }
+
   
   # Create timeseries axis label
   if (variable == "Temperature"){

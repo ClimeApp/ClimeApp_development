@@ -203,17 +203,14 @@ ui <- navbarPage(id = "nav1",
                     ### First Sidebar panel (Variable and dataset selection) ----
                     sidebarPanel(fluidRow(
                     #Method Title and Pop Over
-                    popover(
-                    h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
-                    "Analyzing averages",br(), "involves calculating the mean of a dataset, providing a central tendency measure. Anomalies are deviations from this mean. In climate research, comparing monthly or yearly averages helps identify trends. Analyzing anomalies, the differences from long-term averages, reveals unusual patterns, aiding in detecting climate changes and anomalies such as El Niño or global warming impacts.",
-                    title = "What are anomalies?",
-                    id = "pop_anomalies",
-                    placement = "right",
-                    ), 
+                    anomalies_summary_popover("pop_anomalies"),
+                      
                     br(),
           
                     #Short description of the selection options        
-                    h4(helpText("Select dataset and variable")),
+                    h4(helpText("Select dataset and variable", dataset_variable_popover("pop_anomalies_datvar"))),
+
+                    br(),
                     
                     #Choose one of three datasets (Select)                
                     selectInput(inputId  = "dataset_selected",
@@ -233,7 +230,7 @@ ui <- navbarPage(id = "nav1",
                     sidebarPanel(fluidRow(
                       
                     #Short description of the temporal selection        
-                    h4(helpText("Plot average anomalies for a selected time period")),
+                    h4(helpText("Select a year range, season and reference period",year_season_ref_popover("pop_anomalies_time"))),
             
                     #Choose your year of interest        
                     hidden(
@@ -404,7 +401,7 @@ ui <- navbarPage(id = "nav1",
                       fluidRow(
                       #### Map customization ----       
                       column(width = 4,
-                             h4(helpText("Customize your map")),  
+                             h4(helpText("Customize your map",map_customization_popover("pop_anomalies_cusmap"))),  
                             
                              checkboxInput(inputId = "custom_map",
                                            label   = "Map customization",
@@ -454,6 +451,8 @@ ui <- navbarPage(id = "nav1",
                                        width       = NULL,
                                        placeholder = "Custom title"))),
                              
+                             br(),
+                             
                              checkboxInput(inputId = "hide_borders",
                                            label   = "Show country borders",
                                            value   = TRUE),
@@ -463,7 +462,7 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Add Custom features (points and highlights) ----                        
                       column(width = 4,
-                             h4(helpText("Custom features")),
+                             h4(helpText("Custom features",map_features_popover("pop_anomalies_mapfeat"))),
                              
                              checkboxInput(inputId = "custom_features",
                                            label   = "Enable custom features",
@@ -478,7 +477,8 @@ ui <- navbarPage(id = "nav1",
                                
                                #Custom Points
                                div(id = "hidden_custom_points",
-                                   h5(helpText("Add custom points")),
+                                   h5(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
+                                   
                                    h6(helpText("Enter location/coordinates or double click on map")),
                                    
                                    textInput(inputId = "location", 
@@ -540,7 +540,8 @@ ui <- navbarPage(id = "nav1",
                                
                                #Custom Highlights
                                div(id = "hidden_custom_highlights",
-                                   h5(helpText("Add custom highlights")),
+                                   h5(helpText("Add custom highlights",map_highlights_popover("pop_anomalies_maphl"))),
+                                   
                                    h6(helpText("Enter coordinate or draw a box on map")),
                                    
                                    numericRangeInput(inputId = "highlight_x_values",
@@ -581,7 +582,7 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Custom statistics ----
                       column(width = 4,
-                             h4(helpText("Custom statistics")),
+                             h4(helpText("Custom statistics",map_statistics_popover("pop_anomalies_mapstat"))),
                              
                              checkboxInput(inputId = "enable_custom_statistics",
                                            label   = "Enable custom statistics",
@@ -589,7 +590,7 @@ ui <- navbarPage(id = "nav1",
                              
                              
                                div(id = "hidden_custom_statistics",
-                                   h5(helpText("Choose custom statistic:")),
+                                   h5(helpText("Choose custom statistic:",map_choose_statistic_popover("pop_anomalies_choosestat"))),
                                    
                                    radioButtons(inputId      = "custom_statistic",
                                                 label        = NULL,
@@ -626,7 +627,7 @@ ui <- navbarPage(id = "nav1",
                       ),
 
                       #### Abs/Ref Map plot START ----
-                      h4(helpText("Reference map")), 
+                      h4(helpText("Reference map",reference_map_popover("pop_anomalies_refmap"))), 
                       
                       radioButtons(inputId  = "ref_map_mode",
                                    label    = NULL,
@@ -661,7 +662,7 @@ ui <- navbarPage(id = "nav1",
                       fluidRow(
                       #### Timeseries customization ----
                       column(width = 4,
-                             h4(helpText("Customize your timeseries")),  
+                             h4(helpText("Customize your timeseries",timeseries_customization_popover("pop_anomalies_custime"))),  
                               
                              checkboxInput(inputId = "custom_ts",
                                             label   = "Timeseries customization",
@@ -706,7 +707,7 @@ ui <- navbarPage(id = "nav1",
 
                       #### Add Custom features (points, highlights, lines) ----                        
                       column(width = 4,
-                            h4(helpText("Custom features")),
+                            h4(helpText("Custom features",timeseries_features_popover("pop_anomalies_timefeat"))),
                             
                             checkboxInput(inputId = "custom_features_ts",
                                           label   = "Enable custom features",
@@ -722,7 +723,7 @@ ui <- navbarPage(id = "nav1",
                                 #Custom Points
                                 shinyjs::hidden(
                                 div(id = "hidden_custom_points_ts",
-                                    h5(helpText("Add custom points")),
+                                    h5(helpText("Add custom points",timeseries_points_popover("pop_anomalies_timepoint"))),
                                     h6(helpText("Enter position manually or click on plot")),
                                     
                                     textInput(inputId = "point_label_ts", 
@@ -773,7 +774,7 @@ ui <- navbarPage(id = "nav1",
                                 #Custom highlights
                                 shinyjs::hidden(
                                 div(id = "hidden_custom_highlights_ts",
-                                    h5(helpText("Add custom highlights")),
+                                    h5(helpText("Add custom highlights", timeseries_highlights_popover("pop_anomalies_timehl"))),
                                     h6(helpText("Enter values manually or draw a box on plot")),
                                     
                                     numericRangeInput(inputId = "highlight_x_values_ts",
@@ -800,7 +801,7 @@ ui <- navbarPage(id = "nav1",
                                                  choiceValues = c("Fill","Box","Hatched")),
                                     
                                     checkboxInput(inputId = "show_highlight_on_legend_ts",
-                                                  label   = "Show on legend",
+                                                  label   = "Show on key",
                                                   value   = FALSE),
                                     
                                     hidden(
@@ -823,7 +824,7 @@ ui <- navbarPage(id = "nav1",
                                 #Custom lines
                                 shinyjs::hidden(
                                 div(id = "hidden_custom_line_ts",
-                                    h5(helpText("Add custom lines")),
+                                    h5(helpText("Add custom lines",timeseries_lines_popover("pop_anomalies_timelines"))),
                                     h6(helpText("Enter position manually or click on plot, double click to change orientation")),
                                     
                                     radioButtons(inputId      = "line_orientation_ts",
@@ -847,7 +848,7 @@ ui <- navbarPage(id = "nav1",
                                                  choices = c("solid", "dashed")),
                                     
                                     checkboxInput(inputId = "show_line_on_legend_ts",
-                                                  label   = "Show on legend",
+                                                  label   = "Show on key",
                                                   value   = FALSE),
                                     
                                     hidden(
@@ -869,7 +870,7 @@ ui <- navbarPage(id = "nav1",
                              
                       #### Custom statistics ----
                       column(width = 4,
-                              h4(helpText("Custom statistics")),
+                              h4(helpText("Custom statistics",timeseries_statistics_popover("pop_anomalies_timestats"))),
                               
                               checkboxInput(inputId = "enable_custom_statistics_ts",
                                             label   = "Enable custom statistics",
@@ -963,7 +964,7 @@ ui <- navbarPage(id = "nav1",
                              br(), column(width = 3, dataTableOutput("data2"))),
                     
                     tabPanel("Download NETcdf data",
-                             br(), h4(helpText("Download NETcdf with one or more variable")),
+                             br(), h4(helpText("Download NETcdf with one or more variable", netcdf_popover("pop_anomalies_netcdf"))),
                              #NETcdf download pickerInput checkboxGroupInput
                              column(3, pickerInput(inputId = "netcdf_variables", label = "Choose one or multiple variables:", choices = NULL, selected = NULL, inline = TRUE, multiple = TRUE,)),
                              column(3, downloadButton(outputId = "download_netcdf", label = "Download NETcdf"))),
@@ -971,32 +972,20 @@ ui <- navbarPage(id = "nav1",
                     ### Feedback archive documentation (FAD) ----
                     tabPanel("ModE-RA sources", br(),
                              fluidRow(
-                               
-                               column(width=4,
-                                      numericInput(
-                                        inputId  = "fad_year_a",
-                                        label   =  "Year",
-                                        value = 1422,
-                                        min = 1422,
-                                        max = 2008)),
+                               column(width=4,                               
+                                # Title & help pop up
+                                MEsource_popover("pop_anomalies_mesource"),
+  
+                                 # Year entry
+                                 numericInput(
+                                  inputId  = "fad_year_a",
+                                  label   =  "Year",
+                                  value = 1422,
+                                  min = 1422,
+                                  max = 2008)
+                                ),
                              ),
-                             #Download
-                             h4(helpText("Download maps")),
-                             fluidRow(
-                               column(2, radioButtons(inputId = "file_type_modera_source_a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_fad_wa", label = "Download Oct. - Mar.")),
-                               column(2, radioButtons(inputId = "file_type_modera_source_b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_fad_sa", label = "Download Apr. - Sep."))
-                             ),
-                             
-                             h4(helpText("Download data")),
-                             fluidRow(
-                               column(2, radioButtons(inputId = "file_type_data_modera_source_a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_data_fad_wa", label = "Download Oct. - Mar.")),
-                               column(2, radioButtons(inputId = "file_type_data_modera_source_b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_data_fad_sa", label = "Download Apr. - Sep."))
-                             ),
-                             
+
                              h4(helpText("Draw a box on the left map to use zoom function")),
                              
                              div(id = "fad_map_a",
@@ -1024,6 +1013,23 @@ ui <- navbarPage(id = "nav1",
                                
                                          plotOutput("fad_zoom_summer_a")
                                          )),
+                             
+                             #Download
+                             h4(helpText("Download maps")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_modera_source_a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_fad_wa", label = "Download Oct. - Mar.")),
+                               column(2, radioButtons(inputId = "file_type_modera_source_b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_fad_sa", label = "Download Apr. - Sep."))
+                             ),
+                             
+                             h4(helpText("Download data")),
+                             fluidRow(
+                               column(2, radioButtons(inputId = "file_type_data_modera_source_a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_data_fad_wa", label = "Download Oct. - Mar.")),
+                               column(2, radioButtons(inputId = "file_type_data_modera_source_b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                               column(3, downloadButton(outputId = "download_data_fad_sa", label = "Download Apr. - Sep."))
+                             ),
                     ),
                 ## Main Panel END ----
                 ), width = 8),
@@ -1070,7 +1076,7 @@ ui <- navbarPage(id = "nav1",
                     sidebarPanel(fluidRow(
                       
                       #Short description of the temporal selection        
-                      h4(helpText("Plot composite anomalies for a selected time period")),
+                      h4(helpText("Select a year range, season and reference period")),
                      
                      #Type in your year of interest OR upload a file
                      radioButtons(inputId  = "enter_upload2",
@@ -1343,6 +1349,8 @@ ui <- navbarPage(id = "nav1",
                                             value       = NA,
                                             width       = NULL,
                                             placeholder = "Custom title"))),
+                          
+                          br(),
                           
                           checkboxInput(inputId = "hide_borders2",
                                         label   = "Show country borders",
@@ -1707,7 +1715,7 @@ ui <- navbarPage(id = "nav1",
                                                       choiceValues = c("Fill","Box","Hatched")),
                                          
                                          checkboxInput(inputId = "show_highlight_on_legend_ts2",
-                                                       label   = "Show on legend",
+                                                       label   = "Show on key",
                                                        value   = FALSE),
                                          
                                          hidden(
@@ -1754,7 +1762,7 @@ ui <- navbarPage(id = "nav1",
                                                       choices = c("solid", "dashed")),
                                          
                                          checkboxInput(inputId = "show_line_on_legend_ts2",
-                                                       label   = "Show on legend",
+                                                       label   = "Show on key",
                                                        value   = FALSE),
                                          
                                          hidden(
@@ -1845,32 +1853,20 @@ ui <- navbarPage(id = "nav1",
                     ### Feedback archive documentation (FAD) ----
                    tabPanel("ModE-RA sources", br(),
                             fluidRow(
-                              
-                              column(width=4,
+                              column(width=4,                               
+                                     # Title & help pop up
+                                     MEsource_popover("pop_composite_mesource"),
+                                     
+                                     # Year entry
                                      numericInput(
                                        inputId  = "fad_year_a2",
                                        label   =  "Year",
                                        value = 1422,
                                        min = 1422,
-                                       max = 2008)),
+                                       max = 2008)
+                              ),
                             ),
-                            #Download
-                            h4(helpText("Downloads")),
-                            fluidRow(
-                                    column(2, radioButtons(inputId = "file_type_modera_source_a2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_fad_wa2", label = "Download Oct. - Mar.")),
-                                    column(2, radioButtons(inputId = "file_type_modera_source_b2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_fad_sa2", label = "Download Apr. - Sep."))
-                            ),
-                            
-                            h4(helpText("Download data")),
-                            fluidRow(
-                              column(2, radioButtons(inputId = "file_type_data_modera_source_a2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                              column(3, downloadButton(outputId = "download_data_fad_wa2", label = "Download Oct. - Mar.")),
-                              column(2, radioButtons(inputId = "file_type_data_modera_source_b2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                              column(3, downloadButton(outputId = "download_data_fad_sa2", label = "Download Apr. - Sep."))
-                            ),
-                            
+
                             h4(helpText("Draw a box on the left map to use zoom function")),
                             
                             div(id = "fad_map_a2",
@@ -1900,6 +1896,23 @@ ui <- navbarPage(id = "nav1",
                                   
                                   plotOutput("fad_zoom_summer_a2")
                                 )),
+                            
+                            #Download
+                            h4(helpText("Downloads")),
+                            fluidRow(
+                              column(2, radioButtons(inputId = "file_type_modera_source_a2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                              column(3, downloadButton(outputId = "download_fad_wa2", label = "Download Oct. - Mar.")),
+                              column(2, radioButtons(inputId = "file_type_modera_source_b2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                              column(3, downloadButton(outputId = "download_fad_sa2", label = "Download Apr. - Sep."))
+                            ),
+                            
+                            h4(helpText("Download data")),
+                            fluidRow(
+                              column(2, radioButtons(inputId = "file_type_data_modera_source_a2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                              column(3, downloadButton(outputId = "download_data_fad_wa2", label = "Download Oct. - Mar.")),
+                              column(2, radioButtons(inputId = "file_type_data_modera_source_b2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                              column(3, downloadButton(outputId = "download_data_fad_sa2", label = "Download Apr. - Sep."))
+                            ),
                    ),
                    
                 ## Main Panel END ----
@@ -2533,7 +2546,7 @@ ui <- navbarPage(id = "nav1",
                                                       choiceValues = c("Fill","Box","Hatched")),
                                          
                                          checkboxInput(inputId = "show_highlight_on_legend_ts3",
-                                                       label   = "Show on legend",
+                                                       label   = "Show on key",
                                                        value   = FALSE),
                                          
                                          hidden(
@@ -2580,7 +2593,7 @@ ui <- navbarPage(id = "nav1",
                                                       choices = c("solid", "dashed")),
                                          
                                          checkboxInput(inputId = "show_line_on_legend_ts3",
-                                                       label   = "Show on legend",
+                                                       label   = "Show on key",
                                                        value   = FALSE),
                                          
                                          hidden(
@@ -2712,6 +2725,8 @@ ui <- navbarPage(id = "nav1",
                                                    value       = NA,
                                                    width       = NULL,
                                                    placeholder = "Custom title"))),
+                                   
+                                   br(),
                                    
                                    checkboxInput(inputId = "hide_borders3",
                                                  label   = "Show country borders",
@@ -2911,6 +2926,10 @@ ui <- navbarPage(id = "nav1",
              
                    ### Feedback archive documentation (FAD) ----
                    tabPanel("ModE-RA sources", br(),
+                            
+                            # Title & help pop up
+                            MEsource_popover("pop_correlation_mesource"),
+
                             shinyjs::hidden(
                             div(id = "hidden_v1_fad",
                             fluidRow(
@@ -2923,26 +2942,6 @@ ui <- navbarPage(id = "nav1",
                                        min = 1422,
                                        max = 2008)),
                               ),
-                            
-                            shinyjs::hidden(
-                              div(id = "hidden_v1_fad_download",
-                                  h4(helpText("Downloads")),
-                                  fluidRow(
-                                    column(2, radioButtons(inputId = "file_type_modera_source_a3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_fad_wa3a", label = "Download Oct. - Mar.")),
-                                    column(2, radioButtons(inputId = "file_type_modera_source_b3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_fad_sa3a", label = "Download Apr. - Sep.")),
-                                  ),
-                                  
-                                  h4(helpText("Download data")),
-                                  fluidRow(
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_a3a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_wa3a", label = "Download Oct. - Mar.")),
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_b3a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_sa3a", label = "Download Apr. - Sep."))
-                                  ),
-                                  
-                                  )),
                             
                             div(id = "fad_map_a3a",
                                 h4(helpText("Draw a box on the left map to use zoom function")),
@@ -2975,6 +2974,26 @@ ui <- navbarPage(id = "nav1",
 
                             )),
                             
+                            shinyjs::hidden(
+                              div(id = "hidden_v1_fad_download",
+                                  h4(helpText("Downloads")),
+                                  fluidRow(
+                                    column(2, radioButtons(inputId = "file_type_modera_source_a3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_wa3a", label = "Download Oct. - Mar.")),
+                                    column(2, radioButtons(inputId = "file_type_modera_source_b3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_fad_sa3a", label = "Download Apr. - Sep.")),
+                                  ),
+                                  
+                                  h4(helpText("Download data")),
+                                  fluidRow(
+                                    column(2, radioButtons(inputId = "file_type_data_modera_source_a3a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_data_fad_wa3a", label = "Download Oct. - Mar.")),
+                                    column(2, radioButtons(inputId = "file_type_data_modera_source_b3a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_data_fad_sa3a", label = "Download Apr. - Sep."))
+                                  ),
+                                  
+                              )),
+                            
                             br(),
                             shinyjs::hidden(
                             div(id = "hidden_v2_fad",
@@ -2988,28 +3007,7 @@ ui <- navbarPage(id = "nav1",
                                        min = 1422,
                                        max = 2008)),
                               ),
-                            
-                            shinyjs::hidden(
-                              div(id = "hidden_v2_fad_download",
-                                  h4(helpText("Downloads")),
-                                  fluidRow(
-                                    column(2,radioButtons(inputId = "file_type_modera_source_a3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3,downloadButton(outputId = "download_fad_wa3b", label = "Download Oct. - Mar.")),
-                                    column(2,radioButtons(inputId = "file_type_modera_source_b3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3,downloadButton(outputId = "download_fad_sa3b", label = "Download Apr. - Sep.")),
-                                  ),
-                                  
-                                  h4(helpText("Download data")),
-                                  fluidRow(
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_a3b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_wa3b", label = "Download Oct. - Mar.")),
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_b3b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_sa3b", label = "Download Apr. - Sep."))
-                                  ),
-                                  
-                                  )),
-                            
-                            
+  
                             div(id = "fad_map_a3b",
                                 h4(helpText("Draw a box on the left map to use zoom function")),
                                 splitLayout(
@@ -3038,6 +3036,26 @@ ui <- navbarPage(id = "nav1",
                                   
                                   plotOutput("fad_zoom_summer_a3b")
                                 )),
+                            
+                            shinyjs::hidden(
+                              div(id = "hidden_v2_fad_download",
+                                  h4(helpText("Downloads")),
+                                  fluidRow(
+                                    column(2,radioButtons(inputId = "file_type_modera_source_a3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3,downloadButton(outputId = "download_fad_wa3b", label = "Download Oct. - Mar.")),
+                                    column(2,radioButtons(inputId = "file_type_modera_source_b3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3,downloadButton(outputId = "download_fad_sa3b", label = "Download Apr. - Sep.")),
+                                  ),
+                                  
+                                  h4(helpText("Download data")),
+                                  fluidRow(
+                                    column(2, radioButtons(inputId = "file_type_data_modera_source_a3b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_data_fad_wa3b", label = "Download Oct. - Mar.")),
+                                    column(2, radioButtons(inputId = "file_type_data_modera_source_b3b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_data_fad_sa3b", label = "Download Apr. - Sep."))
+                                  ),
+                                  
+                              )),
 
                             )),
                    ),
@@ -3631,6 +3649,9 @@ ui <- navbarPage(id = "nav1",
 
              ### Feedback archive documentation (FAD) ----
              tabPanel("ModE-RA sources", br(),
+                      # Title & help pop up
+                      MEsource_popover("pop_regression_mesource"),
+                      
                       shinyjs::hidden(
                         div(id = "hidden_iv_fad",
                             fluidRow(
@@ -3643,27 +3664,6 @@ ui <- navbarPage(id = "nav1",
                                        min = 1422,
                                        max = 2008)),
                             ),
-                            
-                            #Downloads
-                            shinyjs::hidden(
-                              div(id = "hidden_iv_fad_download",
-                                  h4(helpText("Downloads")),
-                                  fluidRow(
-                                    column(2, radioButtons(inputId = "file_type_modera_source_a4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_fad_wa4a", label = "Download Oct. - Mar.")),
-                                    column(2, radioButtons(inputId = "file_type_modera_source_b4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_fad_sa4a", label = "Download Apr. - Sep.")),
-                                  ),
-                                  
-                                  h4(helpText("Download data")),
-                                  fluidRow(
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_a4a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_wa4a", label = "Download Oct. - Mar.")),
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_b4a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_sa4a", label = "Download Apr. - Sep."))
-                                  ),
-                                  
-                                  )),
                             
                             div(id = "fad_map_a4a",
                                 h4(helpText("Draw a box on the left map to use zoom function")),
@@ -3695,6 +3695,27 @@ ui <- navbarPage(id = "nav1",
                                 )),
                         )),
                       
+                      #Downloads
+                      shinyjs::hidden(
+                        div(id = "hidden_iv_fad_download",
+                            h4(helpText("Downloads")),
+                            fluidRow(
+                              column(2, radioButtons(inputId = "file_type_modera_source_a4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                              column(3, downloadButton(outputId = "download_fad_wa4a", label = "Download Oct. - Mar.")),
+                              column(2, radioButtons(inputId = "file_type_modera_source_b4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                              column(3, downloadButton(outputId = "download_fad_sa4a", label = "Download Apr. - Sep.")),
+                            ),
+                            
+                            h4(helpText("Download data")),
+                            fluidRow(
+                              column(2, radioButtons(inputId = "file_type_data_modera_source_a4a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                              column(3, downloadButton(outputId = "download_data_fad_wa4a", label = "Download Oct. - Mar.")),
+                              column(2, radioButtons(inputId = "file_type_data_modera_source_b4a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                              column(3, downloadButton(outputId = "download_data_fad_sa4a", label = "Download Apr. - Sep."))
+                            ),
+                            
+                        )),
+                      
                       br(),
                       shinyjs::hidden(
                         div(id = "hidden_dv_fad",
@@ -3708,27 +3729,6 @@ ui <- navbarPage(id = "nav1",
                                        min = 1422,
                                        max = 2008)),
                             ),
-                            
-                            #Downloads
-                            shinyjs::hidden(
-                              div(id = "hidden_dv_fad_download",
-                                  h4(helpText("Downloads")),
-                                  fluidRow(
-                                    column(2,radioButtons(inputId = "file_type_modera_source_a4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3,downloadButton(outputId = "download_fad_wa4b", label = "Download Oct. - Mar.")),
-                                    column(2,radioButtons(inputId = "file_type_modera_source_b4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3,downloadButton(outputId = "download_fad_sa4b", label = "Download Apr. - Sep.")),
-                                  ),
-                                  
-                                  h4(helpText("Download data")),
-                                  fluidRow(
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_a4b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_wa4b", label = "Download Oct. - Mar.")),
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_b4b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_sa4b", label = "Download Apr. - Sep."))
-                                  ),
-                                  
-                                  )),
                             
                             div(id = "fad_map_a4b",
                                 h4(helpText("Draw a box on the left map to use zoom function")),
@@ -3758,6 +3758,27 @@ ui <- navbarPage(id = "nav1",
                                   
                                   plotOutput("fad_zoom_summer_a4b")
                                 )),
+                            
+                            #Downloads
+                            shinyjs::hidden(
+                              div(id = "hidden_dv_fad_download",
+                                  h4(helpText("Downloads")),
+                                  fluidRow(
+                                    column(2,radioButtons(inputId = "file_type_modera_source_a4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3,downloadButton(outputId = "download_fad_wa4b", label = "Download Oct. - Mar.")),
+                                    column(2,radioButtons(inputId = "file_type_modera_source_b4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3,downloadButton(outputId = "download_fad_sa4b", label = "Download Apr. - Sep.")),
+                                  ),
+                                  
+                                  h4(helpText("Download data")),
+                                  fluidRow(
+                                    column(2, radioButtons(inputId = "file_type_data_modera_source_a4b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_data_fad_wa4b", label = "Download Oct. - Mar.")),
+                                    column(2, radioButtons(inputId = "file_type_data_modera_source_b4b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_data_fad_sa4b", label = "Download Apr. - Sep."))
+                                  ),
+                                  
+                              )),
 
                         )),
              ),
@@ -4161,7 +4182,7 @@ ui <- navbarPage(id = "nav1",
                                                         choiceValues = c("Fill","Box","Hatched")),
                                            
                                            checkboxInput(inputId = "show_highlight_on_legend_ts5",
-                                                         label   = "Show on legend",
+                                                         label   = "Show on key",
                                                          value   = FALSE),
                                            
                                            hidden(
@@ -4207,7 +4228,7 @@ ui <- navbarPage(id = "nav1",
                                                         choices = c("solid", "dashed")),
                                            
                                            checkboxInput(inputId = "show_line_on_legend_ts5",
-                                                         label   = "Show on legend",
+                                                         label   = "Show on key",
                                                          value   = FALSE),
                                            
                                            hidden(
@@ -4268,6 +4289,9 @@ ui <- navbarPage(id = "nav1",
                         
                         # Year 1
                         column(width=4,
+                               # Title & help pop up
+                               MEsource_popover("pop_anncyc_mesource"),
+                               
                                numericInput(
                                  inputId  = "fad_year_a5",
                                  label   =  "Year",
@@ -4292,22 +4316,7 @@ ui <- navbarPage(id = "nav1",
                                                  max = 90)),
                       ),
                       
-                      h4(helpText("Downloads")),
-                      
-                      fluidRow(
-                        column(2, radioButtons(inputId = "file_type_modera_source_a5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                        column(3, downloadButton(outputId = "download_fad_wa5", label = "Download Oct. - Mar.")),
-                        column(2, radioButtons(inputId = "file_type_modera_source_b5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                        column(3, downloadButton(outputId = "download_fad_sa5", label = "Download Apr. - Sep.")),
-                      ),
-                      
-                      h4(helpText("Download data")),
-                      fluidRow(
-                        column(2, radioButtons(inputId = "file_type_data_modera_source_a5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                        column(3, downloadButton(outputId = "download_data_fad_wa5", label = "Download Oct. - Mar.")),
-                        column(2, radioButtons(inputId = "file_type_data_modera_source_b5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                        column(3, downloadButton(outputId = "download_data_fad_sa5", label = "Download Apr. - Sep."))
-                      ),
+
                       
                       h4(helpText("Draw a box on the left map to use zoom function")),
                       
@@ -4339,6 +4348,22 @@ ui <- navbarPage(id = "nav1",
                                       plotOutput("fad_zoom_summer_a5")
                           )),
                       
+                      h4(helpText("Downloads")),
+                      
+                      fluidRow(
+                        column(2, radioButtons(inputId = "file_type_modera_source_a5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_fad_wa5", label = "Download Oct. - Mar.")),
+                        column(2, radioButtons(inputId = "file_type_modera_source_b5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_fad_sa5", label = "Download Apr. - Sep.")),
+                      ),
+                      
+                      h4(helpText("Download data")),
+                      fluidRow(
+                        column(2, radioButtons(inputId = "file_type_data_modera_source_a5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_data_fad_wa5", label = "Download Oct. - Mar.")),
+                        column(2, radioButtons(inputId = "file_type_data_modera_source_b5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                        column(3, downloadButton(outputId = "download_data_fad_sa5", label = "Download Apr. - Sep."))
+                      ),
              ),
 
              ## Main Panel END ----
