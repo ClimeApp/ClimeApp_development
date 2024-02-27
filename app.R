@@ -2144,28 +2144,14 @@ ui <- navbarPage(id = "nav1",
                    
                    sidebarPanel(fluidRow(
                      #Choose your year of interest
-                     hidden(
+                     
                      numericRangeInput(inputId    = "range_years3",
                                        label     = "Select the range of years (1422-2008):",
                                        value     = c(1900,2008),
                                        separator = " to ",
                                        min       = 1422,
-                                       max       = 2008)),
-                     
-                     #Choose single year
-                     column(12,
-                            checkboxInput(inputId = "single_year3",
-                                          label   = "Select single year",
-                                          value   = FALSE)),
-                     
-                     
-                     hidden(
-                       numericInput(inputId   = "range_years_sg3",
-                                    label     = "Select the single year:",
-                                    value     = NA,
-                                    min       = 1422,
-                                    max       = 2008)),
-                     
+                                       max       = 2008),
+
                    ), width = 12),
                    
                    br(),
@@ -3287,28 +3273,13 @@ ui <- navbarPage(id = "nav1",
              
              sidebarPanel(fluidRow(
                #Choose your year of interest   
-               hidden(
                numericRangeInput(inputId    = "range_years4",
                                  label     = "Select the range of years (1422-2008):",
                                  value     = c(1900,2000),
                                  separator = " to ",
                                  min       = 1422,
-                                 max       = 2008)),
-               
-               #Choose single year
-               column(12,
-                      checkboxInput(inputId = "single_year4",
-                                    label   = "Select single year",
-                                    value   = FALSE)),
-               
-               
-               hidden(
-                 numericInput(inputId   = "range_years_sg4",
-                              label     = "Select the single year:",
-                              value     = NA,
-                              min       = 1422,
-                              max       = 2008)),
-               
+                                 max       = 2008),
+
              ), width = 12),
              
              br(),
@@ -5590,23 +5561,7 @@ server <- function(input, output, session) {
                     selector = NULL,
                     condition = input$ref_single_year_v2 == FALSE,
                     asis = FALSE)
-    
-    shinyjs::toggle(id = "range_years_sg3",
-                    anim = TRUE,
-                    animType = "slide",
-                    time = 0.5,
-                    selector = NULL,
-                    condition = input$single_year3 == TRUE,
-                    asis = FALSE)
-    
-    shinyjs::toggle(id = "range_years3",
-                    anim = TRUE,
-                    animType = "slide",
-                    time = 0.5,
-                    selector = NULL,
-                    condition = input$single_year3 == FALSE,
-                    asis = FALSE)
-    
+
     shinyjs::toggle(id = "ref_period_sg_iv",
                     anim = TRUE,
                     animType = "slide",
@@ -5622,23 +5577,7 @@ server <- function(input, output, session) {
                     selector = NULL,
                     condition = input$ref_single_year_iv == FALSE,
                     asis = FALSE)
-    
-    shinyjs::toggle(id = "range_years_sg4",
-                    anim = TRUE,
-                    animType = "slide",
-                    time = 0.5,
-                    selector = NULL,
-                    condition = input$single_year4 == TRUE,
-                    asis = FALSE)
-    
-    shinyjs::toggle(id = "range_years4",
-                    anim = TRUE,
-                    animType = "slide",
-                    time = 0.5,
-                    selector = NULL,
-                    condition = input$single_year4 == FALSE,
-                    asis = FALSE)
-    
+ 
     shinyjs::toggle(id = "ref_period_sg_dv",
                     anim = TRUE,
                     animType = "slide",
@@ -8330,9 +8269,7 @@ server <- function(input, output, session) {
     
     metadata_yr3 <- reactive({
       
-      year_range3 = generate_metadata_y_range_corr(input$range_years3,
-                                                   input$single_year3,
-                                                   input$range_years_sg3)
+      year_range3 = generate_metadata_y_range_corr(input$range_years3)
       
       return(year_range3)
     })
@@ -8427,8 +8364,6 @@ server <- function(input, output, session) {
       metadata_yr3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "metadata_yr3")
       
       updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years3", value = metadata_yr3[1:2, "range_years3"])
-      updateCheckboxInput(session = getDefaultReactiveDomain(), "single_year3", value = metadata_yr3[1, "single_year3"])
-      updateNumericInput(session = getDefaultReactiveDomain(), "range_years_sg3", value = metadata_yr3[1, "range_years_sg3"])
       
     }
     
@@ -8574,8 +8509,7 @@ server <- function(input, output, session) {
       metadata_yr3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "metadata_yr3")
       
       updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years3", value = metadata_yr3[1:2, "range_years3"])
-      updateCheckboxInput(session = getDefaultReactiveDomain(), "single_year3", value = metadata_yr3[1, "single_year3"])
-      updateNumericInput(session = getDefaultReactiveDomain(), "range_years_sg3", value = metadata_yr3[1, "range_years_sg3"])
+      
     }
     
     
@@ -12930,10 +12864,8 @@ server <- function(input, output, session) {
     updateNumericInputRange("ref_period_sg", 1422, 2008)
     updateNumericInputRange("ref_period_sg2", 1422, 2008)
     updateNumericInputRange("ref_period_sg_v1", 1422, 2008)
-    updateNumericInputRange("range_years_sg3", 1422, 2008)
     updateNumericInputRange("ref_period_sg_v2", 1422, 2008)
     updateNumericInputRange("ref_period_sg_iv", 1422, 2008)
-    updateNumericInputRange("range_years_sg4", 1422, 2008)
     updateNumericInputRange("ref_period_sg_dv", 1422, 2008)
     updateNumericInputRange("ref_period_sg5", 1422, 2008)
 
@@ -13013,15 +12945,74 @@ server <- function(input, output, session) {
     
     #Single Year inputs update
     observe({
-      input_ids <- c("range_years_sg", "ref_period_sg", "ref_period_sg2", "ref_period_sg_v1", "ref_period_sg_v2", "range_years_sg3", "ref_period_sg_iv", "ref_period_sg_dv", "range_years_sg4", "ref_period_sg5")
-      
-      for (input_id in input_ids) {
-        if (!is.na(input[[input_id]])) {
-          updateNumericRangeInput(
-            inputId = sub("_sg.*", "", input_id),
-            value   = c(input[[input_id]], input[[input_id]])
-          )
-        }
+      if (!is.na(input$range_years_sg)) {
+        updateNumericRangeInput(
+          inputId = "range_years",
+          value   = c(input$range_years_sg, input$range_years_sg)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg)) {
+        updateNumericRangeInput(
+          inputId = "ref_period",
+          value   = c(input$ref_period_sg, input$ref_period_sg)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg2)) {
+        updateNumericRangeInput(
+          inputId = "ref_period2",
+          value   = c(input$ref_period_sg2, input$ref_period_sg2)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg_v1)) {
+        updateNumericRangeInput(
+          inputId = "ref_period_v1",
+          value   = c(input$ref_period_sg_v1, input$ref_period_sg_v1)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg_v2)) {
+        updateNumericRangeInput(
+          inputId = "ref_period_v2",
+          value   = c(input$ref_period_sg_v2, input$ref_period_sg_v2)
+        )
+      }
+    })
+
+    observe({
+      if (!is.na(input$ref_period_sg_iv)) {
+        updateNumericRangeInput(
+          inputId = "ref_period_iv",
+          value   = c(input$ref_period_sg_iv, input$ref_period_sg_iv)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg_dv)) {
+        updateNumericRangeInput(
+          inputId = "ref_period_dv",
+          value   = c(input$ref_period_sg_dv, input$ref_period_sg_dv)
+        )
+      }
+    })
+    
+    observe({
+      if (!is.na(input$ref_period_sg5)) {
+        updateNumericRangeInput(
+          inputId = "ref_period5",
+          value   = c(input$ref_period_sg5, input$ref_period_sg5)
+        )
       }
     })
     

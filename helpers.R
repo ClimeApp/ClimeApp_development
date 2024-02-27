@@ -3066,13 +3066,11 @@ generate_metadata_plot_corr <- function(dataset,variable,type,mode,season_sel,ra
 ## (Correlation) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
 ##               data input = Generation plot inputs from side bar
 
-generate_metadata_y_range_corr <- function(range_years3, single_year3, range_years_sg3) {
+generate_metadata_y_range_corr <- function(range_years3) {
 
   #Generate dataframe from plot inputs
   metadata_yr3 <- data.frame(
     range_years3, #numericRangeInput
-    single_year3, #checkboxInput
-    range_years_sg3 #numericInput
   )
 
   return(metadata_yr3)
