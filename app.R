@@ -45,7 +45,7 @@ ui <- navbarPage(id = "nav1",
                        ),
           theme = my_theme,
           position = c("fixed-top"),
-          windowTitle = "Rich, Nik and Noé are awesome!",
+          windowTitle = "ClimeApp (v1.0)",
 
 # Welcome START ----                             
   tabPanel("Welcome", value = "tab0",
@@ -210,8 +210,6 @@ ui <- navbarPage(id = "nav1",
                     #Short description of the selection options        
                     h4(helpText("Select dataset and variable", dataset_variable_popover("pop_anomalies_datvar"))),
 
-                    br(),
-                    
                     #Choose one of three datasets (Select)                
                     selectInput(inputId  = "dataset_selected",
                                 label    = "Choose a dataset:",
@@ -6054,7 +6052,8 @@ server <- function(input, output, session) {
     observeEvent(input$search, {
       location <- input$location
       if (!is.null(location) && nchar(location) > 0) {
-        result <- geocode_OSM(location)
+        location_encoded <- URLencode(location)
+        result <- geocode_OSM(location_encoded)
         if (!is.null(result$coords)) {
           longitude <- result$coords[1]
           latitude <- result$coords[2]
@@ -6878,7 +6877,8 @@ server <- function(input, output, session) {
     observeEvent(input$search2, {
       location2 <- input$location2
       if (!is.null(location2) && nchar(location2) > 0) {
-        result <- geocode_OSM(location2)
+        location_encoded2 <- URLencode(location2)
+        result <- geocode_OSM(location_encoded2)
         if (!is.null(result$coords)) {
           longitude2 <- result$coords[1]
           latitude2 <- result$coords[2]
@@ -8011,7 +8011,8 @@ server <- function(input, output, session) {
     observeEvent(input$search3, {
       location3 <- input$location3
       if (!is.null(location3) && nchar(location3) > 0) {
-        result <- geocode_OSM(location3)
+        location_encoded3 <- URLencode(location3)
+        result <- geocode_OSM(location_encoded3)
         if (!is.null(result$coords)) {
           longitude3 <- result$coords[1]
           latitude3 <- result$coords[2]
@@ -9525,7 +9526,8 @@ server <- function(input, output, session) {
     observeEvent(input$search5, {
       location5 <- input$location5
       if (!is.null(location5) && nchar(location5) > 0) {
-        result <- geocode_OSM(location5)
+        location_encoded5 <- URLencode(location5)
+        result <- geocode_OSM(location_encoded5)
         if (!is.null(result$coords)) {
           longitude5 <- result$coords[1]
           latitude5 <- result$coords[2]
