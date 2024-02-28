@@ -170,7 +170,7 @@ dataset_variable_popover = function(popover_ID){
     "- Temperature - air temperature at 2m [°C]",br(),
     "- Precipitation - total monthly precipitation [mm]",br(),
     "- SLP - sea level pressure [hPa]",br(),
-    "- Z500 - pressure at 500 hPa geopotential height [hPa]",br(),br(),
+    "- Z500 - pressure at 500 hPa geopotential height [m]",br(),br(),
     "See",em("ModE data"),"tab on the Welcome page for more information.",
     id = popover_ID,
     placement = "right",
@@ -866,7 +866,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
   } else if (variable == "SLP"){
     v_unit = "[hPa]"
   } else if (variable == "Z500"){
-    v_unit = "[hPa]"
+    v_unit = "[m]"
   }  
   
   if (mode == "Absolute"){
@@ -1261,7 +1261,7 @@ plot_default_timeseries = function(data_input,tab,variable, titles, title_mode, 
   } else if (variable == "SLP"){
     v_col = "purple4" ; v_unit = "hPa"
   } else if (variable == "Z500"){
-    v_col = "green4" ; v_unit = "hPa"
+    v_col = "green4" ; v_unit = "m"
   }  
   
   # Plot 
@@ -1326,7 +1326,7 @@ rewrite_tstable = function(tstable,variable){
   } else if (variable == "Precipitation"){
     v_unit = "[mm]"
   } else if (variable == "SLP"|variable == "Z500"){
-    v_unit = "[hPa]"
+    v_unit = "[m]"
   } else {
     v_unit = ""
   }
@@ -1507,7 +1507,7 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
   }
   if ("Z500" %in% user_nc_variables){
     dlname <- paste("500 hPa geopotential height",ln_extension, sep = "") 
-    Z500_def <- ncvar_def("geopotential_height","hPa",list(londim,latdim,timedim),missval=NULL,dlname,prec="single")# to check
+    Z500_def <- ncvar_def("geopotential_height","m",list(londim,latdim,timedim),missval=NULL,dlname,prec="single")# to check
     variable_def_list = append(variable_def_list,list(Z500_def))
   }  
   
@@ -2654,7 +2654,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
       V1_color = "purple4" ; V1_unit = "[hPa]"
     }
     else if (variable1 == "Z500"){
-      V1_color = "green4" ; V1_unit = "[hPa]"
+      V1_color = "green4" ; V1_unit = "[m]"
     }
     # Generate lon/lat addition
     if (variable1_lon_range[1]==variable1_lon_range[2]) {
@@ -2705,7 +2705,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
       V2_color = "purple4" ; V2_unit = "[hPa]"
     }
     else if (variable2 == "Z500"){
-      V2_color = "green4" ; V2_unit = "[hPa]"
+      V2_color = "green4" ; V2_unit = "[m]"
     }
     # Generate lon/lat addition
     if (variable2_lon_range[1]==variable2_lon_range[2]) {
@@ -3234,7 +3234,7 @@ generate_regression_titles = function(independent_source,dependent_source,
     } else if (modERA_dependent_variable == "SLP"){
       color_d = "purple4" ; unit_d = "[hPa]"
     } else if (modERA_dependent_variable == "Z500"){
-      color_d = "green4" ; unit_d = "[hPa]"
+      color_d = "green4" ; unit_d = "[m]"
     }
   }
   
@@ -3656,7 +3656,7 @@ create_monthly_TS_data = function(data_input,dataset,variable,years,lon_range,la
   } else if (variable == "SLP"){
     v_unit = "hPa"
   } else if (variable == "Z500"){
-    v_unit = "hPa"
+    v_unit = "m"
   } 
   Unit = rep(v_unit,length(Years))
   
