@@ -5492,7 +5492,7 @@ server <- function(input, output, session) {
                     condition = input$custom_features5 == TRUE,
                     asis = FALSE)
     
-    #Toggle Single Year UI
+    #Toggle Single Year UI (hide/show UI elements based on conditions)
     
     shinyjs::toggle(id = "range_years_sg",
                     anim = TRUE,
