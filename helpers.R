@@ -171,7 +171,7 @@ dataset_variable_popover = function(popover_ID){
     "- Temperature - air temperature at 2m [°C]",br(),
     "- Precipitation - total monthly precipitation [mm]",br(),
     "- SLP - sea level pressure [hPa]",br(),
-    "- Z500 - pressure at 500 hPa geopotential height [km]",br(),br(),
+    "- Z500 - pressure at 500 hPa geopotential height [m]",br(),br(),
     "See",em("ModE data"),"tab on the Welcome page for more information.",
     id = popover_ID,
     placement = "right",
@@ -630,7 +630,7 @@ load_ModE_data = function(dataset,variable){
     } else if (variable == "SLP"){
       data_output = ncvar_get(data_nc,varid="slp")/100 
     } else {
-      data_output = ncvar_get(data_nc,varid="geopotential_height")/1000
+      data_output = ncvar_get(data_nc,varid="geopotential_height")
     }
     
     nc_close(data_nc)
@@ -867,7 +867,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
   } else if (variable == "SLP"){
     v_unit = "[hPa]"
   } else if (variable == "Z500"){
-    v_unit = "[km]"
+    v_unit = "[m]"
   }  
   
   if (mode == "Absolute"){
@@ -948,8 +948,11 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
   else if (variable == "Precipitation"){
     v_col = colorRampPalette(brewer.pal(11,"BrBG")) ; v_unit = "mm"
   }
-  else if (variable == "SLP"|variable == "Z500"){
+  else if (variable == "SLP"){
     v_col = colorRampPalette(rev(brewer.pal(11,"PRGn"))) ; v_unit = "hPa"
+  } 
+  else if (variable == "Z500"){
+    v_col = colorRampPalette(rev(brewer.pal(11,"PRGn"))) ; v_unit = "m"
   } 
   else if (variable == "SD Ratio"){
     v_col = colorRampPalette(rev(brewer.pal(9,"Greens"))) ; v_unit = ""
@@ -1327,7 +1330,7 @@ rewrite_tstable = function(tstable,variable){
   } else if (variable == "Precipitation"){
     v_unit = "[mm]"
   } else if (variable == "SLP"|variable == "Z500"){
-    v_unit = "[km]"
+    v_unit = "[m]"
   } else {
     v_unit = ""
   }
@@ -2655,7 +2658,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
       V1_color = "purple4" ; V1_unit = "[hPa]"
     }
     else if (variable1 == "Z500"){
-      V1_color = "green4" ; V1_unit = "[km]"
+      V1_color = "green4" ; V1_unit = "[m]"
     }
     # Generate lon/lat addition
     if (variable1_lon_range[1]==variable1_lon_range[2]) {
@@ -2706,7 +2709,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
       V2_color = "purple4" ; V2_unit = "[hPa]"
     }
     else if (variable2 == "Z500"){
-      V2_color = "green4" ; V2_unit = "[km]"
+      V2_color = "green4" ; V2_unit = "[m]"
     }
     # Generate lon/lat addition
     if (variable2_lon_range[1]==variable2_lon_range[2]) {
@@ -3235,7 +3238,7 @@ generate_regression_titles = function(independent_source,dependent_source,
     } else if (modERA_dependent_variable == "SLP"){
       color_d = "purple4" ; unit_d = "[hPa]"
     } else if (modERA_dependent_variable == "Z500"){
-      color_d = "green4" ; unit_d = "[km]"
+      color_d = "green4" ; unit_d = "[m]"
     }
   }
   
