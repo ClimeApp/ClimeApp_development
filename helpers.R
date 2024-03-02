@@ -22,7 +22,7 @@ library(xlsx)
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
 
 #Richard:
 #Laptop/desktop:
@@ -3073,7 +3073,7 @@ generate_metadata_y_range_corr <- function(range_years3) {
 
   #Generate dataframe from plot inputs
   metadata_yr3 <- data.frame(
-    range_years3, #numericRangeInput
+    range_years3 #numericRangeInput
   )
 
   return(metadata_yr3)

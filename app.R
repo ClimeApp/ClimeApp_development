@@ -8283,13 +8283,13 @@ server <- function(input, output, session) {
         openxlsx::addWorksheet(wb, "custom_highlights3")
         openxlsx::addWorksheet(wb, "plot_gen_v1")
         openxlsx::addWorksheet(wb, "plot_gen_v2")
-        openxlsx::addWorksheet(wb, "metadata_yr3")
+        openxlsx::addWorksheet(wb, "plot_gen_3")
         openxlsx::writeData(wb, "custom_map3", metadata_input3())
         openxlsx::writeData(wb, "custom_points3", map_points_data3())
         openxlsx::writeData(wb, "custom_highlights3", map_highlights_data3())
         openxlsx::writeData(wb, "plot_gen_v1", plot_gen_input_v1())
         openxlsx::writeData(wb, "plot_gen_v2", plot_gen_input_v2())
-        openxlsx::writeData(wb, "metadata_yr3", metadata_yr3())
+        openxlsx::writeData(wb, "plot_gen_3", metadata_yr3())
         openxlsx::saveWorkbook(wb, file)
       }
     )
@@ -8361,9 +8361,9 @@ server <- function(input, output, session) {
       lonlat_vals_v2(plot_data_v2[1:4, "lonlat_vals"])
       
       # Update plot generation
-      metadata_yr3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "metadata_yr3")
+      plot_gen_3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "plot_gen_3")
       
-      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years3", value = metadata_yr3[1:2, "range_years3"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years3", value = plot_gen_3[1:2, "range_years3"])
       
     }
     
@@ -8420,14 +8420,14 @@ server <- function(input, output, session) {
         openxlsx::addWorksheet(wb, "custom_lines_ts3")
         openxlsx::addWorksheet(wb, "plot_gen_v1")
         openxlsx::addWorksheet(wb, "plot_gen_v2")
-        openxlsx::addWorksheet(wb, "metadata_yr3")
+        openxlsx::addWorksheet(wb, "plot_gen_3")
         openxlsx::writeData(wb, "custom_map_ts3", metadata_input_ts3())
         openxlsx::writeData(wb, "custom_points_ts3", ts_points_data3())
         openxlsx::writeData(wb, "custom_highlights_ts3", ts_highlights_data3())
         openxlsx::writeData(wb, "custom_lines_ts3", ts_lines_data3())
         openxlsx::writeData(wb, "plot_gen_v1", plot_gen_input_v1())
         openxlsx::writeData(wb, "plot_gen_v2", plot_gen_input_v2())
-        openxlsx::writeData(wb, "metadata_yr3", metadata_yr3())
+        openxlsx::writeData(wb, "plot_gen_3", metadata_yr3())
         openxlsx::saveWorkbook(wb, file)
       }
     )
@@ -8506,9 +8506,9 @@ server <- function(input, output, session) {
       lonlat_vals_v2(plot_data_v2[1:4, "lonlat_vals"])
       
       # Update plot generation
-      metadata_yr3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "metadata_yr3")
+      plot_gen_3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "plot_gen_3")
       
-      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years3", value = metadata_yr3[1:2, "range_years3"])
+      updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years3", value = plot_gen_3[1:2, "range_years3"])
       
     }
     
