@@ -1,4 +1,25 @@
 #### Preparation ####
+
+## Working Directory
+
+#Nik:
+#Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
+#setwd("C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+
+#Richard:
+#Laptop/desktop:
+#setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+
+#Noémie
+#setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
+#setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
+
+## Packages
+
+# Set library path
+#.libPaths("library")
+
 #WD and Packages
 library(shiny)
 library(ncdf4)
@@ -18,19 +39,6 @@ library(sf)
 library(shinylogs)
 library(shinycssloaders)
 library(profvis)
-
-#Nik:
-#Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-#setwd("C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
-
-#Richard:
-#Laptop/desktop:
-#setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
-
-#Noémie
-#setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
-#setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
@@ -146,8 +154,8 @@ anomalies_summary_popover = function(popover_ID){
   popover(
     h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
     "Anomalies show how a selected time period differs from a reference time period:",em("Anomalies = Absolute Values – Reference Values"),br(),br(),
-    "The Anomalies map shows the average anomaly across all years in the range of years.",br(),br(),
-    "The Anomalies timeseries shows the average anomaly across your selected geographic area for each year in the range of years.",br(),br(),  
+    "The",em("Map"),"shows the average anomaly across all years in the range of years.",br(),br(),
+    "The",em("Timeseries"),"shows the average anomaly across your selected geographic area for each year in the range of years.",br(),br(),  
     "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
     title = "What are anomalies?",
     id = popover_ID,
@@ -156,7 +164,7 @@ anomalies_summary_popover = function(popover_ID){
 }
 
 ## DATASET & VARIABLE
-## popover_IDs = pop_anomalies_datvar
+## popover_IDs = pop_anomalies_datvar, pop_composites_datvar
 
 dataset_variable_popover = function(popover_ID){
   popover(
@@ -167,7 +175,7 @@ dataset_variable_popover = function(popover_ID){
     "- ModE-RAclim – ModE-RA without centennial-scale variability or forcings",br(),br(),
     "And select a climate variable:",br(),
     "- Temperature - air temperature at 2m [°C]",br(),
-    "- Precipitation - total monthly precipitation [mm]",br(),
+    "- Precipitation - total monthly precipitation [mm/m]",br(),
     "- SLP - sea level pressure [hPa]",br(),
     "- Z500 - pressure at 500 hPa geopotential height [hPa]",br(),br(),
     "See",em("ModE data"),"tab on the Welcome page for more information.",
@@ -184,32 +192,38 @@ year_season_ref_popover = function(popover_ID){
   if (popover_ID == "pop_anomalies_time"){
       popover(
       HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-      "Choose the range of years you would like to view anomalies for and select the season you are interested in. Use the",em("Custom"),"option to enter your own range of months. You can view the absolute values for your selection by selecting",em("Absolute Values"),"under the Reference map selection below the main map.",br(),br(),
-      "Then choose the reference period you would like your selected year range compared to. You can view the absolute means for your reference period by selecting",em("Reference Values"),"under the",em("Reference map"),"selection below the main map.",
+      "Enter a",em("range of years"),"and a",em("range of months."),"ClimeApp will then calculate an average over these months for each year in the year range. You can view the absolute values for your selection by selecting",em("Absolute Values"),"under the Reference map selection below the main map.",br(),br(),
+      "Then choose the",em("reference period"),"you would like to use for your anomalies. ClimeApp will then subtract the average over this reference period from the average for each year in the year range. You can view the absolute means for your reference period by selecting",em("Reference Values"),"under the",em("Reference map"),"selection below the main map.",
+      id = popover_ID,
+      placement = "right",
+      )     
+  } else {
+  # Composites popover
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Enter or upload a",em("list of years"),"and a",em("range of months."),"ClimeApp will then calculate an average over these months for each year in the year list. You can view the absolute values for your selection by selecting",em("Absolute Values"),"under the Reference map selection below the main map.",br(),br(),
+      "Then choose the",em("reference period"),"you would like to use for your composite. You can select from three types of reference period: A",em("Fixed reference,"),"averaged over a range of consecutive years; a",em("Custom reference,"),"averaged over a set of non-consecutive years; or an",em("X years prior"),"reference period, which will generate a separate reference for each year in the composite, based on the",em("X"),"years preceding that year. ClimeApp will then subtract the average over this reference period (or periods) from the average for each year in the",em("list of years."),"You can view the absolute means for your reference period by selecting",em("Reference Values"),"under the",em("Reference map"),"selection below the main map.",
       id = popover_ID,
       placement = "right",
     )     
-  } else {
-  # Composites popover
-    
   }
 }
 
 ## MAP CUSTOMIZATION 
-## popover_IDs = pop_anomalies_cusmap
+## popover_IDs = pop_anomalies_cusmap, pop_composites_cusmap
 
 map_customization_popover = function(popover_ID){
   popover(
     HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
     "Edit the titles, axes and borders displayed on your map.",br(),br(),
-    "You can view and adjust the limits of the map colour axis by selecting",em("Fixed"),"under",em("Axis customization"),". These limits will stay fixed even after a plot has been changed. Select",em("Automatic"),"to allow the axis to adjust automatically again.",
+    "You can view and adjust the limits of the map colour axis by selecting",em("Fixed"),"under",em("Axis customization."),"These limits will stay fixed even after a plot has been changed. Select",em("Automatic"),"to allow the axis to adjust automatically again.",
     id = popover_ID,
     placement = "right",
   )
 }
 
 ## CUSTOM MAP FEATURES
-## popover_IDs = pop_anomalies_mapfeat
+## popover_IDs = pop_anomalies_mapfeat, pop_composites_mapfeat
 
 map_features_popover = function(popover_ID){
   popover(
@@ -221,7 +235,7 @@ map_features_popover = function(popover_ID){
 }
 
 ## CUSTOM MAP POINTS 
-## popover_IDs = pop_anomalies_mappoint
+## popover_IDs = pop_anomalies_mappoint, pop_composites_mappoint
 
 map_points_popover = function(popover_ID){
   popover(
@@ -234,7 +248,7 @@ map_points_popover = function(popover_ID){
 }
 
 ## CUSTOM MAP HIGHLIGHTS
-## popover_IDs = pop_anomalies_maphl
+## popover_IDs = pop_anomalies_maphl, pop_composites_maphl
 
 map_highlights_popover = function(popover_ID){
   popover(
@@ -247,7 +261,7 @@ map_highlights_popover = function(popover_ID){
 }
 
 ## MAP STATISTICS
-## popover_IDs = pop_anomalies_mapstat
+## popover_IDs = pop_anomalies_mapstat, pop_composites_mapstat
 
 map_statistics_popover = function(popover_ID){
   popover(
@@ -259,35 +273,63 @@ map_statistics_popover = function(popover_ID){
 }
 
 ## MAP CHOOSES STATISTIC 
-## popover_IDs = pop_anomalies_choosestat
+## popover_IDs = pop_anomalies_choosestat, pop_composites_choosestat
 
 map_choose_statistic_popover = function(popover_ID){
-  popover(
-    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-    "The",em("SD ratio"),"option will show points on the map where the SD ratio (averaged over your selected years) is less than a chosen value. The SD ratio shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",br(),br(),
-    "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
-    id = popover_ID,
-    placement = "right",
-  ) 
+  # Anomalies popover
+  if (popover_ID == "pop_anomalies_choosestat"){
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "The",em("SD ratio"),"option will show points on the map where the SD ratio (averaged over your selected years) is less than a chosen value. The SD ratio shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",br(),br(),
+      "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
+      id = popover_ID,
+      placement = "right",
+    ) 
+  } else {
+  # Composites popover
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "The",em("SD ratio"),"option will show points on the map where the SD ratio (averaged over your selected years) is less than a chosen value. The SD ratio shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",br(),br(),
+      em("% sign match"),"will show points on the map where the yearly anomalies that form the composite agree in their sign more often than the selected threshold. This gives an indication of the consistency of anomalies over the composite. Example: A composite of five years, with anomalies of -1°C, -5°C, 1°C, 15°C and -3°C, would display positive average anomaly. However, there would only be a 40% sign match since three of the years in fact have a negative.", br(),br(),
+      "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
+      id = popover_ID,
+      placement = "right",
+    ) 
+  }
+
 }
 
 ## REFERENCE MAP
-## popover_IDs = pop_anomalies_refmap
+## popover_IDs = pop_anomalies_refmap, pop_composites_refmap
 
 reference_map_popover = function(popover_ID){
-  popover(
-    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-    "Plot and download a reference map for your data.",br(),br(), 
-    em("Absolute Values"),"shows the average for your selected month and year range prior to subtracting the reference values. Note that the reanalysis method makes absolute values potentially unreliable – this  is solved by using anomalies.",br(),br(),
-    em("Reference Values"),"are the absolute means for your reference period.",br(),br(), 
-    em("SD Ratio"),"shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",
-    id = popover_ID,
-    placement = "right",
-  )     
+  # Anomalies popover
+  if (popover_ID == "pop_anomalies_refmap"){
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Plot and download a reference map for your data.",br(),br(), 
+      em("Absolute Values"),"shows the average for your selected month and year range, prior to subtracting the reference values. Note that the reanalysis method makes absolute values potentially unreliable – this is solved by using anomalies.",br(),br(),
+      em("Reference Values"),"are the absolute means for your reference period.",br(),br(), 
+      em("SD Ratio"),"shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",
+      id = popover_ID,
+      placement = "right",
+    )
+  } else {
+  # Composites popover
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Plot and download a reference map for your data.",br(),br(), 
+      em("Absolute Values"),"shows the average for your selected month range and list of years, prior to subtracting the reference values. Note that the reanalysis method makes absolute values potentially unreliable – this is solved by using anomalies.",br(),br(),
+      em("Reference Values"),"are the absolute means for your reference period.",br(),br(), 
+      em("SD Ratio"),"shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",
+      id = popover_ID,
+      placement = "right",
+    )
+  }
 }
 
 ## TIMESERIES CUSTOMIZATION
-## popover_IDs = pop_anomalies_custime
+## popover_IDs = pop_anomalies_custime, pop_composites_custime
 
 timeseries_customization_popover = function(popover_ID){
   popover(
@@ -300,7 +342,7 @@ timeseries_customization_popover = function(popover_ID){
 }
 
 ## CUSTOM TIMESERIES FEATURES
-## popover_IDs = pop_anomalies_timefeat
+## popover_IDs = pop_anomalies_timefeat, pop_composites_timefeat
 
 timeseries_features_popover = function(popover_ID){
   popover(
@@ -312,7 +354,7 @@ timeseries_features_popover = function(popover_ID){
 }
 
 ## TIMESERIES POINTS
-## popover_IDs = pop_anomalies_timepoint
+## popover_IDs = pop_anomalies_timepoint, pop_composites_timepoint
 
 timeseries_points_popover = function(popover_ID){
   popover(
@@ -325,7 +367,7 @@ timeseries_points_popover = function(popover_ID){
 }
 
 ## TIMESERIES HIGHLIGHTS
-## popover_IDs = pop_anomalies_timehl
+## popover_IDs = pop_anomalies_timehl, pop_composites_timehl
 
 timeseries_highlights_popover = function(popover_ID){
   popover(
@@ -338,12 +380,12 @@ timeseries_highlights_popover = function(popover_ID){
 }
 
 ## TIMESERIES LINES
-## popover_IDs = pop_anomalies_timelines
+## popover_IDs = pop_anomalies_timelines, pop_composites_timelines
 
 timeseries_lines_popover = function(popover_ID){
   popover(
     HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-    "To add a line, click or double click on the timeseries to set the lines",em("Orientation"),"and",em("Position"),". Single click for a vertical line, double click for a horizontal. Multiple lines can be added simultaneously by entering multiple",em("Position"),"values, separated by commas. Then select a",em("Line colour"),"and",em("Type"),"and click",em("Add line"),"to add your line to the timeseries. Select",em("Show on key"),"and type a",em("Label"), "to add your line to the key. Remember to select the",em("Show key"),"option under",em("Customize your timeseries"),"to show the key on your plot",br(),br(),
+    "To add a line, click or double click on the timeseries to set the lines",em("Orientation"),"and",em("Position."),"Single click for a vertical line, double click for a horizontal. Multiple lines can be added simultaneously by entering multiple",em("Position"),"values, separated by commas. Then select a",em("Line colour"),"and",em("Type"),"and click",em("Add line"),"to add your line to the timeseries. Select",em("Show on key"),"and type a",em("Label"), "to add your line to the key. Remember to select the",em("Show key"),"option under",em("Customize your timeseries"),"to show the key on your plot",br(),br(),
     "Lines can be removed from the timeseries using the",em("Remove last line"),"and",em("Remove all lines"),"buttons.",
     id = popover_ID,
     placement = "right",
@@ -351,17 +393,29 @@ timeseries_lines_popover = function(popover_ID){
 }
 
 ## TIMESERIES CUSTOM STATISTICS
-## popover_IDs = pop_anomalies_timestats
+## popover_IDs = pop_anomalies_timestats, pop_composites_timestats
 
 timeseries_statistics_popover = function(popover_ID){
-  popover(
-    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-    "Add moving averages and percentiles to your timeseries.",br(),br(),
-    "A moving average shows the mean of a chosen number of years around each point on the timeseries. This is useful for ‘smoothing out’ short term variation.",br(),br(),
-    "Percentiles show where a percentage of points in the timeseries are above/below a given value. So, for the 0.95 percentile, 95% of points are between the two lines, 2.5% are above the upper line and 2.5% are below the lower line.",
-    id = popover_ID,
-    placement = "right",
-  )  
+  # Composites popover
+  if (popover_ID == "pop_composites_timestats"){
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Add percentiles to your timeseries.",br(),br(),
+      "Percentiles show where a percentage of points in the timeseries are above/below a given value. So, for the 0.95 percentile, 95% of points are between the two lines, 2.5% are above the upper line and 2.5% are below the lower line.",
+      id = popover_ID,
+      placement = "right",
+    )  
+  } else {
+  # All other popovers
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Add moving averages and percentiles to your timeseries.",br(),br(),
+      "A moving average shows the mean of a chosen number of years around each point on the timeseries. This is useful for ‘smoothing out’ short term variation.",br(),br(),
+      "Percentiles show where a percentage of points in the timeseries are above/below a given value. So, for the 0.95 percentile, 95% of points are between the two lines, 2.5% are above the upper line and 2.5% are below the lower line.",
+      id = popover_ID,
+      placement = "right",
+    )  
+  }
 }
 
 ## NETCDF
@@ -386,6 +440,22 @@ MEsource_popover = function(popover_ID){
     em("Assimilated Observations – Oct. to Mar."),"shows sources that were used to produce the monthly reconstruction between October and March, while",em("Assimilated Observations – Apr. to Sept."),"shows sources that were used to produce the reconstruction between April and September.",br(),br(),
     em("VARIABLE"),"refers to the value that was directly measured, so for example a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.", br(),br(),
     "See",em("ModE data"),"tab on the Welcome page for more information.",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## COMPOSITES SUMMARY
+## popover_IDs = pop_composites
+
+composites_summary_popover = function(popover_ID){
+  popover(
+    h3(HTML("Composites <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    "A composite is an average across multiple, non-consecutive years. The composite anomaly displayed is this average, minus the average over your selected",em("Reference period."),br(),br(),
+    "The",em("Map"),"shows the average anomaly across all years in your list of years.",br(),br(),
+    "The",em("Timeseries"),"shows the average anomaly across your selected geographic area for each year in the list of years.",br(),br(),
+    "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
+    title = "What are composites?",
     id = popover_ID,
     placement = "right",
   ) 
@@ -847,7 +917,7 @@ convert_subset_to_anomalies = function(data_input,ref_data){
 ##           tab = "general" or "composites", "reference", or "sdratio"
 ##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim"
 ##           mode = "Absolute" or "Anomaly" for general tab
-##                  "Absolute", "Fixed reference" or ""Compared to X years prior"
+##                  "Absolute", "Fixed reference" or ""X years prior"
 ##                   for composites tab
 ##           map/ts_title_mode = "Default" or "Custom"
 ##           year_range,baseline_range,baseline_years_before 
@@ -881,7 +951,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
     } else if (mode == "Fixed reference") {
       map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite years)", sep = "")
       map_title2 = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
-    } else if (mode == "Compared to X years prior") {
+    } else if (mode == "X years prior") {
       map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite years)", sep = "")
       map_title2 = paste("Ref. = ",baseline_years_before," yrs prior", sep = "")
     } else {
@@ -921,7 +991,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
   if (variable == "Temperature"){
     v_unit = "[\u00B0C]"
   } else if (variable == "Precipitation"){
-    v_unit = "[mm]"
+    v_unit = "[mm/month]"
   } else if (variable == "SLP"){
     v_unit = "[hPa]"
   } else if (variable == "Z500"){
@@ -1004,7 +1074,7 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
     v_col = colorRampPalette(rev(brewer.pal(11,"RdBu"))) ; v_unit = "\u00B0C"
   }
   else if (variable == "Precipitation"){
-    v_col = colorRampPalette(brewer.pal(11,"BrBG")) ; v_unit = "mm"
+    v_col = colorRampPalette(brewer.pal(11,"BrBG")) ; v_unit = "mm/mon."
   }
   else if (variable == "SLP"|variable == "Z500"){
     v_col = colorRampPalette(rev(brewer.pal(11,"PRGn"))) ; v_unit = "hPa"
@@ -1316,7 +1386,7 @@ plot_default_timeseries = function(data_input,tab,variable, titles, title_mode, 
   if (variable == "Temperature"){
     v_col = "red3" ; v_unit = "\u00B0C"
   } else if (variable == "Precipitation"){
-    v_col = "turquoise4" ; v_unit = "mm"
+    v_col = "turquoise4" ; v_unit = "mm/month"
   } else if (variable == "SLP"){
     v_col = "purple4" ; v_unit = "hPa"
   } else if (variable == "Z500"){
@@ -1383,7 +1453,7 @@ rewrite_tstable = function(tstable,variable){
   if (variable == "Temperature"){
     v_unit = "[\u00B0C]"
   } else if (variable == "Precipitation"){
-    v_unit = "[mm]"
+    v_unit = "[mm/month]"
   } else if (variable == "SLP"|variable == "Z500"){
     v_unit = "[hPa]"
   } else {
@@ -1556,7 +1626,7 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
   }
   if ("Precipitation" %in% user_nc_variables){
     dlname <- paste("total_precipitation (rain and snow)",ln_extension, sep = "")
-    prec_def <- ncvar_def("total_precipitation","mm",list(londim,latdim,timedim),missval=NULL,dlname,prec="single")
+    prec_def <- ncvar_def("total_precipitation","mm/month",list(londim,latdim,timedim),missval=NULL,dlname,prec="single")
     variable_def_list = append(variable_def_list,list(prec_def))
   }
   if ("SLP" %in% user_nc_variables){
@@ -2552,7 +2622,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
       V1_color = "red3" ; V1_unit = "[\u00B0C]"
     }
     else if (variable1 == "Precipitation"){
-      V1_color = "turquoise4" ; V1_unit = "[mm]"
+      V1_color = "turquoise4" ; V1_unit = "[mm/month]"
     }
     else if (variable1 == "SLP"){
       V1_color = "purple4" ; V1_unit = "[hPa]"
@@ -2603,7 +2673,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
       V2_color = "red3" ; V2_unit = "[\u00B0C]"
     }
     else if (variable2 == "Precipitation"){
-      V2_color = "turquoise4" ; V2_unit = "[mm]"
+      V2_color = "turquoise4" ; V2_unit = "[mm/month]"
     }
     else if (variable2 == "SLP"){
       V2_color = "purple4" ; V2_unit = "[hPa]"
@@ -3050,7 +3120,7 @@ generate_regression_titles = function(independent_source,dependent_source,
     if (modERA_dependent_variable == "Temperature"){
       color_d = "red3" ; unit_d = "[\u00B0C]"
     } else if (modERA_dependent_variable == "Precipitation"){
-      color_d = "turquoise4" ; unit_d = "[mm]"
+      color_d = "turquoise4" ; unit_d = "[mm/month]"
     } else if (modERA_dependent_variable == "SLP"){
       color_d = "purple4" ; unit_d = "[hPa]"
     } else if (modERA_dependent_variable == "Z500"){
@@ -3472,7 +3542,7 @@ create_monthly_TS_data = function(data_input,dataset,variable,years,lon_range,la
   if (variable == "Temperature"){
     v_unit = "\u00B0C"
   } else if (variable == "Precipitation"){
-    v_unit = "mm"
+    v_unit = "mm/month"
   } else if (variable == "SLP"){
     v_unit = "hPa"
   } else if (variable == "Z500"){

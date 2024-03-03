@@ -1037,17 +1037,12 @@ ui <- navbarPage(id = "nav1",
                     ### First Sidebar panel (Variable and dataset selection) ----
                     sidebarPanel(fluidRow(
                       #Method Title and Pop Over
-                      popover(
-                        h3(HTML("Composites <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
-                        "Composite analysis in climate research involves averaging variables over specific conditions, such as extreme events. By grouping and averaging data during these conditions, researchers can identify patterns and anomalies, providing insights into the atmospheric or climatic responses associated with certain events.",
-                        title = "What are composites?",
-                        id = "pop_composites",
-                        placement = "right",
-                      ), 
+                      composites_summary_popover("pop_composites"),
+                      
                       br(),
                      
                      #Short description of the Panel Composites        
-                     h4(helpText("Select dataset and variable for composite anomalies")),
+                     h4(helpText("Select dataset and variable for composite anomalies",dataset_variable_popover("pop_composites_datvar"))),
                      
                      #Choose one of three datasets (Select)                
                      selectInput(inputId  = "dataset_selected2",
@@ -1067,7 +1062,7 @@ ui <- navbarPage(id = "nav1",
                     sidebarPanel(fluidRow(
                       
                       #Short description of the temporal selection        
-                      h4(helpText("Select a year range, season and reference period")),
+                      h4(helpText("Select years, season and reference period", year_season_ref_popover("pop_composites_time"))),
                      
                      #Type in your year of interest OR upload a file
                      radioButtons(inputId  = "enter_upload2",
@@ -1114,8 +1109,8 @@ ui <- navbarPage(id = "nav1",
                      
                      #Choose a Mode: Absolute, Fixed Anomaly or Anomalies compared to X years prior
                      radioButtons(inputId  = "mode_selected2",
-                                  label    = "Select anomaly method:",
-                                  choices  = c("Fixed reference","Custom reference", "Compared to X years prior"),
+                                  label    = "Select type of reference period:",
+                                  choices  = c("Fixed reference","Custom reference", "X years prior"),
                                   selected = "Fixed reference" , inline = TRUE),
 
                      #Choose reference period for either Fixed Anomaly or enter X years (1-50) for Anomalies compared to X years prior (Hidden objects)      
@@ -1291,7 +1286,7 @@ ui <- navbarPage(id = "nav1",
                       fluidRow(
                       #### Map customization ----       
                       column(width = 4,
-                      h4(helpText("Customize your map")),  
+                      h4(helpText("Customize your map", map_customization_popover("pop_composites_cusmap"))),  
                       
                       checkboxInput(inputId = "custom_map2",
                                     label   = "Map customization",
@@ -1352,7 +1347,7 @@ ui <- navbarPage(id = "nav1",
                     
                       #### Add Custom features (points and highlights) ----                        
                       column(width = 4,
-                             h4(helpText("Custom features")),
+                             h4(helpText("Custom features", map_features_popover("pop_composites_mapfeat"))),
                              
                              checkboxInput(inputId = "custom_features2",
                                            label   = "Enable custom features",
@@ -1368,7 +1363,7 @@ ui <- navbarPage(id = "nav1",
                                    #Custom Points
                                    shinyjs::hidden(
                                    div(id = "hidden_custom_points2",
-                                       h5(helpText("Add custom points")),
+                                       h5(helpText("Add custom points",map_points_popover("pop_composites_mappoint"))),
                                        h6(helpText("Enter location/coordinates or double click on map")),
                                        
                                        textInput(inputId = "location2", 
@@ -1431,7 +1426,7 @@ ui <- navbarPage(id = "nav1",
                                    #Custom Highlights
                                    shinyjs::hidden(
                                    div(id = "hidden_custom_highlights2",
-                                       h5(helpText("Add custom highlights")),
+                                       h5(helpText("Add custom highlights",map_highlights_popover("pop_composites_maphl"))),
                                        h6(helpText("Enter coordinate or draw a box on map")),
                                        
                                        numericRangeInput(inputId = "highlight_x_values2",
@@ -1472,7 +1467,7 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Custom statistics ----
                       column(width = 4,
-                             h4(helpText("Custom statistics")),
+                             h4(helpText("Custom statistics",map_statistics_popover("pop_composites_mapstat"))),
                              
                              checkboxInput(inputId = "enable_custom_statistics2",
                                            label   = "Enable custom statistics",
@@ -1480,7 +1475,7 @@ ui <- navbarPage(id = "nav1",
                              
                              shinyjs::hidden(
                                div(id = "hidden_custom_statistics2",
-                                   h5(helpText("Choose custom statistic:")),
+                                   h5(helpText("Choose custom statistic:",map_choose_statistic_popover("pop_composites_choosestat"))),
                                    
                                    radioButtons(inputId      = "custom_statistic2",
                                                 label        = NULL,
@@ -1517,7 +1512,7 @@ ui <- navbarPage(id = "nav1",
                      ),
                      
                      #### Abs/Ref Map plot START ----
-                     h4(helpText("Reference map")), 
+                     h4(helpText("Reference map",reference_map_popover("pop_composites_refmap"))), 
                      
                      radioButtons(inputId  = "ref_map_mode2",
                                   label    = NULL,
@@ -1559,7 +1554,7 @@ ui <- navbarPage(id = "nav1",
                         
                       #### Timeseries customization ----
                       column(width = 4,
-                             h4(helpText("Customize your timeseries")),  
+                             h4(helpText("Customize your timeseries", timeseries_customization_popover("pop_composites_custime"))),
                              
                              checkboxInput(inputId = "custom_ts2",
                                            label   = "Timeseries customization",
@@ -1604,7 +1599,7 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Add Custom features (points, highlights, lines) ----                        
                       column(width = 4,
-                             h4(helpText("Custom features")),
+                             h4(helpText("Custom features", timeseries_features_popover("pop_composites_timefeat"))),
                              
                              checkboxInput(inputId = "custom_features_ts2",
                                            label   = "Enable custom features",
@@ -1620,7 +1615,7 @@ ui <- navbarPage(id = "nav1",
                                    #Custom Points
                                    shinyjs::hidden(
                                      div(id = "hidden_custom_points_ts2",
-                                         h5(helpText("Add custom points")),
+                                         h5(helpText("Add custom points",timeseries_points_popover("pop_composites_timepoint"))),
                                          h6(helpText("Enter position manually or click on plot")),
                                          
                                          textInput(inputId = "point_label_ts2", 
@@ -1671,7 +1666,7 @@ ui <- navbarPage(id = "nav1",
                                    #Custom highlights
                                    shinyjs::hidden(
                                      div(id = "hidden_custom_highlights_ts2",
-                                         h5(helpText("Add custom highlights")),
+                                         h5(helpText("Add custom highlights",timeseries_highlights_popover("pop_composites_timehl"))),
                                          h6(helpText("Enter values manually or draw a box on plot")),
                                          
                                          numericRangeInput(inputId = "highlight_x_values_ts2",
@@ -1721,7 +1716,7 @@ ui <- navbarPage(id = "nav1",
                                    #Custom lines
                                    shinyjs::hidden(
                                      div(id = "hidden_custom_line_ts2",
-                                         h5(helpText("Add custom lines")),
+                                         h5(helpText("Add custom lines", timeseries_lines_popover("pop_composites_timelines"))),
                                          h6(helpText("Enter position manually or click on plot, double click to change orientation")),
                                          
                                          radioButtons(inputId      = "line_orientation_ts2",
@@ -1767,7 +1762,7 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Custom statistics ----
                       column(width = 4,
-                             h4(helpText("Custom statistics")),
+                             h4(helpText("Custom statistics", timeseries_statistics_popover("pop_composites_timestats"))),
                              
                              checkboxInput(inputId = "enable_custom_statistics_ts2",
                                            label   = "Enable custom statistics",
@@ -2371,16 +2366,23 @@ ui <- navbarPage(id = "nav1",
                    
                    ### Shared TS plot: START ----
                    tabPanel("Timeseries", br(),
-                            #Choose a correlation method 
-                            radioButtons(inputId  = "cor_method_ts",
-                                         label    = "Choose a correlation method:",
-                                         choices  = c("pearson", "spearman"),
-                                         selected = "pearson" , inline = TRUE),
+                            #Choose a correlation method
+                            fluidRow(
+                              radioButtons(inputId  = "cor_method_ts",
+                                 label    = "Choose a correlation method:",
+                                 choices  = c("pearson", "spearman"),
+                                 selected = "pearson" , inline = TRUE),
+                              
+                              h4(helpText(dataset_variable_popover("test"),inline = TRUE)),
+                            ),
                             textOutput("correlation_r_value"),
+                            textOutput("correlation_p_value"),
+                            h4(helpText(dataset_variable_popover("test2"))),
                             withSpinner(ui_element = plotOutput("correlation_ts",click = "ts_click3", dblclick = "ts_dblclick3", brush = brushOpts(id = "ts_brush3",resetOnNew = TRUE)),
                                         image = spinner_image,
                                         image.width = spinner_width,
                                         image.height = spinner_height),
+                            
                       #### Customization panels START ----       
                       fluidRow(
                         
@@ -3945,11 +3947,6 @@ ui <- navbarPage(id = "nav1",
                                            value   = "")
                           )),
                    
-                   # #Enter Coordinates
-                   actionButton(inputId = "button_location5",
-                                label = "Update point location",
-                                width = "200px"),
-                   
                    br(), br(),
                    
                )),
@@ -4538,7 +4535,7 @@ server <- function(input, output, session) {
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
-                    condition = input$mode_selected2 == "Compared to X years prior",
+                    condition = input$mode_selected2 == "X years prior",
                     asis = FALSE)
     
     shinyjs::toggle(id = "optional2c",
@@ -6630,7 +6627,7 @@ server <- function(input, output, session) {
     })
     
     observe({
-      if(input$mode_selected2 == "Compared to X years prior"){
+      if(input$mode_selected2 == "X years prior"){
         updateRadioButtons(
           inputId = "ref_map_mode2",
           label    = NULL,
@@ -8744,25 +8741,29 @@ server <- function(input, output, session) {
       }
     })
     
-    observeEvent(input$button_location5, {
-      # Update range_longitude5 if point_location_x5 is not empty
-      
-        updateNumericRangeInput(inputId = "range_longitude5",
-                                session = getDefaultReactiveDomain(),
-                                label = NULL,
-                                value = c(input$point_location_x5, input$point_location_x5))
-      
+    # Transfer single lat/lon over to lat/lon range inputs
+    observe({
+      if(input$custom_features5){
+        
+        single_x = as.numeric(input$point_location_x5)
+        single_y = as.numeric(input$point_location_y5)
+        
+        if(!is.na(single_x)){
+          updateNumericRangeInput(inputId = "range_longitude5",
+                        session = getDefaultReactiveDomain(),
+                        label = NULL,
+                        value = c(single_x, single_x))
+        }
+        
+        if(!is.na(single_y)){
+          updateNumericRangeInput(inputId = "range_latitude5",
+                                  session = getDefaultReactiveDomain(),
+                                  label = NULL,
+                                  value = c(single_y, single_y))
+        }
+      }
     })
 
-    observeEvent(input$button_location5, {
-      # Update range_latitude5 if point_location_y5 is not empty
-      
-        updateNumericRangeInput(inputId = "range_latitude5",
-                                session = getDefaultReactiveDomain(),
-                                label = NULL,
-                                value = c(input$point_location_y5, input$point_location_y5))
-      
-    })
     
     ### Interactivity ----
     
@@ -9514,7 +9515,7 @@ server <- function(input, output, session) {
     
     #Converting Composite to anomalies either fixed/custom period or X years prior 
     data_output4_2 <- reactive({
-      if (input$mode_selected2 == "Compared to X years prior"){
+      if (input$mode_selected2 == "X years prior"){
         processed_data4_2 <- convert_composite_to_anomalies(data_output2_2(), data_output1_2(), data_id_2(), year_set_comp(), month_range_2(), input$prior_years2)
       } else {
         processed_data4_2 <- convert_subset_to_anomalies(data_output2_2(), data_output3_2())
@@ -9618,7 +9619,7 @@ server <- function(input, output, session) {
         # Generate ref years
         if (input$mode_selected2 == "Fixed reference"){
           ref_years = input$ref_period2
-        } else if (input$mode_selected2 == "Compared to X years prior"){
+        } else if (input$mode_selected2 == "X years prior"){
           ref_years = c((year_set_comp()-input$prior_years2),year_set_comp()-1)
         } else {
           ref_years = year_set_comp_ref()
@@ -10329,7 +10330,8 @@ server <- function(input, output, session) {
     })
     
     # Plot
-    output$correlation_r_value = renderText({paste("Timeseries correlation:   r =",signif(correlation_stats()$estimate,digits =3)," p =",signif(correlation_stats()$p.value,digits =3), sep = "")})
+    output$correlation_r_value = renderText({paste("Timeseries correlation coefficient: r =",signif(correlation_stats()$estimate,digits =3), sep = "")})
+    output$correlation_p_value = renderText({paste("Timeseries correlation p-value: p =",signif(correlation_stats()$p.value,digits =3), sep = "")})    
     
     corr_ts1 = function(){
       
@@ -10977,7 +10979,7 @@ server <- function(input, output, session) {
     
     #Creating yearly subset
     data_output2_dv <- reactive({ 
-      processed_data2_dv <- create_yearly_subset(data_output1_dv(), data_id_dv(), input$range_years3, month_range_dv())              
+      processed_data2_dv <- create_yearly_subset(data_output1_dv(), data_id_dv(), input$range_years4, month_range_dv())              
       return(processed_data2_dv)  
     })
     
