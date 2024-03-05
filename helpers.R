@@ -23,7 +23,7 @@ library(htmltools)
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-#setwd("C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
 
 #Richard:
 #Laptop/desktop:
@@ -146,7 +146,7 @@ latlon_weights = as.matrix(read.csv("data/latlon_weights.csv"))
 
 anomalies_summary_popover = function(popover_ID){
   popover(
-    h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
     "Anomalies show how a selected time period differs from a reference time period:",em("Anomalies = Absolute Values – Reference Values"),br(),br(),
     "The Anomalies map shows the average anomaly across all years in the range of years.",br(),br(),
     "The Anomalies timeseries shows the average anomaly across your selected geographic area for each year in the range of years.",br(),br(),  
@@ -383,7 +383,7 @@ netcdf_popover = function(popover_ID){
 
 MEsource_popover = function(popover_ID){
   popover(
-    h3(HTML("Plot ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 0px;"),
+    h4(HTML("Plot ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 0px;"),
     "These plots show location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
     em("Assimilated Observations – Oct. to Mar."),"shows sources that were used to produce the monthly reconstruction between October and March, while",em("Assimilated Observations – Apr. to Sept."),"shows sources that were used to produce the reconstruction between April and September.",br(),br(),
     em("VARIABLE"),"refers to the value that was directly measured, so for example a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.", br(),br(),
