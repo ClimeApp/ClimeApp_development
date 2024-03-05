@@ -9,6 +9,7 @@ ui <- navbarPage(id = "nav1",
           ## Configs for navbarPage: theme, images (Header and Footer) ----
           title = div(style = "display: inline;",
                       uiOutput("logo_output", inline = TRUE),
+                      uiOutput("logo_output2", inline = TRUE),
                       "(v1.0)",
                       #Preparation to use Tracking ShinyJS and CSS
                       shinyjs::useShinyjs(),
@@ -498,6 +499,8 @@ ui <- navbarPage(id = "nav1",
                                          image = spinner_image,
                                          image.width = spinner_width,
                                          image.height = spinner_height),
+                             
+                             uiOutput("vices", inline = TRUE),
                       
                       #### Customization panels START ----       
                       fluidRow(
@@ -749,7 +752,7 @@ ui <- navbarPage(id = "nav1",
                                   image = spinner_image,
                                   image.width = spinner_width,
                                   image.height = spinner_height),
-                      
+      
                       #### Download ref. map ----
                       shinyjs::hidden(div(id ="hidden_sec_map_download",
                                           h4("Download reference map", style = "color: #094030;"),
@@ -4534,25 +4537,10 @@ server <- function(input, output, session) {
   logo_style <- "margin-right: 5px; display: inline"
   
   # Check for special occasions
-  if (current_month_day >= "12-01" && current_month_day <= "12-31") {
-    # Christmas Egg
-    logo_src <- 'pics/Clim-mas.png'
-    logo_id <- "Clim-mas"
-    logo_width <- "142px"
-  } else if (current_month_day >= "05-02" && current_month_day <= "05-02") {
-    # Harry Potter Egg
-    logo_src <- 'pics/Clim-bledore.png'
-    logo_id <- "Clim-bledore"
-    logo_width <- "142px"
-  } else if (current_month_day >= "05-15" && current_month_day <= "05-15") {
-    # World Climate Day Egg
-    logo_src <- 'pics/Clim-day.png'
-    logo_id <- "Clim-day"
-    logo_width <- "142px"
-  } else if (current_month_day >= "09-22" && current_month_day <= "09-22") {
-    # Lord of The Rings Day Egg
-    logo_src <- 'pics/Clim-lord.png'
-    logo_id <- "Clim-lord"
+  if (current_month_day >= "01-01" && current_month_day <= "01-03") {
+    # New Year Egg
+    logo_src <- 'pics/Clim-year.png'
+    logo_id <- "Clim-year"
     logo_width <- "142px"
   } else if ((current_month_day >= "03-22" && current_month_day <= "04-09") ||
              (current_month_day >= "04-11" && current_month_day <= "04-25")) {
@@ -4565,28 +4553,64 @@ server <- function(input, output, session) {
     logo_src <- 'pics/Clim-vol.png'
     logo_id <- "Clim-vol"
     logo_width <- "142px"
+  } else if (current_month_day >= "05-02" && current_month_day <= "05-02") {
+    # Harry Potter Egg
+    logo_src <- 'pics/Clim-bledore.png'
+    logo_id <- "Clim-bledore"
+    logo_width <- "142px"
   } else if (current_month_day >= "05-04" && current_month_day <= "05-04") {
     # May the Fourth Egg
     logo_src <- 'pics/Clim-wars.png'
     logo_id <- "Clim-wars"
+    logo_width <- "142px"
+  } else if (current_month_day >= "05-15" && current_month_day <= "05-15") {
+    # World Climate Day Egg
+    logo_src <- 'pics/Clim-day.png'
+    logo_id <- "Clim-day"
+    logo_width <- "142px"
+  } else if (current_month_day >= "09-22" && current_month_day <= "09-22") {
+    # Lord of The Rings Day Egg
+    logo_src <- 'pics/Clim-lord.png'
+    logo_id <- "Clim-lord"
     logo_width <- "142px"
   } else if (current_month_day >= "10-15" && current_month_day <= "11-02") {
     # Halloween Egg
     logo_src <- 'pics/Clim-ween.png'
     logo_id <- "Clim-ween"
     logo_width <- "142px"
-  } else if (current_month_day >= "01-01" && current_month_day <= "01-03") {
-    # New Year Egg
-    logo_src <- 'pics/Clim-year.png'
-    logo_id <- "Clim-year"
+  } else if (current_month_day >= "12-01" && current_month_day <= "12-31") {
+    # Christmas Egg
+    logo_src <- 'pics/Clim-mas.png'
+    logo_id <- "Clim-mas"
     logo_width <- "142px"
   }
+  
   
   # Render the logo
   output$logo_output <- renderUI({
     img(src = logo_src, id = logo_id, height = logo_height, width = logo_width, style = logo_style)
   })
   
+  # Logo 2
+  logo2_src <- 'pics/Font_ClimeApp_Vers2_weiss.png'
+  logo2_id <- "ClimeAppText"
+  logo2_height <- "75px"
+  logo2_width <- "98px"
+  logo2_style <- "margin-right: 5px; display: inline; margin-left: -10px; display: inline"
+  
+  output$logo_output2 <- renderUI({
+    if (logo_id != "ClimeApp") {
+      img(src = logo2_src, id = logo2_id, height = logo2_height, width = logo2_width, style = logo2_style)
+    }
+  })
+  
+  output$vices <- renderUI({
+    if (input$location == "VICES") {
+      img(src = 'pics/no_image.jpg', id = "img_vices", height = "450", width = "600", style = "display: block; margin: 0 auto;")
+    } else {
+      NULL
+    }
+  })
   
   # Add logic to toggle the visibility of the specific tabPanel (Correlation Map) based on radio button values ("Timeseries")
   observe({
@@ -10004,9 +10028,30 @@ server <- function(input, output, session) {
       }
     }
     
-    output$ref_map <- renderPlot({ref_map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
+    output$ref_map <- renderPlot({
+      if (input$ref_map_mode == "None") {
+        ref_map_plot_data <- NULL
+      } else {
+        ref_map_plot_data <- ref_map_plot()
+      }
+      ref_map_plot_data
+    }, 
+    width = function() {
+      if (input$ref_map_mode == "None") {
+        20
+      } else {
+        map_dimensions()[1]
+      }
+    }, 
+    height = function() {
+      if (input$ref_map_mode == "None") {
+        10
+      } else {
+        map_dimensions()[2]
+      }
+    })
     
-    
+
     #Plotting the data (timeseries)
     timeseries_data <- reactive({
       #Plot normal timeseries if year range is > 1 year
@@ -10540,7 +10585,28 @@ server <- function(input, output, session) {
       }
     }
     
-    output$ref_map2 <- renderPlot({ref_map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
+    output$ref_map2 <- renderPlot({
+      if (input$ref_map_mode2 == "None") {
+        ref_map_plot_data2 <- NULL
+      } else {
+        ref_map_plot_data2 <- ref_map_plot_2()
+      }
+      ref_map_plot_data2
+    }, 
+    width = function() {
+      if (input$ref_map_mode2 == "None") {
+        20
+      } else {
+        map_dimensions_2()[1]
+      }
+    }, 
+    height = function() {
+      if (input$ref_map_mode2 == "None") {
+        10
+      } else {
+        map_dimensions_2()[2]
+      }
+    })
     
     
     #Plotting the data (timeseries)
