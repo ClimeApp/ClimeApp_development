@@ -1073,7 +1073,11 @@ ui <- navbarPage(id = "nav1",
                                column(3, downloadButton(outputId = "download_map_data", label = "Download map data"))
                              ),
                              
-                             br(), tableOutput("data1")),
+                             br(), 
+                             withSpinner(ui_element = tableOutput("data1"),
+                                         image = spinner_image,
+                                         image.width = spinner_width,
+                                         image.height = spinner_height)),
                     
                     tabPanel("Timeseries data",
                              
@@ -1084,7 +1088,11 @@ ui <- navbarPage(id = "nav1",
                                column(3, downloadButton(outputId = "download_timeseries_data", label = "Download timeseries data"))
                              ),
                              
-                             br(), column(width = 3, dataTableOutput("data2"))),
+                             br(), column(width = 3, 
+                                         withSpinner(ui_element = dataTableOutput("data2"),
+                                                     image = spinner_image,
+                                                     image.width = spinner_width,
+                                                     image.height = spinner_height))),                                      
                     
                     tabPanel("Download NETcdf data",
                              br(), h4("Download NETcdf with one or more variable", style = "color: #094030;", netcdf_popover("pop_anomalies_netcdf")),
@@ -1981,7 +1989,10 @@ ui <- navbarPage(id = "nav1",
                                column(3, downloadButton(outputId = "download_map_data2", label = "Download map data"))
                              ),
                              
-                             br(), tableOutput("data3")),
+                             br(), withSpinner(ui_element = tableOutput("data3"),
+                                                           image = spinner_image,
+                                                           image.width = spinner_width,
+                                                           image.height = spinner_height)),
                     tabPanel("Timeseries data",
                              
                              br(),  h4("Download", style = "color: #094030;"),
@@ -1990,7 +2001,11 @@ ui <- navbarPage(id = "nav1",
                                column(3, downloadButton(outputId = "download_timeseries_data2", label = "Download timeseries data"))
                              ),
                              
-                             br(), column(width = 3, dataTableOutput("data4"))),
+                             br(), column(width = 3, 
+                                          withSpinner(ui_element = dataTableOutput("data4"),
+                                                      image = spinner_image,
+                                                      image.width = spinner_width,
+                                                      image.height = spinner_height))),
                     
                     ### Feedback archive documentation (FAD) ----
                    tabPanel("ModE-RA sources", br(),
@@ -3060,7 +3075,11 @@ ui <- navbarPage(id = "nav1",
                               column(3, downloadButton(outputId = "download_timeseries_data3", label = "Download timeseries data"))
                             ),
                             
-                            br(), column(width = 3, dataTableOutput("correlation_ts_data"))),
+                            br(), column(width = 3, 
+                                         withSpinner(ui_element = dataTableOutput("correlation_ts_data"),
+                                                     image = spinner_image,
+                                                     image.width = spinner_width,
+                                                     image.height = spinner_height))),
                    tabPanel("Correlation map data", value = "corr_map_data_tab",
                             
                             #Download
@@ -3070,7 +3089,10 @@ ui <- navbarPage(id = "nav1",
                               column(3, downloadButton(outputId = "download_map_data3", label = "Download map data"))
                             ),
                             
-                            br(), tableOutput("correlation_map_data")),
+                            br(), withSpinner(ui_element = tableOutput("correlation_map_data"),
+                                                          image = spinner_image,
+                                                          image.width = spinner_width,
+                                                          image.height = spinner_height)),
              
                    ### Feedback archive documentation (FAD) ----
                    tabPanel("ModE-RA sources", br(),
@@ -3698,10 +3720,16 @@ ui <- navbarPage(id = "nav1",
                           )), br(), 
                       splitLayout(
                         column(width = 4,
-                               dataTableOutput("data_reg_ts")),
+                               withSpinner(ui_element = dataTableOutput("data_reg_ts"),
+                                           image = spinner_image,
+                                           image.width = spinner_width,
+                                           image.height = spinner_height)),
                               verticalLayout(       
                               h4("Statistical summary", style = "color: #094030;"),
-                              verbatimTextOutput("regression_summary_data")
+                              withSpinner(ui_element = verbatimTextOutput("regression_summary_data"),
+                                          image = spinner_image,
+                                          image.width = spinner_width,
+                                          image.height = spinner_height)
                               )
                       )
              ),
@@ -3726,7 +3754,10 @@ ui <- navbarPage(id = "nav1",
                             column(2, radioButtons(inputId = "reg_coe_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
                             column(3, downloadButton(outputId = "download_reg_coe_plot_data", label = "Download data")),
                           )), br(),
-                      tableOutput("data_reg_coeff")
+                      withSpinner(ui_element = tableOutput("data_reg_coeff"),
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height)
              ),
              
              ### Regression pvalues ----
@@ -3749,7 +3780,10 @@ ui <- navbarPage(id = "nav1",
                             column(2,radioButtons(inputId = "reg_pval_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
                             column(3, downloadButton(outputId = "download_reg_pval_plot_data", label = "Download data")),
                           )), br(),
-                      tableOutput("data_reg_pval")
+                      withSpinner(ui_element = tableOutput("data_reg_pval"),
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height)
              ),
              
              ### Regression residuals ----
@@ -3777,7 +3811,10 @@ ui <- navbarPage(id = "nav1",
                             column(2,radioButtons(inputId = "reg_res_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
                             column(3, downloadButton(outputId = "download_reg_res_plot_data", label = "Download data")),
                           )), br(),
-                      tableOutput("data_reg_resi")
+                      withSpinner(ui_element = tableOutput("data_reg_resi"),
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height)
              ),
 
              ### Feedback archive documentation (FAD) ----
