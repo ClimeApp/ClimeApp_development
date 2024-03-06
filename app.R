@@ -719,7 +719,7 @@ ui <- navbarPage(id = "nav1",
                       #### Downloads START ----
                       h4("Downloads", style = "color: #094030;"),
                       checkboxInput(inputId = "download_options",
-                                    label   = "Enable downlod options",
+                                    label   = "Enable download options",
                                     value   = FALSE),
                       
                       shinyjs::hidden(div(id = "hidden_download",
@@ -1039,7 +1039,7 @@ ui <- navbarPage(id = "nav1",
                       #### Downloads TS START ----
                        h4("Downloads", style = "color: #094030;"),
                        checkboxInput(inputId = "download_options_ts",
-                                     label   = "Enable downlod options",
+                                     label   = "Enable download options",
                                      value   = FALSE),
                        
                        shinyjs::hidden(div(id = "hidden_download_ts",
@@ -1644,7 +1644,7 @@ ui <- navbarPage(id = "nav1",
                       #### Downloads START ----
                      h4("Downloads", style = "color: #094030;"),
                      checkboxInput(inputId = "download_options2",
-                                   label   = "Enable downlod options",
+                                   label   = "Enable download options",
                                    value   = FALSE),
                      
                      shinyjs::hidden(div(id = "hidden_download2",
@@ -1946,7 +1946,7 @@ ui <- navbarPage(id = "nav1",
                       #### Downloads TS START ----
                       h4("Downloads", style = "color: #094030;"),
                       checkboxInput(inputId = "download_options_ts2",
-                                    label   = "Enable downlod options",
+                                    label   = "Enable download options",
                                     value   = FALSE),
                       
                       shinyjs::hidden(div(id = "hidden_download_ts2",
@@ -2780,7 +2780,7 @@ ui <- navbarPage(id = "nav1",
                       #### Downloads TS START ----
                       h4("Downloads", style = "color: #094030;"),
                       checkboxInput(inputId = "download_options_ts3",
-                                    label   = "Enable downlod options",
+                                    label   = "Enable download options",
                                     value   = FALSE),
                       
                       shinyjs::hidden(div(id = "hidden_download_ts3",
@@ -3025,7 +3025,7 @@ ui <- navbarPage(id = "nav1",
                       #### Downloads START ----
                       h4("Downloads", style = "color: #094030;"),
                       checkboxInput(inputId = "download_options3",
-                                    label   = "Enable downlod options",
+                                    label   = "Enable download options",
                                     value   = FALSE),
                       
                       shinyjs::hidden(div(id = "hidden_download3",
