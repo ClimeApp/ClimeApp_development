@@ -707,7 +707,7 @@ ui <- navbarPage(id = "nav1",
                       ),
                       
                       #### Upload Meta data ----
-                      h4(helpText("Download / Upload metadata (.xlsx)")),
+                      h4(helpText("Download / Upload metadata",metadata_popover("pop_anomalies_map_metadata"))),
                       fluidRow(
                         column(3, downloadButton(outputId = "download_metadata", label = "Download metadata")),
                         column(4, fileInput(inputId= "upload_metadata", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
@@ -1018,7 +1018,7 @@ ui <- navbarPage(id = "nav1",
                        ),
                      
                       #### Upload Meta data ----
-                       h4(helpText("Download / Upload metadata (.xlsx)")),
+                       h4(helpText("Download / Upload metadata",metadata_popover("pop_anomalies_ts_metadata"))),
                        fluidRow(
                          column(3, downloadButton(outputId = "download_metadata_ts", label = "Download metadata")),
                          column(4, fileInput(inputId= "upload_metadata_ts", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
@@ -1609,7 +1609,7 @@ ui <- navbarPage(id = "nav1",
                      ),
                      
                      #### Upload Meta data ----
-                     h4(helpText("Download / Upload metadata (.xlsx)")),
+                     h4(helpText("Download / Upload metadata",metadata_popover("pop_composites_map_metadata"))),
                      fluidRow(
                        column(3, downloadButton(outputId = "download_metadata2", label = "Download metadata")),
                        column(4, fileInput(inputId= "upload_metadata2", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
@@ -1902,7 +1902,7 @@ ui <- navbarPage(id = "nav1",
                        ),
                       
                       #### Upload Meta data ----
-                       h4(helpText("Download / Upload metadata (.xlsx)")),
+                       h4(helpText("Download / Upload metadata",metadata_popover("pop_composites_ts_metadata"))),
                        fluidRow(
                          column(3, downloadButton(outputId = "download_metadata_ts2", label = "Download metadata")),
                          column(4, fileInput(inputId= "upload_metadata_ts2", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
@@ -2013,16 +2013,10 @@ ui <- navbarPage(id = "nav1",
                    ### First Sidebar panel (Variable 1) ----
                    sidebarPanel(fluidRow(
                      #Method Title and Pop Over
-                     popover(
-                       h3(HTML("Correlation <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
-                       "Correlation measures the strength and direction of a linear relationship between two variables. A correlation coefficient, like Pearsons r, ranges from -1 to 1. Positive values indicate a positive correlation, negative values a negative correlation, and 0 suggests no linear relationship. Correlation is a statistical tool to assess the degree of association between variables.",
-                       title = "What is correlation?",
-                       id = "pop_correlation",
-                       placement = "right",
-                     ), 
+                     correlation_summary_popover("pop_correlation"),
                      br(),
                    #Short description of the General Panel        
-                   h4(helpText("Variable 1")),
+                   h4(helpText("Variable 1",correlation_variable_popover("pop_correlation_variable1"))),
                    
                    #Choose a data source: ME or USer 
                    radioButtons(inputId  = "source_v1",
@@ -2245,7 +2239,7 @@ ui <- navbarPage(id = "nav1",
                    
                    sidebarPanel(fluidRow(
                      #Short description of the General Panel        
-                     h4(helpText("Variable 2")),
+                     h4(helpText("Variable 2",correlation_variable_popover("pop_correlation_variable2"))),
                      
                      #Choose a data source: ME or USer 
                      radioButtons(inputId  = "source_v2",
@@ -2465,18 +2459,20 @@ ui <- navbarPage(id = "nav1",
                    
                    ### Shared TS plot: START ----
                    tabPanel("Timeseries", br(),
+                            
+                            correlation_timeseries_popover("pop_correlation_timeseries"),
+                            
+                            br(),
+                            
                             #Choose a correlation method
-                            fluidRow(
-                              radioButtons(inputId  = "cor_method_ts",
-                                 label    = "Choose a correlation method:",
-                                 choices  = c("pearson", "spearman"),
-                                 selected = "pearson" , inline = TRUE),
+                            radioButtons(inputId  = "cor_method_ts",
+                               label    = "Choose a correlation method:",
+                               choices  = c("pearson", "spearman"),
+                               selected = "pearson" , inline = TRUE),
                               
-                              h4(helpText(dataset_variable_popover("test"),inline = TRUE)),
-                            ),
+
                             textOutput("correlation_r_value"),
                             textOutput("correlation_p_value"),
-                            h4(helpText(dataset_variable_popover("test2"))),
                             withSpinner(ui_element = plotOutput("correlation_ts",click = "ts_click3", dblclick = "ts_dblclick3", brush = brushOpts(id = "ts_brush3",resetOnNew = TRUE)),
                                         image = spinner_image,
                                         image.width = spinner_width,
@@ -2487,7 +2483,7 @@ ui <- navbarPage(id = "nav1",
                         
                       #### Timeseries customization ----
                       column(width = 4,
-                             h4(helpText("Customize your timeseries")),  
+                             h4(helpText("Customize your timeseries",timeseries_customization_popover("pop_correlation_custime"))),  
                              
                              checkboxInput(inputId = "custom_ts3",
                                            label   = "Timeseries customization",
@@ -2528,7 +2524,7 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Add Custom features (points, highlights, lines) ----                        
                       column(width = 4,
-                             h4(helpText("Custom features")),
+                             h4(helpText("Custom features",timeseries_features_popover("pop_correlation_timefeat"))),
                              
                              checkboxInput(inputId = "custom_features_ts3",
                                            label   = "Enable custom features",
@@ -2544,7 +2540,7 @@ ui <- navbarPage(id = "nav1",
                                    #Custom Points
                                    shinyjs::hidden(
                                      div(id = "hidden_custom_points_ts3",
-                                         h5(helpText("Add custom points")),
+                                         h5(helpText("Add custom points",timeseries_points_popover("pop_correlation_timepoint"))),
                                          h6(helpText("Enter position manually or click on plot")),
                                          
                                          textInput(inputId = "point_label_ts3", 
@@ -2595,7 +2591,7 @@ ui <- navbarPage(id = "nav1",
                                    #Custom highlights
                                    shinyjs::hidden(
                                      div(id = "hidden_custom_highlights_ts3",
-                                         h5(helpText("Add custom highlights")),
+                                         h5(helpText("Add custom highlights",timeseries_highlights_popover("pop_correlation_timehl"))),
                                          h6(helpText("Enter values manually or draw a box on plot")),
                                          
                                          numericRangeInput(inputId = "highlight_x_values_ts3",
@@ -2645,7 +2641,7 @@ ui <- navbarPage(id = "nav1",
                                    #Custom lines
                                    shinyjs::hidden(
                                      div(id = "hidden_custom_line_ts3",
-                                         h5(helpText("Add custom lines")),
+                                         h5(helpText("Add custom lines",timeseries_lines_popover("pop_correlation_timelines"))),
                                          h6(helpText("Enter position manually or click on plot, double click to change orientation")),
                                          
                                          radioButtons(inputId      = "line_orientation_ts3",
@@ -2691,7 +2687,7 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Custom statistics ----
                       column(width = 4,
-                             h4(helpText("Custom statistics")),
+                             h4(helpText("Custom statistics", timeseries_statistics_popover("pop_correlation_timestats"))),
                              
                              checkboxInput(inputId = "enable_custom_statistics_ts3",
                                            label   = "Enable custom statistics",
@@ -2733,7 +2729,7 @@ ui <- navbarPage(id = "nav1",
                       ),
                     
                       #### Upload Meta data ----
-                      h4(helpText("Download / Upload metadata (.xlsx)")),
+                      h4(helpText("Download / Upload metadata",metadata_popover("pop_correlation_ts_metadata"))),
                       fluidRow(
                         column(3, downloadButton(outputId = "download_metadata_ts3", label = "Download metadata")),
                         column(4, fileInput(inputId= "upload_metadata_ts3", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
@@ -2745,6 +2741,11 @@ ui <- navbarPage(id = "nav1",
                    
                    ### Map plot: START ----
                    tabPanel("Correlation map", value = "corr_map_tab", br(),
+                            
+                            correlation_map_popover("pop_correlation_map"),
+                            
+                            br(),
+                            
                             #Choose a correlation method 
                             radioButtons(inputId  = "cor_method_map",
                                          label    = "Choose a correlation method:",
@@ -2758,7 +2759,7 @@ ui <- navbarPage(id = "nav1",
                       fluidRow(
                       #### Map customization ----       
                       column(width = 4,
-                             h4(helpText("Customize your map")),  
+                             h4(helpText("Customize your map",map_customization_popover("pop_correlation_cusmap"))),  
                              
                              checkboxInput(inputId = "custom_map3",
                                            label   = "Map customization",
@@ -2813,7 +2814,7 @@ ui <- navbarPage(id = "nav1",
                       
                       #### Add Custom features (points and highlights) ----                        
                       column(width = 4,
-                             h4(helpText("Custom features")),
+                             h4(helpText("Custom features",map_features_popover("pop_correlation_mapfeat"))),
                              
                              checkboxInput(inputId = "custom_features3",
                                            label   = "Enable custom features",
@@ -2829,7 +2830,7 @@ ui <- navbarPage(id = "nav1",
                                    #Custom Points
                                    shinyjs::hidden(
                                      div(id = "hidden_custom_points3",
-                                         h5(helpText("Add custom points")),
+                                         h5(helpText("Add custom points",map_points_popover("pop_correlation_mappoint"))),
                                          h6(helpText("Enter location/coordinates or double click on map")),
                                          
                                          textInput(inputId = "location3", 
@@ -2892,7 +2893,7 @@ ui <- navbarPage(id = "nav1",
                                    #Custom Highlights
                                    shinyjs::hidden(
                                      div(id = "hidden_custom_highlights3",
-                                         h5(helpText("Add custom highlights")),
+                                         h5(helpText("Add custom highlights",map_highlights_popover("pop_correlation_maphl"))),
                                          h6(helpText("Enter coordinate or draw a box on map")),
                                          
                                          numericRangeInput(inputId = "highlight_x_values3",
@@ -2968,7 +2969,7 @@ ui <- navbarPage(id = "nav1",
                       ),
                     
                       #### Upload Meta data ----
-                      h4(helpText("Download / Upload metadata (.xlsx)")),
+                      h4(helpText("Download / Upload metadata",metadata_popover("pop_correlation_map_metadata"))),
                       fluidRow(
                         column(3, downloadButton(outputId = "download_metadata3", label = "Download metadata")),
                         column(4, fileInput(inputId= "upload_metadata3", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
@@ -3152,17 +3153,12 @@ ui <- navbarPage(id = "nav1",
              sidebarPanel(fluidRow(
                
                #Method Title and Pop Over
-               popover(
-                 h3(HTML("Regression <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
-                 "Regression analyzes the relationship between dependent and independent variables. It fits a mathematical model to data, estimating the impact of independent variables on the dependent one. In climate reconstructions, regression helps identify patterns and derive equations to predict past climate conditions using proxy data.",
-                 title = "What is regression?",
-                 id = "pop_regression",
-                 placement = "right",
-               ), 
+               regression_summary_popover("pop_regression"),
+               
                br(),
                
                #Short description of the General Panel        
-               h4(helpText("Independent variable")),
+               h4(helpText("Independent variable",regression_variable_popover("pop_regression_independentvariable"))),
                
                #Choose a data source: ME or USer 
                radioButtons(inputId  = "source_iv",
@@ -3380,7 +3376,7 @@ ui <- navbarPage(id = "nav1",
              
              sidebarPanel(fluidRow(
                #Short description of the General Panel        
-               h4(helpText("Dependent variable")),
+               h4(helpText("Dependent variable",regression_variable_popover("pop_regression_dependentvariable"))),
                
                #Choose a data source: ME or USer 
                radioButtons(inputId  = "source_dv",
@@ -3596,6 +3592,9 @@ ui <- navbarPage(id = "nav1",
              
              ### Regression timeseries and summary----
              tabPanel("Regression timeseries",
+                      br(),
+                      regression_timeseries_popover("pop_regression_timeseries"),
+                      
                       withSpinner(ui_element = plotOutput("plot_reg_ts1"),
                                   image = spinner_image,
                                   image.width = spinner_width,
@@ -3634,8 +3633,11 @@ ui <- navbarPage(id = "nav1",
                       )
              ),
              
-             ### Regression coefficient ----
-             tabPanel("Regression coefficient", br(),
+             ### Regression coefficients ----
+             tabPanel("Regression coefficients", 
+                      br(),
+                      regression_coefficient_popover("pop_regression_coefficients"),
+                      
                       selectInput(inputId  = "coeff_variable",
                                   label    = "Choose a variable:",
                                   choices  = NULL,
@@ -3658,7 +3660,10 @@ ui <- navbarPage(id = "nav1",
              ),
              
              ### Regression pvalues ----
-             tabPanel("Regression pvalues", br(),
+             tabPanel("Regression p values",
+                      br(),
+                      regression_pvalue_popover("pop_regression_pvalues"),
+                      
                       selectInput(inputId  = "pvalue_variable",
                                   label    = "Choose a variable:",
                                   choices  = NULL,
@@ -3681,7 +3686,10 @@ ui <- navbarPage(id = "nav1",
              ),
              
              ### Regression residuals ----
-             tabPanel("Regression residuals", br(),
+             tabPanel("Regression residuals",
+                      br(),
+                      regression_residuals_popover("pop_regression_residuals"),
+                      
                       fluidRow(
                         column(width=4,
                                numericInput(
@@ -3862,17 +3870,11 @@ ui <- navbarPage(id = "nav1",
              sidebarPanel(fluidRow(
                
                #Method Title and Pop Over
-               popover(
-                 h3(HTML("Annual cycles <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
-                 "Analyzing annual cycles involves examining data over consecutive months. Researchers can identify trends, seasonality, and anomalies in climate variables like temperature or precipitation. Statistical techniques, such as moving averages or seasonal decomposition, help reveal patterns and variations in monthly data, aiding in climate research and trend identification.",
-                 title = "What is the annual cycles method?",
-                 id = "pop_monthly_ts",
-                 placement = "right",
-               ), 
+               annualcycles_summary_popover("pop_annualcycles"),
                br(),
                
                #Short description of the General Panel        
-               h4(helpText("Creating annual cycles")),
+               h4(helpText("Set annual cycle data",annualcycles_data_popover("pop_annualcycles_data"))),
                
                #Choose one of three datasets (Select)                
                selectInput(inputId  = "dataset_selected5",
@@ -3934,10 +3936,13 @@ ui <- navbarPage(id = "nav1",
              
              ### Second sidebar panel (Location selection) ----
              sidebarPanel(fluidRow(
-
+               #Short description of the Coord. Sidebar        
+               h4(helpText("Set geographical area",annualcycles_region_popover("pop_annualcycles_region"))),
+               h5(helpText("Select a continent, enter coordinates manually or search for a point location")),
+               
                shinyjs::hidden(div(id = "hidden_region_input",               
                #Short description of the Coord. Sidebar        
-               h4(helpText("Choose a region or enter coordinates manually")),
+               
                
                column(width = 12, fluidRow(      
                  #Global Button
@@ -4014,8 +4019,6 @@ ui <- navbarPage(id = "nav1",
                )),
                
                #Custom location
-               h4(helpText("Choose a point location input")),
-               
                checkboxInput(inputId = "custom_features5",
                              label   = "Switch to point location input",
                              value   = FALSE),
@@ -4094,7 +4097,7 @@ ui <- navbarPage(id = "nav1",
                         fluidRow(
                         #### Timeseries customization ----
                         column(width = 4,
-                               h4(helpText("Customize your timeseries")),  
+                               h4(helpText("Customize your timeseries",timeseries_customization_popover("pop_annualcycles_custime"))),  
                                
                                checkboxInput(inputId = "custom_ts5",
                                              label   = "Timeseries customization",
@@ -4144,7 +4147,7 @@ ui <- navbarPage(id = "nav1",
                         
                         #### Add Custom features (points, highlights, lines) ----                        
                         column(width = 4,
-                               h4(helpText("Custom features")),
+                               h4(helpText("Custom features",timeseries_features_popover("pop_annualcycles_timefeat"))),
 
                                checkboxInput(inputId = "custom_features_ts5",
                                              label   = "Enable custom features",
@@ -4160,7 +4163,7 @@ ui <- navbarPage(id = "nav1",
                                      #Custom Points
                                      shinyjs::hidden(
                                        div(id = "hidden_custom_points_ts5",
-                                           h5(helpText("Add custom points")),
+                                           h5(helpText("Add custom points",timeseries_points_popover("pop_annualcycles_timepoint"))),
                                            h6(helpText("Enter position manually or click on plot")),
                                            
                                            textInput(inputId = "point_label_ts5", 
@@ -4211,7 +4214,7 @@ ui <- navbarPage(id = "nav1",
                                      #Custom highlights
                                      shinyjs::hidden(
                                        div(id = "hidden_custom_highlights_ts5",
-                                           h5(helpText("Add custom highlights")),
+                                           h5(helpText("Add custom highlights",timeseries_highlights_popover("pop_annualcycles_timehl"))),
                                            h6(helpText("Enter values manually or draw a box on plot")),
                                            
                                            numericRangeInput(inputId = "highlight_x_values_ts5",
@@ -4260,7 +4263,7 @@ ui <- navbarPage(id = "nav1",
                                      #Custom lines
                                      shinyjs::hidden(
                                        div(id = "hidden_custom_line_ts5",
-                                           h5(helpText("Add custom lines")),
+                                           h5(helpText("Add custom lines",timeseries_lines_popover("pop_annualcycles_timelines"))),
                                            h6(helpText("Enter position manually or click on plot, double click to change orientation")),
                                            
                                            radioButtons(inputId      = "line_orientation_ts5",

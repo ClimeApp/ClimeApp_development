@@ -212,7 +212,7 @@ year_season_ref_popover = function(popover_ID){
 }
 
 ## MAP CUSTOMIZATION 
-## popover_IDs = pop_anomalies_cusmap, pop_composites_cusmap
+## popover_IDs = pop_anomalies_cusmap, pop_composites_cusmap, pop_correlation_cusmap
 
 map_customization_popover = function(popover_ID){
   popover(
@@ -225,7 +225,7 @@ map_customization_popover = function(popover_ID){
 }
 
 ## CUSTOM MAP FEATURES
-## popover_IDs = pop_anomalies_mapfeat, pop_composites_mapfeat
+## popover_IDs = pop_anomalies_mapfeat, pop_composites_mapfeat, pop_correlation_mapfeat
 
 map_features_popover = function(popover_ID){
   popover(
@@ -237,7 +237,7 @@ map_features_popover = function(popover_ID){
 }
 
 ## CUSTOM MAP POINTS 
-## popover_IDs = pop_anomalies_mappoint, pop_composites_mappoint
+## popover_IDs = pop_anomalies_mappoint, pop_composites_mappoint, pop_correlation_mappoint
 
 map_points_popover = function(popover_ID){
   popover(
@@ -250,7 +250,7 @@ map_points_popover = function(popover_ID){
 }
 
 ## CUSTOM MAP HIGHLIGHTS
-## popover_IDs = pop_anomalies_maphl, pop_composites_maphl
+## popover_IDs = pop_anomalies_maphl, pop_composites_maphl, pop_correlation_maphl
 
 map_highlights_popover = function(popover_ID){
   popover(
@@ -301,6 +301,21 @@ map_choose_statistic_popover = function(popover_ID){
 
 }
 
+## METADATA
+## popover_IDs = pop_anomalies_map_metadata,pop_anomalies_ts_metadata, pop_composites_map_metadata, pop_composites_ts_metadata,
+##               pop_correlation_map_metadata, pop_correlation_ts_metadata
+
+metadata_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Download all currently selected options (data and customization) as metadata. This can be used for reference or to quickly regenerate your current plot in a future session.", br(),br(),
+    em("Upload metadata"),"from a previous session and click",em("Update upload inputs"),"to restore all ClimeApp options to those from the metadata. Note that metadata must be restored to the same tab (i.e.",em("Anomalies"),").", br(),br(),
+    "Metadata is downloaded in .xlsx format.", 
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
 ## REFERENCE MAP
 ## popover_IDs = pop_anomalies_refmap, pop_composites_refmap
 
@@ -331,20 +346,29 @@ reference_map_popover = function(popover_ID){
 }
 
 ## TIMESERIES CUSTOMIZATION
-## popover_IDs = pop_anomalies_custime, pop_composites_custime
+## popover_IDs = pop_anomalies_custime, pop_composites_custime, pop_correlation_custime,pop_annualcycles_custime
 
 timeseries_customization_popover = function(popover_ID){
-  popover(
-    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-    "Edit the titles of your timeseries and add a key or reference line.",br(),br(),
-    "The",em("Show reference"),"option adds a line to the timeseries shows the mean for your selected reference period (i.e. the absolute value corresponding to an anomaly of 0).",
-    id = popover_ID,
-    placement = "right",
-  )     
+  if (popover_ID == "pop_correlation_custime"|popover_ID == "pop_annualcycles_custime"){
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Edit the titles of your timeseries and add a features key.",
+      id = popover_ID,
+      placement = "right",
+    )
+  } else {
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Edit the titles of your timeseries and add a key or reference line.",br(),br(),
+      "The",em("Show reference"),"option adds a line to the timeseries shows the mean for your selected reference period (i.e. the absolute value corresponding to an anomaly of 0).",
+      id = popover_ID,
+      placement = "right",
+    )   
+  }
 }
 
 ## CUSTOM TIMESERIES FEATURES
-## popover_IDs = pop_anomalies_timefeat, pop_composites_timefeat
+## popover_IDs = pop_anomalies_timefeat, pop_composites_timefeat, pop_correlation_timefeat, pop_annualcycles_timefeat
 
 timeseries_features_popover = function(popover_ID){
   popover(
@@ -356,7 +380,7 @@ timeseries_features_popover = function(popover_ID){
 }
 
 ## TIMESERIES POINTS
-## popover_IDs = pop_anomalies_timepoint, pop_composites_timepoint
+## popover_IDs = pop_anomalies_timepoint, pop_composites_timepoint, pop_correlation_timepoint, pop_annualcycles_timepoint
 
 timeseries_points_popover = function(popover_ID){
   popover(
@@ -369,7 +393,7 @@ timeseries_points_popover = function(popover_ID){
 }
 
 ## TIMESERIES HIGHLIGHTS
-## popover_IDs = pop_anomalies_timehl, pop_composites_timehl
+## popover_IDs = pop_anomalies_timehl, pop_composites_timehl, pop_correlation_timehl, pop_annualcycles_timehl
 
 timeseries_highlights_popover = function(popover_ID){
   popover(
@@ -382,7 +406,7 @@ timeseries_highlights_popover = function(popover_ID){
 }
 
 ## TIMESERIES LINES
-## popover_IDs = pop_anomalies_timelines, pop_composites_timelines
+## popover_IDs = pop_anomalies_timelines, pop_composites_timelines, pop_correlation_timelines, pop_annualcycles_timelines
 
 timeseries_lines_popover = function(popover_ID){
   popover(
@@ -395,7 +419,7 @@ timeseries_lines_popover = function(popover_ID){
 }
 
 ## TIMESERIES CUSTOM STATISTICS
-## popover_IDs = pop_anomalies_timestats, pop_composites_timestats
+## popover_IDs = pop_anomalies_timestats, pop_composites_timestats, pop_correlation_timestats
 
 timeseries_statistics_popover = function(popover_ID){
   # Composites popover
@@ -440,7 +464,7 @@ MEsource_popover = function(popover_ID){
     h3(HTML("Plot ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 0px;"),
     "These plots show location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
     em("Assimilated Observations – Oct. to Mar."),"shows sources that were used to produce the monthly reconstruction between October and March, while",em("Assimilated Observations – Apr. to Sept."),"shows sources that were used to produce the reconstruction between April and September.",br(),br(),
-    em("VARIABLE"),"refers to the value that was directly measured, so for example a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.", br(),br(),
+    em("VARIABLE"),"refers to the value that was directly measured. So, for example, a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.", br(),br(),
     "See",em("ModE data"),"tab on the Welcome page for more information.",
     id = popover_ID,
     placement = "right",
@@ -461,6 +485,206 @@ composites_summary_popover = function(popover_ID){
     id = popover_ID,
     placement = "right",
   ) 
+}
+
+## CORRELATION SUMMARY
+## popover_IDs = pop_correlation
+
+correlation_summary_popover = function(popover_ID){
+  popover(
+    h3(HTML("Correlation <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    "A composite is an average across multiple, non-consecutive years. The composite anomaly displayed is this average, minus the average over your selected",em("Reference period."),br(),br(),
+    "The",em("Map"),"shows the average anomaly across all years in your list of years.",br(),br(),
+    "The",em("Timeseries"),"shows the average anomaly across your selected geographic area for each year in the list of years.",br(),br(),
+    "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
+    title = "What is correlation?",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## CORRELATION VARIABLE
+## popover_IDs = pop_correlation_variable1, pop_correlation_variable2
+
+correlation_variable_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Select a ModE",em("dataset, variable, range of months"),"and",em("reference period"),"or upload your own annual user data.",br(),br(),
+    "If uploading data, make sure it is yearly data. The variable name should be on the top row of each column and the first column should give the year of each entry, as shown.",br(),br(),
+    "If using ModE data, select whether to use it as a",em("Field"),"or",em("Timeseries."),"ClimeApp will only correlate two sets of field data where their geographic areas overlap. Select",em("Timeseries"),"for one variable and",em("Field"),"for the other to have ClimeApp correlate a single timeseries with the timeseries for each point on the",em("Field"),"map.",br(),br(),
+    "See",em("ModE data"),"and",em("ClimeApp functions"),"tabs on the Welcome page for more information.",
+    id = popover_ID,
+    placement = "right",
+  )  
+}
+
+## CORRELATION TIMESERIES
+## popover_IDs = pop_correlation_timeseries
+
+correlation_timeseries_popover = function(popover_ID){
+  popover(
+    h4(HTML("Timeseries Correlation <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    "The plot shows your two selected variables plotted as timeseries.",br(),br(),
+    "The",em("pearson"),"correlation method measures the linear relationship between the two timeseries, while the",em("spearman"),"correlation method measures the non-linear relationship.",br(),br(), 
+    "The",em("r value"),"gives the strength of the correlation, with 1 being a perfect positive correlation, -1 being a perfect negative correlation and 0 showing no correlation.",br(),br(),
+    "The",em("p value"),"shows the probability (as a decimal) of this correlation arising due to random chance rather than an actual statistical relationship.",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## CORRELATION MAP
+## popover_IDs = pop_correlation_map
+
+correlation_map_popover = function(popover_ID){
+  popover(
+    h4(HTML("Correlation Map <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    "The map shows the correlation between",em("Variable 1"),"and",em("Variable 2"),"for each point on the map. ",br(),br(),
+    "The",em("pearson"),"correlation method measures the linear relationship between",em("Variable 1"),"and",em("Variable 2,"),"while the",em("spearman"),"correlation method measures the non-linear relationship.",br(),br(), 
+    "The",em("r value"),"gives the strength of the correlation, with 1 being a perfect positive correlation, -1 being a perfect negative correlation and 0 showing no correlation.",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## REGRESSION SUMMARY
+## popover_IDs = pop_regression
+
+regression_summary_popover = function(popover_ID){
+  popover(
+    h3(HTML("Regression <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    "Regression takes one or more independent variables and calculates the linear equation that best links them to the dependent variable. This can be used ‘remove’ the effect of the independent variables, leaving the residual variation in the dependent variable.",br(),br(),
+    "The",em("Regression timeseries"),"tab shows the",em("original, trend"),"and",em("residual"),"timeseries for the dependent variable, where",em("original = trend + residual."),"It also shows the statistics for the linear regression equation.",br(),br(),
+    "The",em("Regression coefficient, pvalues"),"and",em("residuals"),"tabs show the",em("coefficients, p values"),"and",em("residuals"),"of the regression for each point on the map.",br(),br(),
+    "See (?) on the individual tabs and the",em("ClimeApp functions"),"tab on the Welcome page for more information.",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## REGRESSION VARIABLE
+## popover_IDs = pop_regression_independentvariable, pop_regression_dependentvariable
+
+regression_variable_popover = function(popover_ID){
+  if(popover_ID == "pop_regression_independentvariable"){
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Select a ModE",em("dataset, variable, range of months"),"and",em("reference period"),"or upload your own annual user data.",br(),br(),
+      "If uploading data, make sure it is yearly data. The variable name should be on the top row of each column and the first column should give the year of each entry, as shown. You can select multiple variables to perform a multiple linear regression.",br(),br(),
+      "ClimeApp will create a timeseries for the independent variable(s) and calculate the regression against a timeseries for the dependent variable. This is done for each point on the map if the dependent is a ModE variable.",br(),br(),
+      "See",em("ModE data"),"and",em("ClimeApp functions"),"tabs on the Welcome page for more information.",
+      id = popover_ID,
+      placement = "right",
+    ) 
+  } else {
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Select a ModE",em("dataset, variable, range of months"),"and",em("reference period"),"or upload your own annual user data.",br(),br(),
+      "If uploading data, make sure it is yearly data. The variable name should be on the top row of each column and the first column should give the year of each entry, as shown.",br(),br(),
+      "ClimeApp will create a timeseries for the independent variable(s) and calculate the regression against a timeseries for the dependent variable. This is done for each point on the map if the dependent is a ModE variable.",br(),br(),
+      "See",em("ModE data"),"and",em("ClimeApp functions"),"tabs on the Welcome page for more information.",
+      id = popover_ID,
+      placement = "right",
+    )  
+  }
+}
+
+## REGRESSION TIMESERIES
+## popover_IDs = pop_regression_timeseries
+
+regression_timeseries_popover = function(popover_ID){
+  popover(
+    h4(HTML("Regression Timeseries <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    "Plot 1 shows the",em("original"),"data for the dependent variable and the",em("trend"),"in the dependent variable, as predicted from the linear regression and the independent variable(s).",br(),br(),
+    "Plot 2 shows the",em("residual"),"values ( ",em("original – trend"),") for the dependent variable.",br(),br(),
+    "The",em("Statistical summary"),"gives the",em("coefficients"),"and",em("intercept"),"for each independent variable as well as a summary of the",em("residuals"),"and further statistical information.",br(),br(),
+    "See the",em("ClimeApp functions"),"tabs on the Welcome page for more information.",
+    id = popover_ID,
+    placement = "right"
+  )
+}
+
+## REGRESSION COEFFICIENT MAP
+## popover_IDs = pop_regression_coefficients
+
+regression_coefficient_popover = function(popover_ID){
+  popover(
+    h4(HTML("Regression Coefficients Map <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    "The map shows the",em("coefficients"),"of the independent variable(s) in the linear regression equation, for each point on the map. Use",em("Choose a variable"),"to select which of the independent variables you would like to plot the coefficients for.",br(),br(),
+    "The",em("coefficient"),"shows you what the independent variable is being multiplied by in the regression calculation.",br(),br(),
+    "See the",em("ClimeApp functions"),"tabs on the Welcome page for more information.",
+    id = popover_ID,
+    placement = "right"
+  )
+}
+
+## REGRESSION P VALUES MAP
+## popover_IDs = pop_regression_pvalues
+
+regression_pvalue_popover = function(popover_ID){
+  popover(
+    h4(HTML("Regression P Values Map <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    "The map shows the",em("p values"),"of the independent variable(s) in the linear regression equation, for each point on the map. Use",em("Choose a variable"),"to select which of the independent variables you would like to plot the p values for.",br(),br(),
+    "The",em("p value"),"shows the probability (as a decimal) of the linear regression arising due to random chance rather than an actual statistical relationship.",br(),br(),
+    "See the",em("ClimeApp functions"),"tabs on the Welcome page for more information.",
+    id = popover_ID,
+    placement = "right"
+  )
+}
+
+## REGRESSION RESIDUALS MAP
+## popover_IDs = pop_regression_residuals
+
+regression_residuals_popover = function(popover_ID){
+  popover(
+    h4(HTML("Regression Residuals Map <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    "The map shows the",em("residual"),"values of the dependent variable, for the selected",em("Year,"),"for each point on the map.",br(),br(),
+    "The residual values are the ‘leftover’ variation in the dependent variable, after the",em("trend"),"predicted from the independent variable(s) has been removed:",em("Residual = Original – Trend."),br(),br(),
+    "See the",em("ClimeApp functions"),"tabs on the Welcome page for more information.",
+    id = popover_ID,
+    placement = "right"
+  )
+}
+
+## ANNUAL CYCLES SUMMARY
+## popover_IDs = pop_annualcycles
+
+annualcycles_summary_popover = function(popover_ID){
+  popover(
+    h3(HTML("Annual Cycles <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    "This tool can be used to plot monthly values of a variable (absolute or anomaly) as an",em("annual cycle"),"for a given year or set of years. Multiple years can be displayed on the same plot, allowing several",em("annual cycles"),"to be compared.",
+    title = "What are annual cycles?",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## ANNUAL CYCLES DATA
+## popover_IDs = pop_annualcycles_data
+
+annualcycles_data_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Select a ModE",em("dataset, variable, year/list of years/range of years"),"and",em("reference period."),br(),br(),
+    "If entering a",em("list of years,"),"separate each year with a comma (e.g. 1815,1816). If entering a",em("range of years,"),"separate the two years with a dash (e.g. 1815-1820). Multiple years can be plotted as either",em("Individual years,"),"with all years in the list/range plotted as separate lines, or as an",em("Average,"),"which will plot a single line showing the monthly average for all years in the list/range.",br(),br(),
+    "See",em("ModE data"),"and",em("ClimeApp functions"),"tabs on the Welcome page for more information.",
+    id = popover_ID,
+    placement = "right",
+  )  
+}
+
+## ANNUAL CYCLES REGION
+## popover_IDs = pop_annualcycles_region
+
+annualcycles_region_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Select a geographical area and click",em("Add to graph"),"to add your current selection to the plot as a timeseries. The line will show the monthly average across this area.",br(),br(),
+    "Select",em("Switch to point location input"),"to search for or enter a single point rather than an area.",br(),br(),
+    "Timeseries can be removed using the",em("Remove last TS"),"and",em("Remove all TS buttons."),
+    id = popover_ID,
+    placement = "right",
+  )  
 }
 
 
