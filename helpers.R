@@ -19,7 +19,6 @@ library(shinycssloaders)
 library(profvis)
 library(openxlsx) #Don't Change order!
 library(xlsx)
-library(htmltools)
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
