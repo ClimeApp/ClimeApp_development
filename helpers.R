@@ -40,7 +40,6 @@ library(shinycssloaders)
 library(profvis)
 library(openxlsx) #Don't Change order!
 library(xlsx)
-library(htmltools)
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
@@ -154,7 +153,7 @@ latlon_weights = as.matrix(read.csv("data/latlon_weights.csv"))
 
 anomalies_summary_popover = function(popover_ID){
   popover(
-    h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
     "Anomalies show how a selected time period differs from a reference time period:",em("Anomalies = Absolute Values – Reference Values"),br(),br(),
     "The",em("Map"),"shows the average anomaly across all years in the range of years.",br(),br(),
     "The",em("Timeseries"),"shows the average anomaly across your selected geographic area for each year in the range of years.",br(),br(),  
@@ -301,14 +300,15 @@ map_choose_statistic_popover = function(popover_ID){
 
 }
 
-## METADATA
-## popover_IDs = pop_anomalies_map_metadata,pop_anomalies_ts_metadata, pop_composites_map_metadata, pop_composites_ts_metadata,
-##               pop_correlation_map_metadata, pop_correlation_ts_metadata
+## DOWNLOADS
+## popover_IDs = pop_anomalies_map_downloads,pop_anomalies_ts_downloads, pop_composites_map_downloads, pop_composites_ts_downloads,
+##               pop_correlation_map_downloads, pop_correlation_ts_downloads
 
-metadata_popover = function(popover_ID){
+downloads_popover = function(popover_ID){
   popover(
     HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-    "Download all currently selected options (data and customization) as metadata. This can be used for reference or to quickly regenerate your current plot in a future session.", br(),br(),
+    "Download your plot as a PNG, JPEG or PDF file.",br(),br(),
+    "Use",em("Download metadata"),"to download all currently selected options (data and customization) as metadata. This can be used for reference or to quickly regenerate your current plot in a future session.", br(),br(),
     em("Upload metadata"),"from a previous session and click",em("Update upload inputs"),"to restore all ClimeApp options to those from the metadata. Note that metadata must be restored to the same tab (i.e.",em("Anomalies"),").", br(),br(),
     "Metadata is downloaded in .xlsx format.", 
     id = popover_ID,
@@ -461,7 +461,7 @@ netcdf_popover = function(popover_ID){
 
 MEsource_popover = function(popover_ID){
   popover(
-    h3(HTML("Plot ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 0px;"),
+    h4(HTML("Plot ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 0px;"),
     "These plots show location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
     em("Assimilated Observations – Oct. to Mar."),"shows sources that were used to produce the monthly reconstruction between October and March, while",em("Assimilated Observations – Apr. to Sept."),"shows sources that were used to produce the reconstruction between April and September.",br(),br(),
     em("VARIABLE"),"refers to the value that was directly measured. So, for example, a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.", br(),br(),
@@ -1643,6 +1643,7 @@ rewrite_tstable = function(tstable,variable){
 ##           year = a single user selected or default year
 ##           season = "summer" or "winter"
 ##           labs = TRUE or FALSE (TRUE = non-zoomed plot)
+##           Same goes for the feedback_data
 
 plot_modera_sources = function(year,season,lon_range,lat_range,labs){
   
@@ -1695,6 +1696,18 @@ plot_modera_sources = function(year,season,lon_range,lat_range,labs){
       guides(shape = FALSE, color = FALSE) +
       theme_classic()+
       theme(panel.border = element_rect(colour = "black", fill=NA))  }
+}
+
+download_feedback_data = function(year, season, lon_range, lat_range) {
+  # Load data
+  feedback_data = read.csv(paste0("data/feedback_archive/", season, year, ".csv"))
+  
+  # Subset data based on lon and lat range
+  subset_data = feedback_data[(feedback_data$LON > lon_range[1]) & (feedback_data$LON < lon_range[2]) &
+                                (feedback_data$LAT > lat_range[1]) & (feedback_data$LAT < lat_range[2]), ]
+  
+  # Remove the first three columns
+  subset_data = subset_data[, -c(1:3)]
 }
 
 
