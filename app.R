@@ -418,7 +418,10 @@ ui <- navbarPage(id = "nav1",
                     h4("Set geographical area", style = "color: #094030;"),
                     h5(helpText("Select a continent, enter coordinates manually or draw a box on the plot")),
                     
-                     column(width = 12, fluidRow(      
+                     column(width = 12, fluidRow(
+                       
+                     br(), br(),   
+                       
                      #Global Button
                      actionButton(inputId = "button_global",
                                   label = "Global",
@@ -450,7 +453,9 @@ ui <- navbarPage(id = "nav1",
                      column(width = 12, br()),
                      
                      column(width = 12, fluidRow(
-                     
+                       
+                     br(), br(),   
+                       
                      #Africa Button
                      actionButton(inputId = "button_africa",
                                   label = "Africa",
@@ -490,15 +495,14 @@ ui <- navbarPage(id = "nav1",
                                       min = -90,
                                       max = 90),
                     
-                    br(), br(),
-                        
                     #Enter Coordinates
+                    column(12,
                         actionButton(inputId = "button_coord",
                                      label = "Update coordinates",
                                      width = "200px"),
+                    ),
                         
-                        ), width = 12)
-                    
+                    ), width = 12)
                 ## Sidebar Panels END ----
                 )),
 
@@ -1334,7 +1338,10 @@ ui <- navbarPage(id = "nav1",
                      h4("Set geographical area", style = "color: #094030;"),
                      h5(helpText("Select a continent, enter coordinates manually or draw a box on the plot")),
                      
-                     column(width = 12, fluidRow(      
+                     column(width = 12, fluidRow(
+                       
+                       br(), br(),
+                       
                        #Global Button
                        actionButton(inputId = "button_global2",
                                     label = "Global",
@@ -1366,6 +1373,8 @@ ui <- navbarPage(id = "nav1",
                      column(width = 12, br()),
                      
                      column(width = 12, fluidRow(
+                       
+                       br(), br(),
                        
                        #Africa Button
                        actionButton(inputId = "button_africa2",
@@ -1408,9 +1417,11 @@ ui <- navbarPage(id = "nav1",
                      br(), br(),
                      
                      #Enter Coordinates
+                     column(12,
                      actionButton(inputId = "button_coord2",
                                   label = "Update coordinates",
                                   width = "200px"),
+                     ),
                     
                      ), width = 12)
                  ## Sidebar Panels END ----
@@ -2221,7 +2232,10 @@ ui <- navbarPage(id = "nav1",
                    
                    shinyjs::hidden(
                    div(id = "hidden_continents_v1",
-                   column(width = 12, fluidRow(      
+                   column(width = 12, fluidRow(
+                     
+                     br(), br(),
+                     
                      #Global Button
                      actionButton(inputId = "button_global_v1",
                                   label = "Global",
@@ -2253,6 +2267,8 @@ ui <- navbarPage(id = "nav1",
                    column(width = 12, br()),
                    
                    column(width = 12, fluidRow(
+                     
+                     br(), br(),
                      
                      #Africa Button
                      actionButton(inputId = "button_africa_v1",
@@ -2445,7 +2461,10 @@ ui <- navbarPage(id = "nav1",
                      
                      shinyjs::hidden(
                        div(id = "hidden_continents_v2",
-                           column(width = 12, fluidRow(      
+                           column(width = 12, fluidRow(
+                             
+                             br(), br(),
+                             
                              #Global Button
                              actionButton(inputId = "button_global_v2",
                                           label = "Global",
@@ -2477,6 +2496,8 @@ ui <- navbarPage(id = "nav1",
                            column(width = 12, br()),
                            
                            column(width = 12, fluidRow(
+                             
+                             br(), br(),
                              
                              #Africa Button
                              actionButton(inputId = "button_africa_v2",
@@ -3392,7 +3413,10 @@ ui <- navbarPage(id = "nav1",
                      
                      shinyjs::hidden(
                        div(id = "hidden_continents_iv",
-                           column(width = 12, fluidRow(      
+                           column(width = 12, fluidRow(
+                             
+                             br(), br(),
+                             
                              #Global Button
                              actionButton(inputId = "button_global_iv",
                                           label = "Global",
@@ -3424,6 +3448,8 @@ ui <- navbarPage(id = "nav1",
                            column(width = 12, br()),
                            
                            column(width = 12, fluidRow(
+                             
+                             br(), br(),
                              
                              #Africa Button
                              actionButton(inputId = "button_africa_iv",
@@ -3611,7 +3637,10 @@ ui <- navbarPage(id = "nav1",
                      
                      shinyjs::hidden(
                        div(id = "hidden_continents_dv",
-                           column(width = 12, fluidRow(      
+                           column(width = 12, fluidRow(
+                             
+                             br(), br(),
+                             
                              #Global Button
                              actionButton(inputId = "button_global_dv",
                                           label = "Global",
@@ -3643,6 +3672,8 @@ ui <- navbarPage(id = "nav1",
                            column(width = 12, br()),
                            
                            column(width = 12, fluidRow(
+                             
+                             br(), br(),
                              
                              #Africa Button
                              actionButton(inputId = "button_africa_dv",
@@ -4078,7 +4109,10 @@ ui <- navbarPage(id = "nav1",
                shinyjs::hidden(div(id = "hidden_region_input",               
                #Short description of the Coord. Sidebar        
                
-               column(width = 12, fluidRow(      
+               column(width = 12, fluidRow(
+                 
+                 br(), br(),
+                 
                  #Global Button
                  actionButton(inputId = "button_global5",
                               label = "Global",
@@ -4110,6 +4144,8 @@ ui <- navbarPage(id = "nav1",
                column(width = 12, br()),
                
                column(width = 12, fluidRow(
+                 
+                 br(), br(),
                  
                  #Africa Button
                  actionButton(inputId = "button_africa5",
@@ -4190,6 +4226,8 @@ ui <- navbarPage(id = "nav1",
                
                
                column(width = 12, fluidRow(
+                 
+               br(), br(),
                
                #Add timeseries to graph
                actionButton(inputId = "add_monthly_ts",
@@ -13368,13 +13406,13 @@ server <- function(input, output, session) {
     # Stop App on end of session
     # session$onSessionEnded(function() {
     #   stopApp()
-    # })  
+    # })
 }
 
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
 # Run the app normally
-  # runApp(app)
+  #runApp(app)
 # Run the app with profiling
   #profvis({runApp(app)})
 
