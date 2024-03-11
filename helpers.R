@@ -3670,7 +3670,8 @@ plot_regression_coefficients = function(data_input,independent_variables,indepen
   v_col = colorRampPalette(rev(brewer.pal(11,"Spectral")))
   
   # Generate title
-  title_main = paste(regression_titles$title_months_i,
+  title_main = paste("Regression Coefficients. ",
+                     regression_titles$title_months_i,
                      independent_variables[independent_variable_number]," ",
                      regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
                      regression_titles$title_months_d,dependent_variable,
@@ -3678,7 +3679,9 @@ plot_regression_coefficients = function(data_input,independent_variables,indepen
                      sep = "")
   
   # Plot
-  filled.contour(x,y,z, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
+  z_max = max(abs(z))
+  
+  filled.contour(x,y,z, zlim = c(-z_max,z_max), color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
     axis(1, seq(-180, 180, by = 10))
     axis(2, seq(-90, 90, by = 10)) },
     key.title = title(main = "Coefficients",cex.main = 0.8))
@@ -3725,7 +3728,8 @@ plot_regression_pvalues = function(data_input,independent_variables,independent_
   v_lev = c(0,0.01,0.05,0.1,0.2,1)
   
   # Generate title
-  title_main = paste(regression_titles$title_months_i,
+  title_main = paste("Regression P Values. ",
+                     regression_titles$title_months_i,
                      independent_variables[independent_variable_number]," ",
                      regression_titles$title_mode_i," -> ",
                      regression_titles$title_months_d,dependent_variable,
@@ -3775,7 +3779,8 @@ plot_regression_residuals = function(data_input,year_selected,year_range,
   
   # Generate title & axis label
   title_variables_i = paste(independent_variables,collapse = " ; ")
-  title_main = paste(regression_titles$title_months_i,title_variables_i," ",
+  title_main = paste("Regression Residuals. ",
+                     regression_titles$title_months_i,title_variables_i," ",
                      regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
                      regression_titles$title_months_d,dependent_variable,
                      regression_titles$title_mode_d,". ",year_selected, sep = "")
@@ -3830,7 +3835,8 @@ plot_regression_timeseries = function(data_input,plot_type,regression_titles,
   
   # Generate title & axis label
   title_variables_i = paste(independent_variables,collapse = " ; ")
-  title_main = paste(regression_titles$title_months_i,title_variables_i,
+  title_main = paste("Regression Timeseries. ",
+                     regression_titles$title_months_i,title_variables_i,
                      regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
                      regression_titles$title_months_d,dependent_variable,
                      regression_titles$title_mode_d,regression_titles$title_lonlat_d,
