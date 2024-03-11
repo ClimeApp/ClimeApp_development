@@ -4742,1221 +4742,1217 @@ server <- function(input, output, session) {
   })
   
   #Hiding, showing, enabling/disenabling certain inputs
-  observe({
-
     #Sidebars General and Composite
     
-    shinyjs::toggle(id = "optional2a",
+    observe({shinyjs::toggle(id = "optional2a",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$mode_selected2 == "Fixed reference",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "optional2b",
+    observe({shinyjs::toggle(id = "optional2b",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$mode_selected2 == "X years prior",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "optional2c",
+    observe({shinyjs::toggle(id = "optional2c",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$enter_upload2 == "Manual",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "optional2d",
+    observe({shinyjs::toggle(id = "optional2d",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$enter_upload2 == "Upload",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "optional2e",
+    observe({shinyjs::toggle(id = "optional2e",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = is.null(input$upload_file2),
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "season",
+    observe({shinyjs::toggle(id = "season",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$season_selected == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "season2",
+    observe({shinyjs::toggle(id = "season2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$season_selected2 == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "optional2f",
+    observe({shinyjs::toggle(id = "optional2f",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$mode_selected2 == "Custom reference",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "optional2g",
+    observe({shinyjs::toggle(id = "optional2g",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$enter_upload2a == "Manual",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "optional2h",
+    observe({shinyjs::toggle(id = "optional2h",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$enter_upload2a == "Upload",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "optional2i",
+    observe({shinyjs::toggle(id = "optional2i",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = is.null(input$upload_file2a),
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_sec_map_download",
+    observe({shinyjs::toggle(id = "hidden_sec_map_download",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_map_mode != "None",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_sec_map_download2",
+    observe({shinyjs::toggle(id = "hidden_sec_map_download2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_map_mode2 != "None",
-                    asis = FALSE)
+                    asis = FALSE)})
    
     #Customization
     ##General Maps
     
-    shinyjs::toggle(id = "hidden_custom_maps",
+    observe({shinyjs::toggle(id = "hidden_custom_maps",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_map == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_axis",
+    observe({shinyjs::toggle(id = "hidden_custom_axis",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$axis_mode == "Fixed",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_title",
+    observe({shinyjs::toggle(id = "hidden_custom_title",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$title_mode == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_features",
+    observe({shinyjs::toggle(id = "hidden_custom_features",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_features == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_points",
+    observe({shinyjs::toggle(id = "hidden_custom_points",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature == "Point",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_highlights",
+    observe({shinyjs::toggle(id = "hidden_custom_highlights",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature == "Highlight",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_statistics",
+    observe({shinyjs::toggle(id = "hidden_custom_statistics",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$enable_custom_statistics == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_SD_ratio",
+    observe({shinyjs::toggle(id = "hidden_SD_ratio",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_statistic == "SD ratio",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_download",
+    observe({shinyjs::toggle(id = "hidden_download",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$download_options == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
     ## General TS
     
-    shinyjs::toggle(id = "hidden_custom_ts",
+    observe({shinyjs::toggle(id = "hidden_custom_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_ts == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_title_ts",
+    observe({shinyjs::toggle(id = "hidden_custom_title_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$title_mode_ts == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_key_position_ts",
+    observe({shinyjs::toggle(id = "hidden_key_position_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$show_key_ts == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_statistics_ts",
+    observe({shinyjs::toggle(id = "hidden_custom_statistics_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$enable_custom_statistics_ts == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_moving_average_ts",
+    observe({shinyjs::toggle(id = "hidden_moving_average_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_average_ts == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_percentile_ts",
+    observe({shinyjs::toggle(id = "hidden_percentile_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_percentile_ts == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_moving_percentile_ts",
+    observe({shinyjs::toggle(id = "hidden_moving_percentile_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_average_ts == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
 
-    shinyjs::toggle(id = "hidden_custom_features_ts",
+    observe({shinyjs::toggle(id = "hidden_custom_features_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_features_ts == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_points_ts",
+    observe({shinyjs::toggle(id = "hidden_custom_points_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts == "Point",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_highlights_ts",
+    observe({shinyjs::toggle(id = "hidden_custom_highlights_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts == "Highlight",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_line_ts",
+    observe({shinyjs::toggle(id = "hidden_custom_line_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts == "Line",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_download_ts",
+    observe({shinyjs::toggle(id = "hidden_download_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$download_options_ts == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
 
     ## Composites Maps
     
-    shinyjs::toggle(id = "hidden_custom_maps2",
+    observe({shinyjs::toggle(id = "hidden_custom_maps2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_map2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_axis2",
+    observe({shinyjs::toggle(id = "hidden_custom_axis2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$axis_mode2 == "Fixed",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_title2",
+    observe({shinyjs::toggle(id = "hidden_custom_title2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$title_mode2 == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_features2",
+    observe({shinyjs::toggle(id = "hidden_custom_features2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_features2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_points2",
+    observe({shinyjs::toggle(id = "hidden_custom_points2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature2 == "Point",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_highlights2",
+    observe({shinyjs::toggle(id = "hidden_custom_highlights2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature2 == "Highlight",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_statistics2",
+    observe({shinyjs::toggle(id = "hidden_custom_statistics2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$enable_custom_statistics2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_sign_match2",
+    observe({shinyjs::toggle(id = "hidden_sign_match2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_statistic2 == "% sign match",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_SD_ratio2",
+    observe({shinyjs::toggle(id = "hidden_SD_ratio2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_statistic2 == "SD ratio",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "custom_anomaly_years2",
+    observe({shinyjs::toggle(id = "custom_anomaly_years2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$mode_selected2 == "Custom reference",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_download2",
+    observe({shinyjs::toggle(id = "hidden_download2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$download_options2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
     ## Composites TS
     
-    shinyjs::toggle(id = "hidden_custom_ts2",
+    observe({shinyjs::toggle(id = "hidden_custom_ts2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_ts2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_title_ts2",
+    observe({shinyjs::toggle(id = "hidden_custom_title_ts2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$title_mode_ts2 == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_key_position_ts2",
+    observe({shinyjs::toggle(id = "hidden_key_position_ts2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$show_key_ts2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_statistics_ts2",
+    observe({shinyjs::toggle(id = "hidden_custom_statistics_ts2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$enable_custom_statistics_ts2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_percentile_ts2",
+    observe({shinyjs::toggle(id = "hidden_percentile_ts2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_percentile_ts2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_features_ts2",
+    observe({shinyjs::toggle(id = "hidden_custom_features_ts2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_features_ts2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_points_ts2",
+    observe({shinyjs::toggle(id = "hidden_custom_points_ts2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts2 == "Point",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_highlights_ts2",
+    observe({shinyjs::toggle(id = "hidden_custom_highlights_ts2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts2 == "Highlight",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_line_ts2",
+    observe({shinyjs::toggle(id = "hidden_custom_line_ts2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts2 == "Line",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "custom_anomaly_years2b",
+    observe({shinyjs::toggle(id = "custom_anomaly_years2b",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$mode_selected2 == "Custom reference",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_download_ts2",
+    observe({shinyjs::toggle(id = "hidden_download_ts2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$download_options_ts2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
     ## Correlation Maps
     
-    shinyjs::toggle(id = "hidden_custom_maps3",
+    observe({shinyjs::toggle(id = "hidden_custom_maps3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_map3 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_axis3",
+    observe({shinyjs::toggle(id = "hidden_custom_axis3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$axis_mode3 == "Fixed",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_title3",
+    observe({shinyjs::toggle(id = "hidden_custom_title3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$title_mode3 == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_features3",
+    observe({shinyjs::toggle(id = "hidden_custom_features3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_features3 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_points3",
+    observe({shinyjs::toggle(id = "hidden_custom_points3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature3 == "Point",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_highlights3",
+    observe({shinyjs::toggle(id = "hidden_custom_highlights3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature3 == "Highlight",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_download3",
+    observe({shinyjs::toggle(id = "hidden_download3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$download_options3 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
     ## Correlation TS
     
-    shinyjs::toggle(id = "hidden_custom_ts3",
+    observe({shinyjs::toggle(id = "hidden_custom_ts3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_ts3 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_title_ts3",
+    observe({shinyjs::toggle(id = "hidden_custom_title_ts3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$title_mode_ts3 == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_key_position_ts3",
+    observe({shinyjs::toggle(id = "hidden_key_position_ts3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$show_key_ts3 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_statistics_ts3",
+    observe({shinyjs::toggle(id = "hidden_custom_statistics_ts3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$enable_custom_statistics_ts3 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_moving_average_ts3",
+    observe({shinyjs::toggle(id = "hidden_moving_average_ts3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_average_ts3 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_features_ts3",
+    observe({shinyjs::toggle(id = "hidden_custom_features_ts3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_features_ts3 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_points_ts3",
+    observe({shinyjs::toggle(id = "hidden_custom_points_ts3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts3 == "Point",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_highlights_ts3",
+    observe({shinyjs::toggle(id = "hidden_custom_highlights_ts3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts3 == "Highlight",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_line_ts3",
+    observe({shinyjs::toggle(id = "hidden_custom_line_ts3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts3 == "Line",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_download_ts3",
+    observe({shinyjs::toggle(id = "hidden_download_ts3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$download_options_ts3 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
     # Correlation
     
     ##Sidebar V1
     
-    shinyjs::toggle(id = "upload_forcings_v1",
+    observe({shinyjs::toggle(id = "upload_forcings_v1",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v1 == "User Data",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "upload_example_v1",
+    observe({shinyjs::toggle(id = "upload_example_v1",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = is.null(input$user_file_v1),
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_user_variable_v1",
+    observe({shinyjs::toggle(id = "hidden_user_variable_v1",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v1 == "User Data",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_me_dataset_variable_v1",
+    observe({shinyjs::toggle(id = "hidden_me_dataset_variable_v1",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v1 == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_modera_variable_v1",
+    observe({shinyjs::toggle(id = "hidden_modera_variable_v1",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v1 == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "season_v1",
+    observe({shinyjs::toggle(id = "season_v1",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$season_selected_v1 == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "optional_v1",
+    observe({shinyjs::toggle(id = "optional_v1",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$mode_selected_v1 == "Anomaly",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_continents_v1",
+    observe({shinyjs::toggle(id = "hidden_continents_v1",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$coordinates_type_v1 == "Continents",
-                    asis = FALSE)
+                    asis = FALSE)})
     
     ##Sidebar V2
     
-    shinyjs::toggle(id = "upload_forcings_v2",
+    observe({shinyjs::toggle(id = "upload_forcings_v2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v2 == "User Data",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "upload_example_v2",
+    observe({shinyjs::toggle(id = "upload_example_v2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = is.null(input$user_file_v2),
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_user_variable_v2",
+    observe({shinyjs::toggle(id = "hidden_user_variable_v2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v2 == "User Data",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_me_dataset_variable_v2",
+    observe({shinyjs::toggle(id = "hidden_me_dataset_variable_v2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v2 == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
 
-    shinyjs::toggle(id = "hidden_modera_variable_v2",
+    observe({shinyjs::toggle(id = "hidden_modera_variable_v2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v2 == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "season_v2",
+    observe({shinyjs::toggle(id = "season_v2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$season_selected_v2 == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "optional_v2",
+    observe({shinyjs::toggle(id = "optional_v2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$mode_selected_v2 == "Anomaly",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_continents_v2",
+    observe({shinyjs::toggle(id = "hidden_continents_v2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$coordinates_type_v2 == "Continents",
-                    asis = FALSE)
+                    asis = FALSE)})
     
     #Correlation (Main Panel)
     
-    shinyjs::toggle(id = "hidden_v1_fad_download",
+    observe({shinyjs::toggle(id = "hidden_v1_fad_download",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v1 == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_v1_fad",
+    observe({shinyjs::toggle(id = "hidden_v1_fad",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v1 == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_v2_fad_download",
+    observe({shinyjs::toggle(id = "hidden_v2_fad_download",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v2 == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_v2_fad",
+    observe({shinyjs::toggle(id = "hidden_v2_fad",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_v2 == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
     # Regression
     
     ##Sidebar IV
     
-    shinyjs::toggle(id = "upload_forcings_iv",
+    observe({shinyjs::toggle(id = "upload_forcings_iv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_iv == "User Data",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "upload_example_iv",
+    observe({shinyjs::toggle(id = "upload_example_iv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = is.null(input$user_file_iv),
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_user_variable_iv",
+    observe({shinyjs::toggle(id = "hidden_user_variable_iv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_iv == "User Data",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_me_variable_dataset_iv",
+    observe({shinyjs::toggle(id = "hidden_me_variable_dataset_iv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_iv == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_modera_variable_iv",
+    observe({shinyjs::toggle(id = "hidden_modera_variable_iv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_iv == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "season_iv",
+    observe({shinyjs::toggle(id = "season_iv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$season_selected_iv == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "optional_iv",
+    observe({shinyjs::toggle(id = "optional_iv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$mode_selected_iv == "Anomaly",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_continents_iv",
+    observe({shinyjs::toggle(id = "hidden_continents_iv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$coordinates_type_iv == "Continents",
-                    asis = FALSE)
+                    asis = FALSE)})
     
     ##Sidebar DV
     
-    shinyjs::toggle(id = "upload_forcings_dv",
+    observe({shinyjs::toggle(id = "upload_forcings_dv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_dv == "User Data",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "upload_example_dv",
+    observe({shinyjs::toggle(id = "upload_example_dv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = is.null(input$user_file_dv),
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_user_variable_dv",
+    observe({shinyjs::toggle(id = "hidden_user_variable_dv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_dv == "User Data",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_me_variable_dataset_dv",
+    observe({shinyjs::toggle(id = "hidden_me_variable_dataset_dv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_dv == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_modera_variable_dv",
+    observe({shinyjs::toggle(id = "hidden_modera_variable_dv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_dv == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "season_dv",
+    observe({shinyjs::toggle(id = "season_dv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$season_selected_dv == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "optional_dv",
+    observe({shinyjs::toggle(id = "optional_dv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$mode_selected_dv == "Anomaly",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_continents_dv",
+    observe({shinyjs::toggle(id = "hidden_continents_dv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$coordinates_type_dv == "Continents",
-                    asis = FALSE)
+                    asis = FALSE)})
     
     ##Regression (Main Panel)
     
-    shinyjs::toggle(id = "hidden_iv_fad_download",
+    observe({shinyjs::toggle(id = "hidden_iv_fad_download",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_iv == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_iv_fad",
+    observe({shinyjs::toggle(id = "hidden_iv_fad",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_iv == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_dv_fad_download",
+    observe({shinyjs::toggle(id = "hidden_dv_fad_download",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_dv == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_dv_fad",
+    observe({shinyjs::toggle(id = "hidden_dv_fad",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$source_dv == "ModE-",
-                    asis = FALSE)
+                    asis = FALSE)})
     
     # Annual cycles
     
-    shinyjs::toggle(id = "optional5",
+    observe({shinyjs::toggle(id = "optional5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$mode_selected5 == "Anomaly",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_ts5",
+    observe({shinyjs::toggle(id = "hidden_custom_ts5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_ts5 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_title_ts5",
+    observe({shinyjs::toggle(id = "hidden_custom_title_ts5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$title_mode_ts5 == "Custom",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_key_position_ts5",
+    observe({shinyjs::toggle(id = "hidden_key_position_ts5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$show_key_ts5 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_features_ts5",
+    observe({shinyjs::toggle(id = "hidden_custom_features_ts5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_features_ts5 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_points_ts5",
+    observe({shinyjs::toggle(id = "hidden_custom_points_ts5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts5 == "Point",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_highlights_ts5",
+    observe({shinyjs::toggle(id = "hidden_custom_highlights_ts5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts5 == "Highlight",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_line_ts5",
+    observe({shinyjs::toggle(id = "hidden_custom_line_ts5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$feature_ts5 == "Line",
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_region_input",
+    observe({shinyjs::toggle(id = "hidden_region_input",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_features5 == FALSE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "hidden_custom_points5",
+    observe({shinyjs::toggle(id = "hidden_custom_points5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$custom_features5 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
     #Toggle Single Year UI (hide/show UI elements based on conditions)
     
-    shinyjs::toggle(id = "range_years_sg",
+    observe({shinyjs::toggle(id = "range_years_sg",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$single_year == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "range_years",
+    observe({shinyjs::toggle(id = "range_years",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$single_year == FALSE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "ref_period_sg",
+    observe({shinyjs::toggle(id = "ref_period_sg",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "ref_period",
+    observe({shinyjs::toggle(id = "ref_period",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year == FALSE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "ref_period_sg2",
+    observe({shinyjs::toggle(id = "ref_period_sg2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "ref_period2",
+    observe({shinyjs::toggle(id = "ref_period2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year2 == FALSE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "ref_period_sg_v1",
+    observe({shinyjs::toggle(id = "ref_period_sg_v1",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year_v1 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "ref_period_v1",
+    observe({shinyjs::toggle(id = "ref_period_v1",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year_v1 == FALSE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "ref_period_sg_v2",
+    observe({shinyjs::toggle(id = "ref_period_sg_v2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year_v2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "ref_period_v2",
+    observe({shinyjs::toggle(id = "ref_period_v2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year_v2 == FALSE,
-                    asis = FALSE)
+                    asis = FALSE)})
 
-    shinyjs::toggle(id = "ref_period_sg_iv",
+    observe({shinyjs::toggle(id = "ref_period_sg_iv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year_iv == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "ref_period_iv",
+    observe({shinyjs::toggle(id = "ref_period_iv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year_iv == FALSE,
-                    asis = FALSE)
+                    asis = FALSE)})
  
-    shinyjs::toggle(id = "ref_period_sg_dv",
+    observe({shinyjs::toggle(id = "ref_period_sg_dv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year_dv == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "ref_period_dv",
+    observe({shinyjs::toggle(id = "ref_period_dv",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year_dv == FALSE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "ref_period_sg5",
+    observe({shinyjs::toggle(id = "ref_period_sg5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year5 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "ref_period5",
+    observe({shinyjs::toggle(id = "ref_period5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$ref_single_year5 == FALSE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "highlight_label_ts",
+    observe({shinyjs::toggle(id = "highlight_label_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$show_highlight_on_legend_ts == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "highlight_label_ts2",
+    observe({shinyjs::toggle(id = "highlight_label_ts2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$show_highlight_on_legend_ts2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "highlight_label_ts3",
+    observe({shinyjs::toggle(id = "highlight_label_ts3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$show_highlight_on_legend_ts3 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "highlight_label_ts5",
+    observe({shinyjs::toggle(id = "highlight_label_ts5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$show_highlight_on_legend_ts5 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "line_label_ts",
+    observe({shinyjs::toggle(id = "line_label_ts",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$show_line_on_legend_ts == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "line_label_ts2",
+    observe({shinyjs::toggle(id = "line_label_ts2",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$show_line_on_legend_ts2 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "line_label_ts3",
+    observe({shinyjs::toggle(id = "line_label_ts3",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$show_line_on_legend_ts3 == TRUE,
-                    asis = FALSE)
+                    asis = FALSE)})
     
-    shinyjs::toggle(id = "line_label_ts5",
+    observe({shinyjs::toggle(id = "line_label_ts5",
                     anim = TRUE,
                     animType = "slide",
                     time = 0.5,
                     selector = NULL,
                     condition = input$show_line_on_legend_ts5 == TRUE,
-                    asis = FALSE)
-  
-  })
-  
+                    asis = FALSE)})
+ 
   ## GENERAL observe, update & interactive controls ----
   
     ### Input updaters ----
@@ -13349,15 +13345,15 @@ server <- function(input, output, session) {
     })
     
     # Stop App on end of session
-    session$onSessionEnded(function() {
-      stopApp()
-    })  
+    # session$onSessionEnded(function() {
+    #   stopApp()
+    # })  
 }
 
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
 # Run the app normally
-  runApp(app)
+  # runApp(app)
 # Run the app with profiling
   #profvis({runApp(app)})
 
