@@ -111,6 +111,18 @@ ui <- navbarPage(id = "nav1",
               h4(helpText("For queries relating to the ModE-RA data, please contact:")),
               h4("Mail to J\u00F6rg Franke:", a("franke@giub.unibe.ch", href = "mailto:franke@giub.unibe.ch"), style = "color: #094030;")
               
+            ), width = 12),
+          
+            br(),
+          
+            ### Third side bar ----
+            sidebarPanel(fluidRow(
+              h4(helpText("An offline version ClimeApp for Windows - CLIMEAPP DESKTOP - is available to download here:")), br(),
+              column(width = 12,
+                downloadButton("climeapp_desktop_download",
+                               label = "Download ClimeApp Desktop")
+              ),
+              h5(helpText("System Requirements: Download = 5.84 Gb. Full Installation = 11.6 Gb."))
             ), width = 12)
           ## Sidebar Panels END ---- 
           )),
@@ -4559,6 +4571,15 @@ ui <- navbarPage(id = "nav1",
      
 # Define server logic ----
 server <- function(input, output, session) {
+  
+  # ClimeApp Desktop Download ----
+  output$climeapp_desktop_download <- downloadHandler(
+    filename = function() {"ClimeApp Desktop Installer.zip"},
+    content = function(file) {
+      file.copy("ClimeApp Desktop Installer.zip",file)
+    }
+  )
+  
   # Set up custom data and SDratio reactive variables ----
   custom_data = reactiveVal()
   custom_data_ID = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current custom data
