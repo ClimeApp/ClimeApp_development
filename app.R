@@ -517,6 +517,8 @@ ui <- navbarPage(id = "nav1",
                                          image.height = spinner_height),
                              
                              uiOutput("vices", inline = TRUE),
+                             uiOutput("dev_team", inline = TRUE),
+                             uiOutput("ruebli", inline = TRUE),
                       
                       #### Customization panels START ----       
                       fluidRow(
@@ -4714,6 +4716,22 @@ server <- function(input, output, session) {
   output$vices <- renderUI({
     if (input$location == "VICES") {
       img(src = 'pics/no_image.jpg', id = "img_vices", height = "450", width = "600", style = "display: block; margin: 0 auto;")
+    } else {
+      NULL
+    }
+  })
+  
+  output$dev_team <- renderUI({
+    if (input$title1_input == "ClimeApp") {
+      img(src = 'pics/zero_image.jpg', id = "img_dev_team", height = "450", width = "600", style = "display: block; margin: 0 auto;")
+    } else {
+      NULL
+    }
+  })
+  
+  output$ruebli <- renderUI({
+    if (input$title2_input == "Rüebli") {
+      img(src = 'pics/zero_ruebli.jpg', id = "img_miau", height = "600", width = "338", style = "display: block; margin: 0 auto;")
     } else {
       NULL
     }
