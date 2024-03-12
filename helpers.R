@@ -493,9 +493,9 @@ composites_summary_popover = function(popover_ID){
 correlation_summary_popover = function(popover_ID){
   popover(
     h3(HTML("Correlation <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
-    "A composite is an average across multiple, non-consecutive years. The composite anomaly displayed is this average, minus the average over your selected",em("Reference period."),br(),br(),
-    "The",em("Map"),"shows the average anomaly across all years in your list of years.",br(),br(),
-    "The",em("Timeseries"),"shows the average anomaly across your selected geographic area for each year in the list of years.",br(),br(),
+    "Correlation measures the statistical relationship (causal or non-causal) between two variables. This tab allows you to correlate two sets of ModE data, or upload you own data to correlate against the ModE data or correlate two sets of uploaded data.",br(),br(),
+    "The", em("Timeseries"),"tab shows the timeseries and timeseries correlation for", em("Variable 1"),"and",em("Variable 2."),br(),br(),
+    "The",em("Correlation map"),"shows the correlation between", em("Variable 1"),"and",em("Variable 2")," for each point on the map.",br(),br(),
     "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
     title = "What is correlation?",
     id = popover_ID,
@@ -558,6 +558,7 @@ regression_summary_popover = function(popover_ID){
     "The",em("Regression coefficient, pvalues"),"and",em("residuals"),"tabs show the",em("coefficients, p values"),"and",em("residuals"),"of the regression for each point on the map.",br(),br(),
     "See (?) on the individual tabs and the",em("ClimeApp functions"),"tab on the Welcome page for more information.",
     id = popover_ID,
+    title = "What is regression?",
     placement = "right",
   ) 
 }
