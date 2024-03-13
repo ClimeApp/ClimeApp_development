@@ -36,7 +36,17 @@ ui <- navbarPage(id = "nav1",
                               dimension[1] = window.innerHeight;
                               Shiny.onInputChange("dimension", dimension);
                           });
+                      '),
+                      tags$script(
+                       HTML('
+                        $(document).ready(function() {
+                          // Add event listener to detect when the collapsible menu is toggled
+                          $(".navbar-toggle").click(function() {
+                            $(".navbar").toggleClass("collapsed-menu");
+                          });
+                        });
                       ')),
+                      ),
                        # No Red Error messages
                        tags$style(type="text/css",
                                   ".shiny-output-error { visibility: hidden; }",
@@ -13422,15 +13432,15 @@ server <- function(input, output, session) {
     })
     
     # Stop App on end of session
-    # session$onSessionEnded(function() {
-    #   stopApp()
-    # })
+     # session$onSessionEnded(function() {
+     #   stopApp()
+     # })
 }
 
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
 # Run the app normally
-  #runApp(app)
+  # runApp(app)
 # Run the app with profiling
   #profvis({runApp(app)})
 
