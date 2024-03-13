@@ -84,7 +84,7 @@ ui <- navbarPage(id = "nav1",
               h5(helpText("Temperature = Air temperature at 2m [\u00B0C]")),
               h5(helpText("Precipitation = Total monthly precipitation [mm]")),
               h5(helpText("SLP = Sea level pressure [hPa]")),
-              h5(helpText("Z500 = Pressure at 500 hPa geopotential height [m]"))
+              h5(helpText("Z500 = 500 hPa geopotential height [m]"))
             ),
             
             column(width = 12, br()),
@@ -13404,15 +13404,15 @@ server <- function(input, output, session) {
     })
     
     # Stop App on end of session
-    # session$onSessionEnded(function() {
-    #   stopApp()
-    # })
+    session$onSessionEnded(function() {
+       stopApp()
+    })
 }
 
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
 # Run the app normally
-  #runApp(app)
+  runApp(app)
 # Run the app with profiling
   #profvis({runApp(app)})
 
