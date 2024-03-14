@@ -102,7 +102,7 @@ ui <- navbarPage(id = "nav1",
             column(width = 12,
                    
                    h5(strong("User information:", style = "color: #094030;")),
-                   h5(helpText("To receive additional information for certain options, hover over UI elements e.g. Composites.")),
+                   h5(helpText("To receive additional information for certain options, click question mark icons of UI elements, e.g. Anomalies")),
                    h5(helpText("Additional features and subordinate options are initially hidden but can be made visible by clicking or ticking the respective elements.")),
                    h5(helpText("ClimeApp updates instantly when inputs are changed or new values are selected. Customizations have to be added manually.")),
                    h5(helpText("Wait until the loading symbol is gone or the new plot is rendered befor changing further values."))
