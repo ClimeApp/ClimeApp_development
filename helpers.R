@@ -476,7 +476,7 @@ MEsource_popover = function(popover_ID){
 
 composites_summary_popover = function(popover_ID){
   popover(
-    h3(HTML("Composites <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    h3(HTML("Composites <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
     "A composite is an average across multiple, non-consecutive years. The composite anomaly displayed is this average, minus the average over your selected",em("Reference period."),br(),br(),
     "The",em("Map"),"shows the average anomaly across all years in your list of years.",br(),br(),
     "The",em("Timeseries"),"shows the average anomaly across your selected geographic area for each year in the list of years.",br(),br(),
@@ -492,7 +492,7 @@ composites_summary_popover = function(popover_ID){
 
 correlation_summary_popover = function(popover_ID){
   popover(
-    h3(HTML("Correlation <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    h3(HTML("Correlation <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
     "Correlation measures the statistical relationship (causal or non-causal) between two variables. This tab allows you to correlate two sets of ModE data, or upload you own data to correlate against the ModE data or correlate two sets of uploaded data.",br(),br(),
     "The", em("Timeseries"),"tab shows the timeseries and timeseries correlation for", em("Variable 1"),"and",em("Variable 2."),br(),br(),
     "The",em("Correlation map"),"shows the correlation between", em("Variable 1"),"and",em("Variable 2")," for each point on the map.",br(),br(),
@@ -552,7 +552,7 @@ correlation_map_popover = function(popover_ID){
 
 regression_summary_popover = function(popover_ID){
   popover(
-    h3(HTML("Regression <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    h3(HTML("Regression <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
     "Regression takes one or more independent variables and calculates the linear equation that best links them to the dependent variable. This can be used ‘remove’ the effect of the independent variables, leaving the residual variation in the dependent variable.",br(),br(),
     "The",em("Regression timeseries"),"tab shows the",em("original, trend"),"and",em("residual"),"timeseries for the dependent variable, where",em("original = trend + residual."),"It also shows the statistics for the linear regression equation.",br(),br(),
     "The",em("Regression coefficient, pvalues"),"and",em("residuals"),"tabs show the",em("coefficients, p values"),"and",em("residuals"),"of the regression for each point on the map.",br(),br(),
@@ -652,7 +652,7 @@ regression_residuals_popover = function(popover_ID){
 
 annualcycles_summary_popover = function(popover_ID){
   popover(
-    h3(HTML("Annual Cycles <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    h3(HTML("Annual Cycles <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
     "This tool can be used to plot monthly values of a variable (absolute or anomaly) as an",em("annual cycle"),"for a given year or set of years. Multiple years can be displayed on the same plot, allowing several",em("annual cycles"),"to be compared.",
     title = "What are annual cycles?",
     id = popover_ID,
