@@ -143,7 +143,7 @@ ui <- navbarPage(id = "nav1",
             #### Tab Welcome ----
             tabPanel("Welcome",
             tags$img(src = 'pics/welcome_map.jpg', id = "welcome_map", class = "responsive-img"),
-            h4("For more information on ModE-RA please see:", style = "color: #094030;"),
+            h4("For more information on the ModE datasets and ClimeApp please see:", style = "color: #094030;"),
             h5(helpText(a("ModE-RA - a global monthly paleo-reanalysis of the modern era 1421 to 2008", href = "https://doi.org/10.1038/s41597-023-02733-8"), br(), a("ModE-RAclim - a version of the ModE-RA reanalysis with climatological prior for sensitivity studies", href = "https://www.wdc-climate.de/ui/entry?acronym=ModE-RAc"), br(),  a("ModE-Sim – a medium-sized atmospheric general circulation model (AGCM) ensemble to study climate variability during the modern era (1420 to 2009)", href = "https://gmd.copernicus.org/articles/16/4853/2023/"), br(), "[Place Holder for link to: ClimeApp technical paper (in progress)]")),
             h4("To cite, please reference:", style = "color: #094030;"),
             h5(helpText("[Place Holder: ClimeApp technical paper (in progress)]")),
