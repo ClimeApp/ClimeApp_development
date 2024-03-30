@@ -72,7 +72,7 @@ ui <- navbarPage(id = "nav1",
             h1("Welcome to ClimeApp", style = "color: #094030;"),
             br(),
             h4(em(helpText("Created by Niklaus Bartlome & Richard Warren."))),
-            h4(em(helpText("Co-developped by No\u00E9mie Wellinger."))),
+            h4(em(helpText("Co-developed by No\u00E9mie Wellinger."))),
             br(),
             h4("Data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis", style = "color: #094030;"),
             h5(helpText("Franke, J., Veronika, V., Hand, R., Samakinwa, E., Burgdorf, A.M., Lundstad, E., Brugnara, Y., H\u00F6vel, L. and Br\u00F6nnimann, S., 2023")),
@@ -105,7 +105,7 @@ ui <- navbarPage(id = "nav1",
                    h5(helpText("To receive additional information for certain options, click question mark icons of UI elements, e.g. Anomalies")),
                    h5(helpText("Additional features and subordinate options are initially hidden but can be made visible by clicking or ticking the respective elements.")),
                    h5(helpText("ClimeApp updates instantly when inputs are changed or new values are selected. Customizations have to be added manually.")),
-                   h5(helpText("Wait until the loading symbol is gone or the new plot is rendered befor changing further values."))
+                   h5(helpText("Wait until the loading symbol is gone or the new plot is rendered before changing further values."))
             )
 
           ), width = 12),
@@ -13441,7 +13441,7 @@ server <- function(input, output, session) {
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
 # Run the app normally
-  #runApp(app)
+  # runApp(app)
 # Run the app with profiling
   #profvis({runApp(app)})
 

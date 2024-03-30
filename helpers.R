@@ -4,7 +4,7 @@
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-#setwd("C:/Users/nikla/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
 
 #Richard:
 #Laptop/desktop:
@@ -1666,7 +1666,9 @@ plot_modera_sources = function(year,season,lon_range,lat_range,labs){
   
   # Set color scheme
   type_list = c("ice_proxy","glacier_ice_proxy","lake_sediment_proxy","tree_proxy","coral_proxy","instrumental_data","documentary_proxy","speleothem_proxy","bivalve_proxy","other_proxy")
-  color_list = brewer.pal(10,"Paired")
+  # Paul Tol's Muted Colour List for Colour Blind People
+    color_list = c('#88CCEE', '#332288', '#DDCC77', '#117733', '#CC6677', '#882255', '#44AA99', '#999933', '#AA4499', '#000000')
+  # color_list = brewer.pal(10,"Paired")
   named_colors = setNames(color_list,type_list)
   
   # Set shape scheme
