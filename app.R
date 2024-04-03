@@ -10,7 +10,7 @@ ui <- navbarPage(id = "nav1",
           title = div(style = "display: inline;",
                       uiOutput("logo_output", inline = TRUE),
                       uiOutput("logo_output2", inline = TRUE),
-                      "(v1.0)",
+                      "(v1.1)",
                       #Preparation to use Tracking ShinyJS and CSS
                       shinyjs::useShinyjs(),
                       use_tracking()
@@ -259,6 +259,10 @@ ui <- navbarPage(id = "nav1",
             #### Tab Version History ----
             tabPanel("Version history",
                      br(), br(),
+                     h5(strong("v1.1 (04.04.2024)", style = "color: #094030;")),
+                     tags$ul(
+                       tags$li("Option to add GeoPackage-Layers (shape files) on top of field plots"),
+                     ),
                      h5(strong("v1.0 (11.03.2024)", style = "color: #094030;")),
                      tags$ul(
                        tags$li("Download / Upload option for metadata"),
@@ -586,9 +590,18 @@ ui <- navbarPage(id = "nav1",
                              
                              br(),
                              
+                             h4(helpText("Shape file and border options", map_customization_layers_popover("pop_anomalies_layers"))),
+                             
                              checkboxInput(inputId = "hide_borders",
                                            label   = "Show country borders",
                                            value   = TRUE),
+                             
+                             #Shape File Option
+                             
+                             fileInput("shpFile", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
+                             actionButton("reorderButton", "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
+                             pickerInput("shpPickers", "Select Shapefiles to Display", choices = NULL, multiple = TRUE),
+                             uiOutput("colorpickers"),  # Dynamically generate color pickers for each shapefile
                              
                              )),
                          ),
@@ -1512,9 +1525,18 @@ ui <- navbarPage(id = "nav1",
                           
                           br(),
                           
+                          h4(helpText("Shape file and border options", map_customization_layers_popover("pop_composites_layers"))),
+                          
                           checkboxInput(inputId = "hide_borders2",
                                         label   = "Show country borders",
                                         value   = TRUE),
+                          
+                          #Shape File Option
+                          
+                          fileInput("shpFile2", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
+                          actionButton("reorderButton2", "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
+                          pickerInput("shpPickers2", "Select Shapefiles to Display", choices = NULL, multiple = TRUE),
+                          uiOutput("colorpickers2"),  # Dynamically generate color pickers for each shapefile
                           
                         )),
                       ),
@@ -2939,9 +2961,18 @@ ui <- navbarPage(id = "nav1",
                                    
                                    br(),
                                    
+                                   h4(helpText("Shape file and border options", map_customization_layers_popover("pop_correlation_layers"))),
+                                   
                                    checkboxInput(inputId = "hide_borders3",
                                                  label   = "Show country borders",
                                                  value   = TRUE),
+                                   
+                                   #Shape File Option
+                                   
+                                   fileInput("shpFile3", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
+                                   actionButton("reorderButton3", "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
+                                   pickerInput("shpPickers3", "Select Shapefiles to Display", choices = NULL, multiple = TRUE),
+                                   uiOutput("colorpickers3"),  # Dynamically generate color pickers for each shapefile
                                    
                                )),
                       ),
@@ -4661,8 +4692,9 @@ server <- function(input, output, session) {
     logo_src <- 'pics/Clim-year.png'
     logo_id <- "Clim-year"
     logo_width <- "142px"
-  } else if ((current_month_day >= "03-22" && current_month_day <= "04-09") ||
-             (current_month_day >= "04-11" && current_month_day <= "04-25")) {
+  } else if ((current_month_day >= "03-22" && current_month_day <= "04-09")
+             #omitted the OR (current_month_day >= "04-11" && current_month_day <= "04-25")
+             ) {
     # Easter Egg
     logo_src <- 'pics/Clim-ster.png'
     logo_id <- "Clim-ster"
@@ -6849,6 +6881,29 @@ server <- function(input, output, session) {
       }
     })
     
+    ### Generate Layer Options for customization ----
+    # Reactive value to store the plot order
+    plotOrder <- reactiveVal(character(0))
+    
+    # Usage example:
+    observeEvent(input$shpFile, {
+      updatePlotOrder(input$shpFile$datapath, plotOrder, "shpPickers")
+    })
+    
+    # Function to generate color picker UI dynamically
+    output$colorpickers <- renderUI({
+      createColorPickers(plotOrder(), input$shpFile)
+    })
+    
+    # Manually reorder shapefiles
+    observeEvent(input$reorderButton, {
+      createReorderModal(plotOrder(), input$shpFile)
+      
+    })
+    
+    observeEvent(input$reorderConfirm, {
+      reorder_shapefiles(plotOrder, input$reorderSelect, input$reorderAfter, "shpPickers")
+    })
   ## COMPOSITES observe, update & interactive controls ----
   
     ### Input updaters ----
@@ -7671,6 +7726,29 @@ server <- function(input, output, session) {
     })
     
     
+    ### Generate Layer Options for customization ----
+    # Reactive value to store the plot order
+    plotOrder2 <- reactiveVal(character(0))
+    
+    # Usage example:
+    observeEvent(input$shpFile2, {
+      updatePlotOrder(input$shpFile2$datapath, plotOrder2, "shpPickers2")
+    })
+    
+    # Function to generate color picker UI dynamically
+    output$colorpickers2 <- renderUI({
+      createColorPickers(plotOrder2(), input$shpFile2)
+    })
+    
+    # Manually reorder shapefiles
+    observeEvent(input$reorderButton2, {
+      createReorderModal(plotOrder2(), input$shpFile2)
+      
+    })
+    
+    observeEvent(input$reorderConfirm, {
+      reorder_shapefiles(plotOrder2, input$reorderSelect, input$reorderAfter, "shpPickers2")
+    })
   ## CORRELATION observe, update & interactive controls ----
   
     ### Input updaters ----
@@ -8893,6 +8971,29 @@ server <- function(input, output, session) {
       }
     })
     
+    ### Generate Layer Options for customization ----
+    # Reactive value to store the plot order
+    plotOrder3 <- reactiveVal(character(0))
+    
+    # Usage example:
+    observeEvent(input$shpFile3, {
+      updatePlotOrder(input$shpFile3$datapath, plotOrder3, "shpPickers3")
+    })
+    
+    # Function to generate color picker UI dynamically
+    output$colorpickers3 <- renderUI({
+      createColorPickers(plotOrder3(), input$shpFile3)
+    })
+    
+    # Manually reorder shapefiles
+    observeEvent(input$reorderButton3, {
+      createReorderModal(plotOrder3(), input$shpFile3)
+      
+    })
+    
+    observeEvent(input$reorderConfirm, {
+      reorder_shapefiles(plotOrder3, input$reorderSelect, input$reorderAfter, "shpPickers3")
+    })
   ## REGRESSION observe, update & interactive controls ----
     
     ### Input updaters ----
@@ -10110,7 +10211,7 @@ server <- function(input, output, session) {
       return(m_d)  
     })
     
-    map_plot <- function(){plot_default_map(map_data(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders)}
+    map_plot <- function(){plot_default_map(map_data(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,plotOrder(), input$shpPickers, input)}
     
     output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
     # code line below sets height as a function of the ratio of lat/lon 
@@ -10667,7 +10768,7 @@ server <- function(input, output, session) {
       return(m_d_2)
     })
     
-    map_plot_2 <- function(){plot_default_map(map_data_2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2)}
+    map_plot_2 <- function(){plot_default_map(map_data_2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2,plotOrder2(), input$shpPickers2, input)}
     
     output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
     # code line below sets height as a function of the ratio of lat/lon 
@@ -11534,7 +11635,7 @@ server <- function(input, output, session) {
     corr_m1 = function(){
       if ((input$type_v1 == "Field") | (input$type_v2 == "Field")){
         plot_correlation_map(correlation_map_data(),plot_titles_cor(),input$axis_input3,
-                             input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame(),input$hide_borders3)
+                             input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame(),input$hide_borders3,plotOrder3(), input$shpPickers3, input)
       }
     }
     
@@ -13432,9 +13533,9 @@ server <- function(input, output, session) {
     })
     
     # Stop App on end of session
-     # session$onSessionEnded(function() {
-     #   stopApp()
-     # })
+    # session$onSessionEnded(function() {
+    #   stopApp()
+    # })
 
 }
 

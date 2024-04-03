@@ -223,6 +223,20 @@ map_customization_popover = function(popover_ID){
   )
 }
 
+## MAP CUSTOMIZATION LAYERS
+## popover_IDs = pop_anomalies_layers, pop_composites_layers, pop_correlation_layers
+
+map_customization_layers_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Show or hide modern country border by ticking the checkbox or upload your own",em("GeoPackage-Layer"),"using the upload button.",br(),br(),
+    "Layers can be selected individually, their outline separately coloured and even reordered.",br(),
+    "You can upload one or several shape files, compressed in a zip file, to add your own",em("shapes, borders, rivers, cities"),"on top of the global map. The shape file(s) (.shp) must have all dependencies (.shx, .dbf, .prj etc.) inside the zip. You can add and upload multiple zip files to a previously uploaded. Accepted shapes are",em("polygons, points and lines."),
+    id = popover_ID,
+    placement = "right",
+  )
+}
+
 ## CUSTOM MAP FEATURES
 ## popover_IDs = pop_anomalies_mapfeat, pop_composites_mapfeat, pop_correlation_mapfeat
 
@@ -1224,7 +1238,7 @@ set_axis_values = function(data_input,mode){
 ##                available/used
 
 plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axis,
-                            points_data, highlights_data,stat_highlights_data,c_borders){
+                            points_data, highlights_data,stat_highlights_data,c_borders, plotOrder, shpPickers, input){
   
   ## Create x, y & z values
   x_str = colnames(data_input)
@@ -1257,12 +1271,35 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
   if (hide_axis == FALSE){
     # Plot with default axis
     if(is.null(axis_range[1])){
+      
       # Absolute 
       if (mode == "Absolute"){
         filled.contour(x,y,z, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
           axis(1, seq(-170, 180, by = 10))
           axis(2, seq(-90, 90, by = 10))
-          add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)},
+          add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+          
+          for (file in plotOrder) {
+            file_name <- tools::file_path_sans_ext(basename(file))
+            if (file_name %in% shpPickers) {
+              shape <- st_read(file)
+              shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+              
+              # Plot based on geometry type
+              geom_type <- st_geometry_type(shape)
+              if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+                plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+                
+              } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+                plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+                
+              } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+                plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+              }
+            }
+          }
+          
+          },
           key.title = title(main = v_unit,font.main = 1))
       } 
       
@@ -1273,7 +1310,30 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
         filled.contour(x,y,z, zlim = c(-z_max,z_max), color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
           axis(1, seq(-170, 180, by = 10))
           axis(2, seq(-90, 90, by = 10))
-          add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)},
+          add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+          
+          for (file in plotOrder) {
+            file_name <- tools::file_path_sans_ext(basename(file))
+            if (file_name %in% shpPickers) {
+              shape <- st_read(file)
+              shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+              
+              # Plot based on geometry type
+              geom_type <- st_geometry_type(shape)
+              if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+                plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+                
+              } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+                plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+                
+              } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+                plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+              }
+            }
+          }
+          
+          
+          },
           key.title = title(main = v_unit,font.main = 1))
       }
     } 
@@ -1282,7 +1342,29 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
       filled.contour(x,y,z, zlim = axis_range, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
         axis(1, seq(-180, 180, by = 10))
         axis(2, seq(-90, 90, by = 10))
-        add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)},
+        add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+        
+        for (file in plotOrder) {
+          file_name <- tools::file_path_sans_ext(basename(file))
+          if (file_name %in% shpPickers) {
+            shape <- st_read(file)
+            shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+            
+            # Plot based on geometry type
+            geom_type <- st_geometry_type(shape)
+            if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+              plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+              
+            } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+              
+            } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+            }
+          }
+        }
+        
+        },
         key.title = title(main = v_unit,font.main = 1))
     }
     # Add title 2
@@ -1332,12 +1414,33 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
     axis(4,c(-90, 90), label=FALSE, tcl=0, las=1)
     add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
     
+    for (file in plotOrder) {
+      file_name <- tools::file_path_sans_ext(basename(file))
+      if (file_name %in% shpPickers) {
+        shape <- st_read(file)
+        shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+        
+        # Plot based on geometry type
+        geom_type <- st_geometry_type(shape)
+        if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+          plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+          
+        } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+          plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+          
+        } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+          plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+        }
+      }
+    }
+    
     # Add title 2
     title(titles$map_title2, cex.main = 1,   font.main= 1, adj=1)  
   }  
   
   # Add title 1
   title(titles$map_title1, cex.main = 1.5,   font.main= 1, adj=0)
+
 }
 
 
@@ -2573,6 +2676,88 @@ add_TS_key = function(key_position,data_highlights,data_lines,variable,month_ran
 } 
 
 
+## (Plot Features) ADD SHAPE FILE LAYERS TO STANDARD PLOTS
+##                  zipFile = input to the shpFile
+##                  plotOrder = reactive Value to store the plot Order
+##                  pickerInput = Layer Picker Input
+##                  reorderSelect = Modal Button
+##                  reorderAfter = Modal Button
+##                  input = Colour Input
+
+# Define a function to extract shapefile contents and update plot order
+updatePlotOrder <- function(zipFile, plotOrder, pickerInput) {
+  # Unzip the shapefile
+  unzip(zipFile, exdir = tempdir())
+  
+  # Find shapefiles in the temporary directory
+  shpFiles <- list.files(tempdir(), pattern = ".shp$", full.names = TRUE)
+  
+  # Update the plot order reactive value
+  plotOrder(shpFiles)
+  
+  # Update picker input choices
+  updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
+}
+
+# Function to generate color picker UI dynamically
+createColorPickers <- function(plotOrder, shpFile) {
+  req(shpFile)
+  # Get the list of shapefiles from the reactive value
+  shp_files <- plotOrder
+  
+  # Create color pickers for each shapefile
+  colorpickers <- lapply(shp_files, function(file) {
+    file_name <- tools::file_path_sans_ext(basename(file))
+    colourpicker::colourInput(inputId = paste0("shp_colour_", file_name), 
+                              label   = paste("Border Color for", file_name),
+                              value = "black", # default color for the border
+                              showColour = "background",
+                              allowTransparent = TRUE,
+                              palette = "square")
+  })
+  
+  # Combine color pickers into a tag list
+  do.call(tagList, colorpickers)
+}
+
+#Create reorder modal
+createReorderModal <- function(plotOrder, shpFile) {
+  req(shpFile)
+  # Create the modal dialog
+  showModal(
+    modalDialog(
+      selectizeInput("reorderSelect", "Select Shapefile to Move", choices = basename(plotOrder), multiple = FALSE),
+      selectizeInput("reorderAfter", "Move After", choices = c("", basename(plotOrder)), multiple = FALSE),
+      footer = tagList(
+        actionButton("reorderConfirm", "Move"),
+        modalButton("Cancel")
+      )
+    ))
+}
+
+#Reorder shape file
+reorder_shapefiles <- function(plotOrder, reorderSelect, reorderAfter, pickerInput) {
+  
+  new_order <- plotOrder()
+  file_to_move_basename <- reorderSelect
+  move_after_basename <- reorderAfter
+  
+  # Retrieve full paths
+  file_to_move <- new_order[grep(file_to_move_basename, new_order)]
+  move_after <- new_order[grep(move_after_basename, new_order)]
+  
+  if (length(file_to_move) > 0) {  # Ensure file_to_move is found in new_order
+    new_order <- new_order[new_order != file_to_move]
+    if (length(move_after) > 0)  # Ensure move_after is found in new_order
+      insert_index <- match(move_after, new_order) + 1
+    else
+      insert_index <- 1
+    new_order <- c(new_order[seq_len(insert_index - 1)], file_to_move, new_order[seq(insert_index, length(new_order))])
+    plotOrder(new_order)
+    updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(new_order)))
+    removeModal()
+  }
+}
 
 #### Composite Functions ####
 
@@ -3216,7 +3401,7 @@ generate_correlation_map_data = function(variable1_data, variable2_data, method,
 ##                  available/used
 
 plot_correlation_map = function(data_input, correlation_titles,axis_range,
-                                hide_axis,points_data, highlights_data,stat_highlights_data,c_borders){
+                                hide_axis,points_data, highlights_data,stat_highlights_data,c_borders,plotOrder, shpPickers, input){
   
   # Set up variables
   x = data_input[[1]]
@@ -3235,7 +3420,29 @@ plot_correlation_map = function(data_input, correlation_titles,axis_range,
       filled.contour(x,y,z, zlim = minmax, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
         axis(1, seq(-170, 180, by = 10))
         axis(2, seq(-90, 90, by = 10))
-        add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)},
+        add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+        
+        for (file in plotOrder) {
+          file_name <- tools::file_path_sans_ext(basename(file))
+          if (file_name %in% shpPickers) {
+            shape <- st_read(file)
+            shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+            
+            # Plot based on geometry type
+            geom_type <- st_geometry_type(shape)
+            if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+              plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+              
+            } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+              
+            } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+            }
+          }
+        }
+        
+        },
         key.title = title(main = "r",font.main = 1))
     } 
     # Plot with custom axis
@@ -3243,7 +3450,29 @@ plot_correlation_map = function(data_input, correlation_titles,axis_range,
       filled.contour(x,y,z, zlim = axis_range, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
         axis(1, seq(-180, 180, by = 10))
         axis(2, seq(-90, 90, by = 10))
-        add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)},
+        add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+        
+        for (file in plotOrder) {
+          file_name <- tools::file_path_sans_ext(basename(file))
+          if (file_name %in% shpPickers) {
+            shape <- st_read(file)
+            shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+            
+            # Plot based on geometry type
+            geom_type <- st_geometry_type(shape)
+            if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+              plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+              
+            } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+              
+            } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+            }
+          }
+        }
+        
+        },
         key.title = title(main = "r",font.main = 1))
     }
   }
@@ -3277,6 +3506,27 @@ plot_correlation_map = function(data_input, correlation_titles,axis_range,
     axis(3,c(-180, 180), label=FALSE, tcl=0, las=1)
     axis(4,c(-90, 90), label=FALSE, tcl=0, las=1)
     add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+    
+    for (file in plotOrder) {
+      file_name <- tools::file_path_sans_ext(basename(file))
+      if (file_name %in% shpPickers) {
+        shape <- st_read(file)
+        shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+        
+        # Plot based on geometry type
+        geom_type <- st_geometry_type(shape)
+        if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+          plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+          
+        } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+          plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+          
+        } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+          plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+        }
+      }
+    }
+    
   }  
   
   # Add title
