@@ -7725,19 +7725,18 @@ server <- function(input, output, session) {
       }
     })
     
-    
     ### Generate Layer Options for customization ----
     # Reactive value to store the plot order
     plotOrder2 <- reactiveVal(character(0))
     
     # Usage example:
     observeEvent(input$shpFile2, {
-      updatePlotOrder(input$shpFile2$datapath, plotOrder2, "shpPickers2")
+      updatePlotOrder2(input$shpFile2$datapath, plotOrder2, "shpPickers2")
     })
     
     # Function to generate color picker UI dynamically
     output$colorpickers2 <- renderUI({
-      createColorPickers(plotOrder2(), input$shpFile2)
+      createColorPickers2(plotOrder2(), input$shpFile2)
     })
     
     # Manually reorder shapefiles
@@ -8977,12 +8976,12 @@ server <- function(input, output, session) {
     
     # Usage example:
     observeEvent(input$shpFile3, {
-      updatePlotOrder(input$shpFile3$datapath, plotOrder3, "shpPickers3")
+      updatePlotOrder3(input$shpFile3$datapath, plotOrder3, "shpPickers3")
     })
     
     # Function to generate color picker UI dynamically
     output$colorpickers3 <- renderUI({
-      createColorPickers(plotOrder3(), input$shpFile3)
+      createColorPickers3(plotOrder3(), input$shpFile3)
     })
     
     # Manually reorder shapefiles
@@ -10211,7 +10210,7 @@ server <- function(input, output, session) {
       return(m_d)  
     })
     
-    map_plot <- function(){plot_default_map(map_data(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,plotOrder(), input$shpPickers, input)}
+    map_plot <- function(){plot_default_map(map_data(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_")}
     
     output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
     # code line below sets height as a function of the ratio of lat/lon 
@@ -10246,9 +10245,9 @@ server <- function(input, output, session) {
     
     ref_map_plot <- function(){
       if (input$ref_map_mode == "Absolute Values" | input$ref_map_mode == "Reference Values" ){
-        plot_default_map(ref_map_data(), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders)
+        plot_default_map(ref_map_data(), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_")
       } else if(input$ref_map_mode == "SD Ratio"){
-        plot_default_map(ref_map_data(), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders)
+        plot_default_map(ref_map_data(), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_")
       }
     }
     
@@ -10768,7 +10767,7 @@ server <- function(input, output, session) {
       return(m_d_2)
     })
     
-    map_plot_2 <- function(){plot_default_map(map_data_2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2,plotOrder2(), input$shpPickers2, input)}
+    map_plot_2 <- function(){plot_default_map(map_data_2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2, plotOrder2(), input$shpPickers2, input, "shp_colour2_")}
     
     output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
     # code line below sets height as a function of the ratio of lat/lon 
@@ -10803,9 +10802,9 @@ server <- function(input, output, session) {
     
     ref_map_plot_2 <- function(){
       if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Values" ){
-        plot_default_map(ref_map_data_2(), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2)
+        plot_default_map(ref_map_data_2(), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2,plotOrder2(), input$shpPickers2, input, "shp_colour2_")
       } else if (input$ref_map_mode2 == "SD Ratio"){
-        plot_default_map(ref_map_data_2(), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2)
+        plot_default_map(ref_map_data_2(), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2,plotOrder2(), input$shpPickers2, input, "shp_colour2_")
       }
     }
     
@@ -11355,7 +11354,7 @@ server <- function(input, output, session) {
     # Generate Map data & plotting function
     map_data_v1 <- function(){create_map_datatable(data_output4_v1(), subset_lons_v1(), subset_lats_v1())}
     
-    ME_map_plot_v1 <- function(){plot_default_map(map_data_v1(), input$ME_variable_v1, input$mode_selected_v1, plot_titles_v1(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE)}
+    ME_map_plot_v1 <- function(){plot_default_map(map_data_v1(), input$ME_variable_v1, input$mode_selected_v1, plot_titles_v1(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE, plotOrder(), input$shpPickers, input, "shp_colour1_")}
     
     # Generate timeseries data & plotting function
     timeseries_data_v1 <- reactive({
@@ -11442,7 +11441,7 @@ server <- function(input, output, session) {
     # Generate Map data & plotting function
     map_data_v2 <- function(){create_map_datatable(data_output4_v2(), subset_lons_v2(), subset_lats_v2())}
     
-    ME_map_plot_v2 <- function(){plot_default_map(map_data_v2(), input$ME_variable_v2, input$mode_selected_v2, plot_titles_v2(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE)}
+    ME_map_plot_v2 <- function(){plot_default_map(map_data_v2(), input$ME_variable_v2, input$mode_selected_v2, plot_titles_v2(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
     
     # Generate timeseries data & plotting function
     timeseries_data_v2 <- reactive({
@@ -12268,7 +12267,7 @@ server <- function(input, output, session) {
     # Generate Map data & plotting function for dv
     map_data_dv <- function(){create_map_datatable(data_output4_dv(), subset_lons_dv(), subset_lats_dv())}
     
-    ME_map_plot_dv <- function(){plot_default_map(map_data_dv(), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE)}
+    ME_map_plot_dv <- function(){plot_default_map(map_data_dv(), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
     
     # Generate timeseries data & plotting function for iv
     ME_ts_data_iv <- reactive({
@@ -13542,7 +13541,7 @@ server <- function(input, output, session) {
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
 # Run the app normally
-  # runApp(app)
+   # runApp(app)
 # Run the app with profiling
   #profvis({runApp(app)})
 

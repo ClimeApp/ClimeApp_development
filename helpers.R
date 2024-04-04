@@ -231,7 +231,7 @@ map_customization_layers_popover = function(popover_ID){
     HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
     "Show or hide modern country border by ticking the checkbox or upload your own",em("GeoPackage-Layer"),"using the upload button.",br(),br(),
     "Layers can be selected individually, their outline separately coloured and even reordered.",br(),
-    "You can upload one or several shape files, compressed in a zip file, to add your own",em("shapes, borders, rivers, cities"),"on top of the global map. The shape file(s) (.shp) must have all dependencies (.shx, .dbf, .prj etc.) inside the zip. You can add and upload multiple zip files to a previously uploaded. Accepted shapes are",em("polygons, points and lines."),
+    "You can upload one or several shape files, compressed in a zip file, to add your own",em("shapes, borders, rivers, cities"),"on top of the global map. The shape file(s) (.shp) must have all dependencies (.shx, .dbf, .prj etc.) inside the zip. Accepted shapes are",em("polygons, points and lines."),
     id = popover_ID,
     placement = "right",
   )
@@ -1238,7 +1238,14 @@ set_axis_values = function(data_input,mode){
 ##                available/used
 
 plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axis,
-                            points_data, highlights_data,stat_highlights_data,c_borders, plotOrder, shpPickers, input){
+                            points_data, highlights_data,stat_highlights_data,c_borders, plotOrder, shpPickers, input, plotType){
+  
+  # Define the prefix for the color pickers based on plotType
+  if (plotType == "shp_colour_") {
+    color_picker_prefix <- "shp_colour_"
+  } else if (plotType == "shp_colour2_") {
+    color_picker_prefix <- "shp_colour2_"
+  }
   
   ## Create x, y & z values
   x_str = colnames(data_input)
@@ -1288,13 +1295,13 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
               # Plot based on geometry type
               geom_type <- st_geometry_type(shape)
               if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-                plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+                plot(st_geometry(shape), add = TRUE, border = input[[paste0(color_picker_prefix, file_name)]], col = NA)
                 
               } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-                plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+                plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]])
                 
               } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-                plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+                plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]], pch = 1)
               }
             }
           }
@@ -1321,13 +1328,13 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
               # Plot based on geometry type
               geom_type <- st_geometry_type(shape)
               if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-                plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+                plot(st_geometry(shape), add = TRUE, border = input[[paste0(color_picker_prefix, file_name)]], col = NA)
                 
               } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-                plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+                plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]])
                 
               } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-                plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+                plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]], pch = 1)
               }
             }
           }
@@ -1353,13 +1360,13 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
             # Plot based on geometry type
             geom_type <- st_geometry_type(shape)
             if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+              plot(st_geometry(shape), add = TRUE, border = input[[paste0(color_picker_prefix, file_name)]], col = NA)
               
             } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+              plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]])
               
             } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+              plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]], pch = 1)
             }
           }
         }
@@ -1423,13 +1430,13 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
         # Plot based on geometry type
         geom_type <- st_geometry_type(shape)
         if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-          plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+          plot(st_geometry(shape), add = TRUE, border = input[[paste0(color_picker_prefix, file_name)]], col = NA)
           
         } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-          plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+          plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]])
           
         } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-          plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+          plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]], pch = 1)
         }
       }
     }
@@ -2684,13 +2691,17 @@ add_TS_key = function(key_position,data_highlights,data_lines,variable,month_ran
 ##                  reorderAfter = Modal Button
 ##                  input = Colour Input
 
-# Define a function to extract shapefile contents and update plot order
+# Define a function to extract shapefile contents and update plot order (Anomaly)
 updatePlotOrder <- function(zipFile, plotOrder, pickerInput) {
+  # Create a unique temporary directory for this function
+  temp_dir <- tempfile(pattern = "anomaly_")
+  dir.create(temp_dir)
+  
   # Unzip the shapefile
-  unzip(zipFile, exdir = tempdir())
+  unzip(zipFile, exdir = temp_dir)
   
   # Find shapefiles in the temporary directory
-  shpFiles <- list.files(tempdir(), pattern = ".shp$", full.names = TRUE)
+  shpFiles <- list.files(temp_dir, pattern = ".shp$", full.names = TRUE)
   
   # Update the plot order reactive value
   plotOrder(shpFiles)
@@ -2699,7 +2710,45 @@ updatePlotOrder <- function(zipFile, plotOrder, pickerInput) {
   updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
 }
 
-# Function to generate color picker UI dynamically
+# Define a function to extract shapefile contents and update plot order (Composite)
+updatePlotOrder2 <- function(zipFile, plotOrder, pickerInput) {
+  # Create a unique temporary directory for this function
+  temp_dir <- tempfile(pattern = "composite_")
+  dir.create(temp_dir)
+  
+  # Unzip the shapefile
+  unzip(zipFile, exdir = temp_dir)
+  
+  # Find shapefiles in the temporary directory
+  shpFiles <- list.files(temp_dir, pattern = ".shp$", full.names = TRUE)
+  
+  # Update the plot order reactive value
+  plotOrder(shpFiles)
+  
+  # Update picker input choices
+  updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
+}
+
+# Define a function to extract shapefile contents and update plot order (Correlation)
+updatePlotOrder3 <- function(zipFile, plotOrder, pickerInput) {
+  # Create a unique temporary directory for this function
+  temp_dir <- tempfile(pattern = "correlation_")
+  dir.create(temp_dir)
+  
+  # Unzip the shapefile
+  unzip(zipFile, exdir = temp_dir)
+  
+  # Find shapefiles in the temporary directory
+  shpFiles <- list.files(temp_dir, pattern = ".shp$", full.names = TRUE)
+  
+  # Update the plot order reactive value
+  plotOrder(shpFiles)
+  
+  # Update picker input choices
+  updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
+}
+
+# Function to generate color picker UI dynamically (Anomaly)
 createColorPickers <- function(plotOrder, shpFile) {
   req(shpFile)
   # Get the list of shapefiles from the reactive value
@@ -2720,6 +2769,48 @@ createColorPickers <- function(plotOrder, shpFile) {
   do.call(tagList, colorpickers)
 }
 
+# Function to generate color picker UI dynamically (Composite)
+createColorPickers2 <- function(plotOrder, shpFile) {
+  req(shpFile)
+  # Get the list of shapefiles from the reactive value
+  shp_files <- plotOrder
+  
+  # Create color pickers for each shapefile
+  colorpickers2 <- lapply(shp_files, function(file) {
+    file_name <- tools::file_path_sans_ext(basename(file))
+    colourpicker::colourInput(inputId = paste0("shp_colour2_", file_name), 
+                              label   = paste("Border Color for", file_name),
+                              value = "black", # default color for the border
+                              showColour = "background",
+                              allowTransparent = TRUE,
+                              palette = "square")
+  })
+  
+  # Combine color pickers into a tag list
+  do.call(tagList, colorpickers2)
+}
+
+# Function to generate color picker UI dynamically (Correlation)
+createColorPickers3 <- function(plotOrder, shpFile) {
+  req(shpFile)
+  # Get the list of shapefiles from the reactive value
+  shp_files <- plotOrder
+  
+  # Create color pickers for each shapefile
+  colorpickers3 <- lapply(shp_files, function(file) {
+    file_name <- tools::file_path_sans_ext(basename(file))
+    colourpicker::colourInput(inputId = paste0("shp_colour3_", file_name), 
+                              label   = paste("Border Color for", file_name),
+                              value = "black", # default color for the border
+                              showColour = "background",
+                              allowTransparent = TRUE,
+                              palette = "square")
+  })
+  
+  # Combine color pickers into a tag list
+  do.call(tagList, colorpickers3)
+}
+
 #Create reorder modal
 createReorderModal <- function(plotOrder, shpFile) {
   req(shpFile)
@@ -2727,7 +2818,7 @@ createReorderModal <- function(plotOrder, shpFile) {
   showModal(
     modalDialog(
       selectizeInput("reorderSelect", "Select Shapefile to Move", choices = basename(plotOrder), multiple = FALSE),
-      selectizeInput("reorderAfter", "Move After", choices = c("", basename(plotOrder)), multiple = FALSE),
+      selectizeInput("reorderAfter", "Move After", choices = basename(plotOrder), multiple = FALSE),
       footer = tagList(
         actionButton("reorderConfirm", "Move"),
         modalButton("Cancel")
@@ -2742,20 +2833,27 @@ reorder_shapefiles <- function(plotOrder, reorderSelect, reorderAfter, pickerInp
   file_to_move_basename <- reorderSelect
   move_after_basename <- reorderAfter
   
-  # Retrieve full paths
-  file_to_move <- new_order[grep(file_to_move_basename, new_order)]
-  move_after <- new_order[grep(move_after_basename, new_order)]
-  
-  if (length(file_to_move) > 0) {  # Ensure file_to_move is found in new_order
-    new_order <- new_order[new_order != file_to_move]
-    if (length(move_after) > 0)  # Ensure move_after is found in new_order
-      insert_index <- match(move_after, new_order) + 1
-    else
-      insert_index <- 1
-    new_order <- c(new_order[seq_len(insert_index - 1)], file_to_move, new_order[seq(insert_index, length(new_order))])
-    plotOrder(new_order)
-    updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(new_order)))
-    removeModal()
+  # Check if file_to_move_basename and move_after_basename are the same
+  if (file_to_move_basename != move_after_basename) {
+    # Retrieve full paths
+    file_to_move <- new_order[grep(file_to_move_basename, new_order)]
+    move_after <- new_order[grep(move_after_basename, new_order)]
+    
+    if (length(file_to_move) > 0) {  # Ensure file_to_move is found in new_order
+      new_order <- new_order[new_order != file_to_move]
+      if (length(move_after) > 0)  # Ensure move_after is found in new_order
+        insert_index <- match(move_after, new_order) + 1
+      else
+        insert_index <- 1
+      new_order <- c(new_order[seq_len(insert_index - 1)], file_to_move, new_order[seq(insert_index, length(new_order))])
+      plotOrder(new_order)
+      updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(new_order)))
+      removeModal()
+    }
+  } else {
+    # If file_to_move_basename and move_after_basename are the same, do nothing
+    # Or you can add any specific handling for this case
+    message("file_to_move_basename and move_after_basename are the same.")
   }
 }
 
@@ -3431,13 +3529,13 @@ plot_correlation_map = function(data_input, correlation_titles,axis_range,
             # Plot based on geometry type
             geom_type <- st_geometry_type(shape)
             if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+              plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour3_", file_name)]], col = NA)
               
             } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]])
               
             } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]], pch = 1)
             }
           }
         }
@@ -3461,13 +3559,13 @@ plot_correlation_map = function(data_input, correlation_titles,axis_range,
             # Plot based on geometry type
             geom_type <- st_geometry_type(shape)
             if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+              plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour3_", file_name)]], col = NA)
               
             } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]])
               
             } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]], pch = 1)
             }
           }
         }
@@ -3516,13 +3614,13 @@ plot_correlation_map = function(data_input, correlation_titles,axis_range,
         # Plot based on geometry type
         geom_type <- st_geometry_type(shape)
         if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-          plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour_", file_name)]], col = NA)
+          plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour3_", file_name)]], col = NA)
           
         } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-          plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]])
+          plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]])
           
         } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-          plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour_", file_name)]], pch = 1)
+          plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]], pch = 1)
         }
       }
     }
