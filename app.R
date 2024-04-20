@@ -2,29 +2,29 @@
 
 # Source for helpers ----
 source("helpers.R")
-
+  
 # Define UI ----
 
 ui <- navbarPage(id = "nav1",
-          ## Configs for navbarPage: theme, images (Header and Footer) ----
-          title = div(style = "display: inline;",
-                      uiOutput("logo_output", inline = TRUE),
-                      uiOutput("logo_output2", inline = TRUE),
-                      "(v1.1)",
-                      #Preparation to use Tracking ShinyJS and CSS
-                      shinyjs::useShinyjs(),
-                      use_tracking()
-                      ),
-          footer = div(class = "navbar-footer",
-                       style = "display: inline;",
-                       img(src = 'pics/oeschger_logo_rgb.jpg', id = "ClimeApp3", height = "100px", width = "100px", style = "margin-top: 20px; margin-bottom: 20px;"),
-                       img(src = 'pics/LOGO_ERC-FLAG_EU_.jpg', id = "ClimeApp4", height = "100px", width = "141px", style = "margin-top: 20px; margin-bottom: 20px;"),
-                       img(src = 'pics/WBF_SBFI_EU_Frameworkprogramme_E_RGB_pos_quer.jpg', id = "ClimeApp5", height = "100px", width = "349px", style = "margin-top: 20px; margin-bottom: 20px;"),
-                       img(src = 'pics/SNF_Logo_Logo.png', id = "ClimeApp6", height = "75px", width = "560px", style = "margin-top: 20px; margin-bottom: 20px;"),
-                       # Navbar properties
-                       tags$style(type="text/css", "body {padding-top: 90px;}"),
-                       # Window dimensions
-                       tags$head(tags$script('
+                 ## Configs for navbarPage: theme, images (Header and Footer) ----
+                 title = div(style = "display: inline;",
+                             uiOutput("logo_output", inline = TRUE),
+                             uiOutput("logo_output2", inline = TRUE),
+                             "(v1.1)",
+                             #Preparation to use Tracking ShinyJS and CSS
+                             shinyjs::useShinyjs(),
+                             use_tracking()
+                 ),
+                 footer = div(class = "navbar-footer",
+                              style = "display: inline;",
+                              img(src = 'pics/oeschger_logo_rgb.jpg', id = "ClimeApp3", height = "100px", width = "100px", style = "margin-top: 20px; margin-bottom: 20px;"),
+                              img(src = 'pics/LOGO_ERC-FLAG_EU_.jpg', id = "ClimeApp4", height = "100px", width = "141px", style = "margin-top: 20px; margin-bottom: 20px;"),
+                              img(src = 'pics/WBF_SBFI_EU_Frameworkprogramme_E_RGB_pos_quer.jpg', id = "ClimeApp5", height = "100px", width = "349px", style = "margin-top: 20px; margin-bottom: 20px;"),
+                              img(src = 'pics/SNF_Logo_Logo.png', id = "ClimeApp6", height = "75px", width = "560px", style = "margin-top: 20px; margin-bottom: 20px;"),
+                              # Navbar properties
+                              tags$style(type="text/css", "body {padding-top: 90px;}"),
+                              # Window dimensions
+                              tags$head(tags$script('
                           var dimension = [0, 0];
                           $(document).on("shiny:connected", function(e) {
                               dimension[0] = window.innerWidth;
@@ -37,8 +37,8 @@ ui <- navbarPage(id = "nav1",
                               Shiny.onInputChange("dimension", dimension);
                           });
                       '),
-                      tags$script(
-                       HTML('
+                                        tags$script(
+                                          HTML('
                         $(document).ready(function() {
                           // Add event listener to detect when the collapsible menu is toggled
                           $(".navbar-toggle").click(function() {
@@ -46,17 +46,17 @@ ui <- navbarPage(id = "nav1",
                           });
                         });
                       ')),
-                      ),
-                       # No Red Error messages
-                       tags$style(type="text/css",
-                                  ".shiny-output-error { visibility: hidden; }",
-                                  ".shiny-output-error:before { visibility: hidden; }"
-                       )
-                       ),
-          theme = my_theme,
-          position = c("fixed-top"),
-          windowTitle = "ClimeApp (v1.0)",
-          collapsible = TRUE,
+                              ),
+                              # No Red Error messages
+                              tags$style(type="text/css",
+                                         ".shiny-output-error { visibility: hidden; }",
+                                         ".shiny-output-error:before { visibility: hidden; }"
+                              )
+                 ),
+                 theme = my_theme,
+                 position = c("fixed-top"),
+                 windowTitle = "ClimeApp (v1.0)",
+                 collapsible = TRUE,
 
 # Welcome START ----                             
   tabPanel("Welcome", value = "tab0",
@@ -75,7 +75,7 @@ ui <- navbarPage(id = "nav1",
             h4(em(helpText("Co-developed by No\u00E9mie Wellinger."))),
             br(),
             h4("Data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis", style = "color: #094030;"),
-            h5(helpText("Franke, J., Veronika, V., Hand, R., Samakinwa, E., Burgdorf, A.M., Lundstad, E., Brugnara, Y., H\u00F6vel, L. and Br\u00F6nnimann, S., 2023")),
+            h5(helpText("V. Valler, J. Franke, Y. Brugnara, E. Samakinwa, R. Hand, E. Lundstad, A.-M. Burgdorf, L. Lipfert, A. R. Friedman, S. Br\u00F6nnimann, 2024")),
             
             
             column(width = 12,
@@ -144,11 +144,12 @@ ui <- navbarPage(id = "nav1",
             tabPanel("Welcome",
             tags$img(src = 'pics/welcome_map.jpg', id = "welcome_map", class = "responsive-img"),
             h4("For more information on the ModE datasets and ClimeApp please see:", style = "color: #094030;"),
-            h5(helpText(a("ModE-RA - a global monthly paleo-reanalysis of the modern era 1421 to 2008", href = "https://doi.org/10.1038/s41597-023-02733-8"), br(), a("ModE-RAclim - a version of the ModE-RA reanalysis with climatological prior for sensitivity studies", href = "https://www.wdc-climate.de/ui/entry?acronym=ModE-RAc"), br(),  a("ModE-Sim – a medium-sized atmospheric general circulation model (AGCM) ensemble to study climate variability during the modern era (1420 to 2009)", href = "https://gmd.copernicus.org/articles/16/4853/2023/"), br(), "[Place Holder for link to: ClimeApp technical paper (in progress)]")),
+            h5(helpText(a("ModE-RA - a global monthly paleo-reanalysis of the modern era 1421 to 2008", href = "https://doi.org/10.1038/s41597-023-02733-8"), br(), a("ModE-RAclim - a version of the ModE-RA reanalysis with climatological prior for sensitivity studies", href = "https://www.wdc-climate.de/ui/entry?acronym=ModE-RAc"), br(),  a("ModE-Sim – a medium-sized atmospheric general circulation model (AGCM) ensemble to study climate variability during the modern era (1420 to 2009)", href = "https://gmd.copernicus.org/articles/16/4853/2023/"), br(), a("ClimeApp Technical Paper", href = "https://doi.org/10.5194/egusphere-2024-743"))),
             h4("To cite, please reference:", style = "color: #094030;"),
-            h5(helpText("[Place Holder: ClimeApp technical paper (in progress)]")),
+            h5(helpText("R. Warren, N. Bartlome, N. Wellinger, J. Franke, R. Hand, S. Br\u00F6nnimann, H. Huhtamaa: ClimeApp: Opening Doors to the Past Global Climate. New Data Processing Tool for the ModE-RA Climate Reanalysis. Clim. Past [in review].")),
             h5(helpText("V. Valler, J. Franke, Y. Brugnara, E. Samakinwa, R. Hand, E. Lundstad, A.-M. Burgdorf, L. Lipfert, A. R. Friedman, S. Br\u00F6nnimann: ModE-RA: a global monthly paleo-reanalysis of the modern era 1421 to 2008. Scientific Data 11 (2024).")),
             h5(helpText("R. Hand, E. Samakinwa, L. Lipfert, and S. Br\u00F6nnimann: ModE-Sim – a medium-sized atmospheric general circulation model (AGCM) ensemble to study climate variability during the modern era (1420 to 2009). GMD 16 (2023).")),
+            h5("Funding:", style = "color: #094030;"),
             h6(helpText("PALAEO-RA: H2020/ERC grant number 787574")),
             h6(helpText("DEBTS: SNSF grant number PZ00P1_201953")),
             h6(helpText("VolCOPE: SERI contract number MB22.00030")),
@@ -13302,7 +13303,7 @@ server <- function(input, output, session) {
     
     #Updates Values outside of min / max (numericInput)
     
-    updateNumericInputRange <- function(inputId, minValue, maxValue) {
+    updateNumericInputRange1 <- function(inputId, minValue, maxValue) {
       observe({
         input_values <- input[[inputId]]
         
@@ -13326,37 +13327,35 @@ server <- function(input, output, session) {
     }
     
     # Call the function for each input
-    updateNumericInputRange("point_size", 1, 10)
-    updateNumericInputRange("point_size2", 1, 10)
-    updateNumericInputRange("point_size3", 1, 10)
-    updateNumericInputRange("point_size_ts", 1, 10)
-    updateNumericInputRange("point_size_ts2", 1, 10)
-    updateNumericInputRange("point_size_ts3", 1, 10)
-    updateNumericInputRange("percentage_sign_match", 1, 100)
-    updateNumericInputRange("percentage_sign_match2", 1, 100)
-    updateNumericInputRange("hidden_SD_ratio", 0, 1)
-    updateNumericInputRange("hidden_SD_ratio2", 0, 1)
-    updateNumericInputRange("year_moving_ts", 3, 30)
-    updateNumericInputRange("year_moving_ts3", 3, 30)
-    updateNumericInputRange("prior_years2", 1, 50)
+    updateNumericInputRange1("point_size", 1, 10)
+    updateNumericInputRange1("point_size2", 1, 10)
+    updateNumericInputRange1("point_size3", 1, 10)
+    updateNumericInputRange1("point_size_ts", 1, 10)
+    updateNumericInputRange1("point_size_ts2", 1, 10)
+    updateNumericInputRange1("point_size_ts3", 1, 10)
+    updateNumericInputRange1("percentage_sign_match", 1, 100)
+    updateNumericInputRange1("percentage_sign_match2", 1, 100)
+    updateNumericInputRange1("hidden_SD_ratio", 0, 1)
+    updateNumericInputRange1("hidden_SD_ratio2", 0, 1)
+    updateNumericInputRange1("year_moving_ts", 3, 30)
+    updateNumericInputRange1("year_moving_ts3", 3, 30)
+    updateNumericInputRange1("prior_years2", 1, 50)
     
-    
-    updateNumericInputRange <- function(inputId, minValue, maxValue) {
+    updateNumericInputRange2 <- function(inputId, minValue, maxValue) {
       observe({
         input_values <- input[[inputId]]
         
         delay(3000, {
-          if (is.null(input_values) || is.na(input_values)) {         
+          if (is.null(input_values) || is.na(input_values) || nchar(as.character(input_values)) <= 3) { 
+            # If input is null, NA, or has <= 3 characters, take no action
           } else if (!is.numeric(input_values)) {
             updateNumericInput(inputId = inputId, value = 1422)
           } else {
             update_value <- function(val) {
-              if (nchar(as.integer(input_values)) > 3){
-                if (val < minValue) {
-                  updateNumericInput(inputId = inputId, value = minValue)
-                } else if (val > maxValue) {
-                  updateNumericInput(inputId = inputId, value = maxValue)
-                }
+              if (val < minValue) {
+                updateNumericInput(inputId = inputId, value = minValue)
+              } else if (val > maxValue) {
+                updateNumericInput(inputId = inputId, value = maxValue)
               }
             }
             
@@ -13367,22 +13366,22 @@ server <- function(input, output, session) {
     }
     
     # Call the function for each input
-    updateNumericInputRange("fad_year_a", 1422, 2008)
-    updateNumericInputRange("fad_year_a2", 1422, 2008)
-    updateNumericInputRange("fad_year_a3a", 1422, 2008)
-    updateNumericInputRange("fad_year_a3b", 1422, 2008)
-    updateNumericInputRange("fad_year_a4a", 1422, 2008)
-    updateNumericInputRange("fad_year_a4b", 1422, 2008)
-    updateNumericInputRange("fad_year_a5", 1422, 2008)
-    updateNumericInputRange("reg_resi_year", 1422, 2008)
-    updateNumericInputRange("range_years_sg", 1422, 2008)
-    updateNumericInputRange("ref_period_sg", 1422, 2008)
-    updateNumericInputRange("ref_period_sg2", 1422, 2008)
-    updateNumericInputRange("ref_period_sg_v1", 1422, 2008)
-    updateNumericInputRange("ref_period_sg_v2", 1422, 2008)
-    updateNumericInputRange("ref_period_sg_iv", 1422, 2008)
-    updateNumericInputRange("ref_period_sg_dv", 1422, 2008)
-    updateNumericInputRange("ref_period_sg5", 1422, 2008)
+    updateNumericInputRange2("fad_year_a", 1422, 2008)
+    updateNumericInputRange2("fad_year_a2", 1422, 2008)
+    updateNumericInputRange2("fad_year_a3a", 1422, 2008)
+    updateNumericInputRange2("fad_year_a3b", 1422, 2008)
+    updateNumericInputRange2("fad_year_a4a", 1422, 2008)
+    updateNumericInputRange2("fad_year_a4b", 1422, 2008)
+    updateNumericInputRange2("fad_year_a5", 1422, 2008)
+    updateNumericInputRange2("reg_resi_year", 1422, 2008)
+    updateNumericInputRange2("range_years_sg", 1422, 2008)
+    updateNumericInputRange2("ref_period_sg", 1422, 2008)
+    updateNumericInputRange2("ref_period_sg2", 1422, 2008)
+    updateNumericInputRange2("ref_period_sg_v1", 1422, 2008)
+    updateNumericInputRange2("ref_period_sg_v2", 1422, 2008)
+    updateNumericInputRange2("ref_period_sg_iv", 1422, 2008)
+    updateNumericInputRange2("ref_period_sg_dv", 1422, 2008)
+    updateNumericInputRange2("ref_period_sg5", 1422, 2008)
 
     #Updates Values outside of min / max (numericRangeInput)
     
@@ -13541,9 +13540,9 @@ server <- function(input, output, session) {
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
 # Run the app normally
-   # runApp(app)
+  # runApp(app)
 # Run the app with profiling
-  #profvis({runApp(app)})
+  # profvis({runApp(app)})
 
 
   
