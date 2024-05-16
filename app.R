@@ -4646,6 +4646,63 @@ ui <- navbarPage(id = "nav1",
 # Annual cycles END ---- 
          )),
 
+# ModE-RA Sources START ----                             
+  tabPanel("ModE-RA Sources", value = "tab6",
+    shinyjs::useShinyjs(),
+    
+    MEsource_popover("pop_MEsource_main"),
+    
+    # Enter year & Season
+    fluidRow(
+      # Enter Year
+      numericInput(inputId   = "year_MES",
+                   label     = "Year",
+                   value     = 1422,
+                   min       = 1422,
+                   max       = 2008),
+      
+      # Enter Season                
+      selectInput(inputId  = "season_MES",
+                  label    = "Months",
+                  choices  = c("April to September","October to March"),
+                  selected = "April to September"),
+    ),
+    
+    # Plot (Currently 2 plots, eventually 1 zoomable plot)
+    h6(helpText("Draw a box on the left map to use zoom function")),
+
+    splitLayout(
+      withSpinner(ui_element = plotOutput("map_MES",
+                                          brush = brushOpts(
+                                            id = "brush_MES",
+                                            resetOnNew = TRUE
+                                          )),
+                  image = spinner_image,
+                  image.width = spinner_width,
+                  image.height = spinner_height),
+      
+      plotOutput("zoomed_map_MES")
+    ),
+    
+    #Download
+    h4("Downloads", style = "color: #094030;"),
+    fluidRow(
+      # Download image
+      column(2,radioButtons(inputId = "file_type_MES", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+      column(3,downloadButton(outputId = "download_MES", label = "Download Map")),
+    ),
+    
+    br(),
+    
+    fluidRow(
+      # Download data
+      column(2,radioButtons(inputId = "data_file_type_MES", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+      column(3,downloadButton(outputId = "download_MES_data", label = "Download Map Data"))
+    )
+      
+# ModE-RA Sources END ----         
+  )
+
 # END ----
 )
 
@@ -13299,6 +13356,44 @@ server <- function(input, output, session) {
                                                                        row.names = FALSE)
                                                           }})
     
+  ## MODE-RA SOURCES data procession and plotting ----
+    ### Plotting ----
+    
+    # Set up values and functions for plotting
+    MES_zoom  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
+    
+    season_MES_short = reactive({
+      switch(input$season_MES,
+             "April to September" = "summer",
+             "October to March" = "winter")
+    })
+    
+    # Load global data
+    MES_global_data = reactive({
+      load_modera_source_data(input$year_MES, season_MES_short())
+    })
+    
+    # Global map
+    output$map_MES <- renderPlot({
+      plot_modera_sources(MES_global_data(),input$year_MES, season_MES_short(),c(-180,180,-90,90))
+    })
+    
+    # Zoomed map
+    output$zoomed_map_MES <- renderPlot({
+      if (!identical(MES_zoom(),c(-180,180,-90,90))){
+        plot_modera_sources(MES_global_data(),input$year_MES, season_MES_short(),MES_zoom())
+      }
+    })
+    
+    # Update MES_zoom with brush
+    
+    observe({
+      brush <- input$brush_MES
+      if (!is.null(brush)) {
+        MES_zoom(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
+      } 
+    })
+    
   ## Concerning all modes (mainly updating Ui) ----
     
     #Updates Values outside of min / max (numericInput)
@@ -13530,17 +13625,17 @@ server <- function(input, output, session) {
       }
     })
     
-    # Stop App on end of session
-    # session$onSessionEnded(function() {
-    #   stopApp()
-    # })
-
+  ## Stop App on end of session ----
+     session$onSessionEnded(function() {
+       stopApp()
+     })
+# Close server function ----
 }
 
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
 # Run the app normally
-  # runApp(app)
+  runApp(app)
 # Run the app with profiling
   # profvis({runApp(app)})
 

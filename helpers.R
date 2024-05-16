@@ -1749,22 +1749,36 @@ rewrite_tstable = function(tstable,variable){
 }
 
 
+## (General) LOAD MODE-RA SOURCE DATA loads ModE-RA data sources for
+##           a given year and season
+##           year = a single user selected or default year
+##           season = "summer" or "winter"
+
+load_modera_source_data = function(year,season){
+  # Load data
+  feedback_data = read.csv(paste0("data/feedback_archive/",season,year,".csv"))  
+}
+
+
 ## (General) PLOT MODE-RA SOURCES creates a plot of the ModE-RA data sources for
 ##           a given year and season
 ##           year = a single user selected or default year
 ##           season = "summer" or "winter"
-##           labs = TRUE or FALSE (TRUE = non-zoomed plot)
-##           Same goes for the feedback_data
+##           minmax_lonlat = c(min_lon,max_lon,min_lat,max_lat) ->
+##                           c(-180,180,-90,90) for non-zoomed plot
 
-plot_modera_sources = function(year,season,lon_range,lat_range,labs){
+plot_modera_sources = function(ME_source_data,year,season,minmax_lonlat){
   
   # Load data
-  feedback_data = read.csv(paste0("data/feedback_archive/",season,year,".csv"))
   world=map_data("world")
   
   # Sum total sources
-  total_sources = sum((feedback_data$LON>lon_range[1]) & (feedback_data$LON<lon_range[2]) & (feedback_data$LAT>lat_range[1]) & (feedback_data$LAT<lat_range[2]))
-  
+  if (identical(minmax_lonlat,c(-180,180,-90,90))){
+    total_sources = length(ME_source_data$LON)
+  } else {
+    total_sources = sum((ME_source_data$LON>minmax_lonlat[1]) & (ME_source_data$LON<minmax_lonlat[2]) & (ME_source_data$LAT>minmax_lonlat[3]) & (ME_source_data$LAT<minmax_lonlat[4]))
+  }
+
   # Create Season & Year title
   if (season == "summer"){
     season_title = "Apr. to Sept."
@@ -1787,29 +1801,20 @@ plot_modera_sources = function(year,season,lon_range,lat_range,labs){
   named_shapes = setNames(shape_list,variable_list)
   
   # Plot
-  if(labs == TRUE) {
-    ggplot() + geom_polygon(data=world, aes(x=long, y=lat, group=group), fill="grey", color = "darkgrey") + 
-      geom_sf() + coord_sf(xlim = lon_range, ylim = lat_range, crs = st_crs(4326)) +
-      geom_point(data=feedback_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
-      labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
-           subtitle = paste0("Total Sources = ",total_sources), x = "", y = "") +
-      scale_shape_manual(values = named_shapes) +
-      scale_colour_manual(values = named_colors) +
-      guides() + 
-      theme_classic()+
-      theme(panel.border = element_rect(colour = "black", fill=NA))  }
-  else {
-    ggplot() + geom_polygon(data=world, aes(x=long, y=lat, group=group), fill="grey", color = "darkgrey") + 
-      geom_sf() + coord_sf(xlim = lon_range, ylim = lat_range, crs = st_crs(4326)) +
-      geom_point(data=feedback_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
-      labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
-           subtitle = paste0("Zoomed Subplot"), x = "", y = "") +
-      scale_shape_manual(values = named_shapes) +
-      scale_colour_manual(values = named_colors) +
-      guides(shape = FALSE, color = FALSE) +
-      theme_classic()+
-      theme(panel.border = element_rect(colour = "black", fill=NA))  }
+  ggplot() + geom_polygon(data=world, aes(x=long, y=lat, group=group), fill="grey", color = "darkgrey") + 
+    geom_sf() + coord_sf(xlim = minmax_lonlat[c(1,2)], ylim = minmax_lonlat[c(3,4)], crs = st_crs(4326)) +
+    geom_point(data=ME_source_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
+    labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
+         subtitle = paste0("Total Sources = ",total_sources), x = "", y = "") +
+    scale_shape_manual(values = named_shapes) +
+    scale_colour_manual(values = named_colors) +
+    guides() + 
+    theme_classic()+
+    theme(panel.border = element_rect(colour = "black", fill=NA))  
 }
+
+
+## (General) DOWNLOAD MODE-RA SOURCES DATA
 
 download_feedback_data = function(year, season, lon_range, lat_range) {
   # Load data
