@@ -1142,66 +1142,62 @@ ui <- navbarPage(id = "nav1",
                     
                     ### Feedback archive documentation (FAD) ----
                     tabPanel("ModE-RA sources", br(),
-                             fluidRow(
-                               column(width=5,                               
-                                # Title & help pop up
-                                MEsource_popover("pop_anomalies_mesource"),
-  
-                                 # Year entry
-                                 numericInput(
-                                  inputId  = "fad_year_a",
-                                  label   =  "Year",
-                                  value = 1422,
-                                  min = 1422,
-                                  max = 2008)
-                                ),
-                             ),
-
-                             h4("Draw a box on the left map to use zoom function", style = "color: #094030;"),
                              
-                             div(id = "fad_map_a",
-                             splitLayout(withSpinner(ui_element = plotOutput("fad_winter_map_a",
-                                                                              brush = brushOpts(
-                                                                                id = "brush_fad1a",
-                                                                                resetOnNew = TRUE
-                                                                              )), 
+                      # Title & help pop up
+                      MEsource_popover("pop_anomalies_mesource"),
+                             
+                      fluidRow(
+                        
+                         # Year entry
+                         numericInput(
+                          inputId  = "fad_year",
+                          label   =  "Year",
+                          value = 1422,
+                          min = 1422,
+                          max = 2008),
+                         
+                         # Enter Season                
+                         selectInput(inputId  = "fad_season",
+                                     label    = "Months",
+                                     choices  = c("April to September","October to March"),
+                                     selected = "April to September"),
+                        ),
+                        
+                      h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                      
+                      withSpinner(ui_element = plotOutput("fad_map",
+                                                                  brush = brushOpts(
+                                                                  id = "brush_fad",
+                                                                  resetOnNew = TRUE
+                                                                )), 
                                                      image = spinner_image,
                                                      image.width = spinner_width,
                                                      image.height = spinner_height),
-
-                                         plotOutput("fad_zoom_winter_a")
-                                         )),
-                             
-                             div(id = "fad_map_b",
-                             splitLayout(withSpinner(ui_element = plotOutput("fad_summer_map_a",
-                                                                             brush = brushOpts(
-                                                                               id = "brush_fad1b",
-                                                                               resetOnNew = TRUE
-                                                                             )), 
-                                                     image = spinner_image,
-                                                     image.width = spinner_width,
-                                                     image.height = spinner_height),
-                               
-                                         plotOutput("fad_zoom_summer_a")
-                                         )),
-                             
-                             #Download
-                             h4("Download maps", style = "color: #094030;"),
-                             fluidRow(
-                               column(2, radioButtons(inputId = "file_type_modera_source_a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_fad_wa", label = "Download Oct. - Mar.")),
-                               column(2, radioButtons(inputId = "file_type_modera_source_b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_fad_sa", label = "Download Apr. - Sep."))
-                             ),
-                             
-                             h4("Download data", style = "color: #094030;"),
-                             fluidRow(
-                               column(2, radioButtons(inputId = "file_type_data_modera_source_a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_data_fad_wa", label = "Download Oct. - Mar.")),
-                               column(2, radioButtons(inputId = "file_type_data_modera_source_b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_data_fad_sa", label = "Download Apr. - Sep."))
-                             ),
-                    ),
+                      
+                      fluidRow(
+                        h6(helpText("Draw a box on the map to zoom in")),
+                        actionButton(inputId = "fad_reset_zoom",
+                                     label = "Reset zoom",
+                                     width = "200px"),
+                      ),
+                      
+                      br(),
+                      
+                      #Download
+                      h4("Downloads", style = "color: #094030;"),
+                      fluidRow(
+                        column(2,radioButtons(inputId = "file_type_fad", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3,downloadButton(outputId = "download_fad", label = "Download Map")),
+                      ),
+                      
+                      br(),
+                      
+                      fluidRow(
+                        # Download data
+                        column(2,radioButtons(inputId = "data_file_type_fad", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                        column(3,downloadButton(outputId = "download_fad_data", label = "Download Map Data"))
+                      )
+                    )          
                 ## Main Panel END ----
                 ), width = 8),
 # Average & anomaly END ----  
@@ -2066,70 +2062,64 @@ ui <- navbarPage(id = "nav1",
                                                       image.width = spinner_width,
                                                       image.height = spinner_height))),
                     
-                    ### Feedback archive documentation (FAD) ----
+                   ### Feedback archive documentation (FAD) ----
                    tabPanel("ModE-RA sources", br(),
+                            
+                            # Title & help pop up
+                            MEsource_popover("pop_anomalies_mesource"),
+                            
                             fluidRow(
-                              column(width=5,                               
-                                     # Title & help pop up
-                                     MEsource_popover("pop_composite_mesource"),
-                                     
-                                     # Year entry
-                                     numericInput(
-                                       inputId  = "fad_year_a2",
-                                       label   =  "Year",
-                                       value = 1422,
-                                       min = 1422,
-                                       max = 2008)
-                              ),
+                              
+                              # Year entry
+                              numericInput(
+                                inputId  = "fad_year2",
+                                label   =  "Year",
+                                value = 1422,
+                                min = 1422,
+                                max = 2008),
+                              
+                              # Enter Season                
+                              selectInput(inputId  = "fad_season2",
+                                          label    = "Months",
+                                          choices  = c("April to September","October to March"),
+                                          selected = "April to September"),
                             ),
-
-                            h4("Draw a box on the left map to use zoom function", style = "color: #094030;"),
                             
-                            div(id = "fad_map_a2",
-                                splitLayout(
-                                  withSpinner(ui_element = plotOutput("fad_winter_map_a2",
-                                                                      brush = brushOpts(
-                                                                        id = "brush_fad1a2",
-                                                                        resetOnNew = TRUE
-                                                                      )),
-                                              image = spinner_image,
-                                              image.width = spinner_width,
-                                              image.height = spinner_height),
-
-                                  plotOutput("fad_zoom_winter_a2")
-                                )),
+                            h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
                             
-                            div(id = "fad_map_b2",
-                                splitLayout(
-                                  withSpinner(ui_element = plotOutput("fad_summer_map_a2",
-                                                                      brush = brushOpts(
-                                                                        id = "brush_fad1b2",
-                                                                        resetOnNew = TRUE
-                                                                      )),
-                                              image = spinner_image,
-                                              image.width = spinner_width,
-                                              image.height = spinner_height),
-                                  
-                                  plotOutput("fad_zoom_summer_a2")
-                                )),
+                            withSpinner(ui_element = plotOutput("fad_map2",
+                                                                brush = brushOpts(
+                                                                  id = "brush_fad2",
+                                                                  resetOnNew = TRUE
+                                                                )), 
+                                        image = spinner_image,
+                                        image.width = spinner_width,
+                                        image.height = spinner_height),
+                            
+                            fluidRow(
+                              h6(helpText("Draw a box on the map to zoom in")),
+                              actionButton(inputId = "fad_reset_zoom2",
+                                           label = "Reset zoom",
+                                           width = "200px"),
+                            ),
+                            
+                            br(),
                             
                             #Download
                             h4("Downloads", style = "color: #094030;"),
                             fluidRow(
-                              column(2, radioButtons(inputId = "file_type_modera_source_a2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                              column(3, downloadButton(outputId = "download_fad_wa2", label = "Download Oct. - Mar.")),
-                              column(2, radioButtons(inputId = "file_type_modera_source_b2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                              column(3, downloadButton(outputId = "download_fad_sa2", label = "Download Apr. - Sep."))
+                              column(2,radioButtons(inputId = "file_type_fad2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                              column(3,downloadButton(outputId = "download_fad2", label = "Download Map")),
                             ),
                             
-                            h4("Download data", style = "color: #094030;"),
+                            br(),
+                            
                             fluidRow(
-                              column(2, radioButtons(inputId = "file_type_data_modera_source_a2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                              column(3, downloadButton(outputId = "download_data_fad_wa2", label = "Download Oct. - Mar.")),
-                              column(2, radioButtons(inputId = "file_type_data_modera_source_b2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                              column(3, downloadButton(outputId = "download_data_fad_sa2", label = "Download Apr. - Sep."))
-                            ),
-                   ),
+                              # Download data
+                              column(2,radioButtons(inputId = "data_file_type_fad2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                              column(3,downloadButton(outputId = "download_fad_data2", label = "Download Map Data"))
+                            )
+                   )          
                    
                 ## Main Panel END ----
                 ), width = 8),
@@ -3186,142 +3176,65 @@ ui <- navbarPage(id = "nav1",
                                                           image.width = spinner_width,
                                                           image.height = spinner_height)),
              
-                   ### Feedback archive documentation (FAD) ----
-                   tabPanel("ModE-RA sources", br(),
-                            
-                            # Title & help pop up 
-                            MEsource_popover("pop_correlation_mesource"),
-
-                            shinyjs::hidden(
-                            div(id = "hidden_v1_fad",
-                            fluidRow(
-                              h4("Variable 1", style = "color: #094030;"),
-                              column(width=4,
-                                     numericInput(
-                                       inputId  = "fad_year_a3a",
-                                       label   =  "Year",
-                                       value = 1422,
-                                       min = 1422,
-                                       max = 2008)),
-                              ),
-                            
-                            div(id = "fad_map_a3a",
-                                h4("Draw a box on the left map to use zoom function", style = "color: #094030;"),
-                                splitLayout(
-                                  withSpinner(ui_element = plotOutput("fad_winter_map_a3a",
-                                                                      brush = brushOpts(
-                                                                        id = "brush_fad1a3a",
-                                                                        resetOnNew = TRUE
-                                                                      )),
-                                              image = spinner_image,
-                                              image.width = spinner_width,
-                                              image.height = spinner_height),
-                                  
-                                  plotOutput("fad_zoom_winter_a3a")
-                                )),
-                            
-                            div(id = "fad_map_b3a",
-                                splitLayout(
-                                  withSpinner(ui_element = plotOutput("fad_summer_map_a3a",
-                                                                                brush = brushOpts(
-                                                                                  id = "brush_fad1b3a",
-                                                                                  resetOnNew = TRUE
-                                                                                )),
-                                               image = spinner_image,
-                                               image.width = spinner_width,
-                                               image.height = spinner_height),
-                                  
-                                  plotOutput("fad_zoom_summer_a3a")
-                                )),
-
-                            )),
-                            
-                            shinyjs::hidden(
-                              div(id = "hidden_v1_fad_download",
-                                  h4("Downloads", style = "color: #094030;"),
-                                  fluidRow(
-                                    column(2, radioButtons(inputId = "file_type_modera_source_a3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_fad_wa3a", label = "Download Oct. - Mar.")),
-                                    column(2, radioButtons(inputId = "file_type_modera_source_b3a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_fad_sa3a", label = "Download Apr. - Sep.")),
-                                  ),
-                                  
-                                  h4("Download data", style = "color: #094030;"),
-                                  fluidRow(
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_a3a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_wa3a", label = "Download Oct. - Mar.")),
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_b3a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_sa3a", label = "Download Apr. - Sep."))
-                                  ),
-                                  
-                              )),
-                            
-                            br(),
-                            shinyjs::hidden(
-                            div(id = "hidden_v2_fad",
-                            fluidRow(
-                              h4("Variable 2", style = "color: #094030;"),
-                              column(width=4,
-                                     numericInput(
-                                       inputId  = "fad_year_a3b",
-                                       label   =  "Year",
-                                       value = 1422,
-                                       min = 1422,
-                                       max = 2008)),
-                              ),
-  
-                            div(id = "fad_map_a3b",
-                                h4("Draw a box on the left map to use zoom function", style = "color: #094030;"),
-                                splitLayout(
-                                  withSpinner(ui_element = plotOutput("fad_winter_map_a3b",
-                                                                      brush = brushOpts(
-                                                                        id = "brush_fad1a3b",
-                                                                        resetOnNew = TRUE
-                                                                      )),
-                                              image = spinner_image,
-                                              image.width = spinner_width,
-                                              image.height = spinner_height),
-                                  
-                                  plotOutput("fad_zoom_winter_a3b")
-                                )),
-                            
-                            div(id = "fad_map_b3b",
-                                splitLayout(
-                                  withSpinner(ui_element = plotOutput("fad_summer_map_a3b",
-                                                                      brush = brushOpts(
-                                                                        id = "brush_fad1b3b",
-                                                                        resetOnNew = TRUE
-                                                                      )),
-                                              image = spinner_image,
-                                              image.width = spinner_width,
-                                              image.height = spinner_height),
-                                  
-                                  plotOutput("fad_zoom_summer_a3b")
-                                )),
-                            
-                            shinyjs::hidden(
-                              div(id = "hidden_v2_fad_download",
-                                  h4("Downloads", style = "color: #094030;"),
-                                  fluidRow(
-                                    column(2,radioButtons(inputId = "file_type_modera_source_a3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3,downloadButton(outputId = "download_fad_wa3b", label = "Download Oct. - Mar.")),
-                                    column(2,radioButtons(inputId = "file_type_modera_source_b3b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3,downloadButton(outputId = "download_fad_sa3b", label = "Download Apr. - Sep.")),
-                                  ),
-                                  
-                                  h4("Download data", style = "color: #094030;"),
-                                  fluidRow(
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_a3b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_wa3b", label = "Download Oct. - Mar.")),
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_b3b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_sa3b", label = "Download Apr. - Sep."))
-                                  ),
-                                  
-                              )),
-
-                            )),
-                   ),
-             
+                  ### Feedback archive documentation (FAD) ----
+                  tabPanel("ModE-RA sources", br(),
+                           
+                           # Title & help pop up
+                           MEsource_popover("pop_anomalies_mesource"),
+                           
+                           fluidRow(
+                             
+                             # Year entry
+                             numericInput(
+                               inputId  = "fad_year3",
+                               label   =  "Year",
+                               value = 1422,
+                               min = 1422,
+                               max = 2008),
+                             
+                             # Enter Season                
+                             selectInput(inputId  = "fad_season3",
+                                         label    = "Months",
+                                         choices  = c("April to September","October to March"),
+                                         selected = "April to September"),
+                           ),
+                           
+                           h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                           
+                           withSpinner(ui_element = plotOutput("fad_map3",
+                                                               brush = brushOpts(
+                                                                 id = "brush_fad3",
+                                                                 resetOnNew = TRUE
+                                                               )), 
+                                       image = spinner_image,
+                                       image.width = spinner_width,
+                                       image.height = spinner_height),
+                           
+                           fluidRow(
+                             h6(helpText("Draw a box on the map to zoom in")),
+                             actionButton(inputId = "fad_reset_zoom3",
+                                          label = "Reset zoom",
+                                          width = "200px"),
+                           ),
+                           
+                           br(),
+                           
+                           #Download
+                           h4("Downloads", style = "color: #094030;"),
+                           fluidRow(
+                             column(2,radioButtons(inputId = "file_type_fad3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                             column(3,downloadButton(outputId = "download_fad3", label = "Download Map")),
+                           ),
+                           
+                           br(),
+                           
+                           fluidRow(
+                             # Download data
+                             column(2,radioButtons(inputId = "data_file_type_fad3", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                             column(3,downloadButton(outputId = "download_fad_data3", label = "Download Map Data"))
+                           )
+                  )       
+                  
                ## Main Panel END ----
                ), width = 8)
                
@@ -3928,139 +3841,62 @@ ui <- navbarPage(id = "nav1",
 
              ### Feedback archive documentation (FAD) ----
              tabPanel("ModE-RA sources", br(),
+                      
                       # Title & help pop up
-                      MEsource_popover("pop_regression_mesource"),
+                      MEsource_popover("pop_anomalies_mesource"),
                       
-                      shinyjs::hidden(
-                        div(id = "hidden_iv_fad",
-                            fluidRow(
-                              h4("Independent variable", style = "color: #094030;"),
-                              column(width=4,
-                                     numericInput(
-                                       inputId  = "fad_year_a4a",
-                                       label   =  "Year",
-                                       value = 1422,
-                                       min = 1422,
-                                       max = 2008)),
-                            ),
-                            
-                            div(id = "fad_map_a4a",
-                                h4("Draw a box on the left map to use zoom function", style = "color: #094030;"),
-                                splitLayout(
-                                  withSpinner(ui_element =plotOutput("fad_winter_map_a4a",
-                                                                      brush = brushOpts(
-                                                                        id = "brush_fad1a4a",
-                                                                        resetOnNew = TRUE
-                                                                      )),
-                                              image = spinner_image,
-                                              image.width = spinner_width,
-                                              image.height = spinner_height),
-                                  
-                                  plotOutput("fad_zoom_winter_a4a")
-                                )),
-                            
-                            div(id = "fad_map_b4a",
-                                splitLayout(
-                                  withSpinner(ui_element = plotOutput("fad_summer_map_a4a",
-                                                                      brush = brushOpts(
-                                                                        id = "brush_fad1b4a",
-                                                                        resetOnNew = TRUE
-                                                                      )),
-                                              image = spinner_image,
-                                              image.width = spinner_width,
-                                              image.height = spinner_height),
-                                  
-                                            plotOutput("fad_zoom_summer_a4a")
-                                )),
-                        )),
+                      fluidRow(
+                        
+                        # Year entry
+                        numericInput(
+                          inputId  = "fad_year4",
+                          label   =  "Year",
+                          value = 1422,
+                          min = 1422,
+                          max = 2008),
+                        
+                        # Enter Season                
+                        selectInput(inputId  = "fad_season4",
+                                    label    = "Months",
+                                    choices  = c("April to September","October to March"),
+                                    selected = "April to September"),
+                      ),
                       
-                      #Downloads
-                      shinyjs::hidden(
-                        div(id = "hidden_iv_fad_download",
-                            h4("Downloads", style = "color: #094030;"),
-                            fluidRow(
-                              column(2, radioButtons(inputId = "file_type_modera_source_a4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                              column(3, downloadButton(outputId = "download_fad_wa4a", label = "Download Oct. - Mar.")),
-                              column(2, radioButtons(inputId = "file_type_modera_source_b4a", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                              column(3, downloadButton(outputId = "download_fad_sa4a", label = "Download Apr. - Sep.")),
-                            ),
-                            
-                            h4("Download data", style = "color: #094030;"),
-                            fluidRow(
-                              column(2, radioButtons(inputId = "file_type_data_modera_source_a4a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                              column(3, downloadButton(outputId = "download_data_fad_wa4a", label = "Download Oct. - Mar.")),
-                              column(2, radioButtons(inputId = "file_type_data_modera_source_b4a", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                              column(3, downloadButton(outputId = "download_data_fad_sa4a", label = "Download Apr. - Sep."))
-                            ),
-                            
-                        )),
+                      h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                      
+                      withSpinner(ui_element = plotOutput("fad_map4",
+                                                          brush = brushOpts(
+                                                            id = "brush_fad4",
+                                                            resetOnNew = TRUE
+                                                          )), 
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
+                      
+                      fluidRow(
+                        h6(helpText("Draw a box on the map to zoom in")),
+                        actionButton(inputId = "fad_reset_zoom4",
+                                     label = "Reset zoom",
+                                     width = "200px"),
+                      ),
                       
                       br(),
-                      shinyjs::hidden(
-                        div(id = "hidden_dv_fad",
-                            fluidRow(
-                              h4("Dependent variable", style = "color: #094030;"),
-                              column(width=4,
-                                     numericInput(
-                                       inputId  = "fad_year_a4b",
-                                       label   =  "Year",
-                                       value = 1422,
-                                       min = 1422,
-                                       max = 2008)),
-                            ),
-                            
-                            div(id = "fad_map_a4b",
-                                h4("Draw a box on the left map to use zoom function", style = "color: #094030;"),
-                                splitLayout(
-                                  withSpinner(ui_element = plotOutput("fad_winter_map_a4b",
-                                                                      brush = brushOpts(
-                                                                        id = "brush_fad1a4b",
-                                                                        resetOnNew = TRUE
-                                                                      )),
-                                              image = spinner_image,
-                                              image.width = spinner_width,
-                                              image.height = spinner_height),
-                                  
-                                  plotOutput("fad_zoom_winter_a4b")
-                                )),
-                            
-                            div(id = "fad_map_b4b",
-                                splitLayout(
-                                  withSpinner(ui_element = plotOutput("fad_summer_map_a4b",
-                                                                      brush = brushOpts(
-                                                                        id = "brush_fad1b4b",
-                                                                        resetOnNew = TRUE
-                                                                      )),
-                                              image = spinner_image,
-                                              image.width = spinner_width,
-                                              image.height = spinner_height),
-                                  
-                                  plotOutput("fad_zoom_summer_a4b")
-                                )),
-                            
-                            #Downloads
-                            shinyjs::hidden(
-                              div(id = "hidden_dv_fad_download",
-                                  h4("Downloads", style = "color: #094030;"),
-                                  fluidRow(
-                                    column(2,radioButtons(inputId = "file_type_modera_source_a4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3,downloadButton(outputId = "download_fad_wa4b", label = "Download Oct. - Mar.")),
-                                    column(2,radioButtons(inputId = "file_type_modera_source_b4b", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                    column(3,downloadButton(outputId = "download_fad_sa4b", label = "Download Apr. - Sep.")),
-                                  ),
-                                  
-                                  h4("Download data", style = "color: #094030;"),
-                                  fluidRow(
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_a4b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_wa4b", label = "Download Oct. - Mar.")),
-                                    column(2, radioButtons(inputId = "file_type_data_modera_source_b4b", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                    column(3, downloadButton(outputId = "download_data_fad_sa4b", label = "Download Apr. - Sep."))
-                                  ),
-                                  
-                              )),
-
-                        )),
-             ),
+                      
+                      #Download
+                      h4("Downloads", style = "color: #094030;"),
+                      fluidRow(
+                        column(2,radioButtons(inputId = "file_type_fad4", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3,downloadButton(outputId = "download_fad4", label = "Download Map")),
+                      ),
+                      
+                      br(),
+                      
+                      fluidRow(
+                        # Download data
+                        column(2,radioButtons(inputId = "data_file_type_fad4", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                        column(3,downloadButton(outputId = "download_fad_data4", label = "Download Map Data"))
+                      )
+             )       
              
            ## Main Panel END ----
            ), width = 8)
@@ -4560,87 +4396,63 @@ ui <- navbarPage(id = "nav1",
              
              ### Feedback archive documentation (FAD) ----
              tabPanel("ModE-RA sources", br(),
+                      
+                      # Title & help pop up
+                      MEsource_popover("pop_anomalies_mesource"),
+                      
                       fluidRow(
                         
-                        # Year 1
-                        column(width=4,
-                               # Title & help pop up
-                               MEsource_popover("pop_anncyc_mesource"),
-                               
-                               numericInput(
-                                 inputId  = "fad_year_a5",
-                                 label   =  "Year",
-                                 value = 1422,
-                                 min = 1422,
-                                 max = 2000)),
-                        # Longitude 1
-                        column(width=4,
-                               numericRangeInput(inputId = "fad_longitude_a5",
-                                                 label = "Longitude range (-180/180):",
-                                                 value = c(4,12),
-                                                 separator = " to ",
-                                                 min = -180,
-                                                 max = 180)),
-                        # Latitude 1
-                        column(width=4,
-                               numericRangeInput(inputId = "fad_latitude_a5",
-                                                 label = "Latitude range (-90/90):",
-                                                 value = c(43,50),
-                                                 separator = " to ",
-                                                 min = -90,
-                                                 max = 90)),
+                        # Year entry
+                        numericInput(
+                          inputId  = "fad_year5",
+                          label   =  "Year",
+                          value = 1422,
+                          min = 1422,
+                          max = 2008),
+                        
+                        # Enter Season                
+                        selectInput(inputId  = "fad_season5",
+                                    label    = "Months",
+                                    choices  = c("April to September","October to March"),
+                                    selected = "April to September"),
                       ),
                       
-
+                      h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
                       
-                      h4("Draw a box on the left map to use zoom function", style = "color: #094030;"),
+                      withSpinner(ui_element = plotOutput("fad_map5",
+                                                          brush = brushOpts(
+                                                            id = "brush_fad5",
+                                                            resetOnNew = TRUE
+                                                          )), 
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
                       
-                      div(id = "fad_map_a5",
-                          splitLayout(
-                            withSpinner(ui_element = plotOutput("fad_winter_map_a5",
-                                                                brush = brushOpts(
-                                                                  id = "brush_fad1a5",
-                                                                  resetOnNew = TRUE
-                                                                )),
-                                        image = spinner_image,
-                                        image.width = spinner_width,
-                                        image.height = spinner_height),
-                            
-                            plotOutput("fad_zoom_winter_a5")
-                          )),
+                      fluidRow(
+                        h6(helpText("Draw a box on the map to zoom in")),
+                        actionButton(inputId = "fad_reset_zoom5",
+                                     label = "Reset zoom",
+                                     width = "200px"),
+                      ),
                       
-                      div(id = "fad_map_b5",
-                          splitLayout(
-                            withSpinner(ui_element = plotOutput("fad_summer_map_a5",
-                                                                brush = brushOpts(
-                                                                  id = "brush_fad1b5",
-                                                                  resetOnNew = TRUE
-                                                                )),
-                                        image = spinner_image,
-                                        image.width = spinner_width,
-                                        image.height = spinner_height),
-                            
-                                      plotOutput("fad_zoom_summer_a5")
-                          )),
+                      br(),
                       
+                      #Download
                       h4("Downloads", style = "color: #094030;"),
-                      
                       fluidRow(
-                        column(2, radioButtons(inputId = "file_type_modera_source_a5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                        column(3, downloadButton(outputId = "download_fad_wa5", label = "Download Oct. - Mar.")),
-                        column(2, radioButtons(inputId = "file_type_modera_source_b5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                        column(3, downloadButton(outputId = "download_fad_sa5", label = "Download Apr. - Sep.")),
+                        column(2,radioButtons(inputId = "file_type_fad5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                        column(3,downloadButton(outputId = "download_fad5", label = "Download Map")),
                       ),
                       
-                      h4("Download data", style = "color: #094030;"),
+                      br(),
+                      
                       fluidRow(
-                        column(2, radioButtons(inputId = "file_type_data_modera_source_a5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                        column(3, downloadButton(outputId = "download_data_fad_wa5", label = "Download Oct. - Mar.")),
-                        column(2, radioButtons(inputId = "file_type_data_modera_source_b5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                        column(3, downloadButton(outputId = "download_data_fad_sa5", label = "Download Apr. - Sep."))
-                      ),
-             ),
-
+                        # Download data
+                        column(2,radioButtons(inputId = "data_file_type_fad5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                        column(3,downloadButton(outputId = "download_fad_data5", label = "Download Map Data"))
+                      )
+             )       
+             
              ## Main Panel END ----
            ), width = 8),
 # Annual cycles END ---- 
@@ -4720,14 +4532,14 @@ server <- function(input, output, session) {
   )
   
   # Set up custom data and SDratio reactive variables ----
-  custom_data = reactiveVal()
-  custom_data_ID = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current custom data
+  custom_data_primary = reactiveVal()
+  custom_data_id_primary = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current custom data
   
-  custom_data2 = reactiveVal()                 # custom data 2 is only used for variable 2 in correlation
-  custom_data_ID2 = reactiveVal(c(NA,NA,NA,NA)) 
+  custom_data_secondary = reactiveVal()                 # custom data secondary is only used for variable 2 in correlation
+  custom_data_id_secondary = reactiveVal(c(NA,NA,NA,NA)) 
   
   SDratio_data = reactiveVal()
-  SDratio_data_ID = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current SD data
+  SDratio_data_id = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current SD data
   
   #Preparations in the Server (Hidden options) ----
   track_usage(storage_mode = store_json(path = "logs/"))
@@ -9704,13 +9516,13 @@ server <- function(input, output, session) {
       
       # Update custom_data if required
       if (!identical(custom_data_id_primary()[2:3],monthly_ts_data_ID[2:3])){ # ....i.e. changed variable or dataset
-        custom_data(load_ModE_data(input$dataset_selected5,input$variable_selected5)) # load new custom data
-        custom_data_ID(monthly_ts_data_ID) # update custom data ID
+        custom_data_primary(load_ModE_data(input$dataset_selected5,input$variable_selected5)) # load new custom data
+        custom_data_id_primary(monthly_ts_data_ID) # update custom data ID
       }
 
       # Replace starter data if tracker = 1
       if (monthly_ts_tracker() == 1){
-        monthly_ts_data(create_monthly_TS_data(custom_data(),input$dataset_selected5,input$variable_selected5,
+        monthly_ts_data(create_monthly_TS_data(custom_data_primary(),input$dataset_selected5,input$variable_selected5,
                                                input$range_years5,input$range_longitude5,
                                                input$range_latitude5,input$mode_selected5,
                                                input$type_selected5,input$ref_period5))
@@ -9727,7 +9539,7 @@ server <- function(input, output, session) {
       } 
       # Otherwise, add to dataframe
       else {
-        new_rows = create_monthly_TS_data(custom_data(),input$dataset_selected5,input$variable_selected5,
+        new_rows = create_monthly_TS_data(custom_data_primary(),input$dataset_selected5,input$variable_selected5,
                                                input$range_years5,input$range_longitude5,
                                                input$range_latitude5,input$mode_selected5,
                                                input$type_selected5,input$ref_period5)
@@ -10145,22 +9957,22 @@ server <- function(input, output, session) {
     
     month_range_primary <- reactive({
       #Creating Numeric Vector for Month Range between 0 and 12
-      if (input$nav1 == "tab1"){
+      if (input$nav1 == "tab1"){   # Anomalies
         create_month_range(input$range_months)    
-      } else if (input$nav1 == "tab2"){
+      } else if (input$nav1 == "tab2"){   # Composites
         create_month_range(input$range_months2)    
-      } else if (input$nav1 == "tab3"){
+      } else if (input$nav1 == "tab3"){   # Correlation
         create_month_range(input$range_months_v1)   
-      } else if (input$nav1 == "tab4"){
+      } else if (input$nav1 == "tab4"){   # Regression
         create_month_range(input$range_months_dv) 
       }
     })
       
     month_range_secondary <- reactive({
       #Creating Numeric Vector for Month Range between 0 and 12
-      if (input$nav1 == "tab3"){
+      if (input$nav1 == "tab3"){   # Correlation
         create_month_range(input$range_months_v2)  
-      } else if (input$nav1 == "tab4"){
+      } else if (input$nav1 == "tab4"){   # Regression
         create_month_range(input$range_months_iv) 
       }
     })
@@ -10168,41 +9980,41 @@ server <- function(input, output, session) {
     ### Subset lons & Subset lats ----
     
     subset_lons_primary <- reactive({
-      if (input$nav1 == "tab1"){
+      if (input$nav1 == "tab1"){   # Anomalies
         create_subset_lon_IDs(lonlat_vals()[1:2])       
-      } else if (input$nav1 == "tab2"){
+      } else if (input$nav1 == "tab2"){   # Composites
         create_subset_lon_IDs(lonlat_vals2()[1:2])
-      } else if (input$nav1 == "tab3"){
+      } else if (input$nav1 == "tab3"){   # Correlation
         create_subset_lon_IDs(lonlat_vals_v1()[1:2])
-      } else if (input$nav1 == "tab4"){
+      } else if (input$nav1 == "tab4"){   # Regression
         create_subset_lon_IDs(lonlat_vals_dv()[1:2])
       }
     })
     
     subset_lons_secondary <- reactive({
-      if (input$nav1 == "tab3"){
+      if (input$nav1 == "tab3"){   # Correlation
         create_subset_lon_IDs(lonlat_vals_v2()[1:2])
-      } else if (input$nav1 == "tab4"){
+      } else if (input$nav1 == "tab4"){   # Regression
         create_subset_lon_IDs(lonlat_vals_iv()[1:2])
       }
     })
     
     subset_lats_primary <- reactive({
-      if (input$nav1 == "tab1"){
+      if (input$nav1 == "tab1"){   # Anomalies
         create_subset_lat_IDs(lonlat_vals()[3:4])       
-      } else if (input$nav1 == "tab2"){
+      } else if (input$nav1 == "tab2"){   # Composites
         create_subset_lat_IDs(lonlat_vals2()[3:4])
-      } else if (input$nav1 == "tab3"){
+      } else if (input$nav1 == "tab3"){   # Correlation
         create_subset_lat_IDs(lonlat_vals_v1()[3:4])
-      } else if (input$nav1 == "tab4"){
+      } else if (input$nav1 == "tab4"){   # Regression
         create_subset_lat_IDs(lonlat_vals_dv()[3:4])
       }
     })
     
     subset_lats_secondary <- reactive({
-      if (input$nav1 == "tab3"){
+      if (input$nav1 == "tab3"){   # Correlation
         create_subset_lat_IDs(lonlat_vals_v2()[3:4])
-      } else if (input$nav1 == "tab4"){
+      } else if (input$nav1 == "tab4"){   # Regression
         create_subset_lat_IDs(lonlat_vals_iv()[3:4])
       }
     })
@@ -10211,43 +10023,181 @@ server <- function(input, output, session) {
     # Generating data ID - c(pre-processed data?,dataset,variable,season)
     
     data_id_primary <- reactive({
-      if (input$nav1 == "tab1"){
+      if (input$nav1 == "tab1"){   # Anomalies
         generate_data_ID(input$dataset_selected,input$variable_selected, month_range_primary())  
-      } else if (input$nav1 == "tab2"){
+      } else if (input$nav1 == "tab2"){   # Composites
         generate_data_ID(input$dataset_selected2,input$variable_selected2, month_range_primary())
-      } else if (input$nav1 == "tab3"){
+      } else if (input$nav1 == "tab3"){   # Correlation
         generate_data_ID(input$dataset_selected_v1,input$ME_variable_v1, month_range_primary())
-      } else if (input$nav1 == "tab4"){
+      } else if (input$nav1 == "tab4"){   # Regression
         generate_data_ID(input$dataset_selected_dv,input$ME_variable_dv, month_range_primary())
       }  
     })
     
     data_id_secondary <- reactive({
-      if (input$nav1 == "tab3"){
+      if (input$nav1 == "tab3"){   # Correlation
         generate_data_ID(input$dataset_selected_v2,input$ME_variable_v2, month_range_secondary())
       }
     })
     
-  ## GENERAL data processing and plotting ----  
-  #Preparation
+    ### Update custom_data ----
     
-    # Update custom_data if required
+    # Update custom_data_primary (if required)
     observeEvent(data_id_primary(),{
       if (data_id_primary()[1] == 0){ # Only updates when new custom data is required...
         if (!identical(custom_data_id_primary()[2:3],data_id_primary()[2:3])){ # ....i.e. changed variable or dataset
-          custom_data(load_ModE_data(input$dataset_selected,input$variable_selected)) # load new custom data
-          custom_data_ID(data_id_primary()) # update custom data ID
+          
+          new_dataset = switch(data_id_primary()[2],
+                               "1" = "ModE-RA",
+                               "2" = "ModE-Sim",
+                               "3" = "ModE-RAclim")
+          new_variable = switch(data_id_primary()[3],
+                                "1" = "Temperature",
+                                "2" = "Precipitation",
+                                "3" = "SLP",
+                                "4" = "Z500")
+          
+          custom_data_primary(load_ModE_data(new_dataset,new_variable)) # load new custom data
+          custom_data_id_primary(data_id_primary()) # update custom data ID
         }
       }
     })
+    
+    # Update custom_data_secondary (if required)
+    observeEvent(data_id_secondary(),{
+      if (data_id_secondary()[1] == 0){ # Only updates when new custom data is required...
+        if (!identical(custom_data_id_secondary()[2:3],data_id_secondary()[2:3])){ # ....i.e. changed variable or dataset
+          
+          new_dataset = switch(data_id_secondary()[2],
+                               "1" = "ModE-RA",
+                               "2" = "ModE-Sim",
+                               "3" = "ModE-RAclim")
+          new_variable = switch(data_id_secondary()[3],
+                                "1" = "Temperature",
+                                "2" = "Precipitation",
+                                "3" = "SLP",
+                                "4" = "Z500")
+          
+          custom_data_secondary(load_ModE_data(new_dataset,new_variable)) # load new custom data
+          custom_data_id_secondary(data_id_secondary()) # update custom data ID
+        }
+      }
+    })
+
+    ### Geographic Subset ----
+    
+    data_output1_primary <- reactive({
+      req(data_id_primary(), subset_lons_primary(), subset_lats_primary())
+      create_latlon_subset(custom_data_primary(), data_id_primary(), subset_lons_primary(), subset_lats_primary())
+    })
+    
+    data_output1_secondary <- reactive({
+      req(data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
+      create_latlon_subset(custom_data_secondary(), data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
+    })
+
+    ### Yearly subset ----
+    
+    data_output2_primary <- reactive({
+      if (input$nav1 == "tab1"){   # Anomalies
+        create_yearly_subset(data_output1_primary(), data_id_primary(), input$range_years, month_range_primary())  
+      } else if (input$nav1 == "tab2"){   # Composites
+        create_yearly_subset_composite(data_output1_primary(), data_id_primary(), year_set_comp(), month_range_primary())
+      } else if (input$nav1 == "tab3"){   # Correlation
+        create_yearly_subset(data_output1_primary(), data_id_primary(), input$range_years3, month_range_primary())     
+      } else if (input$nav1 == "tab4"){   # Regression
+        create_yearly_subset(data_output1_primary(), data_id_primary(), input$range_years4, month_range_primary()) 
+      }
+    })
+    
+    data_output2_secondary <- reactive({
+      if (input$nav1 == "tab3"){   # Correlation
+        create_yearly_subset(data_output1_secondary(), data_id_secondary(), input$range_years3, month_range_secondary())
+      }
+    })
+
+    ### Reference subset ----
+    # Create reference yearly subset & convert to mean
+    
+    data_output3_primary <- reactive({
+      if (input$nav1 == "tab1"){   # Anomalies
+        apply(create_yearly_subset(data_output1_primary(), data_id_primary(), input$ref_period, month_range_primary()),c(1:2),mean)  
+      } else if (input$nav1 == "tab2"){   # Composites
+        if (input$mode_selected2 == "Fixed reference"){
+          apply(create_yearly_subset(data_output1_primary(), data_id_primary(), input$ref_period2, month_range_primary()),c(1:2),mean)
+        } else if (input$mode_selected2 == "Custom reference") {
+          apply(create_yearly_subset_composite(data_output1_primary(), data_id_primary(), year_set_comp_ref(), month_range_primary()),c(1:2),mean)
+        } else {
+          NA
+        }
+      } else if (input$nav1 == "tab3"){   # Correlation
+        apply(create_yearly_subset(data_output1_primary(), data_id_primary(), input$ref_period_v1, month_range_primary()),c(1:2),mean)
+      } else if (input$nav1 == "tab4"){   # Regression
+        apply(create_yearly_subset(data_output1_primary(), data_id_primary(), input$ref_period_dv, month_range_primary()),c(1:2),mean)
+      }
+    })    
+    
+    data_output3_secondary <- reactive({
+      if (input$nav1 == "tab3"){   # Correlation
+        apply(create_yearly_subset(data_output1_secondary(), data_id_secondary(), input$ref_period_v2, month_range_secondary()),c(1:2),mean)
+      }
+    })    
+    
+    
+    #Converting absolutes to anomalies
+    data_output4 <- reactive({
+      
+      processed_data4 <- convert_subset_to_anomalies(data_output2_primary(), data_output3_primary())
+      
+      return(processed_data4)
+    })
+    
+    ### Convert to anomalies ----
+    
+    data_output4_primary <- reactive({
+      if (input$nav1 == "tab1"){   # Anomalies
+        convert_subset_to_anomalies(data_output2_primary(), data_output3_primary())
+      } else if (input$nav1 == "tab2"){   # Composites
+        if (input$mode_selected2 == "X years prior"){
+          convert_composite_to_anomalies(data_output2_primary(), data_output1_primary(), data_id_primary(), year_set_comp(), month_range_primary(), input$prior_years2)
+        } else {
+          convert_subset_to_anomalies(data_output2_primary(), data_output3_primary())
+        }
+      } else if (input$nav1 == "tab3"){   # Correlation
+        if (input$mode_selected_v1 == "Absolute"){
+          data_output2_primary()
+        } else {
+          convert_subset_to_anomalies(data_output2_primary(), data_output3_primary())
+        }
+      } else if (input$nav1 == "tab4"){   # Regression
+        if (input$mode_selected_dv == "Absolute"){
+          data_output2_primary()
+        } else {
+          convert_subset_to_anomalies(data_output2_primary(), data_output3_primary())
+        }
+      }
+    })
+    
+    data_output4_secondary <- reactive({
+      if (input$nav1 == "tab3"){   # Correlation
+        if (input$mode_selected_v2 == "Absolute"){
+          data_output2_secondary()
+        } else {
+          convert_subset_to_anomalies(data_output2_secondary(), data_output3_secondary())
+        }
+      }
+    })
+    
+  ## ANOMALIES Load SD ratio data, plotting & downloads ----  
+    ### SD ratio data ----
     
     # Update SD ratio data when required
     observe({
       if((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")){
         if (input$nav1 == "tab1"){ # check current tab
-          if (!identical(SDratio_data_id_primary()[3],data_id_primary()[3])){ # check to see if currently loaded variable is the same
+          if (!identical(SDratio_data_id()[3],data_id_primary()[3])){ # check to see if currently loaded variable is the same
             SDratio_data(load_ModE_data("SD Ratio",input$variable_selected)) # load new SD data
-            SDratio_data_ID(data_id_primary()) # update custom data ID
+            SDratio_data_id(data_id_primary()) # update custom data ID
           } 
         }
       }
@@ -10256,6 +10206,8 @@ server <- function(input, output, session) {
     # Processed SD data
     SDratio_subset = reactive({
       
+      req(input$nav1 == "tab1") # Only run code if in the current tab
+      
       req(((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")))
       
       new_SD_data = create_sdratio_data(SDratio_data(),"general",input$variable_selected,subset_lons_primary(),subset_lats_primary(),
@@ -10263,43 +10215,13 @@ server <- function(input, output, session) {
       return(new_SD_data)
     })
     
-    #Geographic Subset
-    data_output1 <- reactive({
-      
-      #Geographic Subset Function
-      processed_data  <- create_latlon_subset(custom_data(), data_id_primary(), subset_lons_primary(), subset_lats_primary())                
-      
-      return(processed_data)
-    })
-    
-    #Creating yearly subset
-    data_output2 <- reactive({
-      #Creating a reduced time range  
-      processed_data2 <- create_yearly_subset(data_output1(), data_id_primary(), input$range_years, month_range_primary())              
-      
-      return(processed_data2)  
-    })
-    
-    # Create reference yearly subset & convert to mean
-    data_output3 <- reactive({
-      # Create annual reference data
-      ref1 <- create_yearly_subset(data_output1(), data_id_primary(), input$ref_period, month_range_primary())   
-      ref2 = apply(ref1,c(1:2),mean)
-      
-      return(ref2)  
-    })
-    
-    #Converting absolutes to anomalies
-    data_output4 <- reactive({
-      
-      processed_data4 <- convert_subset_to_anomalies(data_output2(), data_output3())
-      
-      return(processed_data4)
-    })
+    ### Plotting ----
     
     #Map customization (statistics and map titles)
     
     plot_titles <- reactive({
+      
+      req(input$nav1 == "tab1") # Only run code if in the current tab
       
       my_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Anomaly", input$title_mode,input$title_mode_ts,
                                   month_range_primary(), input$range_years, input$ref_period, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
@@ -10310,7 +10232,9 @@ server <- function(input, output, session) {
     
     map_statistics = reactive({
       
-      my_stats = create_stat_highlights_data(data_output4(),SDratio_subset(),
+      req(input$nav1 == "tab1") # Only run code if in the current tab
+      
+      my_stats = create_stat_highlights_data(data_output4_primary(),SDratio_subset(),
                                              input$custom_statistic,input$sd_ratio,
                                              NA,subset_lons_primary(),subset_lats_primary())
       
@@ -10318,12 +10242,14 @@ server <- function(input, output, session) {
     })
     
     #Plotting the Data (Maps)
-    map_data <- function(){create_map_datatable(data_output4(), subset_lons_primary(), subset_lats_primary())}
+    map_data <- function(){create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
     
     output$data1 <- renderTable({map_data()}, rownames = TRUE)
     
     #Plotting the Map
     map_dimensions <- reactive({
+      
+      req(input$nav1 == "tab1") # Only run code if in the current tab
       
       m_d = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_map_width, input$dimension[2], input$hide_axis)
       
@@ -10339,15 +10265,18 @@ server <- function(input, output, session) {
     #Ref/Absolute/SD ratio Map
     ref_map_data <- function(){
       if (input$ref_map_mode == "Absolute Values"){
-        create_map_datatable(data_output2(), subset_lons_primary(), subset_lats_primary())
+        create_map_datatable(data_output2_primary(), subset_lons_primary(), subset_lats_primary())
       } else if (input$ref_map_mode == "Reference Values"){
-        create_map_datatable(data_output3(), subset_lons_primary(), subset_lats_primary())
+        create_map_datatable(data_output3_primary(), subset_lons_primary(), subset_lats_primary())
       } else if (input$ref_map_mode == "SD Ratio"){
         create_map_datatable(SDratio_subset(), subset_lons_primary(), subset_lats_primary())
       }
     }    
     
     ref_map_titles = reactive({
+      
+      req(input$nav1 == "tab1") # Only run code if in the current tab
+      
       if (input$ref_map_mode == "Absolute Values"){
         rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
                                     month_range_primary(), input$range_years, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
@@ -10397,9 +10326,11 @@ server <- function(input, output, session) {
 
     #Plotting the data (timeseries)
     timeseries_data <- reactive({
+      req(input$nav1 == "tab1") # Only run code if in the current tab
+      
       #Plot normal timeseries if year range is > 1 year
       if (input$range_years[1] != input$range_years[2]){
-        ts_data1 <- create_timeseries_datatable(data_output4(), input$range_years, "range", subset_lons_primary(), subset_lats_primary())
+        ts_data1 <- create_timeseries_datatable(data_output4_primary(), input$range_years, "range", subset_lons_primary(), subset_lats_primary())
         
         ts_data2 = add_stats_to_TS_datatable(ts_data1,input$custom_average_ts,input$year_moving_ts,
                                              "center",input$custom_percentile_ts,input$percentile_ts,input$moving_percentile_ts)
@@ -10417,6 +10348,7 @@ server <- function(input, output, session) {
     })
     
     timeseries_data_output = reactive({
+      req(input$nav1 == "tab1") # Only run code if in the current tab
       if (input$range_years[1] != input$range_years[2]){
         output_ts_table = rewrite_tstable(timeseries_data(),input$variable_selected)
       } else {
@@ -10438,7 +10370,7 @@ server <- function(input, output, session) {
       if (input$range_years[1] != input$range_years[2]){
         # Generate NA or reference mean
         if(input$show_ref_ts == TRUE){
-          ref_ts = signif(mean(data_output3()),3)
+          ref_ts = signif(mean(data_output3_primary()),3)
         } else {
           ref_ts = NA
         }
@@ -10473,112 +10405,66 @@ server <- function(input, output, session) {
     output$timeseries <- renderPlot({timeseries_plot()}, height = 400)
   
     ### ModE-RA sources ----
-    #ModE-RA sources
     
-    ranges  <- reactiveValues(x = NULL, y = NULL)
-    ranges2 <- reactiveValues(x = NULL, y = NULL)
-  
-    fad_wa <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a, "winter", lonlat_vals()[1:2], lonlat_vals()[3:4], labs)}
-    fad_sa <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a, "summer", lonlat_vals()[1:2], lonlat_vals()[3:4], labs)}
+    # Set up values and functions for plotting
+    fad_zoom  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
     
-    # Upper map (Original)
-    output$fad_winter_map_a <- renderPlot({
-      if ((month_range_primary()[1] >= 4) && (month_range_primary()[2] <= 9)) {
-        plot_data <- fad_sa(labs = TRUE)
-      } else {
-        plot_data <- fad_wa(labs = TRUE)
-      }
-      
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
+    season_fad_short = reactive({
+      switch(input$fad_season,
+             "April to September" = "summer",
+             "October to March" = "winter")
     })
     
-    # Upper map (Zoom)
-    output$fad_zoom_winter_a <- renderPlot({
-      if ((month_range_primary()[1] >= 4) && (month_range_primary()[2] <= 9)) {
-        plot_data <- fad_sa(labs = FALSE)
-      } else {
-        plot_data <- fad_wa(labs = FALSE)
-      }
-      
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges$x, ylim = ranges$y, crs = st_crs(4326))
-      
-      plot_data
-    })
-      
-    
-    # Lower map (Original)
-    output$fad_summer_map_a <- renderPlot({
-      if ((month_range_primary()[1] >= 4 && month_range_primary()[2] <= 9) | (month_range_primary()[2] <= 3)) {
-        NULL
-      } else {
-        plot_data <- fad_sa(labs = TRUE)  
-      } 
-    
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
+    # Load global data
+    fad_global_data = reactive({
+      load_modera_source_data(input$fad_year, season_fad_short())
     })
     
-    # Lower map (Zoom)
-    output$fad_zoom_summer_a <- renderPlot({
-      if ((month_range_primary()[1] >= 4 && month_range_primary()[2] <= 9) || (month_range_primary()[2] <= 3)) {
-        NULL
-      } else {
-        plot_data <- fad_sa(labs = FALSE)
-      }
-      
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges2$x, ylim = ranges2$y, crs = st_crs(4326))
-      
-      plot_data
+    # Plot map 
+    fad_plot = function(){plot_modera_sources(fad_global_data(),input$fad_year, season_fad_short(),fad_zoom())}
+    
+    output$fad_map <- renderPlot({
+      fad_plot()
     })
     
-
-    #Update Modera source year input and Brushes when Double Click happens
+    # Set up data function
+    fad_data <- function() {
+      download_feedback_data(fad_global_data(), fad_zoom()[1:2], fad_zoom()[3:4])}
     
+    observeEvent(lonlat_vals()|input$fad_reset_zoom,{
+      fad_zoom(lonlat_vals())
+    })
+    
+    observeEvent(input$brush_fad,{
+      brush = input$brush_fad
+      fad_zoom(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
+    })
+    
+    # Update fad_year 
     observeEvent(input$range_years[1], {
       updateNumericInput(
         session = getDefaultReactiveDomain(),
-        inputId = "fad_year_a",
+        inputId = "fad_year",
         value = input$range_years[1])
     })
     
-    observe({
-      brush <- input$brush_fad1a
-      if (!is.null(brush)) {
-        ranges$x <- c(brush$xmin, brush$xmax)
-        ranges$y <- c(brush$ymin, brush$ymax)
-
+    # Update fad_season
+    observeEvent(month_range_primary()[1], {
+      
+      req(input$nav1 == "tab1") # Only run code if in the current tab
+      
+      if (month_range_primary()[1] >3 & month_range_primary()[1] <10){
+        updateSelectInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "fad_season",
+          selected = "April to September")
       } else {
-        ranges$x <- lonlat_vals()[1:2]
-        ranges$y <- lonlat_vals()[3:4]
+        updateSelectInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "fad_season",
+          selected = "October to March")
       }
     })
-    
-    observe({
-      brush_b <- input$brush_fad1b
-      if (!is.null(brush_b)) {
-        ranges2$x <- c(brush_b$xmin, brush_b$xmax)
-        ranges2$y <- c(brush_b$ymin, brush_b$ymax)
-
-      } else {
-        ranges2$x <- lonlat_vals()[1:2]
-        ranges2$y <- lonlat_vals()[3:4]
-      }
-    })
-    
-    #Data ModE-RA sources
-    fad_wa_data <- function() {
-
-      download_feedback_data(input$fad_year_a, "winter", lonlat_vals()[1:2], lonlat_vals()[3:4])}
-    fad_sa_data <- function() {
-
-      download_feedback_data(input$fad_year_a, "summer", lonlat_vals()[1:2], lonlat_vals()[3:4])}
     
     
     ### Downloads ----
@@ -10657,493 +10543,357 @@ server <- function(input, output, session) {
                                                                        col.names = TRUE)
                                                           }})
     
-    output$download_fad_sa             <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a, "-modera_source.",input$file_type_modera_source_b, sep = "")},
-                                                          content  = function(file) {
-                                                            
-                                                            mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_winter_map_a_width, input$dimension[2], FALSE)
-                                                            if (input$file_type_modera_source_b == "png"){
-                                                              png(file, width = mmd[3] , height = mmd[4], res = 400)  
-                                                              print(fad_sa(labs = TRUE))
-                                                              dev.off()
-                                                            } else if (input$file_type_modera_source_b == "jpeg"){
-                                                              jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
-                                                              print(fad_sa(labs = TRUE)) 
-                                                              dev.off()
-                                                            } else {
-                                                              pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
-                                                              print(fad_sa(labs = TRUE))
-                                                              dev.off()
-                                                            }})
-
-    output$download_fad_wa             <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a, "-modera_source.",input$file_type_modera_source_a, sep = "")},
-                                                          content  = function(file) {
-                                                            
-                                                            mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_winter_map_a_width, input$dimension[2], FALSE)
-                                                            
-                                                            if (input$file_type_modera_source_a == "png"){
-                                                              png(file, width = mmd[3] , height = mmd[4], res = 400)  
-                                                              print(fad_wa(labs = TRUE))
-                                                              dev.off()
-                                                            } else if (input$file_type_modera_source_a == "jpeg"){
-                                                              jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
-                                                              print(fad_wa(labs = TRUE)) 
-                                                              dev.off()
-                                                            } else {
-                                                              pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
-                                                              print(fad_wa(labs = TRUE))
-                                                              dev.off()
-                                                            }})
+    output$download_fad            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season),"_",input$fad_year,".",input$file_type_fad, sep = "")},
+                                                      content  = function(file) {
+                                                        
+                                                        mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map_width, input$dimension[2], FALSE)
+                                                        
+                                                        if (input$file_type_fad == "png"){
+                                                          png(file, width = mmd[3] , height = mmd[4], res = 400)  
+                                                          print(fad_plot())
+                                                          dev.off()
+                                                        } else if (input$file_type_fad == "jpeg"){
+                                                          jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
+                                                          print(fad_plot()) 
+                                                          dev.off()
+                                                        } else {
+                                                          pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
+                                                          print(fad_plot())
+                                                          dev.off()
+                                                        }})
     
-    output$download_data_fad_wa       <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a, "-modera_source_data.",input$file_type_data_modera_source_a, sep = "")},
-                                                          content  = function(file) {
-                                                            if (input$file_type_data_modera_source_a == "csv"){
-                                                              write.csv(fad_wa_data(), file,
-                                                                        row.names = FALSE)
-                                                            } else {
-                                                              write.xlsx(fad_wa_data(), file,
-                                                                         col.names = TRUE,
-                                                                         row.names = FALSE)
-                                                            }})
-    
-    output$download_data_fad_sa      <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a, "-modera_source_data.",input$file_type_data_modera_source_b, sep = "")},
-                                                        content  = function(file) {
-                                                          if (input$file_type_data_modera_source_b == "csv"){
-                                                            write.csv(fad_sa_data(), file,
-                                                                      row.names = FALSE)
-                                                          } else {
-                                                            write.xlsx(fad_sa_data(), file,
-                                                                       col.names = TRUE,
-                                                                       row.names = FALSE)
-                                                          }})
+    output$download_fad_data       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season),"_",input$fad_year,"_data.",input$data_file_type_fad, sep = "")},
+                                                      content  = function(file) {
+                                                        if (input$data_file_type_fad == "csv"){
+                                                          write.csv(fad_data(), file,
+                                                                    row.names = FALSE)
+                                                        } else {
+                                                          write.xlsx(fad_data(), file,
+                                                                     col.names = TRUE,
+                                                                     row.names = FALSE)
+                                                        }})
     
     output$download_netcdf             <- downloadHandler(filename = function() {paste(plot_titles()$netcdf_title, ".nc", sep = "")},
                                                           content  = function(file) {
                                                             netcdf_ID = sample(1:1000000,1)
-                                                            generate_custom_netcdf (data_output4(), "general",input$dataset_selected,netcdf_ID, input$variable_selected, input$netcdf_variables, "Anomaly", subset_lons_primary(), subset_lats_primary(), month_range_primary(), input$range_years, input$ref_period, NA)
+                                                            generate_custom_netcdf (data_output4_primary(), "general",input$dataset_selected,netcdf_ID, input$variable_selected, input$netcdf_variables, "Anomaly", subset_lons_primary(), subset_lats_primary(), month_range_primary(), input$range_years, input$ref_period, NA)
                                                             file.copy(paste("user_ncdf/netcdf_",netcdf_ID,".nc", sep=""),file)
                                                             file.remove(paste("user_ncdf/netcdf_",netcdf_ID,".nc", sep=""))
                                                           })
  
-  ## COMPOSITE data processing and plotting ----      
+  ## COMPOSITE Year range,load SD ratio data, plotting & downloads ---- 
     
-    # Update custom_data if required
-    observeEvent(data_id_primary(),{
-      if (data_id_primary()[1] == 0){ # Only updates when new custom data is required...
-        if (!identical(custom_data_id_primary()[2:3],data_id_primary()[2:3])){ # ....i.e. changed variable or dataset
-          custom_data(load_ModE_data(input$dataset_selected2,input$variable_selected2)) # load new custom data
-          custom_data_ID(data_id_primary()) # update custom data ID
-        }
-      }
-    })
+    ### Year Range ----
     
-    year_set_comp <- reactive({
-      
       #Creating a year set for composite
-      ysc = read_composite_data(input$range_years2, input$upload_file2$datapath, input$enter_upload2)
+      year_set_comp <- reactive({
+        read_composite_data(input$range_years2, input$upload_file2$datapath, input$enter_upload2)
+      })
       
-      return(ysc)
-    })
+      #List of custom anomaly years (from read Composite) as reference data
+      year_set_comp_ref <- reactive({
+        read_composite_data(input$range_years2a, input$upload_file2a$datapath, input$enter_upload2a)
+      })
     
-    #List of custom anomaly years (from read Composite) as reference data
+    ### SD Ratio data ----
     
-    year_set_comp_ref <- reactive({
+      # Update SD ratio data when required
+      observe({
+        if((input$ref_map_mode2 == "SD Ratio")|(input$custom_statistic2 == "SD ratio")){
+          if (input$nav1 == "tab2"){ # check current tab
+            if (!identical(SDratio_data_id()[3],data_id_primary()[3])){ # check to see if currently loaded variable is the same
+              SDratio_data(load_ModE_data("SD Ratio",input$variable_selected2)) # load new SD data
+              SDratio_data_id(data_id_primary()) # update custom data ID
+            } 
+          }
+        }
+      })
       
-      yscr = read_composite_data(input$range_years2a, input$upload_file2a$datapath, input$enter_upload2a)
+      # Processed SD data
+      SDratio_subset_2 = reactive({
+        
+        req(input$nav1 == "tab2") # Only run code if in the current tab
+        
+        req(((input$ref_map_mode2 == "SD Ratio")|(input$custom_statistic2 == "SD ratio")))
+        
+        new_SD_data2 = create_sdratio_data(SDratio_data(),"composites",input$variable_selected2,
+                                           subset_lons_primary(),subset_lats_primary(),month_range_primary(),year_set_comp())
+        return(new_SD_data2)
+      })
+  
+    ### Plotting ----
+          
+      #Map customization (statistics and map titles)
       
-      return(yscr)  
+      plot_titles_2 <- reactive({
+        
+        req(input$nav1 == "tab2") # Only run code if in the current tab
+        
+        my_title <- generate_titles ("composites", input$dataset_selected2, input$variable_selected2, input$mode_selected2, input$title_mode2,input$title_mode_ts2,
+                                     month_range_primary(), input$range_years2, input$ref_period2, input$prior_years2,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
+                                     input$title1_input2, input$title2_input2,input$title1_input_ts2)
+        
+        return(my_title)
+      })
       
-    })
-    
-    # Update SD ratio data when required
-    observe({
-      if((input$ref_map_mode2 == "SD Ratio")|(input$custom_statistic2 == "SD ratio")){
-        if (input$nav1 == "tab2"){ # check current tab
-          if (!identical(SDratio_data_id_primary()[3],data_id_primary()[3])){ # check to see if currently loaded variable is the same
-            SDratio_data(load_ModE_data("SD Ratio",input$variable_selected2)) # load new SD data
-            SDratio_data_ID(data_id_primary()) # update custom data ID
-          } 
+      
+      map_statistics_2 = reactive({
+        
+        req(input$nav1 == "tab2") # Only run code if in the current tab
+        
+        my_stats = create_stat_highlights_data(data_output4_primary(),SDratio_subset_2(),
+                                               input$custom_statistic2,input$sd_ratio2,
+                                               input$percentage_sign_match2,
+                                               subset_lons_primary(),subset_lats_primary())
+        
+        return(my_stats)
+      })
+      
+      #Plotting the Data (Maps)
+      map_data_2 <- function(){create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
+      
+      output$data3 <- renderTable({map_data_2()}, rownames = TRUE)
+      
+      #Plotting the Map
+      map_dimensions_2 <- reactive({
+        
+        req(input$nav1 == "tab2") # Only run code if in the current tab
+        
+        m_d_2 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_map2_width, input$dimension[2]*0.85, input$hide_axis2)
+        
+        return(m_d_2)
+      })
+      
+      map_plot_2 <- function(){plot_default_map(map_data_2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2, plotOrder2(), input$shpPickers2, input, "shp_colour2_")}
+      
+      output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
+      # code line below sets height as a function of the ratio of lat/lon 
+      
+      
+      #Ref/Absolute Map
+      ref_map_data_2 <- function(){
+        if (input$ref_map_mode2 == "Absolute Values"){
+          create_map_datatable(data_output2_primary(), subset_lons_primary(), subset_lats_primary())
+        } else if (input$ref_map_mode2 == "Reference Values"){
+          create_map_datatable(data_output3_primary(), subset_lons_primary(), subset_lats_primary())
+        } else if (input$ref_map_mode2 == "SD Ratio"){
+          create_map_datatable(SDratio_subset_2(), subset_lons_primary(), subset_lats_primary())
+        }
+      }    
+      
+      ref_map_titles_2 = reactive({
+        
+        req(input$nav1 == "tab2") # Only run code if in the current tab
+        
+        if (input$ref_map_mode2 == "Absolute Values"){
+          rm_title2 <- generate_titles("composites",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
+                                       month_range_primary(), year_set_comp(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
+                                       input$title1_input2, input$title2_input2,input$title1_input_ts2)
+        } else if (input$ref_map_mode2 == "Reference Values"){
+          rm_title2 <- generate_titles("reference",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
+                                       month_range_primary(), year_set_comp_ref(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
+                                       input$title1_input2, input$title2_input2,input$title1_input_ts2)
+        } else if (input$ref_map_mode2 == "SD Ratio"){
+          rm_title2 <- generate_titles("sdratio",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
+                                       month_range_primary(), c(NA,NA), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
+                                       input$title1_input2, input$title2_input2,input$title1_input_ts2)
+        }
+      })  
+      
+      ref_map_plot_2 <- function(){
+        if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Values" ){
+          plot_default_map(ref_map_data_2(), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2,plotOrder2(), input$shpPickers2, input, "shp_colour2_")
+        } else if (input$ref_map_mode2 == "SD Ratio"){
+          plot_default_map(ref_map_data_2(), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2,plotOrder2(), input$shpPickers2, input, "shp_colour2_")
         }
       }
-    })
-    
-    # Processed SD data
-    SDratio_subset_2 = reactive({
       
-      req(((input$ref_map_mode2 == "SD Ratio")|(input$custom_statistic2 == "SD ratio")))
-      
-      new_SD_data2 = create_sdratio_data(SDratio_data(),"composites",input$variable_selected2,
-                                         subset_lons_primary(),subset_lats_primary(),month_range_primary(),year_set_comp())
-      return(new_SD_data2)
-    })
-    
-    
-    #Geographic Subset
-    data_output1_2 <- reactive({
-      
-      #Geographic Subset Function
-      processed_data_2  <- create_latlon_subset(custom_data(), data_id_primary(), subset_lons_primary(), subset_lats_primary())                
-      
-      return(processed_data_2)
-    })
-    
-    #Creating yearly subset for Composites
-    data_output2_2 <- reactive({
-      
-      #Creating a reduced time range
-      processed_data2_2 <- create_yearly_subset_composite(data_output1_2(), data_id_primary(), year_set_comp(), month_range_primary())              
-      
-      return(processed_data2_2)  
-    })
-    
-    # Create composite reference yearly subset & convert to mean
-    data_output3_2 = reactive({
-      
-      if (input$mode_selected2 == "Fixed reference"){
-        ref_2 <- create_yearly_subset(data_output1_2(), data_id_primary(), input$ref_period2, month_range_primary())   
-        processed_data3_2 <- apply(ref_2,c(1:2),mean)
-      } else if (input$mode_selected2 == "Custom reference") {
-        ref_2 <- create_yearly_subset_composite(data_output1_2(), data_id_primary(), year_set_comp_ref(), month_range_primary()) 
-        processed_data3_2 <- apply(ref_2,c(1:2),mean)
-      } else {
-        processed_data3_2 <- NA
-      }
-      
-      return(processed_data3_2)
-    })
-    
-    #Converting Composite to anomalies either fixed/custom period or X years prior 
-    data_output4_2 <- reactive({
-      if (input$mode_selected2 == "X years prior"){
-        processed_data4_2 <- convert_composite_to_anomalies(data_output2_2(), data_output1_2(), data_id_primary(), year_set_comp(), month_range_primary(), input$prior_years2)
-      } else {
-        processed_data4_2 <- convert_subset_to_anomalies(data_output2_2(), data_output3_2())
-      }
-      
-      return(processed_data4_2)
-    })
-    
-    #Map customization (statistics and map titles)
-    
-    plot_titles_2 <- reactive({
-      
-      my_title <- generate_titles ("composites", input$dataset_selected2, input$variable_selected2, input$mode_selected2, input$title_mode2,input$title_mode_ts2,
-                                   month_range_primary(), input$range_years2, input$ref_period2, input$prior_years2,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                   input$title1_input2, input$title2_input2,input$title1_input_ts2)
-      
-      return(my_title)
-    })
-    
-    
-    map_statistics_2 = reactive({
-      
-      my_stats = create_stat_highlights_data(data_output4_2(),SDratio_subset_2(),
-                                             input$custom_statistic2,input$sd_ratio2,
-                                             input$percentage_sign_match2,
-                                             subset_lons_primary(),subset_lats_primary())
-      
-      return(my_stats)
-    })
-    
-    #Plotting the Data (Maps)
-    map_data_2 <- function(){create_map_datatable(data_output4_2(), subset_lons_primary(), subset_lats_primary())}
-    
-    output$data3 <- renderTable({map_data_2()}, rownames = TRUE)
-    
-    #Plotting the Map
-    map_dimensions_2 <- reactive({
-      
-      m_d_2 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_map2_width, input$dimension[2]*0.85, input$hide_axis2)
-      
-      return(m_d_2)
-    })
-    
-    map_plot_2 <- function(){plot_default_map(map_data_2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2, plotOrder2(), input$shpPickers2, input, "shp_colour2_")}
-    
-    output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
-    # code line below sets height as a function of the ratio of lat/lon 
-    
-    
-    #Ref/Absolute Map
-    ref_map_data_2 <- function(){
-      if (input$ref_map_mode2 == "Absolute Values"){
-        create_map_datatable(data_output2_2(), subset_lons_primary(), subset_lats_primary())
-      } else if (input$ref_map_mode2 == "Reference Values"){
-        create_map_datatable(data_output3_2(), subset_lons_primary(), subset_lats_primary())
-      } else if (input$ref_map_mode2 == "SD Ratio"){
-        create_map_datatable(SDratio_subset_2(), subset_lons_primary(), subset_lats_primary())
-      }
-    }    
-    
-    ref_map_titles_2 = reactive({
-      if (input$ref_map_mode2 == "Absolute Values"){
-        rm_title2 <- generate_titles("composites",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
-                                     month_range_primary(), year_set_comp(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                     input$title1_input2, input$title2_input2,input$title1_input_ts2)
-      } else if (input$ref_map_mode2 == "Reference Values"){
-        rm_title2 <- generate_titles("reference",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
-                                     month_range_primary(), year_set_comp_ref(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                     input$title1_input2, input$title2_input2,input$title1_input_ts2)
-      } else if (input$ref_map_mode2 == "SD Ratio"){
-        rm_title2 <- generate_titles("sdratio",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
-                                     month_range_primary(), c(NA,NA), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                     input$title1_input2, input$title2_input2,input$title1_input_ts2)
-      }
-    })  
-    
-    ref_map_plot_2 <- function(){
-      if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Values" ){
-        plot_default_map(ref_map_data_2(), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2,plotOrder2(), input$shpPickers2, input, "shp_colour2_")
-      } else if (input$ref_map_mode2 == "SD Ratio"){
-        plot_default_map(ref_map_data_2(), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2,plotOrder2(), input$shpPickers2, input, "shp_colour2_")
-      }
-    }
-    
-    output$ref_map2 <- renderPlot({
-      if (input$ref_map_mode2 == "None") {
-        ref_map_plot_data2 <- NULL
-      } else {
-        ref_map_plot_data2 <- ref_map_plot_2()
-      }
-      ref_map_plot_data2
-    }, 
-    width = function() {
-      if (input$ref_map_mode2 == "None") {
-        20
-      } else {
-        map_dimensions_2()[1]
-      }
-    }, 
-    height = function() {
-      if (input$ref_map_mode2 == "None") {
-        10
-      } else {
-        map_dimensions_2()[2]
-      }
-    })
-    
-    
-    #Plotting the data (timeseries)
-    timeseries_data_2 <- reactive({
-      #Plot normal timeseries if year set is > 1 year
-      if (length(year_set_comp()) > 1){    
-        ts_data1 <- create_timeseries_datatable(data_output4_2(), year_set_comp(), "set", subset_lons_primary(), subset_lats_primary())
-        
-        ts_data2 = add_stats_to_TS_datatable(ts_data1,FALSE,NA,NA,input$custom_percentile_ts2,
-                                             input$percentile_ts2,FALSE)
-      } 
-      # Plot monthly TS if year range = 1 year
-      else {
-        ts_data1 = load_ModE_data(input$dataset_selected2,input$variable_selected2)
-        
-        # Generate ref years
-        if (input$mode_selected2 == "Fixed reference"){
-          ref_years = input$ref_period2
-        } else if (input$mode_selected2 == "X years prior"){
-          ref_years = c((year_set_comp()-input$prior_years2),year_set_comp()-1)
+      output$ref_map2 <- renderPlot({
+        if (input$ref_map_mode2 == "None") {
+          ref_map_plot_data2 <- NULL
         } else {
-          ref_years = year_set_comp_ref()
+          ref_map_plot_data2 <- ref_map_plot_2()
         }
-        
-        ts_data2 = create_monthly_TS_data(ts_data1,input$dataset_selected2,input$variable_selected2,
-                                          year_set_comp(),input$range_longitude2,
-                                          input$range_latitude2,"Anomaly",
-                                          "Individual years",ref_years)
-      }
-      return(ts_data2)
-    })
-    
-    timeseries_data_output_2 = reactive({
-      if (length(year_set_comp()) > 1){ 
-        output_ts_table = rewrite_tstable(timeseries_data_2(),input$variable_selected2)
-      } else {
-        output_ts_table = timeseries_data_2()
-      }
-      return(output_ts_table) 
-    })
-    
-    output$data4 <- renderDataTable({timeseries_data_output_2()}, rownames = FALSE, options = list(
-      autoWidth = TRUE, 
-      searching = FALSE,
-      paging = TRUE,
-      pagingType = "numbers"
-    ))
-    
-    #Plotting the timeseries
-    timeseries_plot_2 <- function(){
-      #Plot normal timeseries if year set is > 1 year
-      if (length(year_set_comp()) > 1){  
-        # Generate NA or reference mean
-        if(input$show_ref_ts2 == TRUE){
-          ref_ts2 = signif(mean(data_output3_2()),3)
+        ref_map_plot_data2
+      }, 
+      width = function() {
+        if (input$ref_map_mode2 == "None") {
+          20
         } else {
-          ref_ts2 = NA
+          map_dimensions_2()[1]
         }
+      }, 
+      height = function() {
+        if (input$ref_map_mode2 == "None") {
+          10
+        } else {
+          map_dimensions_2()[2]
+        }
+      })
+      
+      
+      #Plotting the data (timeseries)
+      timeseries_data_2 <- reactive({
         
-        plot_default_timeseries(timeseries_data_2(),"composites",input$variable_selected2,plot_titles_2(),input$title_mode_ts2,ref_ts2)
-        add_highlighted_areas(ts_highlights_data2())
-        add_percentiles(timeseries_data_2())
-        add_custom_lines(ts_lines_data2())
-        add_timeseries(timeseries_data_2(),"composites",input$variable_selected2)
-        add_boxes(ts_highlights_data2())
-        add_custom_points(ts_points_data2())
-        if (input$show_key_ts2 == TRUE){
-          add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_primary(),
-                     FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
+        req(input$nav1 == "tab2") # Only run code if in the current tab
+        
+        #Plot normal timeseries if year set is > 1 year
+        if (length(year_set_comp()) > 1){    
+          ts_data1 <- create_timeseries_datatable(data_output4_primary(), year_set_comp(), "set", subset_lons_primary(), subset_lats_primary())
+          
+          ts_data2 = add_stats_to_TS_datatable(ts_data1,FALSE,NA,NA,input$custom_percentile_ts2,
+                                               input$percentile_ts2,FALSE)
+        } 
+        # Plot monthly TS if year range = 1 year
+        else {
+          ts_data1 = load_ModE_data(input$dataset_selected2,input$variable_selected2)
+          
+          # Generate ref years
+          if (input$mode_selected2 == "Fixed reference"){
+            ref_years = input$ref_period2
+          } else if (input$mode_selected2 == "X years prior"){
+            ref_years = c((year_set_comp()-input$prior_years2),year_set_comp()-1)
+          } else {
+            ref_years = year_set_comp_ref()
+          }
+          
+          ts_data2 = create_monthly_TS_data(ts_data1,input$dataset_selected2,input$variable_selected2,
+                                            year_set_comp(),input$range_longitude2,
+                                            input$range_latitude2,"Anomaly",
+                                            "Individual years",ref_years)
+        }
+        return(ts_data2)
+      })
+      
+      timeseries_data_output_2 = reactive({
+        
+        req(input$nav1 == "tab2") # Only run code if in the current tab
+        
+        if (length(year_set_comp()) > 1){ 
+          output_ts_table = rewrite_tstable(timeseries_data_2(),input$variable_selected2)
+        } else {
+          output_ts_table = timeseries_data_2()
+        }
+        return(output_ts_table) 
+      })
+      
+      output$data4 <- renderDataTable({timeseries_data_output_2()}, rownames = FALSE, options = list(
+        autoWidth = TRUE, 
+        searching = FALSE,
+        paging = TRUE,
+        pagingType = "numbers"
+      ))
+      
+      #Plotting the timeseries
+      timeseries_plot_2 <- function(){
+        #Plot normal timeseries if year set is > 1 year
+        if (length(year_set_comp()) > 1){  
+          # Generate NA or reference mean
+          if(input$show_ref_ts2 == TRUE){
+            ref_ts2 = signif(mean(data_output3_primary()),3)
+          } else {
+            ref_ts2 = NA
+          }
+          
+          plot_default_timeseries(timeseries_data_2(),"composites",input$variable_selected2,plot_titles_2(),input$title_mode_ts2,ref_ts2)
+          add_highlighted_areas(ts_highlights_data2())
+          add_percentiles(timeseries_data_2())
+          add_custom_lines(ts_lines_data2())
+          add_timeseries(timeseries_data_2(),"composites",input$variable_selected2)
+          add_boxes(ts_highlights_data2())
+          add_custom_points(ts_points_data2())
+          if (input$show_key_ts2 == TRUE){
+            add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_primary(),
+                       FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
+          }
+        }
+        # Plot monthly TS if year range = 1 year
+        else {
+          plot_monthly_timeseries(timeseries_data_2(),plot_titles_2()$ts_title,"Custom","topright","base")
+          add_highlighted_areas(ts_highlights_data2())
+          add_custom_lines(ts_lines_data2())
+          plot_monthly_timeseries(timeseries_data_2(),plot_titles_2()$ts_title,"Custom","topright","lines")
+          add_boxes(ts_highlights_data2())
+          add_custom_points(ts_points_data2())
+          if (input$show_key_ts2 == TRUE){
+            add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_primary(),
+                       FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
+          }
         }
       }
-      # Plot monthly TS if year range = 1 year
-      else {
-        plot_monthly_timeseries(timeseries_data_2(),plot_titles_2()$ts_title,"Custom","topright","base")
-        add_highlighted_areas(ts_highlights_data2())
-        add_custom_lines(ts_lines_data2())
-        plot_monthly_timeseries(timeseries_data_2(),plot_titles_2()$ts_title,"Custom","topright","lines")
-        add_boxes(ts_highlights_data2())
-        add_custom_points(ts_points_data2())
-        if (input$show_key_ts2 == TRUE){
-          add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_primary(),
-                     FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
-        }
-      }
-    }
-    
-    output$timeseries2 <- renderPlot({timeseries_plot_2()}, height = 400)
-    
-    #List of chosen composite years (upload or manual) to plot
-    output$text_years2 <- renderText("Chosen composite years:")
-    output$years2 <- renderText({year_set_comp()})
-    output$text_years2b <- renderText("Chosen composite years:")
-    output$years2b <- renderText({year_set_comp()})
-    
-    output$text_custom_years2  <- renderText("Chosen reference years:")
-    output$custom_years2       <- renderText({year_set_comp_ref()})
-    output$text_custom_years2b <- renderText("Chosen reference years:")
-    output$custom_years2b      <- renderText({year_set_comp_ref()})
+      
+      output$timeseries2 <- renderPlot({timeseries_plot_2()}, height = 400)
+      
+      #List of chosen composite years (upload or manual) to plot
+      output$text_years2 <- renderText("Chosen composite years:")
+      output$years2 <- renderText({year_set_comp()})
+      output$text_years2b <- renderText("Chosen composite years:")
+      output$years2b <- renderText({year_set_comp()})
+      
+      output$text_custom_years2  <- renderText("Chosen reference years:")
+      output$custom_years2       <- renderText({year_set_comp_ref()})
+      output$text_custom_years2b <- renderText("Chosen reference years:")
+      output$custom_years2b      <- renderText({year_set_comp_ref()})
     
     ### ModE-RA sources ----
     
-    ranges_2  <- reactiveValues(x = NULL, y = NULL)
-    ranges2_2 <- reactiveValues(x = NULL, y = NULL)
+    # Set up values and functions for plotting
+    fad_zoom2  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
     
-    fad_wa2 <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a2, "winter", lonlat_vals2()[1:2], lonlat_vals2()[3:4], labs)}
-    fad_sa2 <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a2, "summer", lonlat_vals2()[1:2], lonlat_vals2()[3:4], labs)}
-    
-    # Upper map (Original)
-    output$fad_winter_map_a2 <- renderPlot({
-      if ((month_range_primary()[1] >= 4) && (month_range_primary()[2] <= 9)) {
-        plot_data <- fad_sa2(labs = TRUE)
-      } else {
-        plot_data <- fad_wa2(labs = TRUE)
-      }
-      
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
+    season_fad_short2 = reactive({
+      switch(input$fad_season2,
+             "April to September" = "summer",
+             "October to March" = "winter")
     })
     
-    # Upper map (Zoom)
-    output$fad_zoom_winter_a2 <- renderPlot({
-      if ((month_range_primary()[1] >= 4) && (month_range_primary()[2] <= 9)) {
-        plot_data <- fad_sa2(labs = FALSE)
-      } else {
-        plot_data <- fad_wa2(labs = FALSE)
-      }
-      
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges_2$x, ylim = ranges_2$y, crs = st_crs(4326))
-      
-      plot_data
+    # Load global data
+    fad_global_data2 = reactive({
+      load_modera_source_data(input$fad_year2, season_fad_short2())
     })
     
-    # Lower map (Original)
-    output$fad_summer_map_a2 <- renderPlot({
-      if ((month_range_primary()[1] >= 4 && month_range_primary()[2] <= 9) | (month_range_primary()[2] <= 3)) {
-        NULL
-      } else {
-        plot_data <- fad_sa2(labs = TRUE)  
-      } 
-      
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
+    # Plot map 
+    fad_plot2 = function(){plot_modera_sources(fad_global_data2(),input$fad_year2, season_fad_short2(),fad_zoom2())}
+    
+    output$fad_map2 <- renderPlot({fad_plot2()})
+    
+    # Set up data function
+    fad_data2 <- function() {download_feedback_data(fad_global_data2(), fad_zoom2()[1:2], fad_zoom2()[3:4])}
+    
+    observeEvent(lonlat_vals2()|input$fad_reset_zoom2,{
+      fad_zoom2(lonlat_vals2())
     })
     
-    # Lower map (Zoom)
-    output$fad_zoom_summer_a2 <- renderPlot({
-      if ((month_range_primary()[1] >= 4 && month_range_primary()[2] <= 9) || (month_range_primary()[2] <= 3)) {
-        NULL
-      } else {
-        plot_data <- fad_sa2(labs = FALSE)
-      }
-      
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges2_2$x, ylim = ranges2_2$y, crs = st_crs(4326))
-      
-      plot_data
+    observeEvent(input$brush_fad2,{
+      brush = input$brush_fad2
+      fad_zoom2(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
     })
     
-    #Update Modera source year input and Update Brush Input
-    
-    first_value <- reactive({
-      fv <- head(year_set_comp(), n = 1)
-      return(fv)
-    })
-    
-    last_value <- reactive({
-      lv <- max(year_set_comp(), n = 1)
-      return(lv)
-    })
-    
-    observeEvent(first_value(), {
+    # Update fad_year 
+    observeEvent(year_set_comp()[1], {
       updateNumericInput(
         session = getDefaultReactiveDomain(),
-        inputId = "fad_year_a2",
-        value = first_value()
-      )
+        inputId = "fad_year2",
+        value = year_set_comp()[1])
     })
     
-    observeEvent(last_value(), {
-      updateNumericInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "fad_year_b2",
-        value = last_value()
-      )
-    })
-    
-    observe({
-      brush2 <- input$brush_fad1a2
-      if (!is.null(brush2)) {
-        ranges_2$x <- c(brush2$xmin, brush2$xmax)
-        ranges_2$y <- c(brush2$ymin, brush2$ymax)
-        
+    # Update fad_season
+    observeEvent(month_range_primary()[1], {
+      
+      req(input$nav1 == "tab2") # Only run code if in the current tab
+      
+      if (month_range_primary()[1] >3 & month_range_primary()[1] <10){
+        updateSelectInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "fad_season2",
+          selected = "April to September")
       } else {
-        ranges_2$x <- lonlat_vals2()[1:2]
-        ranges_2$y <- lonlat_vals2()[3:4]
+        updateSelectInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "fad_season2",
+          selected = "October to March")
       }
     })
     
-    observe({
-      brush_b2 <- input$brush_fad1b2
-      if (!is.null(brush_b2)) {
-        ranges2_2$x <- c(brush_b2$xmin, brush_b2$xmax)
-        ranges2_2$y <- c(brush_b2$ymin, brush_b2$ymax)
-        
-      } else {
-        ranges2_2$x <- lonlat_vals2()[1:2]
-        ranges2_2$y <- lonlat_vals2()[3:4]
-      }
-    })
-    
-    #Data ModE-RA sources
-    fad_wa_data2 <- function() {
-      
-      download_feedback_data(input$fad_year_a2, "winter", lonlat_vals2()[1:2], lonlat_vals2()[3:4])}
-    fad_sa_data2 <- function() {
-      
-      download_feedback_data(input$fad_year_a2, "summer", lonlat_vals2()[1:2], lonlat_vals2()[3:4])}
-    
-
     ### Downloads ----
     #Downloading General data
     output$download_map2             <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title,"-map.",input$file_type_map2, sep = "")},
@@ -11220,68 +10970,39 @@ server <- function(input, output, session) {
                                                                         col.names = TRUE)
                                                            }})
     
-    output$download_fad_sa2             <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a2, "-modera_source.",input$file_type_modera_source_b2, sep = "")},
-                                                           content  = function(file) {
-                                                             
-                                                             mmd2 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_winter_map_a2_width, input$dimension[2], FALSE)
-                                                             
-                                                             if (input$file_type_modera_source_b2 == "png"){
-                                                               png(file, width = mmd2[3] , height = mmd2[4], res = 400)  
-                                                               print(fad_sa2(labs = TRUE))
-                                                               dev.off()
-                                                             } else if (input$file_type_modera_source_b2 == "jpeg"){
-                                                               jpeg(file, width = mmd2[3] , height = mmd2[4], res = 400) 
-                                                               print(fad_sa2(labs = TRUE)) 
-                                                               dev.off()
-                                                             } else {
-                                                               pdf(file, width = mmd2[3]/400 , height = mmd2[4]/400) 
-                                                               print(fad_sa2(labs = TRUE))
-                                                               dev.off()
-                                                             }})
+    output$download_fad2            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season2),"_",input$fad_year2,".",input$file_type_fad2, sep = "")},
+                                                      content  = function(file) {
+                                                        
+                                                        mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map2_width, input$dimension[2], FALSE)
+                                                        
+                                                        if (input$file_type_fad2 == "png"){
+                                                          png(file, width = mmd[3] , height = mmd[4], res = 400)  
+                                                          print(fad_plot2())
+                                                          dev.off()
+                                                        } else if (input$file_type_fad2 == "jpeg"){
+                                                          jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
+                                                          print(fad_plot2()) 
+                                                          dev.off()
+                                                        } else {
+                                                          pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
+                                                          print(fad_plot2())
+                                                          dev.off()
+                                                        }})
     
-    output$download_fad_wa2             <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a2, "-modera_source.",input$file_type_modera_source_a2, sep = "")},
-                                                           content  = function(file) {
-                                                             
-                                                             mmd2 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_winter_map_a2_width, input$dimension[2], FALSE)
-                                                             
-                                                             if (input$file_type_modera_source_a2 == "png"){
-                                                               png(file, width = mmd2[3] , height = mmd2[4], res = 400)  
-                                                               print(fad_wa2(labs = TRUE))
-                                                               dev.off()
-                                                             } else if (input$file_type_modera_source_a2 == "jpeg"){
-                                                               jpeg(file, width = mmd2[3] , height = mmd2[4], res = 400) 
-                                                               print(fad_wa2(labs = TRUE)) 
-                                                               dev.off()
-                                                             } else {
-                                                               pdf(file, width = mmd2[3]/400 , height = mmd2[4]/400) 
-                                                               print(fad_wa2(labs = TRUE))
-                                                               dev.off()
-                                                             }})
-    
-    output$download_data_fad_wa2       <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a2, "-modera_source_data.",input$file_type_data_modera_source_a2, sep = "")},
-                                                         content  = function(file) {
-                                                           if (input$file_type_data_modera_source_a2 == "csv"){
-                                                             write.csv(fad_wa_data2(), file,
-                                                                       row.names = FALSE)
-                                                           } else {
-                                                             write.xlsx(fad_wa_data2(), file,
-                                                                        col.names = TRUE,
-                                                                        row.names = FALSE)
-                                                           }})
-    
-    output$download_data_fad_sa2     <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a2, "-modera_source_data.",input$file_type_data_modera_source_b2, sep = "")},
-                                                       content  = function(file) {
-                                                         if (input$file_type_data_modera_source_b2 == "csv"){
-                                                           write.csv(fad_sa_data2(), file,
+    output$download_fad_data2       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season2),"_",input$fad_year2,"_data.",input$data_file_type_fad2, sep = "")},
+                                                      content  = function(file) {
+                                                        if (input$data_file_type_fad2 == "csv"){
+                                                          write.csv(fad_data2(), file,
+                                                                    row.names = FALSE)
+                                                        } else {
+                                                          write.xlsx(fad_data2(), file,
+                                                                     col.names = TRUE,
                                                                      row.names = FALSE)
-                                                         } else {
-                                                           write.xlsx(fad_sa_data2(), file,
-                                                                      col.names = TRUE,
-                                                                      row.names = FALSE)
-                                                         }})
-    
+                                                        }})
  
-  ## CORRELATION data processing and plotting ----
+  ## CORRELATION shared lonlat/year range, user data, plotting & downloads ----
+    
+    ### Shared lonlat/year_range ----
     
     # Find shared lonlat
     
@@ -11290,58 +11011,8 @@ server <- function(input, output, session) {
                             input$range_latitude_v1,input$range_longitude_v2,
                             input$range_latitude_v2)
     })
-
     
-    ### Variable 1 and 2 ----
-    ### User data processing
-    
-    # Load in user data for variable 1
-    user_data_v1 = reactive({
-      
-      req(input$user_file_v1)
-      
-      if (input$source_v1 == "User Data"){
-        new_data1 = read_regcomp_data(input$user_file_v1$datapath)   
-        return(new_data1)
-      }
-      else{
-        return(NULL)
-      }
-    })
-    
-    # Load in user data for variable 2
-    user_data_v2 = reactive({
-      
-      req(input$user_file_v2)
-      
-      if (input$source_v2 == "User Data"){
-        new_data2 = read_regcomp_data(input$user_file_v2$datapath)  
-        return(new_data2)
-      }
-      else{
-        return(NULL)
-      }
-    })
-    
-    # Subset v1 data to year_range and chosen variable
-    user_subset_v1 = reactive({
-      
-      req(user_data_v1(),input$user_variable_v1)
-      
-      usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3)
-      
-      return(usr_ss1)
-    })
-    
-    # Subset v2 data to year_range and chosen variable
-    user_subset_v2 = reactive({
-      
-      req(user_data_v2(),input$user_variable_v2)
-      
-      usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3)
-      
-      return(usr_ss2)
-    })
+    # Extract shared year range
     
     year_range_cor = reactive({
       
@@ -11366,580 +11037,451 @@ server <- function(input, output, session) {
       return(result)
     })  
     
-    ### Generate ModE-RA data   
     
-    # Update custom_data if required
-    observeEvent(data_id_primary(),{
-      if (data_id_primary()[1] == 0){ # Only updates when new custom data is required...
-        if (!identical(custom_data_id_primary()[2:3],data_id_primary()[2:3])){ # ....i.e. changed variable or dataset
-          custom_data(load_ModE_data(input$dataset_selected_v1,input$ME_variable_v1)) # load new custom data
-          custom_data_ID(data_id_primary()) # update custom data ID
+    ### User data processing ----
+    
+      # Load in user data for variable 1
+      user_data_v1 = reactive({
+        
+        req(input$user_file_v1)
+        
+        if (input$source_v1 == "User Data"){
+          new_data1 = read_regcomp_data(input$user_file_v1$datapath)   
+          return(new_data1)
+        }
+        else{
+          return(NULL)
+        }
+      })
+      
+      # Load in user data for variable 2
+      user_data_v2 = reactive({
+        
+        req(input$user_file_v2)
+        
+        if (input$source_v2 == "User Data"){
+          new_data2 = read_regcomp_data(input$user_file_v2$datapath)  
+          return(new_data2)
+        }
+        else{
+          return(NULL)
+        }
+      })
+      
+      # Subset v1 data to year_range and chosen variable
+      user_subset_v1 = reactive({
+        
+        req(user_data_v1(),input$user_variable_v1)
+            year_range_cor = reactive({
+        
+        result <- tryCatch(
+          {
+            return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath))
+            return(yrc)
+          },
+          error = function(e) {
+            showModal(
+              # Add modal dialog for warning message
+              modalDialog(
+                title = "Error",
+                "There was an error in processing your uploaded data. 
+                    \nPlease check if the file has the correct format.",
+                easyClose = FALSE,
+                footer = tagList(modalButton("OK"))
+              ))
+            return(NULL)
+          }
+        )
+        return(result)
+      })  
+      
+        usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3)
+        
+        return(usr_ss1)
+      })
+      
+      # Subset v2 data to year_range and chosen variable
+      user_subset_v2 = reactive({
+        
+        req(user_data_v2(),input$user_variable_v2)
+        
+        usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3)
+        
+        return(usr_ss2)
+      })
+    
+    ### Generate plot data ---- 
+    
+      #Map titles
+      plot_titles_v1 <- reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        my_title_v1 <- generate_titles ("general", input$dataset_selected_v1, input$ME_variable_v1, input$mode_selected_v1,
+                                        "Default","Default", month_range_primary(),input$range_years3,
+                                        input$ref_period_v1, NA,lonlat_vals_v1()[1:2],lonlat_vals_v1()[3:4],
+                                        NA, NA, NA)
+        return(my_title_v1)
+      }) 
+      
+      # Generate Map data & plotting function
+      map_data_v1 <- function(){create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
+      
+      ME_map_plot_v1 <- function(){plot_default_map(map_data_v1(), input$ME_variable_v1, input$mode_selected_v1, plot_titles_v1(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE, plotOrder(), input$shpPickers, input, "shp_colour1_")}
+      
+      # Generate timeseries data & plotting function
+      timeseries_data_v1 <- reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        ts_data1_v1 <- create_timeseries_datatable(data_output4_primary(), input$range_years3, "range", subset_lons_primary(), subset_lats_primary())
+        return(ts_data1_v1)
+      })
+      
+      ME_timeseries_plot_v1 = function(){plot_default_timeseries(timeseries_data_v1(),"general",input$ME_variable_v1,plot_titles_v1(),"Default",NA)}
+      
+      
+      # for Variable 2:
+      
+      #Map titles
+      plot_titles_v2 <- reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        my_title_v2 <- generate_titles ("general", input$dataset_selected_v2,input$ME_variable_v2, input$mode_selected_v2,
+                                        "Default","Default", month_range_secondary(),input$range_years3,
+                                        input$ref_period_v2, NA,lonlat_vals_v2()[1:2],lonlat_vals_v2()[3:4],
+                                        NA, NA, NA)
+        return(my_title_v2)
+      }) 
+      
+      # Generate Map data & plotting function
+      map_data_v2 <- function(){
+        req(data_output4_secondary(), subset_lons_secondary(), subset_lats_secondary())
+        create_map_datatable(data_output4_secondary(), subset_lons_secondary(), subset_lats_secondary())}
+      
+      ME_map_plot_v2 <- function(){plot_default_map(map_data_v2(), input$ME_variable_v2, input$mode_selected_v2, plot_titles_v2(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
+      
+      # Generate timeseries data & plotting function
+      timeseries_data_v2 <- reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        ts_data1_v2 <- create_timeseries_datatable(data_output4_secondary(), input$range_years3, "range", subset_lons_secondary(), subset_lats_secondary())
+        return(ts_data1_v2)
+      })
+      
+      ME_timeseries_plot_v2 = function(){plot_default_timeseries(timeseries_data_v2(),"general",input$ME_variable_v2,plot_titles_v2(),"Default",NA)}
+      
+    ### Plotting ----
+      
+      #### Plot v1/v2 plots
+      
+      # Generate plot dimensions
+      plot_dimensions_v1 <- reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        if (input$type_v1 == "Timeseries"){
+          map_dims_v1 = c(session$clientData$output_plot_v1_width,400)
+        } else {
+          map_dims_v1 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_plot_v1_width, (input$dimension[2]), FALSE)
+        }
+        return(map_dims_v1)  
+      })
+      
+      plot_dimensions_v2 <- reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        if (input$type_v2 == "Timeseries"){
+          map_dims_v2 = c(session$clientData$output_plot_v2_width,400)
+        } else {
+          map_dims_v2 = generate_map_dimensions(subset_lons_secondary(), subset_lats_secondary(), session$clientData$output_plot_v2_width, (input$dimension[2]), FALSE)
+        }
+        return(map_dims_v2)  
+      })     
+      
+      # Plot 
+      output$plot_v1 <- renderPlot({
+        if (input$source_v1 == "User Data"){
+          plot_user_timeseries(user_subset_v1(),"darkorange2")
+        } else if (input$type_v1 == "Timeseries"){
+          ME_timeseries_plot_v1()
+        } else{
+          ME_map_plot_v1()
+        }
+      },width = function(){plot_dimensions_v1()[1]},height = function(){plot_dimensions_v1()[2]})  
+      
+      
+      output$plot_v2 <- renderPlot({
+        if (input$source_v2 == "User Data"){
+          plot_user_timeseries(user_subset_v2(),"saddlebrown")
+        } else if (input$type_v2 == "Timeseries"){
+          ME_timeseries_plot_v2()
+        } else{
+          ME_map_plot_v2()
+        }
+      },width = function(){plot_dimensions_v2()[1]},height = function(){plot_dimensions_v2()[2]})  
+      
+      
+      #### Plot shared TS plot
+      
+      # Generate correlation titles
+      plot_titles_cor = reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        if (input$source_v1 == "ModE-"){
+          variable_v1 = input$ME_variable_v1
+        } else {
+          variable_v1 = input$user_variable_v1
+        }
+        
+        if (input$source_v2 == "ModE-"){
+          variable_v2 = input$ME_variable_v2
+        } else {
+          variable_v2 = input$user_variable_v2
+        }
+        
+        ptc = generate_correlation_titles(input$source_v1,input$source_v2,input$dataset_selected_v1,
+                                          input$dataset_selected_v2,variable_v1,variable_v2,
+                                          input$type_v1,input$type_v2,input$mode_selected_v1,input$mode_selected_v2,
+                                          month_range_primary(),month_range_secondary(),lonlat_vals_v1()[1:2],lonlat_vals_v2()[1:2],
+                                          lonlat_vals_v1()[3:4],lonlat_vals_v2()[3:4],input$range_years3,input$cor_method_ts,
+                                          input$title_mode3,input$title_mode_ts3,input$title1_input3,input$title1_input_ts3)
+        return(ptc)
+      }) 
+      
+      # Select variable timeseries data
+      ts_data_v1 = reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        if (input$source_v1 == "ModE-"){
+          tsd_v1 = timeseries_data_v1()
+        } else {
+          tsd_v1 = user_subset_v1()
+        }
+        
+        # Add moving averages (if chosen)
+        tsds_v1 = add_stats_to_TS_datatable(tsd_v1,input$custom_average_ts3,input$year_moving_ts3,
+                                            "center",FALSE,NA,FALSE)
+        
+        return(tsds_v1)
+      })
+      
+      ts_data_v2 = reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        if (input$source_v2 == "ModE-"){
+          tsd_v2 = timeseries_data_v2()
+        } else {
+          tsd_v2 = user_subset_v2()
+        } 
+        
+        # Add moving averages (if chosen)
+        tsds_v2 = add_stats_to_TS_datatable(tsd_v2,input$custom_average_ts3,input$year_moving_ts3,
+                                            "center",FALSE,NA,FALSE)
+        
+        return(tsds_v2)
+      })
+      
+      # Correlate timeseries
+      correlation_stats = reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        c_st = correlate_timeseries(ts_data_v1(),ts_data_v2(),input$cor_method_ts)
+        
+        return(c_st)
+      })
+      
+      # Plot
+      output$correlation_r_value = renderText({paste("Timeseries correlation coefficient: r =",signif(correlation_stats()$estimate,digits =3), sep = "")})
+      output$correlation_p_value = renderText({paste("Timeseries correlation p-value: p =",signif(correlation_stats()$p.value,digits =3), sep = "")})    
+      
+      corr_ts1 = function(){
+        
+        if (input$source_v1 == "ModE-"){
+          variable_v1 = input$ME_variable_v1
+        } else {
+          variable_v1 = input$user_variable_v1
+        }
+        
+        if (input$source_v2 == "ModE-"){
+          variable_v2 = input$ME_variable_v2
+        } else {
+          variable_v2 = input$user_variable_v2
+        }
+        
+        plot_combined_timeseries(ts_data_v1(),ts_data_v2(),plot_titles_cor())
+        add_highlighted_areas(ts_highlights_data3())
+        add_custom_lines(ts_lines_data3())
+        add_correlation_timeseries(ts_data_v1(),ts_data_v2(),variable_v1,variable_v2,plot_titles_cor())
+        add_boxes(ts_highlights_data3())
+        add_custom_points(ts_points_data3())
+        if (input$show_key_ts3 == TRUE){
+          add_TS_key(input$key_position_ts3,ts_highlights_data3(),ts_lines_data3(),variable_v1,month_range_primary(),
+                     input$custom_average_ts3,input$year_moving_ts3,FALSE,NA,variable_v2,month_range_secondary(),TRUE)
+        }
+        
+      }
+      
+      output$correlation_ts = renderPlot({corr_ts1()}, height = 400)
+      
+      #### Plot correlation map
+      
+      # Pick out relevant v1/v2 data:
+      correlation_map_data_v1 = reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        if (input$type_v1 == "Field"){
+          cmd_v1 = data_output4_primary()
+        } else if (input$source_v1 == "User Data"){
+          cmd_v1 = user_subset_v1()
+        } else {
+          cmd_v1 = timeseries_data_v1()
+        } 
+      })
+      
+      correlation_map_data_v2 = reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        if (input$type_v2 == "Field"){
+          cmd_v2 = data_output4_secondary()
+        } else if (input$source_v2 == "User Data"){
+          cmd_v2 = user_subset_v2()
+        } else {
+          cmd_v2 = timeseries_data_v2()
+        } 
+      })
+      
+      # Generate correlation map data
+      correlation_map_data = reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        corrmd = generate_correlation_map_data(correlation_map_data_v1(),correlation_map_data_v2(),input$cor_method_map,
+                                               input$type_v1,input$type_v2,lonlat_vals_v1()[1:2],lonlat_vals_v2()[1:2],
+                                               lonlat_vals_v1()[3:4],lonlat_vals_v2()[3:4])
+        return(corrmd)
+      })
+      
+      # Generate plot dimensions
+      correlation_map_dimensions <- reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        c_m_d = generate_map_dimensions(correlation_map_data()[[1]], correlation_map_data()[[2]], session$clientData$output_correlation_map_width, input$dimension[2], FALSE)
+        
+        return(c_m_d)
+      })
+      
+      # Plot
+      
+      corr_m1 = function(){
+        if ((input$type_v1 == "Field") | (input$type_v2 == "Field")){
+          plot_correlation_map(correlation_map_data(),plot_titles_cor(),input$axis_input3,
+                               input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame(),input$hide_borders3,plotOrder3(), input$shpPickers3, input)
         }
       }
-    })
-    
-    #Geographic Subset
-    data_output1_v1 <- reactive({ 
-      processed_data_v1  <- create_latlon_subset(custom_data(), data_id_primary(), subset_lons_primary(), subset_lats_primary())                
-      return(processed_data_v1)
-    })
-    
-    #Creating yearly subset
-    data_output2_v1 <- reactive({ 
-      processed_data2_v1 <- create_yearly_subset(data_output1_v1(), data_id_primary(), input$range_years3, month_range_primary())              
-      return(processed_data2_v1)  
-    })
-    
-    # Create reference subset & average over time
-    data_output3_v1 <- reactive({ 
-      ref_v1 <- create_yearly_subset(data_output1_v1(), data_id_primary(), input$ref_period_v1, month_range_primary())
-      processed_data3_v1 = apply(ref_v1,c(1:2),mean)
-      return(processed_data3_v1)  
-    })
-    
-    #Converting absolutes to anomalies
-    data_output4_v1 <- reactive({
-      if (input$mode_selected_v1 == "Absolute"){
-        processed_data4_v1 <- data_output2_v1()
-      } else {
-        processed_data4_v1 <- convert_subset_to_anomalies(data_output2_v1(), data_output3_v1())
-      }
-      return(processed_data4_v1)
-    })
-    
-    #Map titles
-    plot_titles_v1 <- reactive({
-      my_title_v1 <- generate_titles ("general", input$dataset_selected_v1, input$ME_variable_v1, input$mode_selected_v1,
-                                      "Default","Default", month_range_primary(),input$range_years3,
-                                      input$ref_period_v1, NA,lonlat_vals_v1()[1:2],lonlat_vals_v1()[3:4],
-                                      NA, NA, NA)
-      return(my_title_v1)
-    }) 
-    
-    # Generate Map data & plotting function
-    map_data_v1 <- function(){create_map_datatable(data_output4_v1(), subset_lons_primary(), subset_lats_primary())}
-    
-    ME_map_plot_v1 <- function(){plot_default_map(map_data_v1(), input$ME_variable_v1, input$mode_selected_v1, plot_titles_v1(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE, plotOrder(), input$shpPickers, input, "shp_colour1_")}
-    
-    # Generate timeseries data & plotting function
-    timeseries_data_v1 <- reactive({
-      ts_data1_v1 <- create_timeseries_datatable(data_output4_v1(), input$range_years3, "range", subset_lons_primary(), subset_lats_primary())
-      return(ts_data1_v1)
-    })
-    
-    ME_timeseries_plot_v1 = function(){plot_default_timeseries(timeseries_data_v1(),"general",input$ME_variable_v1,plot_titles_v1(),"Default",NA)}
-    
-    
-    # for Variable 2:
-    
-    # Update custom_data if required
-    observeEvent(data_id_secondary(),{
-      req(data_id_secondary())
-      if (data_id_secondary()[1] == 0){ # Only updates when new custom data is required...
-        if (!identical(custom_data_ID2()[2:3],data_id_secondary()[2:3])){ # ....i.e. changed variable or dataset
-          custom_data2(load_ModE_data(input$dataset_selected_v2,input$ME_variable_v2)) # load new custom data
-          custom_data_ID2(data_id_secondary()) # update custom data ID
+      
+      output$correlation_map = renderPlot({corr_m1()},width = function(){correlation_map_dimensions()[1]},height = function(){correlation_map_dimensions()[2]})
+      
+      #### Data tables & Downloads 
+      
+      # Create output ts_data
+      correlation_ts_datatable = reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        if (input$source_v1 == "ModE-"){
+          variable_v1 = input$ME_variable_v1
+        } else {
+          variable_v1 = input$user_variable_v1
         }
-      }
-    })
-    
-    #Geographic Subset
-    data_output1_v2 <- reactive({
-      req(subset_lons_secondary(), subset_lats_secondary(),data_id_secondary())
-      processed_data_v2  <- create_latlon_subset(custom_data2(), data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())                
-      return(processed_data_v2)
-    })
-    
-    #Creating yearly subset
-    data_output2_v2 <- reactive({
-      req(month_range_secondary(),data_id_secondary())
-      processed_data2_v2 <- create_yearly_subset(data_output1_v2(), data_id_secondary(), input$range_years3, month_range_secondary())              
-      return(processed_data2_v2)  
-    })
-    
-    # Create reference subset & average over time
-    data_output3_v2 <- reactive({
-      req(month_range_secondary(),data_id_secondary())
-      ref_v2 <- create_yearly_subset(data_output1_v2(), data_id_secondary(), input$ref_period_v2, month_range_secondary())
-      processed_data3_v2 = apply(ref_v2,c(1:2),mean)
-      return(processed_data3_v2)  
-    })
-    
-    #Converting absolutes to anomalies
-    data_output4_v2 <- reactive({
-      if (input$mode_selected_v2 == "Absolute"){
-        processed_data4_v2 <- data_output2_v2()
-      } else {
-        processed_data4_v2 <- convert_subset_to_anomalies(data_output2_v2(), data_output3_v2())
-      }
-      return(processed_data4_v2)
-    })
-    
-    #Map titles
-    plot_titles_v2 <- reactive({
-      my_title_v2 <- generate_titles ("general", input$dataset_selected_v2,input$ME_variable_v2, input$mode_selected_v2,
-                                      "Default","Default", month_range_secondary(),input$range_years3,
-                                      input$ref_period_v2, NA,lonlat_vals_v2()[1:2],lonlat_vals_v2()[3:4],
-                                      NA, NA, NA)
-      return(my_title_v2)
-    }) 
-    
-    # Generate Map data & plotting function
-    map_data_v2 <- function(){create_map_datatable(data_output4_v2(), subset_lons_secondary(), subset_lats_secondary())}
-    
-    ME_map_plot_v2 <- function(){plot_default_map(map_data_v2(), input$ME_variable_v2, input$mode_selected_v2, plot_titles_v2(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
-    
-    # Generate timeseries data & plotting function
-    timeseries_data_v2 <- reactive({
-      ts_data1_v2 <- create_timeseries_datatable(data_output4_v2(), input$range_years3, "range", subset_lons_secondary(), subset_lats_secondary())
-      return(ts_data1_v2)
-    })
-    
-    ME_timeseries_plot_v2 = function(){plot_default_timeseries(timeseries_data_v2(),"general",input$ME_variable_v2,plot_titles_v2(),"Default",NA)}
-    
-    
-    ### Plot v1/v2 plots
-    
-    # Generate plot dimensions
-    plot_dimensions_v1 <- reactive({
-      if (input$type_v1 == "Timeseries"){
-        map_dims_v1 = c(session$clientData$output_plot_v1_width,400)
-      } else {
-        map_dims_v1 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_plot_v1_width, (input$dimension[2]), FALSE)
-      }
-      return(map_dims_v1)  
-    })
-    
-    plot_dimensions_v2 <- reactive({
-      if (input$type_v2 == "Timeseries"){
-        map_dims_v2 = c(session$clientData$output_plot_v2_width,400)
-      } else {
-        map_dims_v2 = generate_map_dimensions(subset_lons_secondary(), subset_lats_secondary(), session$clientData$output_plot_v2_width, (input$dimension[2]), FALSE)
-      }
-      return(map_dims_v2)  
-    })     
-    
-    # Plot 
-    output$plot_v1 <- renderPlot({
-      if (input$source_v1 == "User Data"){
-        plot_user_timeseries(user_subset_v1(),"darkorange2")
-      } else if (input$type_v1 == "Timeseries"){
-        ME_timeseries_plot_v1()
-      } else{
-        ME_map_plot_v1()
-      }
-    },width = function(){plot_dimensions_v1()[1]},height = function(){plot_dimensions_v1()[2]})  
-    
-    
-    output$plot_v2 <- renderPlot({
-      if (input$source_v2 == "User Data"){
-        plot_user_timeseries(user_subset_v2(),"saddlebrown")
-      } else if (input$type_v2 == "Timeseries"){
-        ME_timeseries_plot_v2()
-      } else{
-        ME_map_plot_v2()
-      }
-    },width = function(){plot_dimensions_v2()[1]},height = function(){plot_dimensions_v2()[2]})  
-    
-    ### Correlation plots and data ----
-    ### Plot shared TS plot
-    
-    # Generate correlation titles
-    plot_titles_cor = reactive({
+        
+        if (input$source_v2 == "ModE-"){
+          variable_v2 = input$ME_variable_v2
+        } else {
+          variable_v2 = input$user_variable_v2
+        }
+        
+        # Create v1/v2 datatables
+        ctd_v1 = rewrite_tstable(ts_data_v1(),variable_v1)
+        ctd_v2 = rewrite_tstable(ts_data_v2(),variable_v2)
+        
+        # Combine into dataframe
+        ctd = data.frame(ctd_v1,ctd_v2[-1])
+        
+        # Add Var1/2 to names
+        colnames(ctd) = c("Year",paste("Var1_",colnames(ctd_v1)[-1], sep = ""),paste("Var2_",colnames(ctd_v2)[-1], sep = ""))
+        
+        return(ctd)
+      })
       
-      if (input$source_v1 == "ModE-"){
-        variable_v1 = input$ME_variable_v1
-      } else {
-        variable_v1 = input$user_variable_v1
-      }
+      output$correlation_ts_data = renderDataTable({correlation_ts_datatable()}, rownames = FALSE, options = list(
+        autoWidth = TRUE, 
+        searching = FALSE,
+        paging = TRUE,
+        pagingType = "numbers"
+      ))
       
-      if (input$source_v2 == "ModE-"){
-        variable_v2 = input$ME_variable_v2
-      } else {
-        variable_v2 = input$user_variable_v2
-      }
+      # Create output map data
+      correlation_map_datatable = reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        corrmada = generate_correlation_map_datatable(correlation_map_data())
+        
+        return(corrmada)
+      })
       
-      ptc = generate_correlation_titles(input$source_v1,input$source_v2,input$dataset_selected_v1,
-                                        input$dataset_selected_v2,variable_v1,variable_v2,
-                                        input$type_v1,input$type_v2,input$mode_selected_v1,input$mode_selected_v2,
-                                        month_range_primary(),month_range_secondary(),lonlat_vals_v1()[1:2],lonlat_vals_v2()[1:2],
-                                        lonlat_vals_v1()[3:4],lonlat_vals_v2()[3:4],input$range_years3,input$cor_method_ts,
-                                        input$title_mode3,input$title_mode_ts3,input$title1_input3,input$title1_input_ts3)
-      return(ptc)
-    }) 
-    
-    # Select variable timeseries data
-    ts_data_v1 = reactive({
-      if (input$source_v1 == "ModE-"){
-        tsd_v1 = timeseries_data_v1()
-      } else {
-        tsd_v1 = user_subset_v1()
-      }
-      
-      # Add moving averages (if chosen)
-      tsds_v1 = add_stats_to_TS_datatable(tsd_v1,input$custom_average_ts3,input$year_moving_ts3,
-                                          "center",FALSE,NA,FALSE)
-      
-      return(tsds_v1)
-    })
-    
-    ts_data_v2 = reactive({
-      if (input$source_v2 == "ModE-"){
-        tsd_v2 = timeseries_data_v2()
-      } else {
-        tsd_v2 = user_subset_v2()
-      } 
-      
-      # Add moving averages (if chosen)
-      tsds_v2 = add_stats_to_TS_datatable(tsd_v2,input$custom_average_ts3,input$year_moving_ts3,
-                                          "center",FALSE,NA,FALSE)
-      
-      return(tsds_v2)
-    })
-    
-    # Correlate timeseries
-    correlation_stats = reactive({
-      c_st = correlate_timeseries(ts_data_v1(),ts_data_v2(),input$cor_method_ts)
-      
-      return(c_st)
-    })
-    
-    # Plot
-    output$correlation_r_value = renderText({paste("Timeseries correlation coefficient: r =",signif(correlation_stats()$estimate,digits =3), sep = "")})
-    output$correlation_p_value = renderText({paste("Timeseries correlation p-value: p =",signif(correlation_stats()$p.value,digits =3), sep = "")})    
-    
-    corr_ts1 = function(){
-      
-      if (input$source_v1 == "ModE-"){
-        variable_v1 = input$ME_variable_v1
-      } else {
-        variable_v1 = input$user_variable_v1
-      }
-      
-      if (input$source_v2 == "ModE-"){
-        variable_v2 = input$ME_variable_v2
-      } else {
-        variable_v2 = input$user_variable_v2
-      }
-      
-      plot_combined_timeseries(ts_data_v1(),ts_data_v2(),plot_titles_cor())
-      add_highlighted_areas(ts_highlights_data3())
-      add_custom_lines(ts_lines_data3())
-      add_correlation_timeseries(ts_data_v1(),ts_data_v2(),variable_v1,variable_v2,plot_titles_cor())
-      add_boxes(ts_highlights_data3())
-      add_custom_points(ts_points_data3())
-      if (input$show_key_ts3 == TRUE){
-        add_TS_key(input$key_position_ts3,ts_highlights_data3(),ts_lines_data3(),variable_v1,month_range_primary(),
-                   input$custom_average_ts3,input$year_moving_ts3,FALSE,NA,variable_v2,month_range_secondary(),TRUE)
-      }
-      
-    }
-    
-    output$correlation_ts = renderPlot({corr_ts1()}, height = 400)
-    
-    ### Plot correlation map
-    
-    # Pick out relevant v1/v2 data:
-    correlation_map_data_v1 = reactive({
-      if (input$type_v1 == "Field"){
-        cmd_v1 = data_output4_v1()
-      } else if (input$source_v1 == "User Data"){
-        cmd_v1 = user_subset_v1()
-      } else {
-        cmd_v1 = timeseries_data_v1()
-      } 
-    })
-    
-    correlation_map_data_v2 = reactive({
-      if (input$type_v2 == "Field"){
-        cmd_v2 = data_output4_v2()
-      } else if (input$source_v2 == "User Data"){
-        cmd_v2 = user_subset_v2()
-      } else {
-        cmd_v2 = timeseries_data_v2()
-      } 
-    })
-    
-    # Generate correlation map data
-    correlation_map_data = reactive({
-      corrmd = generate_correlation_map_data(correlation_map_data_v1(),correlation_map_data_v2(),input$cor_method_map,
-                                             input$type_v1,input$type_v2,lonlat_vals_v1()[1:2],lonlat_vals_v2()[1:2],
-                                             lonlat_vals_v1()[3:4],lonlat_vals_v2()[3:4])
-      return(corrmd)
-    })
-    
-    # Generate plot dimensions
-    correlation_map_dimensions <- reactive({
-      c_m_d = generate_map_dimensions(correlation_map_data()[[1]], correlation_map_data()[[2]], session$clientData$output_correlation_map_width, input$dimension[2], FALSE)
-      
-      return(c_m_d)
-    })
-    
-    # Plot
-    
-    corr_m1 = function(){
-      if ((input$type_v1 == "Field") | (input$type_v2 == "Field")){
-        plot_correlation_map(correlation_map_data(),plot_titles_cor(),input$axis_input3,
-                             input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame(),input$hide_borders3,plotOrder3(), input$shpPickers3, input)
-      }
-    }
-    
-    output$correlation_map = renderPlot({corr_m1()},width = function(){correlation_map_dimensions()[1]},height = function(){correlation_map_dimensions()[2]})
-    
-    ### Data tables & Downloads 
-    
-    # Create output ts_data
-    correlation_ts_datatable = reactive({
-      
-      if (input$source_v1 == "ModE-"){
-        variable_v1 = input$ME_variable_v1
-      } else {
-        variable_v1 = input$user_variable_v1
-      }
-      
-      if (input$source_v2 == "ModE-"){
-        variable_v2 = input$ME_variable_v2
-      } else {
-        variable_v2 = input$user_variable_v2
-      }
-      
-      # Create v1/v2 datatables
-      ctd_v1 = rewrite_tstable(ts_data_v1(),variable_v1)
-      ctd_v2 = rewrite_tstable(ts_data_v2(),variable_v2)
-      
-      # Combine into dataframe
-      ctd = data.frame(ctd_v1,ctd_v2[-1])
-      
-      # Add Var1/2 to names
-      colnames(ctd) = c("Year",paste("Var1_",colnames(ctd_v1)[-1], sep = ""),paste("Var2_",colnames(ctd_v2)[-1], sep = ""))
-      
-      return(ctd)
-    })
-    
-    output$correlation_ts_data = renderDataTable({correlation_ts_datatable()}, rownames = FALSE, options = list(
-      autoWidth = TRUE, 
-      searching = FALSE,
-      paging = TRUE,
-      pagingType = "numbers"
-    ))
-    
-    # Create output map data
-    correlation_map_datatable = reactive({
-      
-      corrmada = generate_correlation_map_datatable(correlation_map_data())
-      
-      return(corrmada)
-    })
-    
-    output$correlation_map_data <- renderTable({correlation_map_datatable()}, rownames = TRUE)
-    
+      output$correlation_map_data <- renderTable({correlation_map_datatable()}, rownames = TRUE)
+        
     ### ModE-RA sources ----
-    #ModE-RA sources Variable 1
     
-    ranges_3a  <- reactiveValues(x = NULL, y = NULL)
-    ranges2_3a <- reactiveValues(x = NULL, y = NULL)
+    # Set up values and functions for plotting
+    fad_zoom3  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
     
-    fad_wa3a <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a3a, "winter", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4], labs)}
-    fad_sa3a <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a3a, "summer", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4], labs)}
-    
-    # Upper map (Original)
-    output$fad_winter_map_a3a <- renderPlot({
-      if ((month_range_primary()[1] >= 4) && (month_range_primary()[2] <= 9)) {
-        plot_data <- fad_sa3a(labs = TRUE)
-      } else {
-        plot_data <- fad_wa3a(labs = TRUE)
-      }
-      
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
+    season_fad_short3 = reactive({
+      switch(input$fad_season3,
+             "April to September" = "summer",
+             "October to March" = "winter")
     })
     
-    # Upper map (Zoom)
-    output$fad_zoom_winter_a3a <- renderPlot({
-      if ((month_range_primary()[1] >= 4) && (month_range_primary()[2] <= 9)) {
-        plot_data <- fad_sa3a(labs = FALSE)
-      } else {
-        plot_data <- fad_wa3a(labs = FALSE)
-      }
-      
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges_3a$x, ylim = ranges_3a$y, crs = st_crs(4326))
-      
-      plot_data
+    # Load global data
+    fad_global_data3 = reactive({
+      load_modera_source_data(input$fad_year3, season_fad_short3())
     })
     
-    # Lower map (Original)
-    output$fad_summer_map_a3a <- renderPlot({
-      if ((month_range_primary()[1] >= 4 && month_range_primary()[2] <= 9) | (month_range_primary()[2] <= 3)) {
-        NULL
-      } else {
-        plot_data <- fad_sa3a(labs = TRUE)  
-      } 
-      
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
+    # Plot map 
+    fad_plot3 = function(){plot_modera_sources(fad_global_data3(),input$fad_year3, season_fad_short3(),fad_zoom3())}
+    
+    output$fad_map3 <- renderPlot({fad_plot3()})
+    
+    # Set up data function
+    fad_data3 <- function() {download_feedback_data(fad_global_data3(), fad_zoom3()[1:2], fad_zoom3()[3:4])}
+    
+    observeEvent(lonlat_vals3()|input$fad_reset_zoom3,{
+      fad_zoom3(lonlat_vals3())
     })
     
-    # Lower map (Zoom)
-    output$fad_zoom_summer_a3a <- renderPlot({
-      if ((month_range_primary()[1] >= 4 && month_range_primary()[2] <= 9) || (month_range_primary()[2] <= 3)) {
-        NULL
-      } else {
-        plot_data <- fad_sa3a(labs = FALSE)
-      }
-      
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges2_3a$x, ylim = ranges2_3a$y, crs = st_crs(4326))
-      
-      plot_data
+    observeEvent(input$brush_fad3,{
+      brush = input$brush_fad3
+      fad_zoom3(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
     })
     
-    #Data ModE-RA sources
-    fad_wa_data3a <- function() {
-      
-      download_feedback_data(input$fad_year_a3a, "winter", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4])}
-    fad_sa_data3a <- function() {
-      
-      download_feedback_data(input$fad_year_a3a, "summer", lonlat_vals_v1()[1:2], lonlat_vals_v1()[3:4])}
-    
-    #ModE-RA sources Variable 2
-    
-    ranges_3b  <- reactiveValues(x = NULL, y = NULL)
-    ranges2_3b <- reactiveValues(x = NULL, y = NULL)
-    
-    fad_wa3b <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a3b, "winter", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4], labs)}
-    fad_sa3b <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a3b, "summer", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4], labs)}
-    
-    # Upper map (Original)
-    output$fad_winter_map_a3b <- renderPlot({
-      if ((month_range_secondary()[1] >= 4) && (month_range_secondary()[2] <= 9)) {
-        plot_data <- fad_sa3b(labs = TRUE)
-      } else {
-        plot_data <- fad_wa3b(labs = TRUE)
-      }
-      
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
-    })
-    
-    # Upper map (Zoom)
-    output$fad_zoom_winter_a3b <- renderPlot({
-      if ((month_range_secondary()[1] >= 4) && (month_range_secondary()[2] <= 9)) {
-        plot_data <- fad_sa3b(labs = FALSE)
-      } else {
-        plot_data <- fad_wa3b(labs = FALSE)
-      }
-      
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges_3b$x, ylim = ranges_3b$y, crs = st_crs(4326))
-      
-      plot_data
-    })
-    
-    # Lower map (Original)
-    output$fad_summer_map_a3b <- renderPlot({
-      if ((month_range_secondary()[1] >= 4 && month_range_secondary()[2] <= 9) | (month_range_secondary()[2] <= 3)) {
-        NULL
-      } else {
-        plot_data <- fad_sa3b(labs = TRUE)  
-      } 
-      
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
-    })
-    
-    # Lower map (Zoom)
-    output$fad_zoom_summer_a3b <- renderPlot({
-      if ((month_range_secondary()[1] >= 4 && month_range_secondary()[2] <= 9) || (month_range_secondary()[2] <= 3)) {
-        NULL
-      } else {
-        plot_data <- fad_sa3b(labs = FALSE)
-      }
-      
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges2_3b$x, ylim = ranges2_3b$y, crs = st_crs(4326))
-      
-      plot_data
-    })
-    
-    #Data ModE-RA sources
-    fad_wa_data3b <- function() {
-      
-      download_feedback_data(input$fad_year_a3b, "winter", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4])}
-    fad_sa_data3b <- function() {
-      
-      download_feedback_data(input$fad_year_a3b, "summer", lonlat_vals_v2()[1:2], lonlat_vals_v2()[3:4])}
-    
-    #Update Modera source year input and update brushes
-    
+    # Update fad_year 
     observeEvent(input$range_years3[1], {
       updateNumericInput(
         session = getDefaultReactiveDomain(),
-        inputId = "fad_year_a3a",
+        inputId = "fad_year3",
         value = input$range_years3[1])
-    })
-    
-    observeEvent(input$range_years3[1], {
-      updateNumericInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "fad_year_a3b",
-        value = input$range_years3[1])
-    })
-    
-    observe({
-      brush_v1a <- input$brush_fad1a3a
-      if (!is.null(brush_v1a)) {
-        ranges_3a$x <- c(brush_v1a$xmin, brush_v1a$xmax)
-        ranges_3a$y <- c(brush_v1a$ymin, brush_v1a$ymax)
-        
-      } else {
-        ranges_3a$x <- lonlat_vals_v1()[1:2]
-        ranges_3a$y <- lonlat_vals_v1()[3:4]
-      }
-    })
-    
-    observe({
-      brush_v1a2 <- input$brush_fad1b3a
-      if (!is.null(brush_v1a2)) {
-        ranges2_3a$x <- c(brush_v1a2$xmin, brush_v1a2$xmax)
-        ranges2_3a$y <- c(brush_v1a2$ymin, brush_v1a2$ymax)
-        
-      } else {
-        ranges2_3a$x <- lonlat_vals_v1()[1:2]
-        ranges2_3a$y <- lonlat_vals_v1()[3:4]
-      }
-    })
-    
-    observe({
-      brush_v2a <- input$brush_fad1a3b
-      if (!is.null(brush_v2a)) {
-        ranges_3b$x <- c(brush_v2a$xmin, brush_v2a$xmax)
-        ranges_3b$y <- c(brush_v2a$ymin, brush_v2a$ymax)
-        
-      } else {
-        ranges_3b$x <- lonlat_vals_v2()[1:2]
-        ranges_3b$y <- lonlat_vals_v2()[3:4]
-      }
-    })
-    
-    observe({
-      brush_v2a2 <- input$brush_fad1b3b
-      if (!is.null(brush_v2a2)) {
-        ranges2_3b$x <- c(brush_v2a2$xmin, brush_v2a2$xmax)
-        ranges2_3b$y <- c(brush_v2a2$ymin, brush_v2a2$ymax)
-        
-      } else {
-        ranges2_3b$x <- lonlat_vals_v2()[1:2]
-        ranges2_3b$y <- lonlat_vals_v2()[3:4]
-      }
     })
     
     ### Downloads ----
@@ -12003,185 +11545,40 @@ server <- function(input, output, session) {
                                                                          col.names = FALSE)
                                                             }})
       
-      ## ModE-RA sources Variable 1
+      output$download_fad3            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season3),"_",input$fad_year3,".",input$file_type_fad3, sep = "")},
+                                                         content  = function(file) {
+                                                           
+                                                           mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map3_width, input$dimension[2], FALSE)
+                                                           
+                                                           if (input$file_type_fad3 == "png"){
+                                                             png(file, width = mmd[3] , height = mmd[4], res = 400)  
+                                                             print(fad_plot3())
+                                                             dev.off()
+                                                           } else if (input$file_type_fad3 == "jpeg"){
+                                                             jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
+                                                             print(fad_plot3()) 
+                                                             dev.off()
+                                                           } else {
+                                                             pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
+                                                             print(fad_plot3())
+                                                             dev.off()
+                                                           }})
       
-      output$download_fad_sa3a             <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a3a, "-modera_source.",input$file_type_modera_source_b3a, sep = "")},
-                                                              content  = function(file) {
-                                                                
-                                                                mmd3a = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_winter_map_a3a_width, input$dimension[2], FALSE)
-                                                                
-                                                                if (input$file_type_modera_source_b3a == "png"){
-                                                                  png(file, width = mmd3a[3] , height = mmd3a[4], res = 400)  
-                                                                  print(fad_sa3a(labs = TRUE))
-                                                                  dev.off()
-                                                                } else if (input$file_type_modera_source_b3a == "jpeg"){
-                                                                  jpeg(file, width = mmd3a[3] , height = mmd3a[4], res = 400) 
-                                                                  print(fad_sa3a(labs = TRUE)) 
-                                                                  dev.off()
-                                                                } else {
-                                                                  pdf(file, width = mmd3a[3]/400 , height = mmd3a[4]/400) 
-                                                                  print(fad_sa3a(labs = TRUE))
-                                                                  dev.off()
-                                                                }})
-      
-      output$download_fad_wa3a             <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a3a, "-modera_source.",input$file_type_modera_source_a3a, sep = "")},
-                                                              content  = function(file) {
-                                                                
-                                                                mmd3a = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_winter_map_a3a_width, input$dimension[2], FALSE)
-                                                                
-                                                                if (input$file_type_modera_source_a3a == "png"){
-                                                                  png(file, width = mmd3a[3] , height = mmd3a[4], res = 400)  
-                                                                  print(fad_wa3a(labs = TRUE))
-                                                                  dev.off()
-                                                                } else if (input$file_type_modera_source_a3a == "jpeg"){
-                                                                  jpeg(file, width = mmd3a[3] , height = mmd3a[4], res = 400) 
-                                                                  print(fad_wa3a(labs = TRUE)) 
-                                                                  dev.off()
-                                                                } else {
-                                                                  pdf(file, width = mmd3a[3]/400 , height = mmd3a[4]/400) 
-                                                                  print(fad_wa3a(labs = TRUE))
-                                                                  dev.off()
-                                                                }})
-      
-      output$download_data_fad_wa3a       <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a3a, "-modera_source_data.",input$file_type_data_modera_source_a3a, sep = "")},
-                                                            content  = function(file) {
-                                                              if (input$file_type_data_modera_source_a3a == "csv"){
-                                                                write.csv(fad_wa_data3a(), file,
-                                                                          row.names = FALSE)
-                                                              } else {
-                                                                write.xlsx(fad_wa_data3a(), file,
-                                                                           col.names = TRUE,
-                                                                           row.names = FALSE)
-                                                              }})
-      
-      output$download_data_fad_sa3a     <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a3a, "-modera_source_data.",input$file_type_data_modera_source_b3a, sep = "")},
-                                                          content  = function(file) {
-                                                            if (input$file_type_data_modera_source_b3a == "csv"){
-                                                              write.csv(fad_sa_data3a(), file,
+      output$download_fad_data3       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season3),"_",input$fad_year3,"_data.",input$data_file_type_fad3, sep = "")},
+                                                         content  = function(file) {
+                                                           if (input$data_file_type_fad3 == "csv"){
+                                                             write.csv(fad_data3(), file,
+                                                                       row.names = FALSE)
+                                                           } else {
+                                                             write.xlsx(fad_data3(), file,
+                                                                        col.names = TRUE,
                                                                         row.names = FALSE)
-                                                            } else {
-                                                              write.xlsx(fad_sa_data3a(), file,
-                                                                         col.names = TRUE,
-                                                                         row.names = FALSE)
-                                                            }})
-      
-      ## ModE-RA sources Variable 2
-      
-      output$download_fad_sa3b             <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a3b, "-modera_source.",input$file_type_modera_source_b3b, sep = "")},
-                                                              content  = function(file) {
-                                                                
-                                                                mmd3b = generate_map_dimensions(subset_lons_secondary(), subset_lats_secondary(), session$clientData$output_fad_winter_map_a3b_width, input$dimension[2], FALSE)
-                                                                
-                                                                if (input$file_type_modera_source_b3b == "png"){
-                                                                  png(file, width = mmd3b[3] , height = mmd3b[4], res = 400)  
-                                                                  print(fad_sa3b(labs = TRUE))
-                                                                  dev.off()
-                                                                } else if (input$file_type_modera_source_b3b == "jpeg"){
-                                                                  jpeg(file, width = mmd3b[3] , height = mmd3b[4], res = 400) 
-                                                                  print(fad_sa3b(labs = TRUE)) 
-                                                                  dev.off()
-                                                                } else {
-                                                                  pdf(file, width = mmd3b[3]/400 , height = mmd3b[4]/400) 
-                                                                  print(fad_sa3b(labs = TRUE))
-                                                                  dev.off()
-                                                                }})
-      
-      output$download_fad_wa3b             <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a3b, "-modera_source.",input$file_type_modera_source_a3b, sep = "")},
-                                                              content  = function(file) {
-                                                                
-                                                                mmd3b = generate_map_dimensions(subset_lons_secondary(), subset_lats_secondary(), session$clientData$output_fad_winter_map_a3b_width, input$dimension[2], FALSE)
-                                                                
-                                                                if (input$file_type_modera_source_a3b == "png"){
-                                                                  png(file, width = mmd3b[3] , height = mmd3b[4], res = 400)  
-                                                                  print(fad_wa3b(labs = TRUE))
-                                                                  dev.off()
-                                                                } else if (input$file_type_modera_source_a3b == "jpeg"){
-                                                                  jpeg(file, width = mmd3b[3] , height = mmd3b[4], res = 400) 
-                                                                  print(fad_wa3b(labs = TRUE)) 
-                                                                  dev.off()
-                                                                } else {
-                                                                  pdf(file, width = mmd3b[3]/400 , height = mmd3b[4]/400) 
-                                                                  print(fad_wa3b(labs = TRUE))
-                                                                  dev.off()
-                                                                }})
-      
-      output$download_data_fad_wa3b       <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a3b, "-modera_source_data.",input$file_type_data_modera_source_a3b, sep = "")},
-                                                             content  = function(file) {
-                                                               if (input$file_type_data_modera_source_a3b == "csv"){
-                                                                 write.csv(fad_wa_data3b(), file,
-                                                                           row.names = FALSE)
-                                                               } else {
-                                                                 write.xlsx(fad_wa_data3b(), file,
-                                                                            col.names = TRUE,
-                                                                            row.names = FALSE)
-                                                               }})
-      
-      output$download_data_fad_sa3b     <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a3b, "-modera_source_data.",input$file_type_data_modera_source_b3b, sep = "")},
-                                                           content  = function(file) {
-                                                             if (input$file_type_data_modera_source_b3b == "csv"){
-                                                               write.csv(fad_sa_data3b(), file,
-                                                                         row.names = FALSE)
-                                                             } else {
-                                                               write.xlsx(fad_sa_data3b(), file,
-                                                                          col.names = TRUE,
-                                                                          row.names = FALSE)
-                                                             }})
+                                                           }})
 
  
-  ## REGRESSION data processing and plotting ----
-    ### Independent and dependent variable ----  
-    ### User data processing
-    
-    # Load in user data for independent variable
-    user_data_iv = reactive({
-      
-      req(input$user_file_iv)
-      
-      if (input$source_iv == "User Data"){
-        new_data1 = read_regcomp_data(input$user_file_iv$datapath)      
-        return(new_data1)
-      }
-      else{
-        return(NULL)
-      }
-    })
-    
-    # Load in user data for dependent variable
-    user_data_dv = reactive({
-      
-      req(input$user_file_dv)
-      
-      if (input$source_dv == "User Data"){
-        new_data2 = read_regcomp_data(input$user_file_dv$datapath)      
-        return(new_data2)
-      }
-      else{
-        return(NULL)
-      }
-    })
-    
-    # Subset iv data to year_range and chosen variable
-    user_subset_iv = reactive({
-      
-      req(user_data_iv(),input$user_variable_iv)
-      
-      usr_ss1 = create_user_data_subset(user_data_iv(),input$user_variable_iv,input$range_years4)
-      
-      return(usr_ss1)
-    }) 
-    
-    # Subset dv data to year_range and chosen variable
-    user_subset_dv = reactive({
-      
-      req(user_data_dv(),input$user_variable_dv)
-      
-      usr_ss2 = create_user_data_subset(user_data_dv(),input$user_variable_dv,input$range_years4)
-      
-      return(usr_ss2)
-    }) 
-    
-    
-    year_range_reg = reactive({
+  ## REGRESSION year range, user data, plotting & downloads ----
+     
+     year_range_reg = reactive({
       
       result <- tryCatch(
         {
@@ -12193,7 +11590,7 @@ server <- function(input, output, session) {
             modalDialog(
               title = "Error",
               "There was an error in processing your uploaded data. 
-                \nPlease check if the file has the correct format.",
+              \nPlease check if the file has the correct format.",
               easyClose = FALSE,
               footer = tagList(modalButton("OK"))
             ))
@@ -12202,558 +11599,435 @@ server <- function(input, output, session) {
       )
       return(result)
     }) 
+      
+    ### User data processing ----
     
-    
-    ### Generate ModE-RA data   
-    
-    ## for dependent variable:
-    
-    # Update custom_data if required
-    observeEvent(data_id_primary(),{
-      if (data_id_primary()[1] == 0){ # Only updates when new custom data is required...
-        if (!identical(custom_data_id_primary()[2:3],data_id_primary()[2:3])){ # ....i.e. changed variable or dataset
-          custom_data(load_ModE_data(input$dataset_selected_dv,input$ME_variable_dv)) # load new custom data
-          custom_data_ID(data_id_primary()) # update custom data ID
+      # Load in user data for independent variable
+      user_data_iv = reactive({
+        
+        req(input$user_file_iv)
+        
+        if (input$source_iv == "User Data"){
+          new_data1 = read_regcomp_data(input$user_file_iv$datapath)      
+          return(new_data1)
         }
-      }
-    })
-    
-    #Geographic Subset
-    data_output1_dv <- reactive({ 
-      processed_data_dv  <- create_latlon_subset(custom_data(), data_id_primary(), subset_lons_primary(), subset_lats_primary())                
-      return(processed_data_dv)
-    })
-    
-    #Creating yearly subset
-    data_output2_dv <- reactive({
-      req(month_range_primary(),data_id_primary())
-      processed_data2_dv <- create_yearly_subset(data_output1_dv(), data_id_primary(), input$range_years4, month_range_primary())              
-      return(processed_data2_dv)  
-    })
-    
-    # Create reference subset & average over time
-    data_output3_dv <- reactive({ 
-      ref_dv <- create_yearly_subset(data_output1_dv(), data_id_primary(), input$ref_period_dv, month_range_primary())
-      processed_data3_dv = apply(ref_dv,c(1:2),mean)
-      return(processed_data3_dv)  
-    })
-    
-    #Converting absolutes to anomalies
-    data_output4_dv <- reactive({
-      if (input$mode_selected_dv == "Absolute"){
-        processed_data4_dv <- data_output2_dv()
-      } else {
-        processed_data4_dv <- convert_subset_to_anomalies(data_output2_dv(), data_output3_dv())
-      }
-      return(processed_data4_dv)
-    })
-    
-    ## ModE-RA map plots and titles:
-    
-    #Map titles
-    plot_titles_dv <- reactive({
-      my_title_dv <- generate_titles ("general",input$dataset_selected_dv, input$ME_variable_dv, input$mode_selected_dv,
-                                      "Default","Default", month_range_primary(),input$range_years4,
-                                      input$ref_period_dv, NA,lonlat_vals_dv()[1:2],lonlat_vals_dv()[3:4],
-                                      NA, NA, NA)
-      return(my_title_dv)
-    }) 
-    
-    plot_titles_iv <- reactive({
-      my_title_iv <- generate_titles ("general",input$dataset_selected_iv, input$ME_variable_iv[1], input$mode_selected_iv,
-                                      "Default","Default", month_range_secondary(),input$range_years4,
-                                      input$ref_period_iv, NA,lonlat_vals_iv()[1:2],lonlat_vals_iv()[3:4],
-                                      NA, NA, NA)
-      return(my_title_iv)
-    }) 
-    
-    # Generate Map data & plotting function for dv
-    map_data_dv <- function(){create_map_datatable(data_output4_dv(), subset_lons_primary(), subset_lats_primary())}
-    
-    ME_map_plot_dv <- function(){plot_default_map(map_data_dv(), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
-    
-    # Generate timeseries data & plotting function for iv
-    ME_ts_data_iv <- reactive({
+        else{
+          return(NULL)
+        }
+      })
       
-      req(subset_lons_secondary(),subset_lats_secondary(),month_range_secondary())
+      # Load in user data for dependent variable
+      user_data_dv = reactive({
+        
+        req(input$user_file_dv)
+        
+        if (input$source_dv == "User Data"){
+          new_data2 = read_regcomp_data(input$user_file_dv$datapath)      
+          return(new_data2)
+        }
+        else{
+          return(NULL)
+        }
+      })
       
-      me_tsd_iv = create_ME_timeseries_data(input$dataset_selected_dv,input$ME_variable_iv,subset_lons_secondary(),subset_lats_secondary(),
-                                            input$mode_selected_iv,month_range_secondary(),input$range_years4,
-                                            input$ref_period_iv)
-      return(me_tsd_iv)
-    })
-    
-    
-    ME_timeseries_plot_iv = function(){plot_default_timeseries(ME_ts_data_iv(),"general",input$ME_variable_iv[1],plot_titles_iv(),"Default",NA)}
-    
-    # Generate Timeseries data for dv
-    timeseries_data_dv <- reactive({
-      ts_data1_dv <- create_timeseries_datatable(data_output4_dv(), input$range_years4, "range", subset_lons_primary(), subset_lats_primary())
-      return(ts_data1_dv)
-    })
-    
-    #ME_timeseries_plot_dv = function(){plot_default_timeseries(timeseries_data_dv(),"general",input$ME_variable_dv,plot_titles_dv(),"Default")}
-    
-    
-    ### Plot iv/dv plots
-    
-    # Generate plot dimensions
-    plot_dimensions_iv <- reactive({
-      p_d_iv = map_dims_iv = c(session$clientData$output_plot_iv_width,400)
+      # Subset iv data to year_range and chosen variable
+      user_subset_iv = reactive({
+        
+        req(user_data_iv(),input$user_variable_iv)
+        
+        usr_ss1 = create_user_data_subset(user_data_iv(),input$user_variable_iv,input$range_years4)
+        
+        return(usr_ss1)
+      }) 
       
-      return(p_d_iv)
-    })
-    
-    plot_dimensions_dv <- reactive({
-      if (input$source_dv == "User Data"){
-        map_dims_dv = c(session$clientData$output_plot_dv_width,400)
-      } else {
-        map_dims_dv = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_plot_dv_width, (input$dimension[2]), FALSE)
-      }
-      return(map_dims_dv)  
-    })
-    
-    # Plot 
-    output$plot_iv <- renderPlot({
-      if (input$source_iv == "User Data"){
-        plot_user_timeseries(user_subset_iv(),"darkorange2")
-      } else {
-        ME_timeseries_plot_iv()
-      } 
-    },height = 400)  
-    
-    output$plot_dv <- renderPlot({
-      if (input$source_dv == "User Data"){
-        plot_user_timeseries(user_subset_dv(),"saddlebrown")
-      } else{
-        ME_map_plot_dv()
-      }
-    },width = function(){plot_dimensions_dv()[1]},height = function(){plot_dimensions_dv()[2]})  
-    
-    ### Regression plots and data ----
-    
-    ## Preparation
-    
-    # Set independent variables:
-    variables_iv = reactive({
-      if (input$source_iv == "ModE-"){
-        v_iv = input$ME_variable_iv
-      } else {
-        v_iv = input$user_variable_iv
-      }
-      return(v_iv)
-    })
-    
-    variable_dv = reactive({
-      if (input$source_dv == "ModE-"){
-        v_dv = input$ME_variable_dv
-      } else {
-        v_dv = input$user_variable_dv
-      }
-      return(v_dv)
-    })
-    
-    # Generate regression titles    
-    plot_titles_reg = reactive({
+      # Subset dv data to year_range and chosen variable
+      user_subset_dv = reactive({
+        
+        req(user_data_dv(),input$user_variable_dv)
+        
+        usr_ss2 = create_user_data_subset(user_data_dv(),input$user_variable_dv,input$range_years4)
+        
+        return(usr_ss2)
+      }) 
       
-      ptr = generate_regression_titles(input$source_iv,input$source_dv,
-                                       input$dataset_selected_iv,input$dataset_selected_dv,
-                                       input$ME_variable_dv,
-                                       input$mode_selected_iv, input$mode_selected_dv,
-                                       month_range_secondary(),month_range_primary(),lonlat_vals_iv()[1:2],
-                                       lonlat_vals_dv()[1:2],lonlat_vals_iv()[3:4],
-                                       lonlat_vals_dv()[3:4],input$range_years4)
-      return(ptr)
-    })
+    ### Prep plotting data ----
     
-    # Select variable timeseries data
-    ts_data_iv = reactive({
-      if (input$source_iv == "ModE-"){
-        tsd_iv = ME_ts_data_iv()
-      } else {
-        tsd_iv = user_subset_iv()
-      }  
-      return(tsd_iv)
-    })
-    
-    ts_data_dv = reactive({
-      if (input$source_dv == "ModE-"){
-        tsd_dv = timeseries_data_dv()
-      } else {
-        tsd_dv = user_subset_dv()
-      }  
-      return(tsd_dv)
-    })
-    
-    # Generate plot dimension
-    plot_dimensions_reg = reactive({
+      #Map titles
+      plot_titles_dv <- reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        my_title_dv <- generate_titles ("general",input$dataset_selected_dv, input$ME_variable_dv, input$mode_selected_dv,
+                                        "Default","Default", month_range_primary(),input$range_years4,
+                                        input$ref_period_dv, NA,lonlat_vals_dv()[1:2],lonlat_vals_dv()[3:4],
+                                        NA, NA, NA)
+        return(my_title_dv)
+      }) 
       
-      p_d_r = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_plot_dv_width, input$dimension[2], FALSE)
+      plot_titles_iv <- reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        my_title_iv <- generate_titles ("general",input$dataset_selected_iv, input$ME_variable_iv[1], input$mode_selected_iv,
+                                        "Default","Default", month_range_secondary(),input$range_years4,
+                                        input$ref_period_iv, NA,lonlat_vals_iv()[1:2],lonlat_vals_iv()[3:4],
+                                        NA, NA, NA)
+        return(my_title_iv)
+      }) 
       
-      return(p_d_r)
-    })
-    
-    ## Regression Summary data 
-    
-    regression_summary_data = reactive({
+      # Generate Map data & plotting function for dv
+      map_data_dv <- function(){
+        req(data_output4_primary(), subset_lons_primary(), subset_lats_primary())
+        create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
       
-      rsd = create_regression_summary_data(ts_data_iv(),ts_data_dv(),variables_iv())
+      ME_map_plot_dv <- function(){plot_default_map(map_data_dv(), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
       
-      return(rsd)
-    })
-    
-    reg_sd = function(){
-      req(regression_summary_data())
-      summary(regression_summary_data())}
-    
-    output$regression_summary_data = renderPrint({reg_sd()})  
-    
-    ## Regression coefficient plot
-    
-    regression_coeff_data = reactive({
+      # Generate timeseries data & plotting function for iv
+      ME_ts_data_iv <- reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        req(subset_lons_secondary(),subset_lats_secondary(),month_range_secondary())
+        
+        me_tsd_iv = create_ME_timeseries_data(input$dataset_selected_dv,input$ME_variable_iv,subset_lons_secondary(),subset_lats_secondary(),
+                                              input$mode_selected_iv,month_range_secondary(),input$range_years4,
+                                              input$ref_period_iv)
+        return(me_tsd_iv)
+      })
       
-      reg_cd = create_regression_coeff_data(ts_data_iv(), data_output4_dv(), variables_iv())
       
-      return(reg_cd)
-    })
-    
-    reg_coef_1 = function(){
-      req(input$coeff_variable)
-      plot_regression_coefficients(regression_coeff_data(),variables_iv(),match(input$coeff_variable,variables_iv()),
-                                   variable_dv(),plot_titles_reg(),subset_lons_primary(),subset_lats_primary(),TRUE)
-    }
-    
-    output$plot_reg_coeff = renderPlot({reg_coef_1()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
-    
-    reg_coef_2 = function(){
+      ME_timeseries_plot_iv = function(){plot_default_timeseries(ME_ts_data_iv(),"general",input$ME_variable_iv[1],plot_titles_iv(),"Default",NA)}
       
-      req(input$coeff_variable)
+      # Generate Timeseries data for dv
+      timeseries_data_dv <- reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        ts_data1_dv <- create_timeseries_datatable(data_output4_primary(), input$range_years4, "range", subset_lons_primary(), subset_lats_primary())
+        return(ts_data1_dv)
+      })
       
-      if (length(variables_iv()) == 1){ #  Deals with the 'variable' dimension disappearing
-        rcd1 = regression_coeff_data()
-      } else{
-        rcd1 = regression_coeff_data()[match(input$coeff_variable,variables_iv()),,]
-      }
+      #ME_timeseries_plot_dv = function(){plot_default_timeseries(timeseries_data_dv(),"general",input$ME_variable_dv,plot_titles_dv(),"Default")}
       
-      # Transform and add rownames to data
-      rcd2 = create_regression_map_datatable(rcd1,subset_lons_primary(),subset_lats_primary())
       
-      return (rcd2)
-    }
-    
-    output$data_reg_coeff = renderTable({reg_coef_2()}, rownames = TRUE)
-    
-    ## Regression pvalue plot
-    
-    regression_pvalue_data = reactive({
-      rpvd = create_regression_pvalue_data(ts_data_iv(), data_output4_dv(), variables_iv())
+    ### Plotting initial IV/DV ----
       
-      return(rpvd)
-    })
-    
-    reg_pval_1 = function(){
-      req(input$pvalue_variable)
-      plot_regression_pvalues(regression_pvalue_data(),variables_iv(),match(input$pvalue_variable,variables_iv()),
-                              variable_dv(),plot_titles_reg(),subset_lons_primary(),subset_lats_primary(),TRUE)
-    }
-    
-    output$plot_reg_pval = renderPlot({reg_pval_1()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
-    
-    reg_pval_2 = function(){
-      req(input$pvalue_variable)
+      # Generate plot dimensions
+      plot_dimensions_iv <- reactive({
+        p_d_iv = map_dims_iv = c(session$clientData$output_plot_iv_width,400)
+        
+        return(p_d_iv)
+      })
       
-      if (length(variables_iv()) == 1){ #  Deals with the 'variable' dimension disappearing
-        rpd1 = regression_pvalue_data()
-      } else{
-        rpd1 = regression_pvalue_data()[match(input$pvalue_variable,variables_iv()),,]
+      plot_dimensions_dv <- reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        if (input$source_dv == "User Data"){
+          map_dims_dv = c(session$clientData$output_plot_dv_width,400)
+        } else {
+          map_dims_dv = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_plot_dv_width, (input$dimension[2]), FALSE)
+        }
+        return(map_dims_dv)  
+      })
+      
+      # Plot 
+      output$plot_iv <- renderPlot({
+        if (input$source_iv == "User Data"){
+          plot_user_timeseries(user_subset_iv(),"darkorange2")
+        } else {
+          ME_timeseries_plot_iv()
+        } 
+      },height = 400)  
+      
+      output$plot_dv <- renderPlot({
+        if (input$source_dv == "User Data"){
+          plot_user_timeseries(user_subset_dv(),"saddlebrown")
+        } else{
+          ME_map_plot_dv()
+        }
+      },width = function(){plot_dimensions_dv()[1]},height = function(){plot_dimensions_dv()[2]})  
+      
+    ### Regression plots ----
+    
+      ## Preparation
+      
+      # Set independent variables:
+      variables_iv = reactive({
+        if (input$source_iv == "ModE-"){
+          v_iv = input$ME_variable_iv
+        } else {
+          v_iv = input$user_variable_iv
+        }
+        return(v_iv)
+      })
+      
+      variable_dv = reactive({
+        if (input$source_dv == "ModE-"){
+          v_dv = input$ME_variable_dv
+        } else {
+          v_dv = input$user_variable_dv
+        }
+        return(v_dv)
+      })
+      
+      # Generate regression titles    
+      plot_titles_reg = reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        req(month_range_secondary(),month_range_primary())
+        
+        ptr = generate_regression_titles(input$source_iv,input$source_dv,
+                                         input$dataset_selected_iv,input$dataset_selected_dv,
+                                         input$ME_variable_dv,
+                                         input$mode_selected_iv, input$mode_selected_dv,
+                                         month_range_secondary(),month_range_primary(),lonlat_vals_iv()[1:2],
+                                         lonlat_vals_dv()[1:2],lonlat_vals_iv()[3:4],
+                                         lonlat_vals_dv()[3:4],input$range_years4)
+        return(ptr)
+      })
+      
+      # Select variable timeseries data
+      ts_data_iv = reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        if (input$source_iv == "ModE-"){
+          tsd_iv = ME_ts_data_iv()
+        } else {
+          tsd_iv = user_subset_iv()
+        }  
+        return(tsd_iv)
+      })
+      
+      ts_data_dv = reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        if (input$source_dv == "ModE-"){
+          tsd_dv = timeseries_data_dv()
+        } else {
+          tsd_dv = user_subset_dv()
+        }  
+        return(tsd_dv)
+      })
+      
+      # Generate plot dimension
+      plot_dimensions_reg = reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        p_d_r = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_plot_dv_width, input$dimension[2], FALSE)
+        
+        return(p_d_r)
+      })
+      
+      ## Regression Summary data 
+      
+      regression_summary_data = reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        rsd = create_regression_summary_data(ts_data_iv(),ts_data_dv(),variables_iv())
+        
+        return(rsd)
+      })
+      
+      reg_sd = function(){
+        req(regression_summary_data())
+        summary(regression_summary_data())}
+      
+      output$regression_summary_data = renderPrint({reg_sd()})  
+      
+      ## Regression coefficient plot
+      
+      regression_coeff_data = reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        reg_cd = create_regression_coeff_data(ts_data_iv(), data_output4_primary(), variables_iv())
+        
+        return(reg_cd)
+      })
+      
+      reg_coef_1 = function(){
+        req(input$coeff_variable)
+        plot_regression_coefficients(regression_coeff_data(),variables_iv(),match(input$coeff_variable,variables_iv()),
+                                     variable_dv(),plot_titles_reg(),subset_lons_primary(),subset_lats_primary(),TRUE)
       }
       
-      # Transform and add rownames to data
-      rpd2 = create_regression_map_datatable(rpd1,subset_lons_primary(),subset_lats_primary())
+      output$plot_reg_coeff = renderPlot({reg_coef_1()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
       
-      return(rpd2)
-    }
-    
-    output$data_reg_pval = renderTable({reg_pval_2()},rownames = TRUE)
-    
-    ## Regression residuals plot
-    
-    regression_residuals_data = reactive({
-      rresd = create_regression_residuals(ts_data_iv(), data_output4_dv(), variables_iv())
-      
-      return(rresd)
-    })
-    
-    # Make sure plot only updates when year is valid
-    reg_resi_year_val  = reactiveVal()
-    observe({
-      if(input$reg_resi_year >= input$range_years4[1] & input$reg_resi_year <= input$range_years4[2]){
-        reg_resi_year_val(input$reg_resi_year)
+      reg_coef_2 = function(){
+        
+        req(input$coeff_variable)
+        
+        if (length(variables_iv()) == 1){ #  Deals with the 'variable' dimension disappearing
+          rcd1 = regression_coeff_data()
+        } else{
+          rcd1 = regression_coeff_data()[match(input$coeff_variable,variables_iv()),,]
+        }
+        
+        # Transform and add rownames to data
+        rcd2 = create_regression_map_datatable(rcd1,subset_lons_primary(),subset_lats_primary())
+        
+        return (rcd2)
       }
-    })
-    
-    reg_res_1 = function(){
-      plot_regression_residuals(regression_residuals_data(),reg_resi_year_val(),input$range_years4,
-                                variables_iv(),variable_dv(),plot_titles_reg(),
-                                subset_lons_primary(),subset_lats_primary(),TRUE)
       
-    }
-    
-    output$plot_reg_resi = renderPlot({reg_res_1()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
-    
-    reg_res_2 = function(){
+      output$data_reg_coeff = renderTable({reg_coef_2()}, rownames = TRUE)
       
-      # Find ID of year selected
-      year_ID = (reg_resi_year_val()-input$range_years4[1])+1
-      rrd1 = regression_residuals_data()[year_ID,,]
+      ## Regression pvalue plot
       
-      # Transform and add rownames to data
-      rrd2 = create_regression_map_datatable(rrd1,subset_lons_primary(),subset_lats_primary())
-    }
-    
-    output$data_reg_resi = renderTable({reg_res_2()},rownames = TRUE)
-    
-    
-    ## Regression timeseries plot
-    
-    regression_ts_data = reactive({
-      rtsd = create_regression_timeseries_datatable(ts_data_dv(),regression_summary_data(),
-                                                    plot_titles_reg())
-      return(rtsd)
-    })
-    
-    reg_ts1a = function(){
-      plot_regression_timeseries(regression_ts_data(),"original_trend",plot_titles_reg(),
-                                 variables_iv(),variable_dv())
-    }
-    
-    output$plot_reg_ts1 = renderPlot({reg_ts1a()},height=400)
-    
-    reg_ts1b = function(){
-      plot_regression_timeseries(regression_ts_data(),"residuals",plot_titles_reg(),
-                                 variables_iv(),variable_dv())
-    }
-    
-    output$plot_reg_ts2 = renderPlot({reg_ts1b()},height=400)
-    
-    output$data_reg_ts= renderDataTable({regression_ts_data()}, rownames = FALSE, options = list(
-      autoWidth = TRUE, 
-      searching = FALSE,
-      paging = TRUE,
-      pagingType = "numbers"
-    ))
+      regression_pvalue_data = reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        rpvd = create_regression_pvalue_data(ts_data_iv(), data_output4_primary(), variables_iv())
+        
+        return(rpvd)
+      })
+      
+      reg_pval_1 = function(){
+        req(input$pvalue_variable)
+        plot_regression_pvalues(regression_pvalue_data(),variables_iv(),match(input$pvalue_variable,variables_iv()),
+                                variable_dv(),plot_titles_reg(),subset_lons_primary(),subset_lats_primary(),TRUE)
+      }
+      
+      output$plot_reg_pval = renderPlot({reg_pval_1()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
+      
+      reg_pval_2 = function(){
+        req(input$pvalue_variable)
+        
+        if (length(variables_iv()) == 1){ #  Deals with the 'variable' dimension disappearing
+          rpd1 = regression_pvalue_data()
+        } else{
+          rpd1 = regression_pvalue_data()[match(input$pvalue_variable,variables_iv()),,]
+        }
+        
+        # Transform and add rownames to data
+        rpd2 = create_regression_map_datatable(rpd1,subset_lons_primary(),subset_lats_primary())
+        
+        return(rpd2)
+      }
+      
+      output$data_reg_pval = renderTable({reg_pval_2()},rownames = TRUE)
+      
+      ## Regression residuals plot
+      
+      regression_residuals_data = reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        rresd = create_regression_residuals(ts_data_iv(), data_output4_primary(), variables_iv())
+        
+        return(rresd)
+      })
+      
+      # Make sure plot only updates when year is valid
+      reg_resi_year_val  = reactiveVal()
+      observe({
+        if(input$reg_resi_year >= input$range_years4[1] & input$reg_resi_year <= input$range_years4[2]){
+          reg_resi_year_val(input$reg_resi_year)
+        }
+      })
+      
+      reg_res_1 = function(){
+        plot_regression_residuals(regression_residuals_data(),reg_resi_year_val(),input$range_years4,
+                                  variables_iv(),variable_dv(),plot_titles_reg(),
+                                  subset_lons_primary(),subset_lats_primary(),TRUE)
+        
+      }
+      
+      output$plot_reg_resi = renderPlot({reg_res_1()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
+      
+      reg_res_2 = function(){
+        
+        # Find ID of year selected
+        year_ID = (reg_resi_year_val()-input$range_years4[1])+1
+        rrd1 = regression_residuals_data()[year_ID,,]
+        
+        # Transform and add rownames to data
+        rrd2 = create_regression_map_datatable(rrd1,subset_lons_primary(),subset_lats_primary())
+      }
+      
+      output$data_reg_resi = renderTable({reg_res_2()},rownames = TRUE)
+      
+      
+      ## Regression timeseries plot
+      
+      regression_ts_data = reactive({
+        
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        
+        rtsd = create_regression_timeseries_datatable(ts_data_dv(),regression_summary_data(),
+                                                      plot_titles_reg())
+        return(rtsd)
+      })
+      
+      reg_ts1a = function(){
+        plot_regression_timeseries(regression_ts_data(),"original_trend",plot_titles_reg(),
+                                   variables_iv(),variable_dv())
+      }
+      
+      output$plot_reg_ts1 = renderPlot({reg_ts1a()},height=400)
+      
+      reg_ts1b = function(){
+        plot_regression_timeseries(regression_ts_data(),"residuals",plot_titles_reg(),
+                                   variables_iv(),variable_dv())
+      }
+      
+      output$plot_reg_ts2 = renderPlot({reg_ts1b()},height=400)
+      
+      output$data_reg_ts= renderDataTable({regression_ts_data()}, rownames = FALSE, options = list(
+        autoWidth = TRUE, 
+        searching = FALSE,
+        paging = TRUE,
+        pagingType = "numbers"
+      ))
     
     ### ModE-RA sources ----
-    #ModE-RA sources independent variable
-    
-    ranges_4a  <- reactiveValues(x = NULL, y = NULL)
-    ranges2_4a <- reactiveValues(x = NULL, y = NULL)
-    
-    fad_wa4a <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a4a, "winter", lonlat_vals_iv()[1:2], lonlat_vals_iv()[3:4], labs)}
-    fad_sa4a <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a4a, "summer", lonlat_vals_iv()[1:2], lonlat_vals_iv()[3:4], labs)}
-    
-    # Upper map (Original)
-    output$fad_winter_map_a4a <- renderPlot({
-      if ((month_range_secondary()[1] >= 4) && (month_range_secondary()[2] <= 9)) {
-        plot_data <- fad_sa4a(labs = TRUE)
-      } else {
-        plot_data <- fad_wa4a(labs = TRUE)
-      }
       
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
-    })
-    
-    # Upper map (Zoom)
-    output$fad_zoom_winter_a4a <- renderPlot({
-      if ((month_range_secondary()[1] >= 4) && (month_range_secondary()[2] <= 9)) {
-        plot_data <- fad_sa4a(labs = FALSE)
-      } else {
-        plot_data <- fad_wa4a(labs = FALSE)
-      }
+      # Set up values and functions for plotting
+      fad_zoom4  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
       
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges_4a$x, ylim = ranges_4a$y, crs = st_crs(4326))
+      season_fad_short4 = reactive({
+        switch(input$fad_season4,
+               "April to September" = "summer",
+               "October to March" = "winter")
+      })
       
-      plot_data
-    })
-    
-    # Lower map (Original)
-    output$fad_summer_map_a4a <- renderPlot({
-      if ((month_range_secondary()[1] >= 4 && month_range_secondary()[2] <= 9) | (month_range_secondary()[2] <= 3)) {
-        NULL
-      } else {
-        plot_data <- fad_sa4a(labs = TRUE)  
-      } 
+      # Load global data
+      fad_global_data4 = reactive({
+        load_modera_source_data(input$fad_year4, season_fad_short4())
+      })
       
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
-    })
-    
-    # Lower map (Zoom)
-    output$fad_zoom_summer_a4a <- renderPlot({
-      if ((month_range_secondary()[1] >= 4 && month_range_secondary()[2] <= 9) || (month_range_secondary()[2] <= 3)) {
-        NULL
-      } else {
-        plot_data <- fad_sa4a(labs = FALSE)
-      }
-
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges2_4a$x, ylim = ranges2_4a$y, crs = st_crs(4326))
+      # Plot map 
+      fad_plot4 = function(){plot_modera_sources(fad_global_data4(),input$fad_year4, season_fad_short4(),fad_zoom4())}
       
-      plot_data
-    })
-    
-    #Data ModE-RA sources
-    fad_wa_data4a <- function() {
+      output$fad_map4 <- renderPlot({fad_plot4()})
       
-      download_feedback_data(input$fad_year_a4a, "winter", lonlat_vals_iv()[1:2], lonlat_vals_iv()[3:4])}
-    fad_sa_data4a <- function() {
+      # Set up data function
+      fad_data4 <- function() {download_feedback_data(fad_global_data4(), fad_zoom4()[1:2], fad_zoom4()[3:4])}
       
-      download_feedback_data(input$fad_year_a4a, "summer", lonlat_vals_iv()[1:2], lonlat_vals_iv()[3:4])}
-    
-    #ModE-RA sources dependent variable
-    
-    ranges_4b  <- reactiveValues(x = NULL, y = NULL)
-    ranges2_4b <- reactiveValues(x = NULL, y = NULL)
-    
-    fad_wa4b <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a4b, "winter", lonlat_vals_dv()[1:2], lonlat_vals_dv()[3:4], labs)}
-    fad_sa4b <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a4b, "summer", lonlat_vals_dv()[1:2], lonlat_vals_dv()[3:4], labs)}
-    
-    # Upper map (Original)
-    output$fad_winter_map_a4b <- renderPlot({
-      if ((month_range_primary()[1] >= 4) && (month_range_primary()[2] <= 9)) {
-        plot_data <- fad_sa4b(labs = TRUE)
-      } else {
-        plot_data <- fad_wa4b(labs = TRUE)
-      }
+      observeEvent(lonlat_vals_dv()|input$fad_reset_zoom4,{
+        fad_zoom4(lonlat_vals_dv())
+      })
       
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
-    })
-    
-    # Upper map (Zoom)
-    output$fad_zoom_winter_a4b <- renderPlot({
-      if ((month_range_primary()[1] >= 4) && (month_range_primary()[2] <= 9)) {
-        plot_data <- fad_sa4b(labs = FALSE)
-      } else {
-        plot_data <- fad_wa4b(labs = FALSE)
-      }
+      observeEvent(input$brush_fad4,{
+        brush = input$brush_fad4
+        fad_zoom4(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
+      })
       
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges_4b$x, ylim = ranges_4b$y, crs = st_crs(4326))
+      # Update fad_year 
+      observeEvent(input$range_years4[1], {
+        updateNumericInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "fad_year4",
+          value = input$range_years4[1])
+      })
       
-      plot_data
-    })
-    
-    # Lower map (Original)
-    output$fad_summer_map_a4b <- renderPlot({
-      if ((month_range_primary()[1] >= 4 && month_range_primary()[2] <= 9) | (month_range_primary()[2] <= 3)) {
-        NULL
-      } else {
-        plot_data <- fad_sa4b(labs = TRUE)  
-      } 
-      
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
-    })
-    
-    # Lower map (Zoom)
-    output$fad_zoom_summer_a4b <- renderPlot({
-      if ((month_range_primary()[1] >= 4 && month_range_primary()[2] <= 9) || (month_range_primary()[2] <= 3)) {
-        NULL
-      } else {
-        plot_data <- fad_sa4b(labs = FALSE)
-      }
-      
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges2_4b$x, ylim = ranges2_4b$y, crs = st_crs(4326))
-      
-      plot_data
-    })
-    
-    #Data ModE-RA sources
-    fad_wa_data4b <- function() {
-      
-      download_feedback_data(input$fad_year_a4b, "winter", lonlat_vals_dv()[1:2], lonlat_vals_dv()[3:4])}
-    fad_sa_data4b <- function() {
-      
-      download_feedback_data(input$fad_year_a4b, "summer", lonlat_vals_dv()[1:2], lonlat_vals_dv()[3:4])}
-    
-    #Update Modera source year input and update brushes
-    
-    observeEvent(input$range_years3[1], {
-      updateNumericInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "fad_year_a4a",
-        value = input$range_years3[1])
-    })
-    
-    observeEvent(input$range_years3[1], {
-      updateNumericInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "fad_year_a4b",
-        value = input$range_years3[1])
-    })
-    
-    observe({
-      brush_iva <- input$brush_fad1a4a
-      if (!is.null(brush_iva)) {
-        ranges_4a$x <- c(brush_iva$xmin, brush_iva$xmax)
-        ranges_4a$y <- c(brush_iva$ymin, brush_iva$ymax)
-        
-      } else {
-        ranges_4a$x <- lonlat_vals_iv()[1:2]
-        ranges_4a$y <- lonlat_vals_iv()[3:4]
-      }
-    })
-    
-    observe({
-      brush_iva2 <- input$brush_fad1b4a
-      if (!is.null(brush_iva2)) {
-        ranges2_4a$x <- c(brush_iva2$xmin, brush_iva2$xmax)
-        ranges2_4a$y <- c(brush_iva2$ymin, brush_iva2$ymax)
-        
-      } else {
-        ranges2_4a$x <- lonlat_vals_iv()[1:2]
-        ranges2_4a$y <- lonlat_vals_iv()[3:4]
-      }
-    })
-    
-    observe({
-      brush_dva <- input$brush_fad1a4b
-      if (!is.null(brush_dva)) {
-        ranges_4b$x <- c(brush_dva$xmin, brush_dva$xmax)
-        ranges_4b$y <- c(brush_dva$ymin, brush_dva$ymax)
-        
-      } else {
-        ranges_4b$x <- lonlat_vals_dv()[1:2]
-        ranges_4b$y <- lonlat_vals_dv()[3:4]
-      }
-    })
-    
-    observe({
-      brush_dva2 <- input$brush_fad1b4b
-      if (!is.null(brush_dva2)) {
-        ranges2_4b$x <- c(brush_dva2$xmin, brush_dva2$xmax)
-        ranges2_4b$y <- c(brush_dva2$ymin, brush_dva2$ymax)
-        
-      } else {
-        ranges2_4b$x <- lonlat_vals_dv()[1:2]
-        ranges2_4b$y <- lonlat_vals_dv()[3:4]
-      }
-    })
-    
     ### Downloads ----
-    #Downloads
     
     output$download_reg_ts_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-ts.",input$reg_ts_plot_type, sep = "")},
                                                         content  = function(file) {
@@ -12900,130 +12174,36 @@ server <- function(input, output, session) {
                                                                                col.names = FALSE)
                                                                   }})
     
-
-    ## ModE-RA sources independent Variable #
+    output$download_fad4            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season4),"_",input$fad_year4,".",input$file_type_fad4, sep = "")},
+                                                       content  = function(file) {
+                                                         
+                                                         mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map4_width, input$dimension[2], FALSE)
+                                                         
+                                                         if (input$file_type_fad4 == "png"){
+                                                           png(file, width = mmd[3] , height = mmd[4], res = 400)  
+                                                           print(fad_plot4())
+                                                           dev.off()
+                                                         } else if (input$file_type_fad4 == "jpeg"){
+                                                           jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
+                                                           print(fad_plot4()) 
+                                                           dev.off()
+                                                         } else {
+                                                           pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
+                                                           print(fad_plot4())
+                                                           dev.off()
+                                                         }})
     
-    output$download_fad_sa4a             <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a4a, "-modera_source.",input$file_type_modera_source_b4a, sep = "")},
-                                                            content  = function(file) {
-                                                              
-                                                              mmd4a = generate_map_dimensions(subset_lons_secondary(), subset_lats_secondary(), session$clientData$output_fad_winter_map_a4a_width, input$dimension[2], FALSE)
-                                                              
-                                                              if (input$file_type_modera_source_b4a == "png"){
-                                                                png(file, width = mmd4a[3] , height = mmd4a[4], res = 400)  
-                                                                print(fad_sa4a(labs = TRUE))
-                                                                dev.off()
-                                                              } else if (input$file_type_modera_source_b4a == "jpeg"){
-                                                                jpeg(file, width = mmd4a[3] , height = mmd4a[4], res = 400) 
-                                                                print(fad_sa4a(labs = TRUE)) 
-                                                                dev.off()
-                                                              } else {
-                                                                pdf(file, width = mmd4a[3]/400 , height = mmd4a[4]/400) 
-                                                                print(fad_sa4a(labs = TRUE))
-                                                                dev.off()
-                                                              }})
+    output$download_fad_data4       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season4),"_",input$fad_year4,"_data.",input$data_file_type_fad4, sep = "")},
+                                                       content  = function(file) {
+                                                         if (input$data_file_type_fad4 == "csv"){
+                                                           write.csv(fad_data4(), file,
+                                                                     row.names = FALSE)
+                                                         } else {
+                                                           write.xlsx(fad_data4(), file,
+                                                                      col.names = TRUE,
+                                                                      row.names = FALSE)
+                                                         }})
     
-    output$download_fad_wa4a             <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a4a, "-modera_source.",input$file_type_modera_source_a4a, sep = "")},
-                                                            content  = function(file) {
-                                                              
-                                                              mmd4a = generate_map_dimensions(subset_lons_secondary(), subset_lats_secondary(), session$clientData$output_fad_winter_map_a4a_width, input$dimension[2], FALSE)
-                                                              
-                                                              if (input$file_type_modera_source_a4a == "png"){
-                                                                png(file, width = mmd4a[3] , height = mmd4a[4], res = 400)  
-                                                                print(fad_wa4a(labs = TRUE))
-                                                                dev.off()
-                                                              } else if (input$file_type_modera_source_a4a == "jpeg"){
-                                                                jpeg(file, width = mmd4a[3] , height = mmd4a[4], res = 400) 
-                                                                print(fad_wa4a(labs = TRUE)) 
-                                                                dev.off()
-                                                              } else {
-                                                                pdf(file, width = mmd4a[3]/400 , height = mmd4a[4]/400) 
-                                                                print(fad_wa4a(labs = TRUE))
-                                                                dev.off()
-                                                              }})
-    
-    output$download_data_fad_wa4a       <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a4a, "-modera_source_data.",input$file_type_data_modera_source_a4a, sep = "")},
-                                                           content  = function(file) {
-                                                             if (input$file_type_data_modera_source_a4a == "csv"){
-                                                               write.csv(fad_wa_data4a(), file,
-                                                                         row.names = FALSE)
-                                                             } else {
-                                                               write.xlsx(fad_wa_data4a(), file,
-                                                                          col.names = TRUE,
-                                                                          row.names = FALSE)
-                                                             }})
-    
-    output$download_data_fad_sa4a     <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a4a, "-modera_source_data.",input$file_type_data_modera_source_b4a, sep = "")},
-                                                         content  = function(file) {
-                                                           if (input$file_type_data_modera_source_b4a == "csv"){
-                                                             write.csv(fad_sa_data4a(), file,
-                                                                       row.names = FALSE)
-                                                           } else {
-                                                             write.xlsx(fad_sa_data4a(), file,
-                                                                        col.names = TRUE,
-                                                                        row.names = FALSE)
-                                                           }})
-    
-    ## ModE-RA sources dependent Variable
-    
-    output$download_fad_sa4b             <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a4b, "-modera_source.",input$file_type_modera_source_b4b, sep = "")},
-                                                            content  = function(file) {
-                                                              
-                                                              mmd4b = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_winter_map_a4b_width, input$dimension[2], FALSE)
-                                                              
-                                                              if (input$file_type_modera_source_b4b == "png"){
-                                                                png(file, width = mmd4b[3] , height = mmd4b[4], res = 400)  
-                                                                print(fad_sa4b(labs = TRUE))
-                                                                dev.off()
-                                                              } else if (input$file_type_modera_source_b4b == "jpeg"){
-                                                                jpeg(file, width = mmd4b[3] , height = mmd4b[4], res = 400) 
-                                                                print(fad_sa4b(labs = TRUE)) 
-                                                                dev.off()
-                                                              } else {
-                                                                pdf(file, width = mmd4b[3]/400 , height = mmd4b[4]/400) 
-                                                                print(fad_sa4b(labs = TRUE))
-                                                                dev.off()
-                                                              }})
-    
-    output$download_fad_wa4b             <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a4b, "-modera_source.",input$file_type_modera_source_a4b, sep = "")},
-                                                            content  = function(file) {
-                                                              
-                                                              mmd4b = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_winter_map_a4b_width, input$dimension[2], FALSE)
-                                                              
-                                                              if (input$file_type_modera_source_a4b == "png"){
-                                                                png(file, width = mmd4b[3] , height = mmd4b[4], res = 400)  
-                                                                print(fad_wa4b(labs = TRUE))
-                                                                dev.off()
-                                                              } else if (input$file_type_modera_source_a4b == "jpeg"){
-                                                                jpeg(file, width = mmd4b[3] , height = mmd4b[4], res = 400) 
-                                                                print(fad_wa4b(labs = TRUE)) 
-                                                                dev.off()
-                                                              } else {
-                                                                pdf(file, width = mmd4b[3]/400 , height = mmd4b[4]/400) 
-                                                                print(fad_wa4b(labs = TRUE))
-                                                                dev.off()
-                                                              }})
-    
-    output$download_data_fad_wa4b       <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a4b, "-modera_source_data.",input$file_type_data_modera_source_a4b, sep = "")},
-                                                           content  = function(file) {
-                                                             if (input$file_type_data_modera_source_a4b == "csv"){
-                                                               write.csv(fad_wa_data4b(), file,
-                                                                         row.names = FALSE)
-                                                             } else {
-                                                               write.xlsx(fad_wa_data4b(), file,
-                                                                          col.names = TRUE,
-                                                                          row.names = FALSE)
-                                                             }})
-    
-    output$download_data_fad_sa4b     <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a4b, "-modera_source_data.",input$file_type_data_modera_source_b4b, sep = "")},
-                                                         content  = function(file) {
-                                                           if (input$file_type_data_modera_source_b4b == "csv"){
-                                                             write.csv(fad_sa_data4b(), file,
-                                                                       row.names = FALSE)
-                                                           } else {
-                                                             write.xlsx(fad_sa_data4b(), file,
-                                                                        col.names = TRUE,
-                                                                        row.names = FALSE)
-                                                           }})
 
     
   ## ANNUAL CYCLES data processing and plotting ----
@@ -13061,156 +12241,41 @@ server <- function(input, output, session) {
     
     ### ModE-RA sources ----
     
-    ranges5  <- reactiveValues(x = NULL, y = NULL)
-    ranges5_2 <- reactiveValues(x = NULL, y = NULL)
+    # Set up values and functions for plotting
+    fad_zoom5  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
     
-    fad_wa5 <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a5, "winter",input$fad_longitude_a5,input$fad_latitude_a5,labs)}
-    fad_sa5 <- function(labs) {
-      labs = labs
-      plot_modera_sources(input$fad_year_a5, "summer", input$fad_longitude_a5,input$fad_latitude_a5,labs)}
-    
-    # Upper map (Original)
-    output$fad_winter_map_a5 <- renderPlot({
-      
-      plot_data <- fad_wa5(labs = TRUE)
-      
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
+    season_fad_short5 = reactive({
+      switch(input$fad_season5,
+             "April to September" = "summer",
+             "October to March" = "winter")
     })
     
-    # Upper map (Zoom)
-    output$fad_zoom_winter_a5 <- renderPlot({
-      plot_data <- fad_wa5(labs = FALSE)
-      
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges5$x, ylim = ranges5$y, crs = st_crs(4326))
-      
-      plot_data
+    # Load global data
+    fad_global_data5 = reactive({
+      load_modera_source_data(input$fad_year5, season_fad_short5())
     })
     
-    # Lower map (Original)
-    output$fad_summer_map_a5 <- renderPlot({
-
-      plot_data <- fad_sa5(labs = TRUE)  
-      
-      # Render the "Original Map" with no fixed aspect ratio
-      plot_data
+    # Plot map 
+    fad_plot5 = function(){plot_modera_sources(fad_global_data5(),input$fad_year5, season_fad_short5(),fad_zoom5())}
+    
+    output$fad_map5 <- renderPlot({fad_plot5()})
+    
+    # Set up data function
+    fad_data5 <- function() {download_feedback_data(fad_global_data5(), fad_zoom5()[1:2], fad_zoom5()[3:4])}
+    
+    # Update fad lonlat
+    
+    #observeEvent(input$add_monthly_ts,{
+    #  fad_zoom5(c(input$range_longitude5,input$range_latitude5))
+    #})
+    
+    observeEvent(input$fad_reset_zoom5,{
+      fad_zoom5(c(-180,180,-90,90))
     })
     
-    # Lower map (Zoom)
-    output$fad_zoom_summer_a5 <- renderPlot({
-
-      plot_data <- fad_sa5(labs = FALSE)
-      
-      # Apply coord_sf to the entire map with adjusted limits
-      plot_data <- plot_data + coord_sf(xlim = ranges5_2$x, ylim = ranges5_2$y, crs = st_crs(4326))
-      
-      plot_data
-    })
-    
-    #Data ModE-RA sources
-    fad_wa_data5 <- function() {
-      
-      download_feedback_data(input$fad_year_a5, "winter", input$fad_longitude_a5, input$fad_latitude_a5)}
-    fad_sa_data5 <- function() {
-      
-      download_feedback_data(input$fad_year_a5, "summer", input$fad_longitude_a5, input$fad_latitude_a5)}
-    
-    #Update Modera source year input and Brushes when Double Click happens
-    
-    observe({
-      brush <- input$brush_fad1a5
-      if (!is.null(brush)) {
-        ranges5$x <- c(brush$xmin, brush$xmax)
-        ranges5$y <- c(brush$ymin, brush$ymax)
-        
-      } else {
-        ranges5$x <- input$fad_longitude_a5
-        ranges5$y <- input$fad_latitude_a5
-      }
-    })
-    
-    observe({
-      brush_b <- input$brush_fad1b5
-      if (!is.null(brush_b)) {
-        ranges5_2$x <- c(brush_b$xmin, brush_b$xmax)
-        ranges5_2$y <- c(brush_b$ymin, brush_b$ymax)
-        
-      } else {
-        ranges5_2$x <- input$fad_longitude_a5
-        ranges5_2$y <- input$fad_latitude_a5
-      }
-    })
-    
-    
-    # Update Modera source year & latlon input
-    
-    # Get last year monthly_ts_data
-    last_year = reactive({
-      
-      # Get last years
-      last_yrs = as.character(tail(monthly_ts_data(),n=1)[2])
-      
-      # Extract last year date
-      if (grepl(",",last_yrs)){
-        last_yr = max(as.integer(unlist(strsplit(last_yrs,","))))
-      } else if (grepl("-",last_yrs)){
-        last_yr = as.integer(unlist(strsplit(last_yrs,"-")))[2]
-      } else {
-        last_yr = as.integer(last_yrs)
-      }
-      
-      return(last_yr)
-    })
-    
-    # Get last coordinates from monthly_ts_data
-    last_coordinates = reactive({
-      
-      # Get last coords and split into lat,lon
-      last_coords = unlist(strsplit(as.character(tail(monthly_ts_data(),n=1)[17]),","))
-      
-      # Extract lon
-      if (grepl(":",last_coords[1])){
-        last_lons = gsub("[^0-9.-]", "", unlist(strsplit(last_coords[1],":")))
-      } else {
-        last_lons = rep(gsub("[^0-9.-]", "", last_coords[1]),2)
-      }
-      
-      # Extract lat
-      if (grepl(":",last_coords[2])){
-        last_lats = gsub("[^0-9.-]", "", unlist(strsplit(last_coords[2],":")))
-      } else {
-        last_lats = rep(gsub("[^0-9.-]", "", last_coords[2]),2)
-      }
-      
-      last_coord = c(last_lons,last_lats)
-      
-      return(last_coord)
-    })
-    
-    # Update ME source year
-    observeEvent(last_year(),{
-      updateNumericInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "fad_year_a5",
-        value = last_year())
-    })
-    
-    # Update ME source coordinates
-    observeEvent(last_coordinates(),{
-      updateNumericRangeInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "fad_longitude_a5",
-        label = NULL,
-        value = last_coordinates()[1:2])
-      
-      updateNumericRangeInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "fad_latitude_a5",
-        label = NULL,
-        value = last_coordinates()[3:4])
+    observeEvent(input$brush_fad5,{
+      brush = input$brush_fad5
+      fad_zoom5(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
     })
     
     ### Downloading Annual cycles data ----
@@ -13244,65 +12309,35 @@ server <- function(input, output, session) {
                                                                        col.names = TRUE)
                                                           }})
     
-    output$download_fad_sa5             <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a5, "-modera_source.",input$file_type_modera_source_b5, sep = "")},
-                                                           content  = function(file) {
-                                                             
-                                                             mmd5 = generate_map_dimensions(create_subset_lon_IDs(input$fad_longitude_a5),create_subset_lat_IDs(input$fad_latitude_a5), session$clientData$output_fad_winter_map_a5_width, input$dimension[2], FALSE)
-                                                             
-                                                             if (input$file_type_modera_source_b5 == "png"){
-                                                               png(file, width = mmd5[3] , height = mmd5[4], res = 400)  
-                                                               print(fad_sa5(labs = TRUE))
-                                                               dev.off()
-                                                             } else if (input$file_type_modera_source_b5 == "jpeg"){
-                                                               jpeg(file, width = mmd5[3] , height = mmd5[4], res = 400) 
-                                                               print(fad_sa5(labs = TRUE)) 
-                                                               dev.off()
-                                                             } else {
-                                                               pdf(file, width = mmd5[3]/400 , height = mmd5[4]/400) 
-                                                               print(fad_sa5(labs = TRUE))
-                                                               dev.off()
-                                                             }})
+    output$download_fad5            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season5),"_",input$fad_year5,".",input$file_type_fad5, sep = "")},
+                                                       content  = function(file) {
+                                                         
+                                                         mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map5_width, input$dimension[2], FALSE)
+                                                         
+                                                         if (input$file_type_fad5 == "png"){
+                                                           png(file, width = mmd[3] , height = mmd[4], res = 400)  
+                                                           print(fad_plot5())
+                                                           dev.off()
+                                                         } else if (input$file_type_fad5 == "jpeg"){
+                                                           jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
+                                                           print(fad_plot5()) 
+                                                           dev.off()
+                                                         } else {
+                                                           pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
+                                                           print(fad_plot5())
+                                                           dev.off()
+                                                         }})
     
-    output$download_fad_wa5             <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a5, "-modera_source.",input$file_type_modera_source_a5, sep = "")},
-                                                           content  = function(file) {
-                                                             
-                                                             mmd5 = generate_map_dimensions(create_subset_lon_IDs(input$fad_longitude_a5),create_subset_lat_IDs(input$fad_latitude_a5), session$clientData$output_fad_winter_map_a5_width, input$dimension[2], FALSE)
-                                                             
-                                                             if (input$file_type_modera_source_a5 == "png"){
-                                                               png(file, width = mmd5[3] , height = mmd5[4], res = 400)  
-                                                               print(fad_wa5(labs = TRUE))
-                                                               dev.off()
-                                                             } else if (input$file_type_modera_source_a5 == "jpeg"){
-                                                               jpeg(file, width = mmd5[3] , height = mmd5[4], res = 400) 
-                                                               print(fad_wa5(labs = TRUE)) 
-                                                               dev.off()
-                                                             } else {
-                                                               pdf(file, width = mmd5[3]/400 , height = mmd5[4]/400) 
-                                                               print(fad_wa5(labs = TRUE))
-                                                               dev.off()
-                                                             }})
-    
-    output$download_data_fad_wa5       <- downloadHandler(filename = function(){paste("Assimilated Observations_winter_",input$fad_year_a5, "-modera_source_data.",input$file_type_data_modera_source_a5, sep = "")},
-                                                          content  = function(file) {
-                                                            if (input$file_type_data_modera_source_a5 == "csv"){
-                                                              write.csv(fad_wa_data5(), file,
-                                                                        row.names = FALSE)
-                                                            } else {
-                                                              write.xlsx(fad_wa_data5(), file,
-                                                                         col.names = TRUE,
-                                                                         row.names = FALSE)
-                                                            }})
-    
-    output$download_data_fad_sa5     <- downloadHandler(filename = function(){paste("Assimilated Observations_summer_",input$fad_year_a5, "-modera_source_data.",input$file_type_data_modera_source_b5, sep = "")},
-                                                        content  = function(file) {
-                                                          if (input$file_type_data_modera_source_b5 == "csv"){
-                                                            write.csv(fad_sa_data5(), file,
+    output$download_fad_data5       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season5),"_",input$fad_year5,"_data.",input$data_file_type_fad5, sep = "")},
+                                                       content  = function(file) {
+                                                         if (input$data_file_type_fad5 == "csv"){
+                                                           write.csv(fad_data5(), file,
+                                                                     row.names = FALSE)
+                                                         } else {
+                                                           write.xlsx(fad_data5(), file,
+                                                                      col.names = TRUE,
                                                                       row.names = FALSE)
-                                                          } else {
-                                                            write.xlsx(fad_sa_data5(), file,
-                                                                       col.names = TRUE,
-                                                                       row.names = FALSE)
-                                                          }})
+                                                         }})
     
   ## MODE-RA SOURCES data procession and plotting ----
     ### Plotting ----

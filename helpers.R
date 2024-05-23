@@ -18,7 +18,7 @@
 ## Packages
 
 # Set library path
-#.libPaths("library")
+assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 
 #WD and Packages
 library(shiny)
@@ -1816,13 +1816,11 @@ plot_modera_sources = function(ME_source_data,year,season,minmax_lonlat){
 
 ## (General) DOWNLOAD MODE-RA SOURCES DATA
 
-download_feedback_data = function(year, season, lon_range, lat_range) {
-  # Load data
-  feedback_data = read.csv(paste0("data/feedback_archive/", season, year, ".csv"))
-  
+download_feedback_data = function(global_data, lon_range, lat_range) {
+
   # Subset data based on lon and lat range
-  subset_data = feedback_data[(feedback_data$LON > lon_range[1]) & (feedback_data$LON < lon_range[2]) &
-                                (feedback_data$LAT > lat_range[1]) & (feedback_data$LAT < lat_range[2]), ]
+  subset_data = global_data[(global_data$LON > lon_range[1]) & (global_data$LON < lon_range[2]) &
+                                (global_data$LAT > lat_range[1]) & (global_data$LAT < lat_range[2]), ]
   
   # Remove the first three columns
   subset_data = subset_data[, -c(1:3)]
