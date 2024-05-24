@@ -18,7 +18,7 @@
 ## Packages
 
 # Set library path
-assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
+#assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 
 #WD and Packages
 library(shiny)

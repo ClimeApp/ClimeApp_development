@@ -4466,8 +4466,8 @@ ui <- navbarPage(id = "nav1",
     h6("This interactive map let's you explore the feedback archive of assimilated sources that were used to ModE-RA and ModE-RAclim.", style = "color: #094030;"),
     h6("Click on a point to get more information and access the database or publication behind it.", style = "color: #094030;"),
     
-    # Enter year & Season
     fluidRow(
+    column(2,
       # Enter Year
       numericInput(inputId   = "year_MES",
                    label     = "Year",
@@ -4481,34 +4481,38 @@ ui <- navbarPage(id = "nav1",
                   choices  = c("April to September","October to March"),
                   selected = "April to September"),
       
-      checkboxInput(inputId = "legend_MES", "Show legend", TRUE) # Add checkbox for legend
+      # Add checkbox for legend
+      checkboxInput(inputId = "legend_MES", "Show legend", TRUE),
+      #radioButtons(inputId = "legend_MES", label = "", choices = c("Show legend", "Hide legend"), selected = "Show legend", inline = TRUE),
+      
+      br(),
+      # Download
+      h4("Download", style = "color: #094030;"),
+      radioButtons(inputId = "data_file_type_MES", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
+      downloadButton(outputId = "download_MES_data", label = "Download Map Data")
     ),
 
-    div(id = "leaflet",
+    column(10, div(id = "leaflet",
         tags$style(type = "text/css", "#MES_leaflet {height: calc(80vh - 100px) !important;}"), # Adjust the height of the map
+        tags$style(type = "text/css", "div.leaflet-control {text-align: left;}"), # Makes sure that legend text is left-aligned
         withSpinner(ui_element = leafletOutput("MES_leaflet"
         ), 
         image = spinner_image,
         image.width = spinner_width,
-        image.height = spinner_height)),
+        image.height = spinner_height)))),
 
     br(),
     
     #Download
-    h4("Downloads", style = "color: #094030;"),
-    fluidRow(
-      # Download image
-      column(2,radioButtons(inputId = "file_type_MES", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-      column(3,downloadButton(outputId = "download_MES", label = "Download Map")),
-    ),
+    # h4("Downloads", style = "color: #094030;"),
+    # fluidRow(
+    #   # Download image
+    #   column(2,radioButtons(inputId = "file_type_MES", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+    #   column(3,downloadButton(outputId = "download_MES", label = "Download Map")),
+    # ),
+    # 
+
     
-    br(),
-    
-    fluidRow(
-      # Download data
-      column(2,radioButtons(inputId = "data_file_type_MES", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-      column(3,downloadButton(outputId = "download_MES_data", label = "Download Map Data"))
-    ),
     
   #   tags$style(HTML("
   #   .leaflet-control .legend-labels {
@@ -12370,43 +12374,26 @@ server <- function(input, output, session) {
     ### Leaflet Map ----
     
     output$MES_leaflet = renderLeaflet({
-      
+      # Render leaflet map without legend
       leaflet() |>
-        # addTiles() |>
-        # Base groups
-        addTiles(group = "OSM (default)") |>
-        #addProviderTiles(providers$Stadia.StamenToner, group = "Toner") |>
-        addProviderTiles(providers$Esri.WorldImagery, group = "ESRI Satellite") |>
-        addProviderTiles(providers$Esri.WorldGrayCanvas, group = "ESRI  gray") |>
-        setView(lng = -5, lat = 54, zoom = 1.3) |>
-        addCircleMarkers(data = MES_global_data(),
-                         radius = 5,
-                         fillColor = ~pal_type(TYPE),
-                         stroke = TRUE,
-                         weight = 1,  # Thickness of the border
-                         color = "grey",
-                         fillOpacity = 1,
-                         opacity = 1,
-                         group = MES_global_data()$TYPE,
-                         popup = paste(
-                           "<strong>Measurement type: </strong>", named_variables[MES_global_data()$VARIABLE],
-                           "<br><strong>Source type: </strong>", named_types[MES_global_data()$TYPE], 
-                           "<br><strong>Link to source: </strong>", 
-                           "<a href='https://www.sbb.ch' target='_blank'>SBB</a>" #add link to database or publication
-                         )
-        ) |>
-        # Add layers control for filtering by TYPE
-        addLayersControl(
-          baseGroups = c("OSM (default)", "ESRI Satellite", "ESRI  gray"), # Base maps
-          overlayGroups = type_list,  # Use TYPE values as overlay groups
-          options = layersControlOptions(collapsed = TRUE)  # Make the control always expanded
-        ) |>
-        addLegend(pal = pal_type, 
-           values = type_list, 
-           title = "Proxies/Sources", 
-           position = "bottomleft", 
-           opacity = 1.0) 
-      
+          # Base maps
+          addProviderTiles(providers$Esri.WorldGrayCanvas, group = "ESRI  gray") |>
+          addTiles(group = "Open Street Map") |>
+          addProviderTiles(providers$Esri.WorldImagery, group = "ESRI Satellite") |>
+          setView(lng = 0, lat = 30, zoom = 1.6) |>
+
+          # Add layers control for filtering by TYPE
+          addLayersControl(
+            baseGroups = c("ESRI  gray", "Open Street Map", "ESRI Satellite"), # Base maps
+            overlayGroups = type_list,  # Use TYPE values as overlay groups
+            options = layersControlOptions(collapsed = TRUE)  # Make the control always expanded
+          ) |>
+          addLegend(pal = pal_type,
+                    values = type_list,
+                    labels = c("Bivalve", "Coral", "Documentary", "Glacier ice", "Ice", "Instrumental", "Lake sediment", "Other", "Speleothem", "Tree"),
+                    title = "Proxies/Sources",
+                    position = "bottomleft",
+                    opacity = 1.0)
     })
     
     # Use a separate observer to show or hide the legend
@@ -12416,7 +12403,7 @@ server <- function(input, output, session) {
         proxy %>%
           addLegend(pal = pal_type, values = type_list, # pal_type and type_list are defined in helpers.R
                     title = "Legend",
-                    labels = type_names,
+                    labels = c("Bivalve", "Coral", "Documentary", "Glacier ice", "Ice", "Instrumental", "Lake sediment", "Other", "Speleothem", "Tree"),
                     position = "bottomleft",
                     opacity = 1.0)
       }
@@ -12425,18 +12412,27 @@ server <- function(input, output, session) {
       }
     })
     
-    # observe({
-    #   leafletProxy("MES_leaflet") |>
-    #     clearControls() |>
-    #     {if (input$legend_MES) 
-    #       addLegend(., pal = pal_type, 
-    #                 values = type_list, 
-    #                 title = "Legend", 
-    #                 position = "bottomleft", 
-    #                 opacity = 1.0) 
-    #       else .}
-    # })
-    
+    # Use a separate observer to add the data points
+    observe({
+      proxy <- leafletProxy("MES_leaflet")
+        proxy %>% clearMarkers() %>%
+          addCircleMarkers(data = MES_global_data(),
+                           radius = 5,
+                           fillColor = ~pal_type(TYPE),
+                           stroke = TRUE,
+                           weight = 1,  # Thickness of the border
+                           color = "grey",
+                           fillOpacity = 1,
+                           opacity = 1,
+                           group = MES_global_data()$TYPE,
+                           popup = paste(
+                             "<strong>Measurement type: </strong>", named_variables[MES_global_data()$VARIABLE],
+                             "<br><strong>Source type: </strong>", named_types[MES_global_data()$TYPE], 
+                             "<br><strong>Link to source: </strong>", 
+                             "<a href='https://www.sbb.ch' target='_blank'>SBB</a>" #add link to database or publication
+                           )
+          )
+    })
     
   ## Concerning all modes (mainly updating Ui) ----
     
@@ -12521,6 +12517,7 @@ server <- function(input, output, session) {
     updateNumericInputRange2("ref_period_sg_iv", 1422, 2008)
     updateNumericInputRange2("ref_period_sg_dv", 1422, 2008)
     updateNumericInputRange2("ref_period_sg5", 1422, 2008)
+    #updateNumericInputRange2("year_MES", 1422, 2008)
 
     #Updates Values outside of min / max (numericRangeInput)
     
@@ -12668,6 +12665,15 @@ server <- function(input, output, session) {
         )
       }
     })
+    
+    # observe({
+    #   if (!is.na(input$year_MES)) {
+    #     updateNumericRangeInput(
+    #       inputId = "year_MES1",
+    #       value   = c(input$year_MES, input$year_MES)
+    #     )
+    #   }
+    # })
     
   ## Stop App on end of session ----
      session$onSessionEnded(function() {
