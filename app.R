@@ -173,7 +173,7 @@ ui <- navbarPage(id = "nav1",
                      br(), br(),
                      h6(helpText("(Cf. ModE-RA paper", a("Usage notes.", href = "https://www.nature.com/articles/s41597-023-02733-8#Sec13"),")")),
                      ),
-            #### Tab ClimeApp funtions ----
+            #### Tab ClimeApp functions ----
             tabPanel("ClimeApp functions",
 
                      br(), br(),
@@ -4650,7 +4650,9 @@ ui <- navbarPage(id = "nav1",
   tabPanel("ModE-RA Sources", value = "tab6",
     shinyjs::useShinyjs(),
     
-    MEsource_popover("pop_MEsource_main"),
+    MEsource_leaflet_popover("pop_MEsource_main"),
+    h6("This interactive map let's you explore the feedback archive of assimilated sources that were used to ModE-RA and ModE-RAclim.", style = "color: #094030;"),
+    h6("Click on a point to get more information and access the database or publication behind it.", style = "color: #094030;"),
     
     # Enter year & Season
     fluidRow(
@@ -4666,23 +4668,19 @@ ui <- navbarPage(id = "nav1",
                   label    = "Months",
                   choices  = c("April to September","October to March"),
                   selected = "April to September"),
-    ),
-    
-    # Plot (Currently 2 plots, eventually 1 zoomable plot)
-    h6(helpText("Draw a box on the left map to use zoom function")),
-
-    splitLayout(
-      withSpinner(ui_element = plotOutput("map_MES",
-                                          brush = brushOpts(
-                                            id = "brush_MES",
-                                            resetOnNew = TRUE
-                                          )),
-                  image = spinner_image,
-                  image.width = spinner_width,
-                  image.height = spinner_height),
       
-      plotOutput("zoomed_map_MES")
+      checkboxInput(inputId = "legend_MES", "Show legend", TRUE) # Add checkbox for legend
     ),
+
+    div(id = "leaflet",
+        tags$style(type = "text/css", "#MES_leaflet {height: calc(80vh - 100px) !important;}"), # Adjust the height of the map
+        withSpinner(ui_element = leafletOutput("MES_leaflet"
+        ), 
+        image = spinner_image,
+        image.width = spinner_width,
+        image.height = spinner_height)),
+
+    br(),
     
     #Download
     h4("Downloads", style = "color: #094030;"),
@@ -4698,7 +4696,19 @@ ui <- navbarPage(id = "nav1",
       # Download data
       column(2,radioButtons(inputId = "data_file_type_MES", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
       column(3,downloadButton(outputId = "download_MES_data", label = "Download Map Data"))
-    )
+    ),
+    
+  #   tags$style(HTML("
+  #   .leaflet-control .legend-labels {
+  #     text-align: left !important;
+  #   }
+  #   .leaflet-control .legend {
+  #     text-align: left !important;
+  #   }
+  #   .leaflet-control .leaflet-legend {
+  #     text-align: left !important;
+  #   }
+  # "))
       
 # ModE-RA Sources END ----         
   )
@@ -13357,10 +13367,7 @@ server <- function(input, output, session) {
                                                           }})
     
   ## MODE-RA SOURCES data procession and plotting ----
-    ### Plotting ----
-    
-    # Set up values and functions for plotting
-    MES_zoom  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
+    ### Plotting (for download)----
     
     season_MES_short = reactive({
       switch(input$season_MES,
@@ -13370,29 +13377,83 @@ server <- function(input, output, session) {
     
     # Load global data
     MES_global_data = reactive({
-      load_modera_source_data(input$year_MES, season_MES_short())
+      load_modera_source_data(input$year_MES, season_MES_short()) |>
+        dplyr::select(LON, LAT, VARIABLE, TYPE) |>
+        st_as_sf(coords = c('LON', 'LAT')) |>
+        st_set_crs(4326)
     })
     
-    # Global map
-    output$map_MES <- renderPlot({
-      plot_modera_sources(MES_global_data(),input$year_MES, season_MES_short(),c(-180,180,-90,90))
+    
+    ### Leaflet Map ----
+    
+    output$MES_leaflet = renderLeaflet({
+      
+      leaflet() |>
+        # addTiles() |>
+        # Base groups
+        addTiles(group = "OSM (default)") |>
+        #addProviderTiles(providers$Stadia.StamenToner, group = "Toner") |>
+        addProviderTiles(providers$Esri.WorldImagery, group = "ESRI Satellite") |>
+        addProviderTiles(providers$Esri.WorldGrayCanvas, group = "ESRI  gray") |>
+        setView(lng = -5, lat = 54, zoom = 1.3) |>
+        addCircleMarkers(data = MES_global_data(),
+                         radius = 5,
+                         fillColor = ~pal_type(TYPE),
+                         stroke = TRUE,
+                         weight = 1,  # Thickness of the border
+                         color = "grey",
+                         fillOpacity = 1,
+                         opacity = 1,
+                         group = MES_global_data()$TYPE,
+                         popup = paste(
+                           "<strong>Measurement type: </strong>", named_variables[MES_global_data()$VARIABLE],
+                           "<br><strong>Source type: </strong>", named_types[MES_global_data()$TYPE], 
+                           "<br><strong>Link to source: </strong>", 
+                           "<a href='https://www.sbb.ch' target='_blank'>SBB</a>" #add link to database or publication
+                         )
+        ) |>
+        # Add layers control for filtering by TYPE
+        addLayersControl(
+          baseGroups = c("OSM (default)", "ESRI Satellite", "ESRI  gray"), # Base maps
+          overlayGroups = type_list,  # Use TYPE values as overlay groups
+          options = layersControlOptions(collapsed = TRUE)  # Make the control always expanded
+        ) |>
+        addLegend(pal = pal_type, 
+           values = type_list, 
+           title = "Proxies/Sources", 
+           position = "bottomleft", 
+           opacity = 1.0) 
+      
     })
     
-    # Zoomed map
-    output$zoomed_map_MES <- renderPlot({
-      if (!identical(MES_zoom(),c(-180,180,-90,90))){
-        plot_modera_sources(MES_global_data(),input$year_MES, season_MES_short(),MES_zoom())
+    # Use a separate observer to show or hide the legend
+    observe({
+      proxy <- leafletProxy("MES_leaflet")
+      if (input$legend_MES) {
+        proxy %>%
+          addLegend(pal = pal_type, values = type_list, # pal_type and type_list are defined in helpers.R
+                    title = "Legend",
+                    labels = type_names,
+                    position = "bottomleft",
+                    opacity = 1.0)
+      }
+      else {
+        proxy %>% clearControls()
       }
     })
     
-    # Update MES_zoom with brush
+    # observe({
+    #   leafletProxy("MES_leaflet") |>
+    #     clearControls() |>
+    #     {if (input$legend_MES) 
+    #       addLegend(., pal = pal_type, 
+    #                 values = type_list, 
+    #                 title = "Legend", 
+    #                 position = "bottomleft", 
+    #                 opacity = 1.0) 
+    #       else .}
+    # })
     
-    observe({
-      brush <- input$brush_MES
-      if (!is.null(brush)) {
-        MES_zoom(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
-      } 
-    })
     
   ## Concerning all modes (mainly updating Ui) ----
     

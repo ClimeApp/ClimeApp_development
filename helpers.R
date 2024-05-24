@@ -40,12 +40,30 @@ library(shinycssloaders)
 library(profvis)
 library(openxlsx) #Don't Change order!
 library(xlsx)
+#new libraries for leaflet
+library(sf)
+library(leaflet)
+library(htmltools)
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
 
 # Choosing theme and making colouring changes
 my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")
+
+# Choosing theme and making colouring changes
+my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")
+
+# Colour palette and variable names for ModE-RA source leaflet
+  type_list <- c("bivalve_proxy", "coral_proxy", "documentary_proxy", "glacier_ice_proxy", "ice_proxy", "instrumental_data", "lake_sediment_proxy", "other_proxy", "speleothem_proxy", "tree_proxy")
+  type_names <-c("Bivalve", "Coral", "Documentary", "Glacier ice", "Ice", "Instrumental", "Lake sediment", "Other", "Speleothem", "Tree")
+  named_types <- setNames(type_names, type_list)
+  # Create a Factor Palette with Paul Tol's Muted Colour List for Colour Blind People
+  pal_type <- colorFactor(c('#AA4499', '#CC6677', '#44AA99', '#332288', '#88CCEE', '#882255', '#DDCC77', '#bbbbbb', '#999933', '#117733'), type_list)
+  
+  variable_list <- c("sea_level_pressure", "no_of_rainy_days", "pressure", "precipitation", "temperature", "historical_proxy", "natural_proxy")
+  variable_names <- c("Sea level pressure", "No. of rainy days", "Pressure", "Precipitation", "Temperature", "Historical proxy", "Natural proxy")
+  named_variables <- setNames(variable_names, variable_list)
 
 # Spinner configurations
 spinner_image = "pics/ClimeApp_Loading_V2.gif"
@@ -477,6 +495,21 @@ MEsource_popover = function(popover_ID){
   popover(
     h4(HTML("Plot ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 0px;"),
     "These plots show location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
+    em("Assimilated Observations – Oct. to Mar."),"shows sources that were used to produce the monthly reconstruction between October and March, while",em("Assimilated Observations – Apr. to Sept."),"shows sources that were used to produce the reconstruction between April and September.",br(),br(),
+    em("VARIABLE"),"refers to the value that was directly measured. So, for example, a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.", br(),br(),
+    "See",em("ModE data"),"tab on the Welcome page for more information.",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## MODE-RA SOURCES
+## popover_IDs = pop_anomalies_mesource, pop_composites_mesource, pop_correlation_mesource, pop_regression_mesource, pop_anncyc_mesource
+
+MEsource_leaflet_popover = function(popover_ID){
+  popover(
+    h4(HTML("Explore ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 0px;"),
+    "This map shows location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
     em("Assimilated Observations – Oct. to Mar."),"shows sources that were used to produce the monthly reconstruction between October and March, while",em("Assimilated Observations – Apr. to Sept."),"shows sources that were used to produce the reconstruction between April and September.",br(),br(),
     em("VARIABLE"),"refers to the value that was directly measured. So, for example, a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.", br(),br(),
     "See",em("ModE data"),"tab on the Welcome page for more information.",
