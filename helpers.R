@@ -53,23 +53,23 @@ spinner_width = 310
 spinner_height = 200
 
 # Load pre-processed data
-annual_temp_nc = nc_open("data/ModE-RA/Annual/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_year.nc")
-DJF_temp_nc = nc_open("data/ModE-RA/DJF/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_djf.nc")
-MAM_temp_nc = nc_open("data/ModE-RA/MAM/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_mam.nc")
-JJA_temp_nc = nc_open("data/ModE-RA/JJA/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_jja.nc")
-SON_temp_nc = nc_open("data/ModE-RA/SON/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_son.nc")
+annual_temp_nc = nc_open("data/ModE-RA/year/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1421-2008_year.nc")
+DJF_temp_nc = nc_open("data/ModE-RA/djf/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1421-2008_djf.nc")
+MAM_temp_nc = nc_open("data/ModE-RA/mam/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1421-2008_mam.nc")
+JJA_temp_nc = nc_open("data/ModE-RA/jja/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1421-2008_jja.nc")
+SON_temp_nc = nc_open("data/ModE-RA/son/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1421-2008_son.nc")
 
-annual_prec_nc = nc_open("data/ModE-RA/Annual/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_year.nc")
-DJF_prec_nc = nc_open("data/ModE-RA/DJF/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_djf.nc")
-MAM_prec_nc = nc_open("data/ModE-RA/MAM/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_mam.nc")
-JJA_prec_nc = nc_open("data/ModE-RA/JJA/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_jja.nc")
-SON_prec_nc = nc_open("data/ModE-RA/SON/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_son.nc")
+annual_prec_nc = nc_open("data/ModE-RA/year/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1421-2008_year.nc")
+DJF_prec_nc = nc_open("data/ModE-RA/djf/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1421-2008_djf.nc")
+MAM_prec_nc = nc_open("data/ModE-RA/mam/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1421-2008_mam.nc")
+JJA_prec_nc = nc_open("data/ModE-RA/jja/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1421-2008_jja.nc")
+SON_prec_nc = nc_open("data/ModE-RA/son/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1421-2008_son.nc")
 
-annual_slp_nc = nc_open("data/ModE-RA/Annual/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_year.nc")
-DJF_slp_nc = nc_open("data/ModE-RA/DJF/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_djf.nc")
-MAM_slp_nc = nc_open("data/ModE-RA/MAM/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_mam.nc")
-JJA_slp_nc = nc_open("data/ModE-RA/JJA/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_jja.nc")
-SON_slp_nc = nc_open("data/ModE-RA/SON/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_son.nc")
+annual_slp_nc = nc_open("data/ModE-RA/year/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1421-2008_year.nc")
+DJF_slp_nc = nc_open("data/ModE-RA/djf/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1421-2008_djf.nc")
+MAM_slp_nc = nc_open("data/ModE-RA/mam/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1421-2008_mam.nc")
+JJA_slp_nc = nc_open("data/ModE-RA/jja/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1421-2008_jja.nc")
+SON_slp_nc = nc_open("data/ModE-RA/son/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1421-2008_son.nc")
 
 ## Create dataframe of preprocessed yearly variables
 ## - pp_data[[season]][[variable]] where
@@ -854,7 +854,8 @@ generate_map_dimensions = function(subset_lon_IDs,subset_lat_IDs,output_width,
 
 ## (General) GENERATE DATA ID
 ##           Creates a vector with the reference numbers for ModE data:
-##           c(pre-processed data?,dataset,variable,season)
+##           c(pre-processed data? (0 = NO, 1 = yes, preloaded, 2 = yes, not preloaded)
+##             ,dataset,variable,season)
 ##           data_set = "ModE-RA","ModE-Sim","ModE-RAclim" or "SD Ratio"
 
 generate_data_ID = function(dataset,variable,month_range){
@@ -903,9 +904,26 @@ generate_data_ID = function(dataset,variable,month_range){
       season_ref = NA
       pp_available = 0
     } 
-  } else {
-    pp_available = 0
-    season_ref = NA
+  } else { # Other data (may be preprocessed, but may need to be loaded in) 
+    if (identical(month_range,c(1,12))){
+      season_ref = 5
+      pp_available = 2
+    } else if (identical(month_range,c(0,2))){
+      season_ref = 1
+      pp_available = 2
+    } else if (identical(month_range,c(3,5))){
+      season_ref = 2
+      pp_available = 2
+    } else if (identical(month_range,c(6,8))){
+      season_ref = 3
+      pp_available = 2
+    } else if (identical(month_range,c(9,11))){
+      season_ref = 4
+      pp_available = 2
+    } else {
+      season_ref = NA
+      pp_available = 0
+    } 
   }
   
   # Create data reference
@@ -915,7 +933,7 @@ generate_data_ID = function(dataset,variable,month_range){
 }        
 
 
-## (General) LOAD CORRECT ModE DATA - load ModE-RA/sim/clim/SDratio data for a chosen variable
+## (General) LOAD FULL ModE DATA - load ModE-RA/sim/clim/SDratio data for a chosen variable
 ##           and data source
 ##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim","SD Ratio"
 
@@ -929,7 +947,7 @@ load_ModE_data = function(dataset,variable){
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
     
-    data_nc = nc_open(paste0("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_",vname,"_abs_1420-2009_mon.nc"))
+    data_nc = nc_open(paste0("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_",vname,"_abs_1421-2008_mon.nc"))
     
     # extract data and convert units if necessary                  
     if (variable == "Temperature"){
@@ -963,7 +981,7 @@ load_ModE_data = function(dataset,variable){
     } else if (variable == "SLP"){
       data_output = ncvar_get(data_nc,varid="slp")/100 
     } else {
-      data_output = ncvar_get(data_nc,varid="geopoth")/1000
+      data_output = ncvar_get(data_nc,varid="geopoth")
     }
     
     # remove the first year (1421)
@@ -989,7 +1007,7 @@ load_ModE_data = function(dataset,variable){
     } else if (variable == "SLP"){
       data_output = ncvar_get(data_nc,varid="slp")/100 
     } else {
-      data_output = ncvar_get(data_nc,varid="geopotential_height")/1000
+      data_output = ncvar_get(data_nc,varid="geopotential_height")
     }
     
     nc_close(data_nc)
@@ -1003,7 +1021,7 @@ load_ModE_data = function(dataset,variable){
                     "Precipitation" = "totprec",
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
-    data_nc = nc_open(paste0("data/ModE-RA/Monthly/SDratio/ModE-RA_lowres_20mem_Set_1420-3_1850-1_sdratio_",vname,"_anom_wrt_1901-2000_1421-2008_mon.nc"))
+    data_nc = nc_open(paste0("data/SD_ratio/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_sdratio_",vname,"_anom_wrt_1901-2000_1421-2008_mon.nc"))
     
     # extract data and convert units if necessary                  
     if (variable == "Temperature"){
@@ -1024,16 +1042,156 @@ load_ModE_data = function(dataset,variable){
 }
 
 
+## (General) LOAD PRE-PROCESSED ModE DATA - load ModE-RA/sim/clim/SDratio pp_data for a chosen variable
+##           and month range
+##           data_ID = as created by generate_data_ID
+
+load_preprocessed_data = function(data_ID){
+  
+  # Mod E-RA
+  if (data_ID[2] == 1){ # ModE-RA
+    # get variable and month names
+    vname = "geopoth_50000"
+    mname = switch(data_ID[4],
+                   "1" = "djf",
+                   "2" = "mam",
+                   "3" = "jja",
+                   "4" = "son",
+                   "5" = "year")
+    
+    # Open file
+    data_nc = nc_open(paste0("data/ModE-RA/",mname,"/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_",vname,"_abs_1421-2008_",mname,".nc"))
+    
+    # extract data and convert units if necessary                  
+    data_output = ncvar_get(data_nc,varid="geopoth")
+    
+    nc_close(data_nc)
+  } 
+  
+  # ModE-SIM
+  else if (data_ID[2] == 2){ # ModE-Sim
+    # get variable name and month names
+    vname =  switch(data_ID[3],
+                    "1" = "temp2",
+                    "2" = "totprec",
+                    "3" = "slp",
+                    "4" = "geopoth_50000")
+    mname = switch(data_ID[4],
+                   "1" = "djf",
+                   "2" = "mam",
+                   "3" = "jja",
+                   "4" = "son",
+                   "5" = "year")
+    
+    # open file
+    data_nc = nc_open(paste0("data/ModE-SIM/",mname,"/ModE-Sim_lowres_20mem_Set_1420-3_1850-1_ensmean_",vname,"_abs_1420-2009_",mname,".nc"))
+    
+    # extract data and convert units if necessary                  
+    if (data_ID[3] == 1){
+      data_output = ncvar_get(data_nc,varid="temp2")-273.15 
+    } else if (data_ID[3] == 2){
+      data_output = ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
+    } else if (data_ID[3] == 3){
+      data_output = ncvar_get(data_nc,varid="slp")/100 
+    } else {
+      data_output = ncvar_get(data_nc,varid="geopoth")
+    }
+    
+    # remove the first year (1421)
+    data_output = data_output[,,2:589]
+    
+    nc_close(data_nc)
+  }
+  
+  # ModE-RAclim
+  else if (data_ID[2] == 3) { # ModE-RAclim
+    # get variable name and month names
+    vname =  switch(data_ID[3],
+                    "1" = "temp2",
+                    "2" = "totprec",
+                    "3" = "slp",
+                    "4" = "geopoth_50000")
+    mname = switch(data_ID[4],
+                   "1" = "djf",
+                   "2" = "mam",
+                   "3" = "jja",
+                   "4" = "son",
+                   "5" = "year")
+    
+    # Open file
+    data_nc = nc_open(paste0("data/ModE-RAclim/",mname,"/ModE-RAclim_ensmean_",vname,"_anom_1421-2008_",mname,".nc"))
+    
+    # extract data and convert units if necessary                  
+    if (data_ID[3] == 1){
+      data_output = ncvar_get(data_nc,varid="temp2") 
+    } else if (data_ID[3] == 2){
+      data_output = ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
+    } else if (data_ID[3] == 3){
+      data_output = ncvar_get(data_nc,varid="slp")/100 
+    } else {
+      data_output = ncvar_get(data_nc,varid="geopoth")
+    }
+    
+    nc_close(data_nc)
+  }
+  
+  # SDratio
+  else if (data_ID[2] == 4){
+    # get variable name and month names
+    vname =  switch(data_ID[3],
+                    "1" = "temp2",
+                    "2" = "totprec",
+                    "3" = "slp",
+                    "4" = "geopoth_50000")
+    mname = switch(data_ID[4],
+                   "1" = "djf",
+                   "2" = "mam",
+                   "3" = "jja",
+                   "4" = "son",
+                   "5" = "year")
+    
+    # Open file
+    data_nc = nc_open(paste0("data/SD_ratio/",mname,"/ModE-RA_lowres_20mem_Set_1420-3_1850-1_sd_ratio_",vname,"_abs_1421-2008_",mname,".nc"))
+    
+    # extract data and convert units if necessary                  
+    if (data_ID[3] == 1){
+      data_output = ncvar_get(data_nc,varid="temp2") 
+    } else if (data_ID[3] == 2){
+      data_output = ncvar_get(data_nc,varid="totprec")
+    } else if (data_ID[3] == 3){
+      data_output = ncvar_get(data_nc,varid="slp")
+    } else {
+      data_output = ncvar_get(data_nc,varid="geopoth")
+    }
+    
+    nc_close(data_nc)
+    
+    # Add an extra year at the start for djf
+    if(mname == "djf"){
+      empty_year = array(NA, dim = c(192,96,588))
+      empty_year[,,c(2:588)] = data_output
+      data_output = empty_year
+    }
+  }
+  
+  return(data_output)
+
+}
+
+
 ## (General) CREATE GEOGRAPHIC SUBSET - returns a new dataset with a reduced geographic area
 ##           data_input = any ModE-RA variable (temp_data/prec_data/SlP_data etc.)
 ##                        (this should already be assigned as "custom_data()")
+##                        OR
+##                        any preprocessed ModE-RA variable
 
 create_latlon_subset = function(data_input,data_ID,subset_lon_IDs,subset_lat_IDs){
   if (data_ID[1] == 1){
     # subset preprocessed data
     data_subset = pp_data[[data_ID[4]]][[data_ID[3]]][subset_lon_IDs,subset_lat_IDs,]
-  } else {
-    # subset base data
+  } 
+  else {
+    # subset base/loaded preprocessed data
     data_subset = data_input[subset_lon_IDs,subset_lat_IDs,]
   }
   return(data_subset)
@@ -1046,7 +1204,7 @@ create_latlon_subset = function(data_input,data_ID,subset_lon_IDs,subset_lat_IDs
 
 create_yearly_subset = function(data_input,data_ID,year_range,month_range){
   # Check for preprocessed subset
-  if (data_ID[1] == 1){
+  if (data_ID[1] != 0){
     year_IDs = (year_range[1]-1420):(year_range[2]-1420) 
     data_subset = data_input[,,year_IDs]
   } 
@@ -1778,6 +1936,13 @@ plot_modera_sources = function(ME_source_data,year,season,minmax_lonlat){
   } else {
     total_sources = sum((ME_source_data$LON>minmax_lonlat[1]) & (ME_source_data$LON<minmax_lonlat[2]) & (ME_source_data$LAT>minmax_lonlat[3]) & (ME_source_data$LAT<minmax_lonlat[4]))
   }
+  
+  #if (identical(minmax_lonlat,c(-180,180,-90,90))){
+  #  total_sources = sum(ME_source_data$OBSERVATIONS)
+  #} else {
+  #  cut_sources = (ME_source_data$LON>minmax_lonlat[1]) & (ME_source_data$LON<minmax_lonlat[2]) & (ME_source_data$LAT>minmax_lonlat[3]) & (ME_source_data$LAT<minmax_lonlat[4])
+  #  total_sources = sum(cut_sources$OBSERVATIONS)
+  #}
 
   # Create Season & Year title
   if (season == "summer"){
@@ -1858,6 +2023,8 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
       # Access variable base data (if pp data not available)
       if (data_ref[1]==0){
         data1 = load_ModE_data(dataset,i)
+      } else if (data_ref[1]==2){
+        data1 = load_preprocessed_data(data_ref)
       } else {
         data1 = NA
       }
@@ -2070,20 +2237,23 @@ generate_metadata_plot <- function(dataset,variable,range_years,select_sg_year,s
 
 ## (Plot Features) CREATE SD RATIO DATA - creates SD ratio data for the current 
 ##                 year/season/region selected
-##                 data_input = custom_sd_data() (for the moment - update to use pp_data later)
+##                 data_input = custom_sd_data() (which can also be pp data)
 ##                 tab = "general" or "composites"
 ##                 year_range = year range or year set
 
-create_sdratio_data = function(data_input,tab,variable,subset_lon_IDs,subset_lat_IDs,
+create_sdratio_data = function(data_input,data_ID,tab,variable,subset_lon_IDs,subset_lat_IDs,
                                month_range,year_range){
   
+  # Change data_ID to identify data as preprocessed but not preloaded:
+  if (data_ID[1]==1){ data_ID[1]=2 } 
+  
   # Lat/lon subset:
-  SD_data1 = create_latlon_subset(data_input,c(0,NA,NA,NA),subset_lon_IDs, subset_lat_IDs)  
+  SD_data1 = create_latlon_subset(data_input,data_ID,subset_lon_IDs, subset_lat_IDs)  
   # Yearly subset:
   if (tab == "general"){
-    SD_data2 = create_yearly_subset(SD_data1, c(0,NA,NA,NA), year_range, month_range)
+    SD_data2 = create_yearly_subset(SD_data1, data_ID, year_range, month_range)
   } else {
-    SD_data2 = create_yearly_subset_composite(SD_data1, c(0,NA,NA,NA), year_range, month_range)
+    SD_data2 = create_yearly_subset_composite(SD_data1, data_ID, year_range, month_range)
   }
   
   return(SD_data2)
@@ -2901,7 +3071,7 @@ read_composite_data = function(data_input_manual,data_input_filepath,year_input_
 create_yearly_subset_composite = function(data_input,data_ID,year_set,month_range){
   
   # Check for preprocessed subset
-  if (data_ID[1] == 1){
+  if (data_ID[1] != 0){
     year_IDs = year_set-1420 
     data_subset = data_input[,,year_IDs]
   } 
@@ -2942,7 +3112,7 @@ convert_composite_to_anomalies = function(data_input,ref_data,data_ID,year_set,m
   baseline_array = array(NA,dim=c(dim_data[1],dim_data[2], length(subset_year_set)))
   
   # Use PP data to calculate baselines
-  if (data_ID[1]==1){
+  if (data_ID[1]!=0){
     for (i in 1:length(subset_year_set)){
       year_list = c()
       for (j in 1:baseline_year_before){ # Note: years_before COULD be a chosen range (i.e.10-20 years before)
@@ -3768,6 +3938,8 @@ create_ME_timeseries_data = function(dataset,variables,subset_lon_IDs,subset_lat
     # Access variable base data (if pp data not available)
     if (data_ref[1]==0){
       data1 = load_ModE_data(dataset,i)
+    } else if (data_ref[1]==2){
+      data1 = load_preprocessed_data(data_ref)
     } else {
       data1 = NA
     }

@@ -55,7 +55,7 @@ ui <- navbarPage(id = "nav1",
                  ),
                  theme = my_theme,
                  position = c("fixed-top"),
-                 windowTitle = "ClimeApp (v1.0)",
+                 windowTitle = "ClimeApp (v1.1)",
                  collapsible = TRUE,
 
 # Welcome START ----                             
@@ -4531,7 +4531,13 @@ server <- function(input, output, session) {
     }
   )
   
-  # Set up custom data and SDratio reactive variables ----
+  # Set up custom data, preprocessed data and SDratio reactive variables ----
+  preprocessed_data_primary = reactiveVal()
+  preprocessed_data_id_primary = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current preprocessed data
+  
+  preprocessed_data_secondary = reactiveVal()
+  preprocessed_data_id_secondary = reactiveVal(c(NA,NA,NA,NA)) # data_ID for secodnary preprocessed data
+  
   custom_data_primary = reactiveVal()
   custom_data_id_primary = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current custom data
   
@@ -10040,9 +10046,11 @@ server <- function(input, output, session) {
       }
     })
     
+    
     ### Update custom_data ----
     
-    # Update custom_data_primary (if required)
+    # Update preprocessed and custom_data_primary (if required)
+    
     observeEvent(data_id_primary(),{
       if (data_id_primary()[1] == 0){ # Only updates when new custom data is required...
         if (!identical(custom_data_id_primary()[2:3],data_id_primary()[2:3])){ # ....i.e. changed variable or dataset
@@ -10059,6 +10067,14 @@ server <- function(input, output, session) {
           
           custom_data_primary(load_ModE_data(new_dataset,new_variable)) # load new custom data
           custom_data_id_primary(data_id_primary()) # update custom data ID
+        }
+      } 
+      
+      # Update preprocessed data
+      else if (data_id_primary()[1] == 2){ # Only updates when new pp data is required...
+        if (!identical(preprocessed_data_id_primary()[2:4],data_id_primary()[2:4])){ # ....i.e. changed variable, dataset or month range
+          preprocessed_data_primary(load_preprocessed_data(data_id_primary()))# load new pp data
+          preprocessed_data_id_primary(data_id_primary()) # update pp data ID
         }
       }
     })
@@ -10082,18 +10098,34 @@ server <- function(input, output, session) {
           custom_data_id_secondary(data_id_secondary()) # update custom data ID
         }
       }
+      
+      # Update preprocessed data
+      else if (data_id_secondary()[1] == 2){ # Only updates when new pp data is required...
+        if (!identical(preprocessed_data_id_secondary()[2:4],data_id_secondary()[2:4])){ # ....i.e. changed variable, dataset or month range
+          preprocessed_data_secondary(load_preprocessed_data(data_id_secondary()))# load new pp data
+          preprocessed_data_id_secondary(data_id_secondary()) # update pp data ID
+        }
+      }
     })
 
     ### Geographic Subset ----
     
     data_output1_primary <- reactive({
       req(data_id_primary(), subset_lons_primary(), subset_lats_primary())
-      create_latlon_subset(custom_data_primary(), data_id_primary(), subset_lons_primary(), subset_lats_primary())
+      if (data_id_primary()[1] != 2) { # i.e. preloaded or custom data
+        create_latlon_subset(custom_data_primary(), data_id_primary(), subset_lons_primary(), subset_lats_primary())
+      } else { # i.e. preloaded data
+        create_latlon_subset(preprocessed_data_primary(), data_id_primary(), subset_lons_primary(), subset_lats_primary())
+      }
     })
     
     data_output1_secondary <- reactive({
       req(data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
-      create_latlon_subset(custom_data_secondary(), data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
+      if (data_id_secondary()[1] != 2) { # i.e. preloaded or custom data
+        create_latlon_subset(custom_data_secondary(), data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
+      } else { # i.e. preloaded data
+        create_latlon_subset(preprocessed_data_secondary(), data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
+      }
     })
 
     ### Yearly subset ----
@@ -10195,9 +10227,18 @@ server <- function(input, output, session) {
     observe({
       if((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")){
         if (input$nav1 == "tab1"){ # check current tab
-          if (!identical(SDratio_data_id()[3],data_id_primary()[3])){ # check to see if currently loaded variable is the same
-            SDratio_data(load_ModE_data("SD Ratio",input$variable_selected)) # load new SD data
-            SDratio_data_id(data_id_primary()) # update custom data ID
+          if (!identical(SDratio_data_id()[3:4],data_id_primary()[3:4])){ # check to see if currently loaded variable & month range are the same
+            if (data_id_primary()[1] != 0) { # check for preprocessed SD ratio data
+              new_data_id = data_id_primary()
+              new_data_id[2] = 4 # change data ID to SD ratio
+              
+              SDratio_data(load_preprocessed_data(new_data_id)) # load new SD data
+              SDratio_data_id(data_id_primary()) # update custom data ID
+            }
+            else{
+              SDratio_data(load_ModE_data("SD Ratio",input$variable_selected)) # load new SD data
+              SDratio_data_id(data_id_primary()) # update custom data ID
+            }
           } 
         }
       }
@@ -10210,9 +10251,8 @@ server <- function(input, output, session) {
       
       req(((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")))
       
-      new_SD_data = create_sdratio_data(SDratio_data(),"general",input$variable_selected,subset_lons_primary(),subset_lats_primary(),
-                                        month_range_primary(),input$range_years)
-      return(new_SD_data)
+      create_sdratio_data(SDratio_data(),data_id_primary(),"general",input$variable_selected,
+                          subset_lons_primary(),subset_lats_primary(),month_range_primary(),input$range_years)
     })
     
     ### Plotting ----
@@ -10269,6 +10309,7 @@ server <- function(input, output, session) {
       } else if (input$ref_map_mode == "Reference Values"){
         create_map_datatable(data_output3_primary(), subset_lons_primary(), subset_lats_primary())
       } else if (input$ref_map_mode == "SD Ratio"){
+        req(SDratio_subset())
         create_map_datatable(SDratio_subset(), subset_lons_primary(), subset_lats_primary())
       }
     }    
@@ -10596,14 +10637,23 @@ server <- function(input, output, session) {
       })
     
     ### SD Ratio data ----
-    
+      
       # Update SD ratio data when required
       observe({
         if((input$ref_map_mode2 == "SD Ratio")|(input$custom_statistic2 == "SD ratio")){
           if (input$nav1 == "tab2"){ # check current tab
-            if (!identical(SDratio_data_id()[3],data_id_primary()[3])){ # check to see if currently loaded variable is the same
-              SDratio_data(load_ModE_data("SD Ratio",input$variable_selected2)) # load new SD data
-              SDratio_data_id(data_id_primary()) # update custom data ID
+            if (!identical(SDratio_data_id()[3:4],data_id_primary()[3:4])){ # check to see if currently loaded variable & month range are the same
+              if (data_id_primary()[1] != 0) { # check for preprocessed SD ratio data
+                new_data_id = data_id_primary()
+                new_data_id[2] = 4 # change data ID to SD ratio
+                
+                SDratio_data(load_preprocessed_data(new_data_id)) # load new SD data
+                SDratio_data_id(data_id_primary()) # update custom data ID
+              }
+              else{
+                SDratio_data(load_ModE_data("SD Ratio",input$variable_selected2)) # load new SD data
+                SDratio_data_id(data_id_primary()) # update custom data ID
+              }
             } 
           }
         }
@@ -10616,11 +10666,10 @@ server <- function(input, output, session) {
         
         req(((input$ref_map_mode2 == "SD Ratio")|(input$custom_statistic2 == "SD ratio")))
         
-        new_SD_data2 = create_sdratio_data(SDratio_data(),"composites",input$variable_selected2,
-                                           subset_lons_primary(),subset_lats_primary(),month_range_primary(),year_set_comp())
-        return(new_SD_data2)
+        create_sdratio_data(SDratio_data(),data_id_primary(),"composites",input$variable_selected2,
+                            subset_lons_primary(),subset_lats_primary(),month_range_primary(),year_set_comp())
       })
-  
+
     ### Plotting ----
           
       #Map customization (statistics and map titles)
