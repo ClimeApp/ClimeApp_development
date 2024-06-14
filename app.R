@@ -55,7 +55,7 @@ ui <- navbarPage(id = "nav1",
                  ),
                  theme = my_theme,
                  position = c("fixed-top"),
-                 windowTitle = "ClimeApp (v1.0)",
+                 windowTitle = "ClimeApp (v1.1)",
                  collapsible = TRUE,
 
 # Welcome START ----                             
