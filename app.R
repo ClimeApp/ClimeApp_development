@@ -10,7 +10,7 @@ ui <- navbarPage(id = "nav1",
                  title = div(style = "display: inline;",
                              uiOutput("logo_output", inline = TRUE),
                              uiOutput("logo_output2", inline = TRUE),
-                             "(v1.1)",
+                             "(v1.2)",
                              #Preparation to use Tracking ShinyJS and CSS
                              shinyjs::useShinyjs(),
                              use_tracking()
@@ -55,7 +55,7 @@ ui <- navbarPage(id = "nav1",
                  ),
                  theme = my_theme,
                  position = c("fixed-top"),
-                 windowTitle = "ClimeApp (v1.1)",
+                 windowTitle = "ClimeApp (v1.2)",
                  collapsible = TRUE,
 
 # Welcome START ----                             
@@ -260,10 +260,16 @@ ui <- navbarPage(id = "nav1",
             #### Tab Version History ----
             tabPanel("Version history",
                      br(), br(),
+                     h5(strong("v1.2 (21.06.2024)", style = "color: #094030;")),
+                     tags$ul(
+                       tags$li("Preprocessed data for all Datasets (Mode-Sim, Mode-R-Clim and Mode-RA)"),
+                     ),
+                     br(),
                      h5(strong("v1.1 (04.04.2024)", style = "color: #094030;")),
                      tags$ul(
                        tags$li("Option to add GeoPackage-Layers (shape files) on top of field plots"),
                      ),
+                     br(),
                      h5(strong("v1.0 (11.03.2024)", style = "color: #094030;")),
                      tags$ul(
                        tags$li("Download / Upload option for metadata"),
@@ -12725,16 +12731,16 @@ server <- function(input, output, session) {
     # })
     
   ## Stop App on end of session ----
-     session$onSessionEnded(function() {
-       stopApp()
-     })
+     # session$onSessionEnded(function() {
+     #   stopApp()
+     # })
 # Close server function ----
 }
 
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
 # Run the app normally
-  runApp(app)
+  # runApp(app)
 # Run the app with profiling
   # profvis({runApp(app)})
 
