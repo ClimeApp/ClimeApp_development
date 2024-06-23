@@ -260,9 +260,10 @@ ui <- navbarPage(id = "nav1",
             #### Tab Version History ----
             tabPanel("Version history",
                      br(), br(),
-                     h5(strong("v1.2 (21.06.2024)", style = "color: #094030;")),
+                     h5(strong("v1.2 (23.06.2024)", style = "color: #094030;")),
                      tags$ul(
                        tags$li("Preprocessed data for all Datasets (Mode-Sim, Mode-R-Clim and Mode-RA)"),
+                       tags$li("Overhaul of Mode-Source plots and data"),
                      ),
                      br(),
                      h5(strong("v1.1 (04.04.2024)", style = "color: #094030;")),

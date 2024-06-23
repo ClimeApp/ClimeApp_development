@@ -4,7 +4,7 @@
 
 #Nik:
 #Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-setwd("C:/Users/nikla/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/nikla/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
 
 #Richard:
 #Laptop/desktop:
@@ -1947,7 +1947,8 @@ rewrite_tstable = function(tstable,variable){
 
 load_modera_source_data = function(year,season){
   # Load data
-  feedback_data = read.csv(paste0("data/feedback_archive/",season,year,".csv"))  
+  feedback_data = read.csv(paste0("data/feedback_archive_fin/",season,year,".csv"))  
+  #feedback_data = read.csv(paste0("data/feedback_archive/",season,year,".csv"))  
 }
 
 
@@ -1964,18 +1965,23 @@ plot_modera_sources = function(ME_source_data,year,season,minmax_lonlat){
   world=map_data("world")
   
   # Sum total sources
-  if (identical(minmax_lonlat,c(-180,180,-90,90))){
-    total_sources = length(ME_source_data$LON)
-  } else {
-    total_sources = sum((ME_source_data$LON>minmax_lonlat[1]) & (ME_source_data$LON<minmax_lonlat[2]) & (ME_source_data$LAT>minmax_lonlat[3]) & (ME_source_data$LAT<minmax_lonlat[4]))
-  }
+  # if (identical(minmax_lonlat,c(-180,180,-90,90))){
+  #   total_sources = length(ME_source_data$LON)
+  #   cut_sources = 0
+  # } else {
+  #   total_sources = sum((ME_source_data$LON>minmax_lonlat[1]) & (ME_source_data$LON<minmax_lonlat[2]) & (ME_source_data$LAT>minmax_lonlat[3]) & (ME_source_data$LAT<minmax_lonlat[4]))
+  #   cut_sources = 0
+  # }
   
-  #if (identical(minmax_lonlat,c(-180,180,-90,90))){
-  #  total_sources = sum(ME_source_data$OBSERVATIONS)
-  #} else {
-  #  cut_sources = (ME_source_data$LON>minmax_lonlat[1]) & (ME_source_data$LON<minmax_lonlat[2]) & (ME_source_data$LAT>minmax_lonlat[3]) & (ME_source_data$LAT<minmax_lonlat[4])
-  #  total_sources = sum(cut_sources$OBSERVATIONS)
-  #}
+  if (identical(minmax_lonlat, c(-180, 180, -90, 90))) {
+    total_sources = sum(ME_source_data$Omitted_Duplicates) + nrow(ME_source_data)
+    cut_sources = sum(ME_source_data$Omitted_Duplicates)
+  } else {
+    in_boundary = ME_source_data$LON > minmax_lonlat[1] & ME_source_data$LON < minmax_lonlat[2] &
+      ME_source_data$LAT > minmax_lonlat[3] & ME_source_data$LAT < minmax_lonlat[4]
+    total_sources = sum(ME_source_data$Omitted_Duplicates[in_boundary]) + sum(in_boundary)
+    cut_sources = sum(ME_source_data$Omitted_Duplicates[in_boundary])
+  }
 
   # Create Season & Year title
   if (season == "summer"){
@@ -2003,7 +2009,7 @@ plot_modera_sources = function(ME_source_data,year,season,minmax_lonlat){
     geom_sf() + coord_sf(xlim = minmax_lonlat[c(1,2)], ylim = minmax_lonlat[c(3,4)], crs = st_crs(4326)) +
     geom_point(data=ME_source_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
     labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
-         subtitle = paste0("Total Sources = ",total_sources), x = "", y = "") +
+         subtitle = paste0("Total Sources = ",total_sources,", ","Omitted Duplicates = ", cut_sources), x = "", y = "") +
     scale_shape_manual(values = named_shapes) +
     scale_colour_manual(values = named_colors) +
     guides() + 
