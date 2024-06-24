@@ -4489,7 +4489,7 @@ ui <- navbarPage(id = "nav1",
                   selected = "April to September"),
       
       # Add checkbox for legend
-      checkboxInput(inputId = "legend_MES", "Show legend", TRUE),
+      checkboxInput(inputId = "legend_MES", "Show legend", FALSE),
       #radioButtons(inputId = "legend_MES", label = "", choices = c("Show legend", "Hide legend"), selected = "Show legend", inline = TRUE),
       
       # br(),
@@ -12412,7 +12412,7 @@ server <- function(input, output, session) {
   ## MODE-RA SOURCES data procession and plotting ----
     ### Plotting (for download)----
     
-    season_MES_short = reactive({
+    season_MES_short <- reactive({
       switch(input$season_MES,
              "April to September" = "summer",
              "October to March" = "winter")
@@ -12432,47 +12432,72 @@ server <- function(input, output, session) {
     
     ### Leaflet Map ----
     
-    output$MES_leaflet = renderLeaflet({
-      # Render leaflet map without legend
-      leaflet() |>
-          # Base maps
-          addProviderTiles(providers$Esri.WorldGrayCanvas, group = "ESRI  gray") |>
-          addTiles(group = "Open Street Map") |>
-          addProviderTiles(providers$Esri.WorldImagery, group = "ESRI Satellite") |>
-          setView(lng = 0, lat = 30, zoom = 1.6) |>
+    output$MES_leaflet <- renderLeaflet({
+      data <- MES_global_data()
+      
+      leaflet(data) |>
+        # Base maps
+        addProviderTiles(providers$Esri.WorldGrayCanvas, group = "ESRI gray") |>
+        addTiles(group = "Open Street Map") |>
+        addProviderTiles(providers$Esri.WorldImagery, group = "ESRI Satellite") |>
+        setView(lng = 0, lat = 30, zoom = 1.6) |>
+        
+        # Add layers control for filtering by TYPE
+        addLayersControl(
+          baseGroups = c("ESRI gray", "Open Street Map", "ESRI Satellite"), # Base maps
+          overlayGroups = type_list,  # Use TYPE values as overlay groups
+          options = layersControlOptions(collapsed = TRUE)  # Make the control always expanded
+        ) |>
 
-          # Add layers control for filtering by TYPE
-          addLayersControl(
-            baseGroups = c("ESRI  gray", "Open Street Map", "ESRI Satellite"), # Base maps
-            overlayGroups = type_list,  # Use TYPE values as overlay groups
-            options = layersControlOptions(collapsed = TRUE)  # Make the control always expanded
-          ) |>
-          addLegend(pal = pal_type,
-                    values = type_list,
-                    labels = c("Bivalve", "Coral", "Documentary", "Glacier ice", "Ice", "Instrumental", "Lake sediment", "Other", "Speleothem", "Tree"),
-                    title = "Proxies/Sources",
-                    position = "bottomleft",
-                    opacity = 1.0)
+        # Add initial data points
+        addCircleMarkers(data = data,
+                         radius = 5,
+                         fillColor = ~pal_type(data$TYPE),
+                         stroke = TRUE,
+                         weight = 1,
+                         color = "grey",
+                         fillOpacity = 1,
+                         opacity = 1,
+                         group = data$TYPE,
+                         popup = paste(
+                           "<strong>Measurement type: </strong>", named_variables[data$VARIABLE],
+                           "<br><strong>Source type: </strong>", named_types[data$TYPE], 
+                           "<br><strong>Name database: </strong>", data$Name_Database,
+                           "<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
+                           "<br><strong>Proxy code: </strong>", data$Code_Proxy,
+                           "<br><strong>Proxy reference: </strong>", data$Reference_Proxy,
+                           "<br><strong>Proxy reference database: </strong>", data$Reference_Proxy_Database
+                         ))
+
     })
     
     # Use a separate observer to show or hide the legend
     observe({
-      proxy <- leafletProxy("MES_leaflet")
-      if (input$legend_MES) {
+
+      if (input$legend_MES == TRUE) {
+        proxy <- leafletProxy("MES_leaflet")
         proxy %>%
-          addLegend(pal = pal_type, values = type_list, # pal_type and type_list are defined in helpers.R
+          addLegend(pal = pal_type,
+                    values = type_list, # pal_type and type_list are defined in helpers.R
                     title = "Legend",
                     labels = c("Bivalve", "Coral", "Documentary", "Glacier ice", "Ice", "Instrumental", "Lake sediment", "Other", "Speleothem", "Tree"),
                     position = "bottomleft",
-                    opacity = 1.0)
+                    opacity = 1.0) |>
+
+          addControl(
+            html = sprintf("<strong>Total global sources visible: %d</strong>", nrow(MES_global_data())),
+            position = "bottomleft"
+          )
       }
       else {
+        proxy <- leafletProxy("MES_leaflet")
         proxy %>% clearControls()
       }
     })
-
+    
     # Use a separate observer to add the data points
     observe({
+
       data <- MES_global_data()
       
       if (!is.null(data)) {
@@ -12483,7 +12508,7 @@ server <- function(input, output, session) {
                            radius = 5,
                            fillColor = ~pal_type(data$TYPE),
                            stroke = TRUE,
-                           weight = 1,  # Thickness of the border
+                           weight = 1,
                            color = "grey",
                            fillOpacity = 1,
                            opacity = 1,
@@ -12496,10 +12521,8 @@ server <- function(input, output, session) {
                              "<br><strong>Proxy code: </strong>", data$Code_Proxy,
                              "<br><strong>Proxy reference: </strong>", data$Reference_Proxy,
                              "<br><strong>Proxy reference database: </strong>", data$Reference_Proxy_Database
-                           )
-          )
+                           ))
       }
-      
     })
     
   ## Concerning all modes (mainly updating Ui) ----
