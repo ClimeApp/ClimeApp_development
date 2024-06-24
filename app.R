@@ -4492,11 +4492,11 @@ ui <- navbarPage(id = "nav1",
       checkboxInput(inputId = "legend_MES", "Show legend", TRUE),
       #radioButtons(inputId = "legend_MES", label = "", choices = c("Show legend", "Hide legend"), selected = "Show legend", inline = TRUE),
       
-      br(),
-      # Download
-      h4("Download", style = "color: #094030;"),
-      radioButtons(inputId = "data_file_type_MES", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-      downloadButton(outputId = "download_MES_data", label = "Download Map Data")
+      # br(),
+      # # Download
+      # h4("Download", style = "color: #094030;"),
+      # radioButtons(inputId = "data_file_type_MES", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
+      # downloadButton(outputId = "download_MES_data", label = "Download Map Data")
     ),
 
     column(10, div(id = "leaflet",
@@ -12419,13 +12419,16 @@ server <- function(input, output, session) {
     })
     
     # Load global data
-    MES_global_data = reactive({
-      load_modera_source_data(input$year_MES, season_MES_short()) |>
-        dplyr::select(LON, LAT, VARIABLE, TYPE) |>
-        st_as_sf(coords = c('LON', 'LAT')) |>
-        st_set_crs(4326)
+    MES_global_data <- reactive({
+      if (input$year_MES >= 1422 && input$year_MES <= 2008) {
+        load_modera_source_data(input$year_MES, season_MES_short()) |>
+          dplyr::select(LON, LAT, VARIABLE, TYPE, Name_Database, Paper_Database, Code_Proxy, Reference_Proxy, Reference_Proxy_Database, Omitted_Duplicates) |>
+          st_as_sf(coords = c('LON', 'LAT')) |>
+          st_set_crs(4326)
+      } else {
+        NULL
+      }
     })
-    
     
     ### Leaflet Map ----
     
@@ -12467,27 +12470,36 @@ server <- function(input, output, session) {
         proxy %>% clearControls()
       }
     })
-    
+
     # Use a separate observer to add the data points
     observe({
-      proxy <- leafletProxy("MES_leaflet")
+      data <- MES_global_data()
+      
+      if (!is.null(data)) {
+        proxy <- leafletProxy("MES_leaflet")
+        
         proxy %>% clearMarkers() %>%
-          addCircleMarkers(data = MES_global_data(),
+          addCircleMarkers(data = data,
                            radius = 5,
-                           fillColor = ~pal_type(TYPE),
+                           fillColor = ~pal_type(data$TYPE),
                            stroke = TRUE,
                            weight = 1,  # Thickness of the border
                            color = "grey",
                            fillOpacity = 1,
                            opacity = 1,
-                           group = MES_global_data()$TYPE,
+                           group = data$TYPE,
                            popup = paste(
-                             "<strong>Measurement type: </strong>", named_variables[MES_global_data()$VARIABLE],
-                             "<br><strong>Source type: </strong>", named_types[MES_global_data()$TYPE], 
-                             "<br><strong>Link to source: </strong>", 
-                             "<a href='https://www.sbb.ch' target='_blank'>SBB</a>" #add link to database or publication
+                             "<strong>Measurement type: </strong>", named_variables[data$VARIABLE],
+                             "<br><strong>Source type: </strong>", named_types[data$TYPE], 
+                             "<br><strong>Name database: </strong>", data$Name_Database,
+                             "<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
+                             "<br><strong>Proxy code: </strong>", data$Code_Proxy,
+                             "<br><strong>Proxy reference: </strong>", data$Reference_Proxy,
+                             "<br><strong>Proxy reference database: </strong>", data$Reference_Proxy_Database
                            )
           )
+      }
+      
     })
     
   ## Concerning all modes (mainly updating Ui) ----
