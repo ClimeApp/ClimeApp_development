@@ -262,8 +262,8 @@ ui <- navbarPage(id = "nav1",
                      br(), br(),
                      h5(strong("v1.2 (23.06.2024)", style = "color: #094030;")),
                      tags$ul(
-                       tags$li("Preprocessed data for all Datasets (Mode-Sim, Mode-R-Clim and Mode-RA)"),
-                       tags$li("Overhaul of Mode-Source plots and data"),
+                       tags$li("Preprocessed data for all datasets (Mode-Sim, Mode-R-Clim and Mode-RA) to speed loading time"),
+                       tags$li("Overhaul of Mode-RA source plots to allow exploration and access to detailed source data"),
                      ),
                      br(),
                      h5(strong("v1.1 (04.04.2024)", style = "color: #094030;")),
@@ -4466,7 +4466,7 @@ ui <- navbarPage(id = "nav1",
          )),
 
 # ModE-RA Sources START ----                             
-  tabPanel("ModE-RA Sources", value = "tab6",
+  tabPanel("Explore ModE-RA Sources", value = "tab6",
     shinyjs::useShinyjs(),
     
     MEsource_leaflet_popover("pop_MEsource_main"),
@@ -4490,13 +4490,12 @@ ui <- navbarPage(id = "nav1",
       
       # Add checkbox for legend
       checkboxInput(inputId = "legend_MES", "Show legend", FALSE),
-      #radioButtons(inputId = "legend_MES", label = "", choices = c("Show legend", "Hide legend"), selected = "Show legend", inline = TRUE),
-      
-      # br(),
-      # # Download
-      # h4("Download", style = "color: #094030;"),
-      # radioButtons(inputId = "data_file_type_MES", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-      # downloadButton(outputId = "download_MES_data", label = "Download Map Data")
+
+      br(),
+      # Download
+      h4("Download", style = "color: #094030;"),
+      radioButtons(inputId = "data_file_type_MES", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
+      downloadButton(outputId = "download_MES_data", label = "Download Map Data")
     ),
 
     column(10, div(id = "leaflet",
@@ -4509,18 +4508,7 @@ ui <- navbarPage(id = "nav1",
         image.height = spinner_height)))),
 
     br(),
-    
-    #Download
-    # h4("Downloads", style = "color: #094030;"),
-    # fluidRow(
-    #   # Download image
-    #   column(2,radioButtons(inputId = "file_type_MES", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-    #   column(3,downloadButton(outputId = "download_MES", label = "Download Map")),
-    # ),
-    # 
 
-    
-    
   #   tags$style(HTML("
   #   .leaflet-control .legend-labels {
   #     text-align: left !important;
@@ -10491,7 +10479,13 @@ server <- function(input, output, session) {
     
     # Set up data function
     fad_data <- function() {
-      download_feedback_data(fad_global_data(), fad_zoom()[1:2], fad_zoom()[3:4])}
+      fad_base_data = download_feedback_data(fad_global_data(), fad_zoom()[1:2], fad_zoom()[3:4])
+      fad_col_names = c(colnames(fad_base_data)[1:(length(fad_base_data)-1)],"Observations")
+      
+      fad_base_data$Omitted_Duplicates = fad_base_data$Omitted_Duplicates + 1
+      colnames(fad_base_data) = fad_col_names
+      return(fad_base_data)
+    }
     
     observeEvent(lonlat_vals()|input$fad_reset_zoom,{
       fad_zoom(lonlat_vals())
@@ -10927,8 +10921,16 @@ server <- function(input, output, session) {
     output$fad_map2 <- renderPlot({fad_plot2()})
     
     # Set up data function
-    fad_data2 <- function() {download_feedback_data(fad_global_data2(), fad_zoom2()[1:2], fad_zoom2()[3:4])}
-    
+    fad_data2 <- function() {
+      
+      fad_base_data2 = download_feedback_data(fad_global_data2(), fad_zoom2()[1:2], fad_zoom2()[3:4])
+      fad_col_names2 = c(colnames(fad_base_data2)[1:(length(fad_base_data2)-1)],"Observations")
+      
+      fad_base_data2$Omitted_Duplicates = fad_base_data2$Omitted_Duplicates + 1
+      colnames(fad_base_data2) = fad_col_names2
+      return(fad_base_data2)
+    }
+
     observeEvent(lonlat_vals2()|input$fad_reset_zoom2,{
       fad_zoom2(lonlat_vals2())
     })
@@ -11535,8 +11537,17 @@ server <- function(input, output, session) {
     output$fad_map3 <- renderPlot({fad_plot3()})
     
     # Set up data function
-    fad_data3 <- function() {download_feedback_data(fad_global_data3(), fad_zoom3()[1:2], fad_zoom3()[3:4])}
-    
+    fad_data3 <- function() {
+      
+      fad_base_data3 = download_feedback_data(fad_global_data3(), fad_zoom3()[1:2], fad_zoom3()[3:4])
+      fad_col_names3 = c(colnames(fad_base_data3)[1:(length(fad_base_data3)-1)],"Observations")
+      
+      fad_base_data3$Omitted_Duplicates = fad_base_data3$Omitted_Duplicates + 1
+      colnames(fad_base_data3) = fad_col_names3
+      return(fad_base_data3)
+      
+    }
+
     observeEvent(lonlat_vals3()|input$fad_reset_zoom3,{
       fad_zoom3(lonlat_vals3())
     })
@@ -12078,8 +12089,17 @@ server <- function(input, output, session) {
       output$fad_map4 <- renderPlot({fad_plot4()})
       
       # Set up data function
-      fad_data4 <- function() {download_feedback_data(fad_global_data4(), fad_zoom4()[1:2], fad_zoom4()[3:4])}
-      
+      fad_data4 <- function() {
+        
+        fad_base_data4 = download_feedback_data(fad_global_data4(), fad_zoom4()[1:2], fad_zoom4()[3:4])
+        fad_col_names4 = c(colnames(fad_base_data4)[1:(length(fad_base_data4)-1)],"Observations")
+        
+        fad_base_data4$Omitted_Duplicates = fad_base_data4$Omitted_Duplicates + 1
+        colnames(fad_base_data4) = fad_col_names4
+        return(fad_base_data4)
+        
+      }
+
       observeEvent(lonlat_vals_dv()|input$fad_reset_zoom4,{
         fad_zoom4(lonlat_vals_dv())
       })
@@ -12331,14 +12351,25 @@ server <- function(input, output, session) {
     output$fad_map5 <- renderPlot({fad_plot5()})
     
     # Set up data function
-    fad_data5 <- function() {download_feedback_data(fad_global_data5(), fad_zoom5()[1:2], fad_zoom5()[3:4])}
-    
+    fad_data5 <- function() {
+      
+      fad_base_data5 = download_feedback_data(fad_global_data5(), fad_zoom5()[1:2], fad_zoom5()[3:4])
+      fad_col_names5 = c(colnames(fad_base_data5)[1:(length(fad_base_data5)-1)],"Observations")
+      
+      fad_base_data5$Omitted_Duplicates = fad_base_data5$Omitted_Duplicates + 1
+      colnames(fad_base_data5) = fad_col_names5
+      return(fad_base_data5)
+      
+    }
+
     # Update fad lonlat
     
-    #observeEvent(input$add_monthly_ts,{
-    #  fad_zoom5(c(input$range_longitude5,input$range_latitude5))
-    #})
+    observe({
+      # Update zoom parameters based on range_longitude5 and range_latitude5 change
+      fad_zoom5(c(input$range_longitude5[1],input$range_longitude5[2],input$range_latitude5[1], input$range_latitude5[2]))
+    })
     
+
     observeEvent(input$fad_reset_zoom5,{
       fad_zoom5(c(-180,180,-90,90))
     })
@@ -12461,7 +12492,8 @@ server <- function(input, output, session) {
                          group = data$TYPE,
                          popup = paste(
                            "<strong>Measurement type: </strong>", named_variables[data$VARIABLE],
-                           "<br><strong>Source type: </strong>", named_types[data$TYPE], 
+                           "<br><strong>Source type: </strong>", named_types[data$TYPE],
+                           "<br><strong>Observations: </strong>", data$Omitted_Duplicates+1, 
                            "<br><strong>Name database: </strong>", data$Name_Database,
                            "<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
                            "<br><strong>Proxy code: </strong>", data$Code_Proxy,
@@ -12485,9 +12517,15 @@ server <- function(input, output, session) {
                     opacity = 1.0) |>
 
           addControl(
-            html = sprintf("<strong>Total global sources visible: %d</strong>", nrow(MES_global_data())),
+            html = sprintf("<strong>Total global sources: %d</strong>", nrow(MES_global_data())),
+            position = "bottomleft"
+          ) |>
+        
+          addControl(
+            html = sprintf("<strong>Total global observations: %d</strong>", nrow(MES_global_data()) + sum(MES_global_data()$Omitted_Duplicates)),
             position = "bottomleft"
           )
+        
       }
       else {
         proxy <- leafletProxy("MES_leaflet")
@@ -12516,6 +12554,7 @@ server <- function(input, output, session) {
                            popup = paste(
                              "<strong>Measurement type: </strong>", named_variables[data$VARIABLE],
                              "<br><strong>Source type: </strong>", named_types[data$TYPE], 
+                             "<br><strong>Observations: </strong>", data$Omitted_Duplicates+1, 
                              "<br><strong>Name database: </strong>", data$Name_Database,
                              "<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
                              "<br><strong>Proxy code: </strong>", data$Code_Proxy,
@@ -12525,6 +12564,35 @@ server <- function(input, output, session) {
       }
     })
     
+    ## Download Preparation for Data (CSV/XLSX)
+    # Set up values and functions for plotting
+    fad_zoom_MES  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
+    
+    MES_global_data_download = reactive({
+      load_modera_source_data(input$year_MES, season_MES_short())
+    })
+ 
+    # Set up data function
+    fad_data_MES <- function() {
+      fad_base_data_MES = download_feedback_data(MES_global_data_download(), fad_zoom_MES()[1:2], fad_zoom_MES()[3:4])
+      fad_col_names_MES = c(colnames(fad_base_data_MES)[1:(length(fad_base_data_MES)-1)],"Observations")
+
+      fad_base_data_MES$Omitted_Duplicates = fad_base_data_MES$Omitted_Duplicates + 1
+      colnames(fad_base_data_MES) = fad_col_names_MES
+      return(fad_base_data_MES)
+    }
+
+    output$download_MES_data       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$season_MES),"_",input$year_MES,"_data.",input$data_file_type_MES, sep = "")},
+                                                      content  = function(file) {
+                                                        if (input$data_file_type_MES == "csv"){
+                                                          write.csv(fad_data_MES(), file,
+                                                                    row.names = FALSE)
+                                                        } else {
+                                                          write.xlsx(fad_data_MES(), file,
+                                                                     col.names = TRUE,
+                                                                     row.names = FALSE)
+                                                        }})
+
   ## Concerning all modes (mainly updating Ui) ----
     
     #Updates Values outside of min / max (numericInput)
@@ -12767,16 +12835,16 @@ server <- function(input, output, session) {
     # })
     
   ## Stop App on end of session ----
-     # session$onSessionEnded(function() {
-     #   stopApp()
-     # })
+     session$onSessionEnded(function() {
+       stopApp()
+     })
 # Close server function ----
 }
 
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
 # Run the app normally
-  # runApp(app)
+  runApp(app)
 # Run the app with profiling
   # profvis({runApp(app)})
 

@@ -1976,13 +1976,13 @@ plot_modera_sources = function(ME_source_data,year,season,minmax_lonlat){
   # }
   
   if (identical(minmax_lonlat, c(-180, 180, -90, 90))) {
-    total_sources = sum(ME_source_data$Omitted_Duplicates) + nrow(ME_source_data)
+    total_observations = sum(ME_source_data$Omitted_Duplicates) + nrow(ME_source_data)
     visible_sources = nrow(ME_source_data)
     cut_sources = sum(ME_source_data$Omitted_Duplicates)
   } else {
     in_boundary = ME_source_data$LON > minmax_lonlat[1] & ME_source_data$LON < minmax_lonlat[2] &
       ME_source_data$LAT > minmax_lonlat[3] & ME_source_data$LAT < minmax_lonlat[4]
-    total_sources = sum(ME_source_data$Omitted_Duplicates[in_boundary]) + sum(in_boundary)
+    total_observations = sum(ME_source_data$Omitted_Duplicates[in_boundary]) + sum(in_boundary)
     visible_sources = sum(in_boundary)
     cut_sources = sum(ME_source_data$Omitted_Duplicates[in_boundary])
   }
@@ -2013,7 +2013,7 @@ plot_modera_sources = function(ME_source_data,year,season,minmax_lonlat){
     geom_sf() + coord_sf(xlim = minmax_lonlat[c(1,2)], ylim = minmax_lonlat[c(3,4)], crs = st_crs(4326)) +
     geom_point(data=ME_source_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
     labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
-         subtitle = paste0("Total Sources = ",total_sources,", ","Omitted Duplicates = ", cut_sources, ", ", "Visible Sources =", visible_sources), x = "", y = "") +
+         subtitle = paste0("Total Observations = ",total_observations,", ", "Total Sources =", visible_sources), x = "", y = "") +
     scale_shape_manual(values = named_shapes) +
     scale_colour_manual(values = named_colors) +
     guides() + 
@@ -2029,9 +2029,6 @@ download_feedback_data = function(global_data, lon_range, lat_range) {
   # Subset data based on lon and lat range
   subset_data = global_data[(global_data$LON > lon_range[1]) & (global_data$LON < lon_range[2]) &
                                 (global_data$LAT > lat_range[1]) & (global_data$LAT < lat_range[2]), ]
-  
-  # Remove the first three columns
-  subset_data = subset_data[, -c(1:3)]
 }
 
 
