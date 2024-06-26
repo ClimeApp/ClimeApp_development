@@ -249,6 +249,11 @@ ui <- navbarPage(id = "nav1",
                      tags$hr(),
                      
                      br(), br(),
+                     h5(strong("Explore ModE-RA Sources", style = "color: #094030;")),
+                     helpText("The interactive map shows information on all the sources used to create ModE-RA and ModE-RAclim. Source data should include the study or database that observations were sourced from, along with supplementary information. A rounding algorithm was used to identfy each study based on source type and location, so there is a small chance that some data sources may have been mis-attributed. Please report any errors or omissions to the ClimeApp development team."),
+                     tags$hr(),
+                     
+                     br(), br(),
                      h5(strong("Source Analysis and Further Statistical Functions:", style = "color: #094030;")),
                      helpText("The accuracy of ModE-RA is dependent on the availability and reliability of observations to constrain the model ensemble of ModE-Sim. To capture this, ClimeApp includes tools for visualizing the sources used to create ModE-RA and ModE-RAclim and the standard deviation (SD) ratio of the ModE-RA and ModE-Sim ensembles. The ModE-RA sources are presented as a semi-annual map showing the data points assimilated for each half-year, grouped by type and variable. This allows the user to see where proxy, documentary or instrumental observations were integrated into the reconstruction and any gaps in the data. The SD ratio meanwhile, is the standard deviation of the ModE-Sim ensemble divided by the standard deviation of ModE-RA after the assimilation of observations:"),
                      br(), withMathJax("$$ SD \\ ratio = \\frac{\\sigma_{ModE-RA \\ Ensemble}}{\\sigma_{ModE-SIM \\ Ensemble}}$$"), 
@@ -1170,7 +1175,7 @@ ui <- navbarPage(id = "nav1",
                                      selected = "April to September"),
                         ),
                         
-                      h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                      h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                       
                       withSpinner(ui_element = plotOutput("fad_map",
                                                                   brush = brushOpts(
@@ -2092,7 +2097,7 @@ ui <- navbarPage(id = "nav1",
                                           selected = "April to September"),
                             ),
                             
-                            h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                            h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                             
                             withSpinner(ui_element = plotOutput("fad_map2",
                                                                 brush = brushOpts(
@@ -3206,7 +3211,7 @@ ui <- navbarPage(id = "nav1",
                                          selected = "April to September"),
                            ),
                            
-                           h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                           h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                            
                            withSpinner(ui_element = plotOutput("fad_map3",
                                                                brush = brushOpts(
@@ -3869,7 +3874,7 @@ ui <- navbarPage(id = "nav1",
                                     selected = "April to September"),
                       ),
                       
-                      h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                      h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                       
                       withSpinner(ui_element = plotOutput("fad_map4",
                                                           brush = brushOpts(
@@ -4424,7 +4429,7 @@ ui <- navbarPage(id = "nav1",
                                     selected = "April to September"),
                       ),
                       
-                      h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                      h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                       
                       withSpinner(ui_element = plotOutput("fad_map5",
                                                           brush = brushOpts(
@@ -4469,8 +4474,8 @@ ui <- navbarPage(id = "nav1",
   tabPanel("Explore ModE-RA Sources", value = "tab6",
     shinyjs::useShinyjs(),
     
-    MEsource_leaflet_popover("pop_MEsource_main"),
-    h6("This interactive map let's you explore the feedback archive of assimilated sources that were used to ModE-RA and ModE-RAclim.", style = "color: #094030;"),
+    h4("Explore ModE-RA sources", style = "color: #094030;"),
+    h6("This interactive map let's you explore the individual data sources that were used to create ModE-RA and ModE-RAclim.", style = "color: #094030;"),
     h6("Click on a point to get more information and access the database or publication behind it.", style = "color: #094030;"),
     
     fluidRow(
@@ -12515,17 +12520,16 @@ server <- function(input, output, session) {
                     labels = c("Bivalve", "Coral", "Documentary", "Glacier ice", "Ice", "Instrumental", "Lake sediment", "Other", "Speleothem", "Tree"),
                     position = "bottomleft",
                     opacity = 1.0) |>
-
-          addControl(
-            html = sprintf("<strong>Total global sources: %d</strong>", nrow(MES_global_data())),
-            position = "bottomleft"
-          ) |>
-        
+          
           addControl(
             html = sprintf("<strong>Total global observations: %d</strong>", nrow(MES_global_data()) + sum(MES_global_data()$Omitted_Duplicates)),
             position = "bottomleft"
+          ) |>
+          
+          addControl(
+            html = sprintf("<strong>Total global sources: %d</strong>", nrow(MES_global_data())),
+            position = "bottomleft"
           )
-        
       }
       else {
         proxy <- leafletProxy("MES_leaflet")
