@@ -495,27 +495,10 @@ netcdf_popover = function(popover_ID){
 MEsource_popover = function(popover_ID){
   popover(
     h4(HTML("Plot ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 0px;"),
-    "These plots show location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
-    em("Assimilated Observations – Oct. to Mar."),"shows sources that were used to produce the monthly reconstruction between October and March, while",em("Assimilated Observations – Apr. to Sept."),"shows sources that were used to produce the reconstruction between April and September.",br(),br(),
-    em("VARIABLE"),"refers to the value that was directly measured. So, for example, a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.",br(),br(), 
-    em("Total Sources"), "shows the total of all used observations.", em("Omitted Duplicates"), "gives you the amount of identical sources of different assimilations.", em("Visible Sources"),"depicts the amount of all the different proxies, studies and sources.", br(),br(),
-    "See",em("ModE data"),"tab on the Welcome page for more information.",
-    id = popover_ID,
-    placement = "right",
-  ) 
-}
-
-## MODE-RA SOURCES
-## popover_IDs = pop_anomalies_mesource, pop_composites_mesource, pop_correlation_mesource, pop_regression_mesource, pop_anncyc_mesource
-
-MEsource_leaflet_popover = function(popover_ID){
-  popover(
-    h4(HTML("Explore ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 0px;"),
-    "This map shows location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
-    em("Assimilated Observations – Oct. to Mar."),"shows sources that were used to produce the monthly reconstruction between October and March, while",em("Assimilated Observations – Apr. to Sept."),"shows sources that were used to produce the reconstruction between April and September.",br(),br(),
-    em("VARIABLE"),"refers to the value that was directly measured. So, for example, a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.",br(),br(), 
-    em("Total Sources"), "shows the total of all used observations.", em("Omitted Duplicates"), "gives you the amount of identical sources of different assimilations.", em("Visible Sources"),"depicts the amount of all the different proxies, studies and sources.", br(),br(),
-    "See",em("ModE data"),"tab on the Welcome page for more information.",
+    "This plot shows location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
+    "Each",em("source"),"may have 1 or more", em("observations")," associated with it. These",em("observations"),"are the individual data points used to create ModE-RA.", br(),br(),
+    "The term", em("VARIABLE"),"refers to the value that was directly measured by each source. For example, a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.",br(),br(), 
+    "Use the",em("Explore ModE-RA Sources"),"tab or", em("Download Map Data"),"tool for more information on indiviudal sources",
     id = popover_ID,
     placement = "right",
   ) 
@@ -2014,7 +1997,7 @@ plot_modera_sources = function(ME_source_data,year,season,minmax_lonlat){
     geom_sf() + coord_sf(xlim = minmax_lonlat[c(1,2)], ylim = minmax_lonlat[c(3,4)], crs = st_crs(4326)) +
     geom_point(data=ME_source_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
     labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
-         subtitle = paste0("Total Observations = ",total_observations,", ", "Total Sources =", visible_sources), x = "", y = "") +
+         subtitle = paste0("Total Sources = ", visible_sources,", ","Total Observations = ",total_observations), x = "", y = "") +
     scale_shape_manual(values = named_shapes) +
     scale_colour_manual(values = named_colors) +
     guides() + 
