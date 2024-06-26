@@ -41,9 +41,10 @@ library(profvis)
 library(openxlsx) #Don't Change order!
 library(xlsx)
 #new libraries for leaflet
-library(sf)
 library(leaflet)
 library(htmltools)
+library(dplyr)
+library(plotly)  # Load plotly library for interactivity
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
@@ -2031,6 +2032,86 @@ download_feedback_data = function(global_data, lon_range, lat_range) {
                                 (global_data$LAT > lat_range[1]) & (global_data$LAT < lat_range[2]), ]
 }
 
+## (General) PLOT MODE-RA SOURCES AS TIME SERIES in the new ModE-RA section
+##           data = filepath to prepared sources file
+##           year_column = 
+##           selected_columns =
+##           line_titles =
+##           title =
+##           x_label =
+##           y_label =
+##           x_ticks_every =
+##           year_range =
+
+# Custom function for formatting y-axis labels with apostrophe for thousands separator
+comma_apostrophe <- function(x) {
+  format(x, big.mark = "'", scientific = FALSE)
+}
+
+# Function to create the time series plot for selected lines with a legend
+plot_time_series <- function(data, year_column, selected_columns, line_titles, title, x_label, y_label, x_ticks_every, year_range) {
+  # Filter data based on the selected year range
+  data <- data %>% filter(get(year_column) >= year_range[1], get(year_column) <= year_range[2])
+  
+  # Define custom colors for each line (adjust as needed)
+  line_colors <- c(
+    "Global Sources (Apr. - Sept.)" = "#CC6677",
+    "Global Observations (Apr. - Sept.)" = "#882255",
+    "Global Sources (Oct. - Mar.)" = "#88CCEE",
+    "Global Observations (Oct. - Mar.)" = "#332288",
+    "Global Sources Total" = "#DDCC77",
+    "Global Observations Total" = "#117733"
+  )
+  
+  # Calculate the maximum value of the selected columns
+  max_value <- data %>% select(all_of(selected_columns)) %>% max(na.rm = TRUE)
+  
+  # Determine appropriate breaks based on the maximum value (rounded up to next whole number)
+  y_breaks <- ceiling(seq(0, max_value, length.out = 10))
+  
+  # Determine x-axis tick marks dynamically based on year range
+  if ((year_range[2] - year_range[1]) <= 10) {
+    x_ticks_every <- 2  # Tick every year if range is 10 years or less
+  } else if ((year_range[2] - year_range[1]) <= 20) {
+    x_ticks_every <- 5  # Tick every 5 years if range is between 11 and 20 years
+  } else {
+    x_ticks_every <- 20  # Default tick interval if range is more than 20 years
+  }
+  
+  # Create an empty plot object using ggplot
+  p <- ggplot(data) +
+    labs(title = title, x = x_label, y = y_label, color = "Legend") +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5, size = 20),
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      legend.title = element_text(face = "bold")  # Make the legend title bold
+    )
+  
+  # Add each selected line to the plot with customized titles and colors
+  for (col in selected_columns) {
+    title <- line_titles[[col]]
+    p <- p + geom_line(aes_string(x = year_column, y = col, color = shQuote(title)), size = 1)
+  }
+  
+  # Adjust x-axis tick marks
+  if (x_ticks_every > 1) {
+    p <- p + scale_x_continuous(breaks = seq(year_range[1], year_range[2], by = x_ticks_every))
+  }
+  
+  # Format y-axis labels with apostrophe for thousands separator
+  p <- p + scale_y_continuous(labels = comma_apostrophe, breaks = y_breaks)
+  
+  # Set manual color scale with consistent colors
+  p <- p + scale_color_manual(values = line_colors)
+  
+  # Convert ggplot to plotly for interactivity
+  p <- ggplotly(p, tooltip = c("x","y"))
+  
+  return(p)
+}
 
 ## (General) GENERATE CUSTOM NETCDF
 ##           data_input = map plotting data
