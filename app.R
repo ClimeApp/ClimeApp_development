@@ -4505,22 +4505,8 @@ ui <- navbarPage(id = "nav1",
       br(), br(),
       #Modera Time Series
       h4("Total sources and observations", style = "color: #094030;"),
-      
 
-      checkboxGroupInput("selected_lines", "Select lines to plot:", 
-                         choices = c("Global Sources (Apr. - Sept.)" = "Total_global_sources_summer",
-                                     "Global Observations (Apr. - Sept.)" = "Total_global_observations_summer",
-                                     "Global Sources (Oct. - Mar.)" = "Total_global_sources_winter",
-                                     "Global Observations (Oct. - Mar.)" = "Total_global_observations_winter",
-                                     "Global Sources Total" = "Total_global_sources",
-                                     "Global Observations Total" = "Total_global_observations"),
-                         selected = c("Total_global_sources_summer", 
-                                      "Total_global_observations_summer",
-                                      "Total_global_sources_winter", 
-                                      "Total_global_observations_winter",
-                                      "Total_global_sources", 
-                                      "Total_global_observations")),
-      numericRangeInput("year_range", "Select Year Range:", 
+      numericRangeInput("year_range_sources", "Select Year Range:", 
                         value = c(1421, 2009), 
                         min = 1421, max = 2009, step = 1)
     ),
@@ -12625,6 +12611,7 @@ server <- function(input, output, session) {
                                                                      row.names = FALSE)
                                                         }})
     
+    ### TS Sources and Observation Map ----
     ## Timeseries plot for ModE-ra sources and observations
     
     # File path and data parameters
@@ -12652,19 +12639,20 @@ server <- function(input, output, session) {
     
     # Render plot for selected lines using plotly
     output$time_series_plot <- renderPlotly({
-      selected_columns <- input$selected_lines
-      year_range <- input$year_range
-      
-      if (length(selected_columns) == 0) {
-        return(NULL)  # Return NULL if no lines are selected
-      }
-      
-      plot_time_series(data_sources, year_column_sources, selected_columns, line_titles_sources,
-                       title = "Total Global Sources and Observations",
-                       x_label = "Year",
-                       y_label = "Total Amount",
-                       x_ticks_every = 20,
-                       year_range = year_range)
+      selected_columns <- c("Total_global_sources_summer",
+                            "Total_global_observations_summer",
+                            "Total_global_sources_winter",
+                            "Total_global_observations_winter",
+                            "Total_global_sources",
+                            "Total_global_observations")
+      year_range <- input$year_range_sources
+
+      plot_ts_modera_sources(data_sources, year_column_sources, selected_columns, line_titles_sources,
+                             title = "Total Global Sources and Observations",
+                             x_label = "Year",
+                             y_label = "Total Amount",
+                             x_ticks_every = 20,
+                             year_range = year_range)
     })
 
   ## Concerning all modes (mainly updating Ui) ----

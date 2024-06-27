@@ -1950,15 +1950,8 @@ plot_modera_sources = function(ME_source_data,year,season,minmax_lonlat){
   # Load data
   world=map_data("world")
   
-  # Sum total sources
-  # if (identical(minmax_lonlat,c(-180,180,-90,90))){
-  #   total_sources = length(ME_source_data$LON)
-  #   cut_sources = 0
-  # } else {
-  #   total_sources = sum((ME_source_data$LON>minmax_lonlat[1]) & (ME_source_data$LON<minmax_lonlat[2]) & (ME_source_data$LAT>minmax_lonlat[3]) & (ME_source_data$LAT<minmax_lonlat[4]))
-  #   cut_sources = 0
-  # }
-  
+  # Sum total sources and observations
+
   if (identical(minmax_lonlat, c(-180, 180, -90, 90))) {
     total_observations = sum(ME_source_data$Omitted_Duplicates) + nrow(ME_source_data)
     visible_sources = nrow(ME_source_data)
@@ -2016,15 +2009,15 @@ download_feedback_data = function(global_data, lon_range, lat_range) {
 }
 
 ## (General) PLOT MODE-RA SOURCES AS TIME SERIES in the new ModE-RA section
-##           data = filepath to prepared sources file
-##           year_column = 
-##           selected_columns =
-##           line_titles =
-##           title =
-##           x_label =
-##           y_label =
-##           x_ticks_every =
-##           year_range =
+##           data = The read and prepared data for the TS plot
+##           year_column = Name of the Column of the Years (X Axis, I think) = "Year"
+##           selected_columns = Input of the selected lines of the source plots (Set fix to all Columns)
+##           line_titles = Titles for the legend of the plot
+##           title = "Total Global Sources and Observations"
+##           x_label = "Year"
+##           y_label = "Total Amount"
+##           x_ticks_every = 20
+##           year_range = Input of the Year Range of the Sources
 
 # Custom function for formatting y-axis labels with apostrophe for thousands separator
 comma_apostrophe <- function(x) {
@@ -2032,7 +2025,7 @@ comma_apostrophe <- function(x) {
 }
 
 # Function to create the time series plot for selected lines with a legend
-plot_time_series <- function(data, year_column, selected_columns, line_titles, title, x_label, y_label, x_ticks_every, year_range) {
+plot_ts_modera_sources <- function(data, year_column, selected_columns, line_titles, title, x_label, y_label, x_ticks_every, year_range) {
   # Filter data based on the selected year range
   data <- data %>% filter(get(year_column) >= year_range[1], get(year_column) <= year_range[2])
   
