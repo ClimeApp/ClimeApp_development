@@ -4504,7 +4504,7 @@ ui <- navbarPage(id = "nav1",
       
       br(), br(),
       #Modera Time Series
-      h4("Total sources and observations", style = "color: #094030;"),
+      h4("Total sources and observations", style = "color: #094030;", sourcesandobservations_popover("pop_sourcesandobservation")),
 
       numericRangeInput("year_range_sources", "Select Year Range:", 
                         value = c(1421, 2009), 
@@ -12615,7 +12615,7 @@ server <- function(input, output, session) {
     ## Timeseries plot for ModE-ra sources and observations
     
     # File path and data parameters
-    file_path_sources <- "C:/Users/nikla/OneDrive/1_Universität/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp/data/feedback_archive_fin/Info/total_sources_observations.xlsx"
+    file_path_sources <- "data/feedback_archive_fin/Info/total_sources_observations.xlsx"
     sheet_name_sources <- "sources"
     year_column_sources <- "Year"
     value_columns_sources <- c("Total_global_sources_summer", 
@@ -12650,7 +12650,7 @@ server <- function(input, output, session) {
       plot_ts_modera_sources(data_sources, year_column_sources, selected_columns, line_titles_sources,
                              title = "Total Global Sources and Observations",
                              x_label = "Year",
-                             y_label = "Total Amount",
+                             y_label = "Sources/Observations",
                              x_ticks_every = 20,
                              year_range = year_range)
     })
