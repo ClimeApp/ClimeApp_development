@@ -9,7 +9,7 @@
 #Richard:
 #Laptop/desktop:
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
@@ -987,7 +987,7 @@ load_ModE_data = function(dataset,variable){
     } else if (variable == "SLP"){
       data_output = ncvar_get(data_nc,varid="slp")/100 
     } else {
-      data_output = ncvar_get(data_nc,varid="geopotential_height")
+      data_output = ncvar_get(data_nc,varid="geopoth")
     }
     
     nc_close(data_nc)
@@ -1037,7 +1037,7 @@ load_ModE_data = function(dataset,variable){
     } else if (variable == "SLP"){
       data_output = ncvar_get(data_nc,varid="slp")/100 
     } else {
-      data_output = ncvar_get(data_nc,varid="geopotential_height")
+      data_output = ncvar_get(data_nc,varid="geopoth")
     }
     
     nc_close(data_nc)
@@ -1061,7 +1061,7 @@ load_ModE_data = function(dataset,variable){
     } else if (variable == "SLP"){
       data_output = ncvar_get(data_nc,varid="slp")
     } else {
-      data_output = ncvar_get(data_nc,varid="geopotential_height")
+      data_output = ncvar_get(data_nc,varid="geopoth")
     }
     
     nc_close(data_nc)
