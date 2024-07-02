@@ -9,7 +9,7 @@
 #Richard:
 #Laptop/desktop:
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
@@ -721,7 +721,18 @@ annualcycles_region_popover = function(popover_ID){
   )  
 }
 
-
+## TOTAL SOURCES AND OBSERVATIONS POPOVER
+## popover_IDs = pop_sourcesandobservation
+sourcesandobservations_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "The timeseries below the main map shows the total number of", em("sources"),"and", em("observations"),"that were used to create ModE-RA/ModE-RAclim for each year/half-year.",br(),br(),
+    "A", em("source"),"is a single data source, from which several climate", em("observations"),"per year/half-year may have been used.",br(),br(),
+    "Click names on the legend to add/remove lines from the plot.",
+    id = popover_ID,
+    placement = "right",
+  )
+}
 
 #### Internal Functions ####
 # (Functions used ONLY by other functions)
@@ -976,7 +987,7 @@ load_ModE_data = function(dataset,variable){
     } else if (variable == "SLP"){
       data_output = ncvar_get(data_nc,varid="slp")/100 
     } else {
-      data_output = ncvar_get(data_nc,varid="geopotential_height")
+      data_output = ncvar_get(data_nc,varid="geopoth")
     }
     
     nc_close(data_nc)
@@ -1026,7 +1037,7 @@ load_ModE_data = function(dataset,variable){
     } else if (variable == "SLP"){
       data_output = ncvar_get(data_nc,varid="slp")/100 
     } else {
-      data_output = ncvar_get(data_nc,varid="geopotential_height")
+      data_output = ncvar_get(data_nc,varid="geopoth")
     }
     
     nc_close(data_nc)
@@ -1050,7 +1061,7 @@ load_ModE_data = function(dataset,variable){
     } else if (variable == "SLP"){
       data_output = ncvar_get(data_nc,varid="slp")
     } else {
-      data_output = ncvar_get(data_nc,varid="geopotential_height")
+      data_output = ncvar_get(data_nc,varid="geopoth")
     }
     
     nc_close(data_nc)
@@ -2015,7 +2026,7 @@ download_feedback_data = function(global_data, lon_range, lat_range) {
 ##           line_titles = Titles for the legend of the plot
 ##           title = "Total Global Sources and Observations"
 ##           x_label = "Year"
-##           y_label = "Total Amount"
+##           y_label = "No. of Sources/Observations"
 ##           x_ticks_every = 20
 ##           year_range = Input of the Year Range of the Sources
 
@@ -2069,7 +2080,7 @@ plot_ts_modera_sources <- function(data, year_column, selected_columns, line_tit
   # Add each selected line to the plot with customized titles and colors
   for (col in selected_columns) {
     title <- line_titles[[col]]
-    p <- p + geom_line(aes_string(x = year_column, y = col, color = shQuote(title)), size = 1)
+    p <- p + geom_line(aes_string(x = year_column, y = col, color = shQuote(title)), linewidth = 1)
   }
   
   # Adjust x-axis tick marks
