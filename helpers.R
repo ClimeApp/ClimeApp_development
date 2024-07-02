@@ -2070,11 +2070,11 @@ plot_ts_modera_sources <- function(data, year_column, selected_columns, line_tit
     labs(title = title, x = x_label, y = y_label, color = "Legend") +
     theme_minimal() +
     theme(
-      plot.title = element_text(hjust = 0.5, size = 20),
-      axis.title.x = element_text(size = 15),
-      axis.title.y = element_text(size = 15),
+      plot.title = element_text(hjust = 0.5, size = 20, color = "#094030"),
+      axis.title.x = element_text(size = 15, color = "#094030"),
+      axis.title.y = element_text(size = 15, color = "#094030"),
       axis.text.x = element_text(angle = 45, hjust = 1),
-      legend.title = element_text(face = "bold")  # Make the legend title bold
+      legend.title = element_text(size = 12, face = "bold", color = "#094030")  # Make the legend title bold
     )
   
   # Add each selected line to the plot with customized titles and colors
