@@ -12738,7 +12738,7 @@ server <- function(input, output, session) {
     updateNumericInputRange2("ref_period_sg_iv", 1422, 2008)
     updateNumericInputRange2("ref_period_sg_dv", 1422, 2008)
     updateNumericInputRange2("ref_period_sg5", 1422, 2008)
-    #updateNumericInputRange2("year_MES", 1422, 2008)
+    updateNumericInputRange2("year_MES", 1422, 2008)
 
     #Updates Values outside of min / max (numericRangeInput)
     
@@ -12886,16 +12886,7 @@ server <- function(input, output, session) {
         )
       }
     })
-    
-    # observe({
-    #   if (!is.na(input$year_MES)) {
-    #     updateNumericRangeInput(
-    #       inputId = "year_MES1",
-    #       value   = c(input$year_MES, input$year_MES)
-    #     )
-    #   }
-    # })
-    
+
   ## Stop App on end of session ----
      session$onSessionEnded(function() {
        stopApp()
