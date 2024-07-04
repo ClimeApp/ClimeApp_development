@@ -18,7 +18,8 @@
 ## Packages
 
 # Set library path
-assign(".lib.loc", "library", envir = environment(.libPaths))
+#assign(".lib.loc", "library", envir = environment(.libPaths))
+#assign(".lib.loc", "/home/climeapp/R/x86_64-pc-linux-gnu-library/4.4", envir = environment(.libPaths))
 
 #WD and Packages
 library(shiny)

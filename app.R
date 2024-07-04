@@ -12888,16 +12888,16 @@ server <- function(input, output, session) {
     })
 
   ## Stop App on end of session ----
-     session$onSessionEnded(function() {
-       stopApp()
-     })
+     # session$onSessionEnded(function() {
+     #   stopApp()
+     # })
 # Close server function ----
 }
 
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
 # Run the app normally
-  runApp(app)
+  # runApp(app)
 # Run the app with profiling
   # profvis({runApp(app)})
 
