@@ -12513,8 +12513,8 @@ server <- function(input, output, session) {
                            "<strong>Measurement type: </strong>", named_variables[data$VARIABLE],
                            "<br><strong>Source type: </strong>", named_types[data$TYPE],
                            "<br><strong>Observations: </strong>", data$Omitted_Duplicates+1, 
-                           "<br><strong>Name database: </strong>", data$Name_Database,
-                           "<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
+                           "<br><strong>Name database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Name_Database, "</a>",
+                           #"<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
                            "<br><strong>Proxy code: </strong>", data$Code_Proxy,
                            "<br><strong>Proxy reference: </strong>", data$Reference_Proxy,
                            "<br><strong>Proxy reference database: </strong>", data$Reference_Proxy_Database
