@@ -44,6 +44,7 @@ library(xlsx)
 library(sf)
 library(leaflet)
 library(htmltools)
+library(mapdata)
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
@@ -71,23 +72,23 @@ spinner_width = 310
 spinner_height = 200
 
 # Load pre-processed data
-annual_temp_nc = nc_open("data/ModE-RA/Annual/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_year.nc")
-DJF_temp_nc = nc_open("data/ModE-RA/DJF/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_djf.nc")
-MAM_temp_nc = nc_open("data/ModE-RA/MAM/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_mam.nc")
-JJA_temp_nc = nc_open("data/ModE-RA/JJA/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_jja.nc")
-SON_temp_nc = nc_open("data/ModE-RA/SON/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_son.nc")
+annual_temp_nc = nc_open("data/ModE-RA/year/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_year.nc")
+DJF_temp_nc = nc_open("data/ModE-RA/djf/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_djf.nc")
+MAM_temp_nc = nc_open("data/ModE-RA/mam/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_mam.nc")
+JJA_temp_nc = nc_open("data/ModE-RA/jja/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_jja.nc")
+SON_temp_nc = nc_open("data/ModE-RA/son/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1420-2009_son.nc")
 
-annual_prec_nc = nc_open("data/ModE-RA/Annual/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_year.nc")
-DJF_prec_nc = nc_open("data/ModE-RA/DJF/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_djf.nc")
-MAM_prec_nc = nc_open("data/ModE-RA/MAM/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_mam.nc")
-JJA_prec_nc = nc_open("data/ModE-RA/JJA/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_jja.nc")
-SON_prec_nc = nc_open("data/ModE-RA/SON/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_son.nc")
+annual_prec_nc = nc_open("data/ModE-RA/year/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_year.nc")
+DJF_prec_nc = nc_open("data/ModE-RA/djf/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_djf.nc")
+MAM_prec_nc = nc_open("data/ModE-RA/mam/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_mam.nc")
+JJA_prec_nc = nc_open("data/ModE-RA/jja/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_jja.nc")
+SON_prec_nc = nc_open("data/ModE-RA/son/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_totprec_abs_1420-2009_son.nc")
 
-annual_slp_nc = nc_open("data/ModE-RA/Annual/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_year.nc")
-DJF_slp_nc = nc_open("data/ModE-RA/DJF/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_djf.nc")
-MAM_slp_nc = nc_open("data/ModE-RA/MAM/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_mam.nc")
-JJA_slp_nc = nc_open("data/ModE-RA/JJA/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_jja.nc")
-SON_slp_nc = nc_open("data/ModE-RA/SON/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_son.nc")
+annual_slp_nc = nc_open("data/ModE-RA/year/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_year.nc")
+DJF_slp_nc = nc_open("data/ModE-RA/djf/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_djf.nc")
+MAM_slp_nc = nc_open("data/ModE-RA/mam/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_mam.nc")
+JJA_slp_nc = nc_open("data/ModE-RA/jja/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_jja.nc")
+SON_slp_nc = nc_open("data/ModE-RA/son/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_slp_abs_1420-2009_son.nc")
 
 ## Create dataframe of preprocessed yearly variables
 ## - pp_data[[season]][[variable]] where
@@ -1270,217 +1271,371 @@ set_axis_values = function(data_input,mode){
 ##                create_..._data functions OR and empty dataframe if not 
 ##                available/used
 
-plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axis,
-                            points_data, highlights_data,stat_highlights_data,c_borders, plotOrder, shpPickers, input, plotType){
-  
-  # Define the prefix for the color pickers based on plotType
-  if (plotType == "shp_colour_") {
-    color_picker_prefix <- "shp_colour_"
-  } else if (plotType == "shp_colour2_") {
-    color_picker_prefix <- "shp_colour2_"
-  }
-  
-  ## Create x, y & z values
-  x_str = colnames(data_input)
-  x = as.numeric(substr(x_str, 1, nchar(x_str) - 1)) # removes degree symbols
-  
-  y_str = rownames(data_input)
-  y = rev(as.numeric(substr(y_str, 1, nchar(y_str) - 1))) # removes degree symbols and reverses y
-  
-  z = t(as.matrix(data_input))[,rev(1:length(y))] #  rearranges z for plotting
-  
-  
-  ## Generate units & color scheme
-  if (variable == "Temperature"){
-    v_col = colorRampPalette(rev(brewer.pal(11,"RdBu"))) ; v_unit = "\u00B0C"
-  }
-  else if (variable == "Precipitation"){
-    v_col = colorRampPalette(brewer.pal(11,"BrBG")) ; v_unit = "mm/mon."
-  }
-  else if (variable == "SLP"){
-    v_col = colorRampPalette(rev(brewer.pal(11,"PRGn"))) ; v_unit = "hPa"
-  } 
-  else if (variable == "Z500"){
-    v_col = colorRampPalette(rev(brewer.pal(11,"PRGn"))) ; v_unit = "m"
-  } 
-  else if (variable == "SD Ratio"){
-    v_col = colorRampPalette(rev(brewer.pal(9,"Greens"))) ; v_unit = ""
-  }
-  
-  ## Plot with axis
-  if (hide_axis == FALSE){
-    # Plot with default axis
-    if(is.null(axis_range[1])){
-      
-      # Absolute 
-      if (mode == "Absolute"){
-        filled.contour(x,y,z, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
-          axis(1, seq(-170, 180, by = 10))
-          axis(2, seq(-90, 90, by = 10))
-          add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
-          
-          for (file in plotOrder) {
-            file_name <- tools::file_path_sans_ext(basename(file))
-            if (file_name %in% shpPickers) {
-              shape <- st_read(file)
-              shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
-              
-              # Plot based on geometry type
-              geom_type <- st_geometry_type(shape)
-              if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-                plot(st_geometry(shape), add = TRUE, border = input[[paste0(color_picker_prefix, file_name)]], col = NA)
-                
-              } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-                plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]])
-                
-              } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-                plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]], pch = 1)
-              }
-            }
-          }
-          
-          },
-          key.title = title(main = v_unit,font.main = 1))
-      } 
-      
-      # Anomaly
-      else {
-        z_max = max(abs(z))
-        
-        filled.contour(x,y,z, zlim = c(-z_max,z_max), color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
-          axis(1, seq(-170, 180, by = 10))
-          axis(2, seq(-90, 90, by = 10))
-          add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
-          
-          for (file in plotOrder) {
-            file_name <- tools::file_path_sans_ext(basename(file))
-            if (file_name %in% shpPickers) {
-              shape <- st_read(file)
-              shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
-              
-              # Plot based on geometry type
-              geom_type <- st_geometry_type(shape)
-              if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-                plot(st_geometry(shape), add = TRUE, border = input[[paste0(color_picker_prefix, file_name)]], col = NA)
-                
-              } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-                plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]])
-                
-              } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-                plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]], pch = 1)
-              }
-            }
-          }
-          
-          
-          },
-          key.title = title(main = v_unit,font.main = 1))
-      }
-    } 
-    # Plot with custom axis
-    else {
-      filled.contour(x,y,z, zlim = axis_range, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
-        axis(1, seq(-180, 180, by = 10))
-        axis(2, seq(-90, 90, by = 10))
-        add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
-        
-        for (file in plotOrder) {
-          file_name <- tools::file_path_sans_ext(basename(file))
-          if (file_name %in% shpPickers) {
-            shape <- st_read(file)
-            shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
-            
-            # Plot based on geometry type
-            geom_type <- st_geometry_type(shape)
-            if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, border = input[[paste0(color_picker_prefix, file_name)]], col = NA)
-              
-            } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]])
-              
-            } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]], pch = 1)
-            }
-          }
-        }
-        
-        },
-        key.title = title(main = v_unit,font.main = 1))
-    }
-    # Add title 2
-    title(titles$map_title2, cex.main = 1,   font.main= 1, adj=0.845)  
-    
-  }
-  
-  ## Plot without axis
-  else {
-    plot(NA,xlim=range(x),
-         ylim=range(y),xlab="",ylab="",
-         frame=FALSE,axes=F,xaxs="i",yaxs="i")
-    # Plot without default axis
-    if(is.null(axis_range[1])){
-      # Absolute 
-      if (mode == "Absolute"){
-        mylevs = pretty(range(z, finite = TRUE),20)
-        
-        .filled.contour(x=x, y=y, z=z,
-                        levels=mylevs,
-                        col=v_col(length(mylevs)-1))
-      } 
-      # Anomaly
-      else {
-        z_max = max(abs(z))
-        
-        mylevs = pretty(c(-z_max,z_max),20)
-        
-        .filled.contour(x=x, y=y, z=z,
-                        levels=mylevs,
-                        col=v_col(length(mylevs)-1))
-      }
-    } 
-    # Plot without custom axis
-    else {
-      mylevs = pretty((axis_range),20)
-      
-      .filled.contour(x=x, y=y, z=z,
-                      levels=mylevs,
-                      col=v_col(length(mylevs)-1))
-    }
-    # Add world map and side axes
-    plot.axes=map("world",interior=c_borders,add=T)
-    axis(1, seq(-180, 180, by = 10))
-    axis(2, seq(-90, 90, by = 10))
-    axis(3,c(-180, 180), label=FALSE, tcl=0, las=1)
-    axis(4,c(-90, 90), label=FALSE, tcl=0, las=1)
-    add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
-    
-    for (file in plotOrder) {
-      file_name <- tools::file_path_sans_ext(basename(file))
-      if (file_name %in% shpPickers) {
-        shape <- st_read(file)
-        shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
-        
-        # Plot based on geometry type
-        geom_type <- st_geometry_type(shape)
-        if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-          plot(st_geometry(shape), add = TRUE, border = input[[paste0(color_picker_prefix, file_name)]], col = NA)
-          
-        } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-          plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]])
-          
-        } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-          plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]], pch = 1)
-        }
-      }
-    }
-    
-    # Add title 2
-    title(titles$map_title2, cex.main = 1,   font.main= 1, adj=1)  
-  }  
-  
-  # Add title 1
-  title(titles$map_title1, cex.main = 1.5,   font.main= 1, adj=0)
+# plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axis,
+#                             points_data, highlights_data,stat_highlights_data,c_borders, plotOrder, shpPickers, input, plotType){
+# 
+#   # Define the prefix for the color pickers based on plotType
+#   if (plotType == "shp_colour_") {
+#     color_picker_prefix <- "shp_colour_"
+#   } else if (plotType == "shp_colour2_") {
+#     color_picker_prefix <- "shp_colour2_"
+#   }
+# 
+#   ## Create x, y & z values
+#   x_str = colnames(data_input)
+#   x = as.numeric(substr(x_str, 1, nchar(x_str) - 1)) # removes degree symbols
+# 
+#   y_str = rownames(data_input)
+#   y = rev(as.numeric(substr(y_str, 1, nchar(y_str) - 1))) # removes degree symbols and reverses y
+# 
+#   z = t(as.matrix(data_input))[,rev(1:length(y))] #  rearranges z for plotting
+# 
+# 
+#   ## Generate units & color scheme
+#   if (variable == "Temperature"){
+#     v_col = colorRampPalette(rev(brewer.pal(11,"RdBu"))) ; v_unit = "\u00B0C"
+#   }
+#   else if (variable == "Precipitation"){
+#     v_col = colorRampPalette(brewer.pal(11,"BrBG")) ; v_unit = "mm/mon."
+#   }
+#   else if (variable == "SLP"){
+#     v_col = colorRampPalette(rev(brewer.pal(11,"PRGn"))) ; v_unit = "hPa"
+#   }
+#   else if (variable == "Z500"){
+#     v_col = colorRampPalette(rev(brewer.pal(11,"PRGn"))) ; v_unit = "m"
+#   }
+#   else if (variable == "SD Ratio"){
+#     v_col = colorRampPalette(rev(brewer.pal(9,"Greens"))) ; v_unit = ""
+#   }
+# 
+#   ## Plot with axis
+#   if (hide_axis == FALSE){
+#     # Plot with default axis
+#     if(is.null(axis_range[1])){
+# 
+#       # Absolute
+#       if (mode == "Absolute"){
+#         filled.contour(x,y,z, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
+#           axis(1, seq(-170, 180, by = 10))
+#           axis(2, seq(-90, 90, by = 10))
+#           add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+# 
+#           for (file in plotOrder) {
+#             file_name <- tools::file_path_sans_ext(basename(file))
+#             if (file_name %in% shpPickers) {
+#               shape <- st_read(file)
+#               shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+# 
+#               # Plot based on geometry type
+#               geom_type <- st_geometry_type(shape)
+#               if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+#                 plot(st_geometry(shape), add = TRUE, border = input[[paste0(color_picker_prefix, file_name)]], col = NA)
+# 
+#               } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+#                 plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]])
+# 
+#               } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+#                 plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]], pch = 1)
+#               }
+#             }
+#           }
+# 
+#           },
+#           key.title = title(main = v_unit,font.main = 1))
+#       }
+# 
+#       # Anomaly
+#       else {
+#         z_max = max(abs(z))
+# 
+#         filled.contour(x,y,z, zlim = c(-z_max,z_max), color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
+#           axis(1, seq(-170, 180, by = 10))
+#           axis(2, seq(-90, 90, by = 10))
+#           add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+# 
+#           for (file in plotOrder) {
+#             file_name <- tools::file_path_sans_ext(basename(file))
+#             if (file_name %in% shpPickers) {
+#               shape <- st_read(file)
+#               shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+# 
+#               # Plot based on geometry type
+#               geom_type <- st_geometry_type(shape)
+#               if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+#                 plot(st_geometry(shape), add = TRUE, border = input[[paste0(color_picker_prefix, file_name)]], col = NA)
+# 
+#               } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+#                 plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]])
+# 
+#               } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+#                 plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]], pch = 1)
+#               }
+#             }
+#           }
+# 
+# 
+#           },
+#           key.title = title(main = v_unit,font.main = 1))
+#       }
+#     }
+#     # Plot with custom axis
+#     else {
+#       filled.contour(x,y,z, zlim = axis_range, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
+#         axis(1, seq(-180, 180, by = 10))
+#         axis(2, seq(-90, 90, by = 10))
+#         add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+# 
+#         for (file in plotOrder) {
+#           file_name <- tools::file_path_sans_ext(basename(file))
+#           if (file_name %in% shpPickers) {
+#             shape <- st_read(file)
+#             shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+# 
+#             # Plot based on geometry type
+#             geom_type <- st_geometry_type(shape)
+#             if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+#               plot(st_geometry(shape), add = TRUE, border = input[[paste0(color_picker_prefix, file_name)]], col = NA)
+# 
+#             } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+#               plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]])
+# 
+#             } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+#               plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]], pch = 1)
+#             }
+#           }
+#         }
+# 
+#         },
+#         key.title = title(main = v_unit,font.main = 1))
+#     }
+#     # Add title 2
+#     title(titles$map_title2, cex.main = 1,   font.main= 1, adj=0.845)
+# 
+#   }
+# 
+#   ## Plot without axis
+#   else {
+#     plot(NA,xlim=range(x),
+#          ylim=range(y),xlab="",ylab="",
+#          frame=FALSE,axes=F,xaxs="i",yaxs="i")
+#     # Plot without default axis
+#     if(is.null(axis_range[1])){
+#       # Absolute
+#       if (mode == "Absolute"){
+#         mylevs = pretty(range(z, finite = TRUE),20)
+# 
+#         .filled.contour(x=x, y=y, z=z,
+#                         levels=mylevs,
+#                         col=v_col(length(mylevs)-1))
+#       }
+#       # Anomaly
+#       else {
+#         z_max = max(abs(z))
+# 
+#         mylevs = pretty(c(-z_max,z_max),20)
+# 
+#         .filled.contour(x=x, y=y, z=z,
+#                         levels=mylevs,
+#                         col=v_col(length(mylevs)-1))
+#       }
+#     }
+#     # Plot without custom axis
+#     else {
+#       mylevs = pretty((axis_range),20)
+# 
+#       .filled.contour(x=x, y=y, z=z,
+#                       levels=mylevs,
+#                       col=v_col(length(mylevs)-1))
+#     }
+#     # Add world map and side axes
+#     plot.axes=map("world",interior=c_borders,add=T)
+#     axis(1, seq(-180, 180, by = 10))
+#     axis(2, seq(-90, 90, by = 10))
+#     axis(3,c(-180, 180), label=FALSE, tcl=0, las=1)
+#     axis(4,c(-90, 90), label=FALSE, tcl=0, las=1)
+#     add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+# 
+#     for (file in plotOrder) {
+#       file_name <- tools::file_path_sans_ext(basename(file))
+#       if (file_name %in% shpPickers) {
+#         shape <- st_read(file)
+#         shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+# 
+#         # Plot based on geometry type
+#         geom_type <- st_geometry_type(shape)
+#         if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+#           plot(st_geometry(shape), add = TRUE, border = input[[paste0(color_picker_prefix, file_name)]], col = NA)
+# 
+#         } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+#           plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]])
+# 
+#         } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+#           plot(st_geometry(shape), add = TRUE, col = input[[paste0(color_picker_prefix, file_name)]], pch = 1)
+#         }
+#       }
+#     }
+# 
+#     # Add title 2
+#     title(titles$map_title2, cex.main = 1,   font.main= 1, adj=1)
+#   }
+# 
+#   # Add title 1
+#   title(titles$map_title1, cex.main = 1.5,   font.main= 1, adj=0)
+# 
+# }
 
+# Plot default map with GGPLOT2
+plot_default_map <- function(data_input, variable, mode, titles, axis_range, hide_axis,
+                             points_data, highlights_data, stat_highlights_data, c_borders,
+                             plotOrder, shpPickers, input, plotType) {
+
+  # Define the prefix for the color pickers based on plotType
+  color_picker_prefix <- ifelse(plotType == "shp_colour_", "shp_colour_", "shp_colour2_")
+
+  ## Create x, y & z values
+  x_str <- colnames(data_input)
+  x <- as.numeric(substr(x_str, 1, nchar(x_str) - 1)) # removes degree symbols
+
+  y_str <- rownames(data_input)
+  y <- rev(as.numeric(substr(y_str, 1, nchar(y_str) - 1))) # removes degree symbols and reverses y
+
+  z <- t(as.matrix(data_input))[, rev(1:length(y))] # rearranges z for plotting
+
+  # Create x and y values of points_data
+  if (!is.null(points_data)) {
+    points_data$x <- as.numeric(substr(points_data$lon, 1, nchar(points_data$lon) - 1))
+    points_data$y <- as.numeric(substr(points_data$lat, 1, nchar(points_data$lat) - 1))
+  }
+
+  ## Create a data frame for ggplot
+  df <- expand.grid(x = x, y = y)
+  df$z <- as.vector(z)
+
+  ## Generate units & color scheme
+  if (variable == "Temperature") {
+    v_col <- rev(brewer.pal(11, "RdBu")); v_unit <- "\u00B0C"
+  } else if (variable == "Precipitation") {
+    v_col <- brewer.pal(11, "BrBG"); v_unit <- "mm/mon."
+  } else if (variable == "SLP") {
+    v_col <- rev(brewer.pal(11, "PRGn")); v_unit <- "hPa"
+  } else if (variable == "Z500") {
+    v_col <- rev(brewer.pal(11, "PRGn")); v_unit <- "m"
+  } else if (variable == "SD Ratio") {
+    v_col <- rev(brewer.pal(9, "Greens")); v_unit <- ""
+  }
+
+  ## Plot using ggplot2
+  # p <- ggplot(df, aes(x = x, y = y), fill = z) +
+  #   geom_tile() +
+  #   scale_fill_gradientn(colours = v_col, limits = axis_range) +
+  #   theme_minimal() +
+  #   theme(axis.title = element_blank(),
+  #         axis.text = element_blank(),
+  #         axis.ticks = element_blank(),
+  #         panel.grid = element_blank(),
+  #         legend.title = element_text(size = 12),
+  #         legend.text = element_text(size = 12),
+  #         legend.position = "right",
+  #         legend.key.width = unit(2, "cm"),
+  #         legend.key.height = unit(0.5, "cm"),
+  #         legend.direction = "vertical") +
+  #   labs(fill = v_unit) +
+  #   coord_fixed()
+
+  #       # Absolute
+  #       if (mode == "Absolute"){
+  #         mylevs = pretty(range(z, finite = TRUE),20)
+  #
+  #         .filled.contour(x=x, y=y, z=z,
+  #                         levels=mylevs,
+  #                         col=v_col(length(mylevs)-1))
+  #       }
+  #       # Anomaly
+  #       else {
+  #         z_max = max(abs(z))
+  #
+  #         mylevs = pretty(c(-z_max,z_max),20)
+  
+  world=map_data("world")
+  
+  # If plotting anomalies, make sure that center of colorbar (white) is 0
+  if (mode != "Absolute") {
+    axis_range <- c(-max(abs(z)), max(abs(z)))
+  }
+
+    # Create the plot
+    p <- ggplot(df, aes(x = x, y = y)) +
+      geom_contour_filled(aes(z = z, fill = after_stat(level)), bins = 20) +
+      scale_fill_stepsn(
+        n.breaks = 20,
+        nice.breaks = TRUE, #place breaks at nice values
+        #labels = scales::number_format(accuracy = 2), #round to 1 decimal
+        colors = v_col,
+        limits = axis_range,
+        #breaks = pretty(axis_range, n = 20),
+        #labels = labels
+      ) +
+        geom_polygon(data=world, aes(x=long, y=lat, group=group), fill=NA, color = "#222222", linewidth = 0.25) + 
+        theme_bw() +
+        labs(fill = v_unit) +
+    #limit the plot to the extent of df
+    #coord_cartesian(xlim = range(df$x), ylim = range(df$y)) +
+      coord_fixed()
+    guides(
+      fill = guide_colorbar(
+        barwidth = 1.5, # Adjust width as needed
+        barheight = unit(0.8, "npc"), # Match the height of the plot
+        title.position = "top", # Position the title at the top of the color bar
+        title.hjust = 0.5, # Center the title
+        show.limits = TRUE,
+        draw.ulim = TRUE, 
+        draw.llim = TRUE
+      ))
+
+  # Add country boarders
+
+  # Add title and subtitle if provided
+  if (!is.null(titles)) {
+    p <- p + ggtitle(titles$map_title1) + labs(subtitle = titles$map_title2)
+  }
+
+  # # Add map points and highlights
+  if (!is.null(points_data)) {
+    p <- p + geom_point(data = points_data, aes(x = x, y = x), color = "black", size = 2)
+  }
+  # if (!is.null(highlights_data)) {
+  #   p <- p + geom_point(data = highlights_data, aes(x = lon, y = lat), color = "red", size = 3)
+  # }
+  # if (!is.null(stat_highlights_data)) {
+  #   p <- p + geom_point(data = stat_highlights_data, aes(x = lon, y = lat), color = "blue", size = 3, shape = 2)
+  # }
+
+  # Add shapefiles
+  # for (file in plotOrder) {
+  #   file_name <- tools::file_path_sans_ext(basename(file))
+  #   if (file_name %in% shpPickers) {
+  #     shape <- st_read(file)
+  #     shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+  #     geom_type <- st_geometry_type(shape)
+  #
+  #     if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+  #       p <- p + geom_sf(data = shape, fill = NA, color = input[[paste0(color_picker_prefix, file_name)]])
+  #     } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+  #       p <- p + geom_sf(data = shape, color = input[[paste0(color_picker_prefix, file_name)]])
+  #     } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+  #       p <- p + geom_sf(data = shape, color = input[[paste0(color_picker_prefix, file_name)]], shape = 1)
+  #     }
+  #   }
+  # }
+
+  # Hide axis if specified
+  if (hide_axis) {
+    p <- p + theme(axis.title = element_blank(),
+                   axis.text = element_blank(),
+                   axis.ticks = element_blank())
+  }
+
+  return(p)
 }
 
 
