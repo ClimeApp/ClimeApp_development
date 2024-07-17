@@ -10,7 +10,7 @@ ui <- navbarPage(id = "nav1",
                  title = div(style = "display: inline;",
                              uiOutput("logo_output", inline = TRUE),
                              uiOutput("logo_output2", inline = TRUE),
-                             "(v1.1)",
+                             "(v1.2)",
                              #Preparation to use Tracking ShinyJS and CSS
                              shinyjs::useShinyjs(),
                              use_tracking()
@@ -55,7 +55,7 @@ ui <- navbarPage(id = "nav1",
                  ),
                  theme = my_theme,
                  position = c("fixed-top"),
-                 windowTitle = "ClimeApp (v1.0)",
+                 windowTitle = "ClimeApp (v1.2)",
                  collapsible = TRUE,
 
 # Welcome START ----                             
@@ -249,6 +249,11 @@ ui <- navbarPage(id = "nav1",
                      tags$hr(),
                      
                      br(), br(),
+                     h5(strong("Explore ModE-RA Sources", style = "color: #094030;")),
+                     helpText("The interactive map shows information on all the sources used to create ModE-RA and ModE-RAclim. Source data should include the study or database that observations were sourced from, along with supplementary information. A rounding algorithm was used to identfy each study based on source type and location, so there is a small chance that some data sources may have been mis-attributed. Please report any errors or omissions to the ClimeApp development team."),
+                     tags$hr(),
+                     
+                     br(), br(),
                      h5(strong("Source Analysis and Further Statistical Functions:", style = "color: #094030;")),
                      helpText("The accuracy of ModE-RA is dependent on the availability and reliability of observations to constrain the model ensemble of ModE-Sim. To capture this, ClimeApp includes tools for visualizing the sources used to create ModE-RA and ModE-RAclim and the standard deviation (SD) ratio of the ModE-RA and ModE-Sim ensembles. The ModE-RA sources are presented as a semi-annual map showing the data points assimilated for each half-year, grouped by type and variable. This allows the user to see where proxy, documentary or instrumental observations were integrated into the reconstruction and any gaps in the data. The SD ratio meanwhile, is the standard deviation of the ModE-Sim ensemble divided by the standard deviation of ModE-RA after the assimilation of observations:"),
                      br(), withMathJax("$$ SD \\ ratio = \\frac{\\sigma_{ModE-RA \\ Ensemble}}{\\sigma_{ModE-SIM \\ Ensemble}}$$"), 
@@ -260,10 +265,17 @@ ui <- navbarPage(id = "nav1",
             #### Tab Version History ----
             tabPanel("Version history",
                      br(), br(),
+                     h5(strong("v1.2 (04.07.2024)", style = "color: #094030;")),
+                     tags$ul(
+                       tags$li("Preprocessed data for all datasets (Mode-Sim, Mode-R-Clim and Mode-RA) to speed loading time"),
+                       tags$li("Overhaul of Mode-RA source plots to allow exploration and access to detailed source data"),
+                     ),
+                     br(),
                      h5(strong("v1.1 (04.04.2024)", style = "color: #094030;")),
                      tags$ul(
                        tags$li("Option to add GeoPackage-Layers (shape files) on top of field plots"),
                      ),
+                     br(),
                      h5(strong("v1.0 (11.03.2024)", style = "color: #094030;")),
                      tags$ul(
                        tags$li("Download / Upload option for metadata"),
@@ -1163,7 +1175,7 @@ ui <- navbarPage(id = "nav1",
                                      selected = "April to September"),
                         ),
                         
-                      h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                      h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                       
                       withSpinner(ui_element = plotOutput("fad_map",
                                                                   brush = brushOpts(
@@ -2085,7 +2097,7 @@ ui <- navbarPage(id = "nav1",
                                           selected = "April to September"),
                             ),
                             
-                            h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                            h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                             
                             withSpinner(ui_element = plotOutput("fad_map2",
                                                                 brush = brushOpts(
@@ -3199,7 +3211,7 @@ ui <- navbarPage(id = "nav1",
                                          selected = "April to September"),
                            ),
                            
-                           h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                           h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                            
                            withSpinner(ui_element = plotOutput("fad_map3",
                                                                brush = brushOpts(
@@ -3862,7 +3874,7 @@ ui <- navbarPage(id = "nav1",
                                     selected = "April to September"),
                       ),
                       
-                      h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                      h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                       
                       withSpinner(ui_element = plotOutput("fad_map4",
                                                           brush = brushOpts(
@@ -4417,7 +4429,7 @@ ui <- navbarPage(id = "nav1",
                                     selected = "April to September"),
                       ),
                       
-                      h6("Use the ModE-RA sources main tab for further information", style = "color: #094030;"),
+                      h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                       
                       withSpinner(ui_element = plotOutput("fad_map5",
                                                           brush = brushOpts(
@@ -4459,11 +4471,11 @@ ui <- navbarPage(id = "nav1",
          )),
 
 # ModE-RA Sources START ----                             
-  tabPanel("ModE-RA Sources", value = "tab6",
+  tabPanel("Explore ModE-RA Sources", value = "tab6",
     shinyjs::useShinyjs(),
     
-    MEsource_leaflet_popover("pop_MEsource_main"),
-    h6("This interactive map let's you explore the feedback archive of assimilated sources that were used to ModE-RA and ModE-RAclim.", style = "color: #094030;"),
+    h4("Explore ModE-RA sources", style = "color: #094030;"),
+    h6("This interactive map let's you explore the individual data sources that were used to create ModE-RA and ModE-RAclim.", style = "color: #094030;"),
     h6("Click on a point to get more information and access the database or publication behind it.", style = "color: #094030;"),
     
     fluidRow(
@@ -4482,14 +4494,21 @@ ui <- navbarPage(id = "nav1",
                   selected = "April to September"),
       
       # Add checkbox for legend
-      checkboxInput(inputId = "legend_MES", "Show legend", TRUE),
-      #radioButtons(inputId = "legend_MES", label = "", choices = c("Show legend", "Hide legend"), selected = "Show legend", inline = TRUE),
-      
+      checkboxInput(inputId = "legend_MES", "Show legend", FALSE),
+
       br(),
       # Download
       h4("Download", style = "color: #094030;"),
       radioButtons(inputId = "data_file_type_MES", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-      downloadButton(outputId = "download_MES_data", label = "Download Map Data")
+      downloadButton(outputId = "download_MES_data", label = "Download Map Data"),
+      
+      br(), br(),
+      #Modera Time Series
+      h4("Total sources and observations", style = "color: #094030;", sourcesandobservations_popover("pop_sourcesandobservation")),
+
+      numericRangeInput("year_range_sources", "Select Year Range:", 
+                        value = c(1421, 2009), 
+                        min = 1421, max = 2009, step = 1)
     ),
 
     column(10, div(id = "leaflet",
@@ -4499,21 +4518,16 @@ ui <- navbarPage(id = "nav1",
         ), 
         image = spinner_image,
         image.width = spinner_width,
-        image.height = spinner_height)))),
+        image.height = spinner_height)),
+        
+        br(), br(),
+        
+        plotlyOutput("time_series_plot")  # Use plotlyOutput instead of plotOutput
+        
+        )),
 
     br(),
-    
-    #Download
-    # h4("Downloads", style = "color: #094030;"),
-    # fluidRow(
-    #   # Download image
-    #   column(2,radioButtons(inputId = "file_type_MES", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-    #   column(3,downloadButton(outputId = "download_MES", label = "Download Map")),
-    # ),
-    # 
 
-    
-    
   #   tags$style(HTML("
   #   .leaflet-control .legend-labels {
   #     text-align: left !important;
@@ -4545,7 +4559,13 @@ server <- function(input, output, session) {
     }
   )
   
-  # Set up custom data and SDratio reactive variables ----
+  # Set up custom data, preprocessed data and SDratio reactive variables ----
+  preprocessed_data_primary = reactiveVal()
+  preprocessed_data_id_primary = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current preprocessed data
+  
+  preprocessed_data_secondary = reactiveVal()
+  preprocessed_data_id_secondary = reactiveVal(c(NA,NA,NA,NA)) # data_ID for secodnary preprocessed data
+  
   custom_data_primary = reactiveVal()
   custom_data_id_primary = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current custom data
   
@@ -10054,9 +10074,11 @@ server <- function(input, output, session) {
       }
     })
     
+    
     ### Update custom_data ----
     
-    # Update custom_data_primary (if required)
+    # Update preprocessed and custom_data_primary (if required)
+    
     observeEvent(data_id_primary(),{
       if (data_id_primary()[1] == 0){ # Only updates when new custom data is required...
         if (!identical(custom_data_id_primary()[2:3],data_id_primary()[2:3])){ # ....i.e. changed variable or dataset
@@ -10073,6 +10095,14 @@ server <- function(input, output, session) {
           
           custom_data_primary(load_ModE_data(new_dataset,new_variable)) # load new custom data
           custom_data_id_primary(data_id_primary()) # update custom data ID
+        }
+      } 
+      
+      # Update preprocessed data
+      else if (data_id_primary()[1] == 2){ # Only updates when new pp data is required...
+        if (!identical(preprocessed_data_id_primary()[2:4],data_id_primary()[2:4])){ # ....i.e. changed variable, dataset or month range
+          preprocessed_data_primary(load_preprocessed_data(data_id_primary()))# load new pp data
+          preprocessed_data_id_primary(data_id_primary()) # update pp data ID
         }
       }
     })
@@ -10096,18 +10126,34 @@ server <- function(input, output, session) {
           custom_data_id_secondary(data_id_secondary()) # update custom data ID
         }
       }
+      
+      # Update preprocessed data
+      else if (data_id_secondary()[1] == 2){ # Only updates when new pp data is required...
+        if (!identical(preprocessed_data_id_secondary()[2:4],data_id_secondary()[2:4])){ # ....i.e. changed variable, dataset or month range
+          preprocessed_data_secondary(load_preprocessed_data(data_id_secondary()))# load new pp data
+          preprocessed_data_id_secondary(data_id_secondary()) # update pp data ID
+        }
+      }
     })
 
     ### Geographic Subset ----
     
     data_output1_primary <- reactive({
       req(data_id_primary(), subset_lons_primary(), subset_lats_primary())
-      create_latlon_subset(custom_data_primary(), data_id_primary(), subset_lons_primary(), subset_lats_primary())
+      if (data_id_primary()[1] != 2) { # i.e. preloaded or custom data
+        create_latlon_subset(custom_data_primary(), data_id_primary(), subset_lons_primary(), subset_lats_primary())
+      } else { # i.e. preloaded data
+        create_latlon_subset(preprocessed_data_primary(), data_id_primary(), subset_lons_primary(), subset_lats_primary())
+      }
     })
     
     data_output1_secondary <- reactive({
       req(data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
-      create_latlon_subset(custom_data_secondary(), data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
+      if (data_id_secondary()[1] != 2) { # i.e. preloaded or custom data
+        create_latlon_subset(custom_data_secondary(), data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
+      } else { # i.e. preloaded data
+        create_latlon_subset(preprocessed_data_secondary(), data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
+      }
     })
 
     ### Yearly subset ----
@@ -10209,9 +10255,18 @@ server <- function(input, output, session) {
     observe({
       if((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")){
         if (input$nav1 == "tab1"){ # check current tab
-          if (!identical(SDratio_data_id()[3],data_id_primary()[3])){ # check to see if currently loaded variable is the same
-            SDratio_data(load_ModE_data("SD Ratio",input$variable_selected)) # load new SD data
-            SDratio_data_id(data_id_primary()) # update custom data ID
+          if (!identical(SDratio_data_id()[3:4],data_id_primary()[3:4])){ # check to see if currently loaded variable & month range are the same
+            if (data_id_primary()[1] != 0) { # check for preprocessed SD ratio data
+              new_data_id = data_id_primary()
+              new_data_id[2] = 4 # change data ID to SD ratio
+              
+              SDratio_data(load_preprocessed_data(new_data_id)) # load new SD data
+              SDratio_data_id(data_id_primary()) # update custom data ID
+            }
+            else{
+              SDratio_data(load_ModE_data("SD Ratio",input$variable_selected)) # load new SD data
+              SDratio_data_id(data_id_primary()) # update custom data ID
+            }
           } 
         }
       }
@@ -10224,9 +10279,8 @@ server <- function(input, output, session) {
       
       req(((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")))
       
-      new_SD_data = create_sdratio_data(SDratio_data(),"general",input$variable_selected,subset_lons_primary(),subset_lats_primary(),
-                                        month_range_primary(),input$range_years)
-      return(new_SD_data)
+      create_sdratio_data(SDratio_data(),data_id_primary(),"general",input$variable_selected,
+                          subset_lons_primary(),subset_lats_primary(),month_range_primary(),input$range_years)
     })
     
     ### Plotting ----
@@ -10283,6 +10337,7 @@ server <- function(input, output, session) {
       } else if (input$ref_map_mode == "Reference Values"){
         create_map_datatable(data_output3_primary(), subset_lons_primary(), subset_lats_primary())
       } else if (input$ref_map_mode == "SD Ratio"){
+        req(SDratio_subset())
         create_map_datatable(SDratio_subset(), subset_lons_primary(), subset_lats_primary())
       }
     }    
@@ -10443,7 +10498,13 @@ server <- function(input, output, session) {
     
     # Set up data function
     fad_data <- function() {
-      download_feedback_data(fad_global_data(), fad_zoom()[1:2], fad_zoom()[3:4])}
+      fad_base_data = download_feedback_data(fad_global_data(), fad_zoom()[1:2], fad_zoom()[3:4])
+      fad_col_names = c(colnames(fad_base_data)[1:(length(fad_base_data)-1)],"Observations")
+      
+      fad_base_data$Omitted_Duplicates = fad_base_data$Omitted_Duplicates + 1
+      colnames(fad_base_data) = fad_col_names
+      return(fad_base_data)
+    }
     
     observeEvent(lonlat_vals()|input$fad_reset_zoom,{
       fad_zoom(lonlat_vals())
@@ -10610,14 +10671,23 @@ server <- function(input, output, session) {
       })
     
     ### SD Ratio data ----
-    
+      
       # Update SD ratio data when required
       observe({
         if((input$ref_map_mode2 == "SD Ratio")|(input$custom_statistic2 == "SD ratio")){
           if (input$nav1 == "tab2"){ # check current tab
-            if (!identical(SDratio_data_id()[3],data_id_primary()[3])){ # check to see if currently loaded variable is the same
-              SDratio_data(load_ModE_data("SD Ratio",input$variable_selected2)) # load new SD data
-              SDratio_data_id(data_id_primary()) # update custom data ID
+            if (!identical(SDratio_data_id()[3:4],data_id_primary()[3:4])){ # check to see if currently loaded variable & month range are the same
+              if (data_id_primary()[1] != 0) { # check for preprocessed SD ratio data
+                new_data_id = data_id_primary()
+                new_data_id[2] = 4 # change data ID to SD ratio
+                
+                SDratio_data(load_preprocessed_data(new_data_id)) # load new SD data
+                SDratio_data_id(data_id_primary()) # update custom data ID
+              }
+              else{
+                SDratio_data(load_ModE_data("SD Ratio",input$variable_selected2)) # load new SD data
+                SDratio_data_id(data_id_primary()) # update custom data ID
+              }
             } 
           }
         }
@@ -10630,11 +10700,10 @@ server <- function(input, output, session) {
         
         req(((input$ref_map_mode2 == "SD Ratio")|(input$custom_statistic2 == "SD ratio")))
         
-        new_SD_data2 = create_sdratio_data(SDratio_data(),"composites",input$variable_selected2,
-                                           subset_lons_primary(),subset_lats_primary(),month_range_primary(),year_set_comp())
-        return(new_SD_data2)
+        create_sdratio_data(SDratio_data(),data_id_primary(),"composites",input$variable_selected2,
+                            subset_lons_primary(),subset_lats_primary(),month_range_primary(),year_set_comp())
       })
-  
+
     ### Plotting ----
           
       #Map customization (statistics and map titles)
@@ -10871,8 +10940,16 @@ server <- function(input, output, session) {
     output$fad_map2 <- renderPlot({fad_plot2()})
     
     # Set up data function
-    fad_data2 <- function() {download_feedback_data(fad_global_data2(), fad_zoom2()[1:2], fad_zoom2()[3:4])}
-    
+    fad_data2 <- function() {
+      
+      fad_base_data2 = download_feedback_data(fad_global_data2(), fad_zoom2()[1:2], fad_zoom2()[3:4])
+      fad_col_names2 = c(colnames(fad_base_data2)[1:(length(fad_base_data2)-1)],"Observations")
+      
+      fad_base_data2$Omitted_Duplicates = fad_base_data2$Omitted_Duplicates + 1
+      colnames(fad_base_data2) = fad_col_names2
+      return(fad_base_data2)
+    }
+
     observeEvent(lonlat_vals2()|input$fad_reset_zoom2,{
       fad_zoom2(lonlat_vals2())
     })
@@ -11479,8 +11556,17 @@ server <- function(input, output, session) {
     output$fad_map3 <- renderPlot({fad_plot3()})
     
     # Set up data function
-    fad_data3 <- function() {download_feedback_data(fad_global_data3(), fad_zoom3()[1:2], fad_zoom3()[3:4])}
-    
+    fad_data3 <- function() {
+      
+      fad_base_data3 = download_feedback_data(fad_global_data3(), fad_zoom3()[1:2], fad_zoom3()[3:4])
+      fad_col_names3 = c(colnames(fad_base_data3)[1:(length(fad_base_data3)-1)],"Observations")
+      
+      fad_base_data3$Omitted_Duplicates = fad_base_data3$Omitted_Duplicates + 1
+      colnames(fad_base_data3) = fad_col_names3
+      return(fad_base_data3)
+      
+    }
+
     observeEvent(lonlat_vals3()|input$fad_reset_zoom3,{
       fad_zoom3(lonlat_vals3())
     })
@@ -12022,8 +12108,17 @@ server <- function(input, output, session) {
       output$fad_map4 <- renderPlot({fad_plot4()})
       
       # Set up data function
-      fad_data4 <- function() {download_feedback_data(fad_global_data4(), fad_zoom4()[1:2], fad_zoom4()[3:4])}
-      
+      fad_data4 <- function() {
+        
+        fad_base_data4 = download_feedback_data(fad_global_data4(), fad_zoom4()[1:2], fad_zoom4()[3:4])
+        fad_col_names4 = c(colnames(fad_base_data4)[1:(length(fad_base_data4)-1)],"Observations")
+        
+        fad_base_data4$Omitted_Duplicates = fad_base_data4$Omitted_Duplicates + 1
+        colnames(fad_base_data4) = fad_col_names4
+        return(fad_base_data4)
+        
+      }
+
       observeEvent(lonlat_vals_dv()|input$fad_reset_zoom4,{
         fad_zoom4(lonlat_vals_dv())
       })
@@ -12275,14 +12370,25 @@ server <- function(input, output, session) {
     output$fad_map5 <- renderPlot({fad_plot5()})
     
     # Set up data function
-    fad_data5 <- function() {download_feedback_data(fad_global_data5(), fad_zoom5()[1:2], fad_zoom5()[3:4])}
-    
+    fad_data5 <- function() {
+      
+      fad_base_data5 = download_feedback_data(fad_global_data5(), fad_zoom5()[1:2], fad_zoom5()[3:4])
+      fad_col_names5 = c(colnames(fad_base_data5)[1:(length(fad_base_data5)-1)],"Observations")
+      
+      fad_base_data5$Omitted_Duplicates = fad_base_data5$Omitted_Duplicates + 1
+      colnames(fad_base_data5) = fad_col_names5
+      return(fad_base_data5)
+      
+    }
+
     # Update fad lonlat
     
-    #observeEvent(input$add_monthly_ts,{
-    #  fad_zoom5(c(input$range_longitude5,input$range_latitude5))
-    #})
+    observe({
+      # Update zoom parameters based on range_longitude5 and range_latitude5 change
+      fad_zoom5(c(input$range_longitude5[1],input$range_longitude5[2],input$range_latitude5[1], input$range_latitude5[2]))
+    })
     
+
     observeEvent(input$fad_reset_zoom5,{
       fad_zoom5(c(-180,180,-90,90))
     })
@@ -12356,84 +12462,199 @@ server <- function(input, output, session) {
   ## MODE-RA SOURCES data procession and plotting ----
     ### Plotting (for download)----
     
-    season_MES_short = reactive({
+    season_MES_short <- reactive({
       switch(input$season_MES,
              "April to September" = "summer",
              "October to March" = "winter")
     })
     
     # Load global data
-    MES_global_data = reactive({
-      load_modera_source_data(input$year_MES, season_MES_short()) |>
-        dplyr::select(LON, LAT, VARIABLE, TYPE) |>
-        st_as_sf(coords = c('LON', 'LAT')) |>
-        st_set_crs(4326)
+    MES_global_data <- reactive({
+      if (input$year_MES >= 1422 && input$year_MES <= 2008) {
+        load_modera_source_data(input$year_MES, season_MES_short()) |>
+          dplyr::select(LON, LAT, VARIABLE, TYPE, Name_Database, Paper_Database, Code_Proxy, Reference_Proxy, Reference_Proxy_Database, Omitted_Duplicates) |>
+          st_as_sf(coords = c('LON', 'LAT')) |>
+          st_set_crs(4326)
+      } else {
+        NULL
+      }
     })
-    
     
     ### Leaflet Map ----
     
-    output$MES_leaflet = renderLeaflet({
-      # Render leaflet map without legend
-      leaflet() |>
-          # Base maps
-          addProviderTiles(providers$Esri.WorldGrayCanvas, group = "ESRI  gray") |>
-          addTiles(group = "Open Street Map") |>
-          addProviderTiles(providers$Esri.WorldImagery, group = "ESRI Satellite") |>
-          setView(lng = 0, lat = 30, zoom = 1.6) |>
+    output$MES_leaflet <- renderLeaflet({
+      data <- MES_global_data()
+      
+      leaflet(data) |>
+        # Base maps
+        addProviderTiles(providers$Esri.WorldGrayCanvas, group = "ESRI gray") |>
+        addTiles(group = "Open Street Map") |>
+        addProviderTiles(providers$Esri.WorldImagery, group = "ESRI Satellite") |>
+        setView(lng = 0, lat = 30, zoom = 1.6) |>
+        
+        # Add layers control for filtering by TYPE
+        addLayersControl(
+          baseGroups = c("ESRI gray", "Open Street Map", "ESRI Satellite"), # Base maps
+          overlayGroups = type_list,  # Use TYPE values as overlay groups
+          options = layersControlOptions(collapsed = TRUE)  # Make the control always expanded
+        ) |>
 
-          # Add layers control for filtering by TYPE
-          addLayersControl(
-            baseGroups = c("ESRI  gray", "Open Street Map", "ESRI Satellite"), # Base maps
-            overlayGroups = type_list,  # Use TYPE values as overlay groups
-            options = layersControlOptions(collapsed = TRUE)  # Make the control always expanded
-          ) |>
-          addLegend(pal = pal_type,
-                    values = type_list,
-                    labels = c("Bivalve", "Coral", "Documentary", "Glacier ice", "Ice", "Instrumental", "Lake sediment", "Other", "Speleothem", "Tree"),
-                    title = "Proxies/Sources",
-                    position = "bottomleft",
-                    opacity = 1.0)
+        # Add initial data points
+        addCircleMarkers(data = data,
+                         radius = 5,
+                         fillColor = ~pal_type(data$TYPE),
+                         stroke = TRUE,
+                         weight = 1,
+                         color = "grey",
+                         fillOpacity = 1,
+                         opacity = 1,
+                         group = data$TYPE,
+                         popup = paste(
+                           "<strong>Measurement type: </strong>", named_variables[data$VARIABLE],
+                           "<br><strong>Source type: </strong>", named_types[data$TYPE],
+                           "<br><strong>Observations: </strong>", data$Omitted_Duplicates+1, 
+                           "<br><strong>Name database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Name_Database, "</a>",
+                           #"<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
+                           "<br><strong>Proxy code: </strong>", data$Code_Proxy,
+                           "<br><strong>Proxy reference: </strong>", data$Reference_Proxy,
+                           "<br><strong>Proxy reference database: </strong>", data$Reference_Proxy_Database
+                         ))
+
     })
     
     # Use a separate observer to show or hide the legend
     observe({
-      proxy <- leafletProxy("MES_leaflet")
-      if (input$legend_MES) {
+
+      if (input$legend_MES == TRUE) {
+        proxy <- leafletProxy("MES_leaflet")
         proxy %>%
-          addLegend(pal = pal_type, values = type_list, # pal_type and type_list are defined in helpers.R
+          addLegend(pal = pal_type,
+                    values = type_list, # pal_type and type_list are defined in helpers.R
                     title = "Legend",
                     labels = c("Bivalve", "Coral", "Documentary", "Glacier ice", "Ice", "Instrumental", "Lake sediment", "Other", "Speleothem", "Tree"),
                     position = "bottomleft",
-                    opacity = 1.0)
+                    opacity = 1.0) |>
+          
+          addControl(
+            html = sprintf("<strong>Total global observations: %d</strong>", nrow(MES_global_data()) + sum(MES_global_data()$Omitted_Duplicates)),
+            position = "bottomleft"
+          ) |>
+          
+          addControl(
+            html = sprintf("<strong>Total global sources: %d</strong>", nrow(MES_global_data())),
+            position = "bottomleft"
+          )
       }
       else {
+        proxy <- leafletProxy("MES_leaflet")
         proxy %>% clearControls()
       }
     })
     
     # Use a separate observer to add the data points
     observe({
-      proxy <- leafletProxy("MES_leaflet")
+
+      data <- MES_global_data()
+      
+      if (!is.null(data)) {
+        proxy <- leafletProxy("MES_leaflet")
+        
         proxy %>% clearMarkers() %>%
-          addCircleMarkers(data = MES_global_data(),
+          addCircleMarkers(data = data,
                            radius = 5,
-                           fillColor = ~pal_type(TYPE),
+                           fillColor = ~pal_type(data$TYPE),
                            stroke = TRUE,
-                           weight = 1,  # Thickness of the border
+                           weight = 1,
                            color = "grey",
                            fillOpacity = 1,
                            opacity = 1,
-                           group = MES_global_data()$TYPE,
+                           group = data$TYPE,
                            popup = paste(
-                             "<strong>Measurement type: </strong>", named_variables[MES_global_data()$VARIABLE],
-                             "<br><strong>Source type: </strong>", named_types[MES_global_data()$TYPE], 
-                             "<br><strong>Link to source: </strong>", 
-                             "<a href='https://www.sbb.ch' target='_blank'>SBB</a>" #add link to database or publication
-                           )
-          )
+                             "<strong>Measurement type: </strong>", named_variables[data$VARIABLE],
+                             "<br><strong>Source type: </strong>", named_types[data$TYPE], 
+                             "<br><strong>Observations: </strong>", data$Omitted_Duplicates+1, 
+                             "<br><strong>Name database: </strong>", data$Name_Database,
+                             "<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
+                             "<br><strong>Proxy code: </strong>", data$Code_Proxy,
+                             "<br><strong>Proxy reference: </strong>", data$Reference_Proxy,
+                             "<br><strong>Proxy reference database: </strong>", data$Reference_Proxy_Database
+                           ))
+      }
     })
     
+    ## Download Preparation for Data (CSV/XLSX)
+    # Set up values and functions for plotting
+    fad_zoom_MES  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
+    
+    MES_global_data_download = reactive({
+      load_modera_source_data(input$year_MES, season_MES_short())
+    })
+ 
+    # Set up data function
+    fad_data_MES <- function() {
+      fad_base_data_MES = download_feedback_data(MES_global_data_download(), fad_zoom_MES()[1:2], fad_zoom_MES()[3:4])
+      fad_col_names_MES = c(colnames(fad_base_data_MES)[1:(length(fad_base_data_MES)-1)],"Observations")
+
+      fad_base_data_MES$Omitted_Duplicates = fad_base_data_MES$Omitted_Duplicates + 1
+      colnames(fad_base_data_MES) = fad_col_names_MES
+      return(fad_base_data_MES)
+    }
+
+    output$download_MES_data       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$season_MES),"_",input$year_MES,"_data.",input$data_file_type_MES, sep = "")},
+                                                      content  = function(file) {
+                                                        if (input$data_file_type_MES == "csv"){
+                                                          write.csv(fad_data_MES(), file,
+                                                                    row.names = FALSE)
+                                                        } else {
+                                                          write.xlsx(fad_data_MES(), file,
+                                                                     col.names = TRUE,
+                                                                     row.names = FALSE)
+                                                        }})
+    
+    ### TS Sources and Observation Map ----
+    ## Timeseries plot for ModE-ra sources and observations
+    
+    # File path and data parameters
+    file_path_sources <- "data/feedback_archive_fin/Info/total_sources_observations.xlsx"
+    sheet_name_sources <- "sources"
+    year_column_sources <- "Year"
+    value_columns_sources <- c("Total_global_sources_summer", 
+                               "Total_global_observations_summer",
+                               "Total_global_sources_winter", 
+                               "Total_global_observations_winter",
+                               "Total_global_sources", 
+                               "Total_global_observations") # List of columns to plot
+    
+    # Corresponding line titles for the legend
+    line_titles_sources <- c("Total_global_sources_summer" = "Global Sources (Apr. - Sept.)", 
+                             "Total_global_observations_summer" = "Global Observations (Apr. - Sept.)",
+                             "Total_global_sources_winter" = "Global Sources (Oct. - Mar.)", 
+                             "Total_global_observations_winter" = "Global Observations (Oct. - Mar.)",
+                             "Total_global_sources" = "Global Sources Total", 
+                             "Total_global_observations" = "Global Observations Total")
+    
+    # Read data from Excel once and reuse it
+    data_sources <- read_excel(file_path_sources, sheet = sheet_name_sources)
+    data_sources[[year_column_sources]] <- as.numeric(data_sources[[year_column_sources]])
+    
+    # Render plot for selected lines using plotly
+    output$time_series_plot <- renderPlotly({
+      selected_columns <- c("Total_global_sources_summer",
+                            "Total_global_observations_summer",
+                            "Total_global_sources_winter",
+                            "Total_global_observations_winter",
+                            "Total_global_sources",
+                            "Total_global_observations")
+      year_range <- input$year_range_sources
+
+      plot_ts_modera_sources(data_sources, year_column_sources, selected_columns, line_titles_sources,
+                             title = "Total Global Sources and Observations",
+                             x_label = "Year",
+                             y_label = "Sources/Observations",
+                             x_ticks_every = 20,
+                             year_range = year_range)
+    })
+
   ## Concerning all modes (mainly updating Ui) ----
     
     #Updates Values outside of min / max (numericInput)
@@ -12517,7 +12738,7 @@ server <- function(input, output, session) {
     updateNumericInputRange2("ref_period_sg_iv", 1422, 2008)
     updateNumericInputRange2("ref_period_sg_dv", 1422, 2008)
     updateNumericInputRange2("ref_period_sg5", 1422, 2008)
-    #updateNumericInputRange2("year_MES", 1422, 2008)
+    updateNumericInputRange2("year_MES", 1422, 2008)
 
     #Updates Values outside of min / max (numericRangeInput)
     
@@ -12665,16 +12886,7 @@ server <- function(input, output, session) {
         )
       }
     })
-    
-    # observe({
-    #   if (!is.na(input$year_MES)) {
-    #     updateNumericRangeInput(
-    #       inputId = "year_MES1",
-    #       value   = c(input$year_MES, input$year_MES)
-    #     )
-    #   }
-    # })
-    
+
   ## Stop App on end of session ----
      session$onSessionEnded(function() {
        stopApp()
