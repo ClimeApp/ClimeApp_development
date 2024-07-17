@@ -526,7 +526,7 @@ MEsource_popover = function(popover_ID){
   popover(
     h4(HTML("Plot ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 0px;"),
     "This plot shows location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
-    "Each",em("source"),"may have 1 or more", em("observations")," associated with it. These",em("observations"),"are the individual data points used to create ModE-RA.", br(),br(),
+    "Note that each",em("source"),"may include one or more individual observations or measurements.", br(),br(),
     "The term", em("VARIABLE"),"refers to the value that was directly measured by each source. For example, a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.",br(),br(), 
     "Use the",em("Explore ModE-RA Sources"),"tab or", em("Download Map Data"),"tool for more information on indiviudal sources",
     id = popover_ID,
@@ -756,8 +756,8 @@ annualcycles_region_popover = function(popover_ID){
 sourcesandobservations_popover = function(popover_ID){
   popover(
     HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-    "The timeseries below the main map shows the total number of", em("sources"),"and", em("observations"),"that were used to create ModE-RA/ModE-RAclim for each year/half-year.",br(),br(),
-    "A", em("source"),"is a single data source, from which several climate", em("observations"),"per year/half-year may have been used.",br(),br(),
+    "The timeseries below the main map shows the total number of", em("sources"),"that were used to create ModE-RA/ModE-RAclim for each year/half-year.",br(),br(),
+    "Note that each",em("source"),"may include one or more individual observations or measurements.", br(),br(),
     "Click names on the legend to add/remove lines from the plot.",
     id = popover_ID,
     placement = "right",
@@ -1975,7 +1975,6 @@ rewrite_tstable = function(tstable,variable){
 load_modera_source_data = function(year,season){
   # Load data
   feedback_data = read.csv(paste0("data/feedback_archive_fin/",season,year,".csv"))  
-  #feedback_data = read.csv(paste0("data/feedback_archive/",season,year,".csv"))  
 }
 
 
@@ -2031,7 +2030,7 @@ plot_modera_sources = function(ME_source_data,year,season,minmax_lonlat){
     geom_sf() + coord_sf(xlim = minmax_lonlat[c(1,2)], ylim = minmax_lonlat[c(3,4)], crs = st_crs(4326)) +
     geom_point(data=ME_source_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
     labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
-         subtitle = paste0("Total Sources = ", visible_sources,", ","Total Observations = ",total_observations), x = "", y = "") +
+         subtitle = paste0("Total Sources = ", visible_sources), x = "", y = "") +
     scale_shape_manual(values = named_shapes) +
     scale_colour_manual(values = named_colors) +
     guides() + 
@@ -2054,9 +2053,9 @@ download_feedback_data = function(global_data, lon_range, lat_range) {
 ##           year_column = Name of the Column of the Years (X Axis, I think) = "Year"
 ##           selected_columns = Input of the selected lines of the source plots (Set fix to all Columns)
 ##           line_titles = Titles for the legend of the plot
-##           title = "Total Global Sources and Observations"
+##           title = "Total Global Sources"
 ##           x_label = "Year"
-##           y_label = "No. of Sources/Observations"
+##           y_label = "No. of Sources"
 ##           x_ticks_every = 20
 ##           year_range = Input of the Year Range of the Sources
 
@@ -2072,12 +2071,9 @@ plot_ts_modera_sources <- function(data, year_column, selected_columns, line_tit
   
   # Define custom colors for each line (adjust as needed)
   line_colors <- c(
-    "Global Sources (Apr. - Sept.)" = "#CC6677",
-    "Global Observations (Apr. - Sept.)" = "#882255",
-    "Global Sources (Oct. - Mar.)" = "#88CCEE",
-    "Global Observations (Oct. - Mar.)" = "#332288",
-    "Global Sources Total" = "#DDCC77",
-    "Global Observations Total" = "#117733"
+    "Global Sources (Apr. - Sept.)" = "#882255",
+    "Global Sources (Oct. - Mar.)" = "#332288",
+    "Global Sources Total" = "#117733"
   )
   
   # Calculate the maximum value of the selected columns
