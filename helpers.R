@@ -1834,27 +1834,27 @@ plot_default_map = function(data_input,variable,mode,titles,axis_range, hide_axi
 #   return(p)
 # }
 # 
-# 
-# ## (General) CREATE MAP DATATABLE
-# ##           data_input = yearly_subset or subset_to_anomalies data
-# 
-# create_map_datatable = function(data_input,subset_lon_IDs,subset_lat_IDs){
-#   
-#   # find x,y & z values
-#   x = lon[subset_lon_IDs]
-#   y = lat[subset_lat_IDs]
-#   
-#   data_mean = apply(data_input,c(1:2),mean) # finds mean of input data
-#   z = data_mean[,rev(1:length(y))]
-#   
-#   # Transpose and rotate z
-#   map_data =t(z)[order(ncol(z):1),]
-#   
-#   colnames(map_data) = paste(x,"\u00B0",sep = "")
-#   rownames(map_data) = paste(round(y, digits = 3),"\u00B0",sep = "")
-#   
-#   return(map_data)
-# }
+
+## (General) CREATE MAP DATATABLE
+##           data_input = yearly_subset or subset_to_anomalies data
+
+create_map_datatable = function(data_input,subset_lon_IDs,subset_lat_IDs){
+
+  # find x,y & z values
+  x = lon[subset_lon_IDs]
+  y = lat[subset_lat_IDs]
+
+  data_mean = apply(data_input,c(1:2),mean) # finds mean of input data
+  z = data_mean[,rev(1:length(y))]
+
+  # Transpose and rotate z
+  map_data =t(z)[order(ncol(z):1),]
+
+  colnames(map_data) = paste(x,"\u00B0",sep = "")
+  rownames(map_data) = paste(round(y, digits = 3),"\u00B0",sep = "")
+
+  return(map_data)
+}
 
 
 ## (General) CREATE BASIC TIMESERIES DATATABLE
