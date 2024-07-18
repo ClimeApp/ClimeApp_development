@@ -2893,6 +2893,9 @@ ui <- navbarPage(id = "nav1",
                           column(2, actionButton(inputId = "update_metadata_ts3", label = "Update upload inputs")),
                         ),
                       )),
+                      
+                      #Easter Calm
+                      uiOutput("keep_calm", inline = TRUE),
                     
                    ### Shared TS plot: End ----          
                   ),
@@ -4504,7 +4507,7 @@ ui <- navbarPage(id = "nav1",
       
       br(), br(),
       #Modera Time Series
-      h4("Total sources and observations", style = "color: #094030;", sourcesandobservations_popover("pop_sourcesandobservation")),
+      h4("Total sources", style = "color: #094030;", sourcesandobservations_popover("pop_sourcesandobservation")),
 
       numericRangeInput("year_range_sources", "Select Year Range:", 
                         value = c(1421, 2009), 
@@ -4678,6 +4681,14 @@ server <- function(input, output, session) {
   output$ruebli <- renderUI({
     if (input$title2_input == "Rüebli") {
       img(src = 'pics/zero_ruebli.jpg', id = "img_miau", height = "600", width = "338", style = "display: block; margin: 0 auto;")
+    } else {
+      NULL
+    }
+  })
+  
+  output$keep_calm <- renderUI({
+    if (input$title1_input_ts3 == "Keep Calm") {
+      img(src = 'pics/KCAUCA.png', id = "img_britannia", height = "514", width = "488", style = "display: block; margin: 0 auto;")
     } else {
       NULL
     }
@@ -10499,10 +10510,10 @@ server <- function(input, output, session) {
     # Set up data function
     fad_data <- function() {
       fad_base_data = download_feedback_data(fad_global_data(), fad_zoom()[1:2], fad_zoom()[3:4])
-      fad_col_names = c(colnames(fad_base_data)[1:(length(fad_base_data)-1)],"Observations")
       
-      fad_base_data$Omitted_Duplicates = fad_base_data$Omitted_Duplicates + 1
-      colnames(fad_base_data) = fad_col_names
+      # Remove the last column
+      fad_base_data = fad_base_data[ , -ncol(fad_base_data)]
+
       return(fad_base_data)
     }
     
@@ -10943,10 +10954,10 @@ server <- function(input, output, session) {
     fad_data2 <- function() {
       
       fad_base_data2 = download_feedback_data(fad_global_data2(), fad_zoom2()[1:2], fad_zoom2()[3:4])
-      fad_col_names2 = c(colnames(fad_base_data2)[1:(length(fad_base_data2)-1)],"Observations")
       
-      fad_base_data2$Omitted_Duplicates = fad_base_data2$Omitted_Duplicates + 1
-      colnames(fad_base_data2) = fad_col_names2
+      # Remove the last column
+      fad_base_data2 = fad_base_data2[ , -ncol(fad_base_data2)]
+      
       return(fad_base_data2)
     }
 
@@ -11559,10 +11570,10 @@ server <- function(input, output, session) {
     fad_data3 <- function() {
       
       fad_base_data3 = download_feedback_data(fad_global_data3(), fad_zoom3()[1:2], fad_zoom3()[3:4])
-      fad_col_names3 = c(colnames(fad_base_data3)[1:(length(fad_base_data3)-1)],"Observations")
       
-      fad_base_data3$Omitted_Duplicates = fad_base_data3$Omitted_Duplicates + 1
-      colnames(fad_base_data3) = fad_col_names3
+      # Remove the last column
+      fad_base_data3 = fad_base_data3[ , -ncol(fad_base_data3)]
+      
       return(fad_base_data3)
       
     }
@@ -11582,6 +11593,24 @@ server <- function(input, output, session) {
         session = getDefaultReactiveDomain(),
         inputId = "fad_year3",
         value = input$range_years3[1])
+    })
+    
+    # Update fad_season
+    observeEvent(month_range_primary()[1], {
+
+      req(input$nav1 == "tab3") # Only run code if in the current tab
+
+      if (month_range_primary()[1] >3 & month_range_primary()[1] <10){
+        updateSelectInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "fad_season3",
+          selected = "April to September")
+      } else {
+        updateSelectInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "fad_season3",
+          selected = "October to March")
+      }
     })
     
     ### Downloads ----
@@ -12111,10 +12140,10 @@ server <- function(input, output, session) {
       fad_data4 <- function() {
         
         fad_base_data4 = download_feedback_data(fad_global_data4(), fad_zoom4()[1:2], fad_zoom4()[3:4])
-        fad_col_names4 = c(colnames(fad_base_data4)[1:(length(fad_base_data4)-1)],"Observations")
         
-        fad_base_data4$Omitted_Duplicates = fad_base_data4$Omitted_Duplicates + 1
-        colnames(fad_base_data4) = fad_col_names4
+        # Remove the last column
+        fad_base_data4 = fad_base_data4[ , -ncol(fad_base_data4)]
+        
         return(fad_base_data4)
         
       }
@@ -12134,6 +12163,24 @@ server <- function(input, output, session) {
           session = getDefaultReactiveDomain(),
           inputId = "fad_year4",
           value = input$range_years4[1])
+      })
+      
+      # Update fad_season
+      observeEvent(month_range_secondary()[1], {
+
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+
+        if (month_range_secondary()[1] >3 & month_range_secondary()[1] <10){
+          updateSelectInput(
+            session = getDefaultReactiveDomain(),
+            inputId = "fad_season4",
+            selected = "April to September")
+        } else {
+          updateSelectInput(
+            session = getDefaultReactiveDomain(),
+            inputId = "fad_season4",
+            selected = "October to March")
+        }
       })
       
     ### Downloads ----
@@ -12373,10 +12420,10 @@ server <- function(input, output, session) {
     fad_data5 <- function() {
       
       fad_base_data5 = download_feedback_data(fad_global_data5(), fad_zoom5()[1:2], fad_zoom5()[3:4])
-      fad_col_names5 = c(colnames(fad_base_data5)[1:(length(fad_base_data5)-1)],"Observations")
       
-      fad_base_data5$Omitted_Duplicates = fad_base_data5$Omitted_Duplicates + 1
-      colnames(fad_base_data5) = fad_col_names5
+      # Remove the last column
+      fad_base_data5 = fad_base_data5[ , -ncol(fad_base_data5)]
+      
       return(fad_base_data5)
       
     }
@@ -12512,7 +12559,6 @@ server <- function(input, output, session) {
                          popup = paste(
                            "<strong>Measurement type: </strong>", named_variables[data$VARIABLE],
                            "<br><strong>Source type: </strong>", named_types[data$TYPE],
-                           "<br><strong>Observations: </strong>", data$Omitted_Duplicates+1, 
                            "<br><strong>Name database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Name_Database, "</a>",
                            #"<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
                            "<br><strong>Proxy code: </strong>", data$Code_Proxy,
@@ -12534,12 +12580,7 @@ server <- function(input, output, session) {
                     labels = c("Bivalve", "Coral", "Documentary", "Glacier ice", "Ice", "Instrumental", "Lake sediment", "Other", "Speleothem", "Tree"),
                     position = "bottomleft",
                     opacity = 1.0) |>
-          
-          addControl(
-            html = sprintf("<strong>Total global observations: %d</strong>", nrow(MES_global_data()) + sum(MES_global_data()$Omitted_Duplicates)),
-            position = "bottomleft"
-          ) |>
-          
+
           addControl(
             html = sprintf("<strong>Total global sources: %d</strong>", nrow(MES_global_data())),
             position = "bottomleft"
@@ -12572,9 +12613,8 @@ server <- function(input, output, session) {
                            popup = paste(
                              "<strong>Measurement type: </strong>", named_variables[data$VARIABLE],
                              "<br><strong>Source type: </strong>", named_types[data$TYPE], 
-                             "<br><strong>Observations: </strong>", data$Omitted_Duplicates+1, 
-                             "<br><strong>Name database: </strong>", data$Name_Database,
-                             "<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
+                             "<br><strong>Name database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Name_Database, "</a>",
+                             #"<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
                              "<br><strong>Proxy code: </strong>", data$Code_Proxy,
                              "<br><strong>Proxy reference: </strong>", data$Reference_Proxy,
                              "<br><strong>Proxy reference database: </strong>", data$Reference_Proxy_Database
@@ -12593,12 +12633,13 @@ server <- function(input, output, session) {
     # Set up data function
     fad_data_MES <- function() {
       fad_base_data_MES = download_feedback_data(MES_global_data_download(), fad_zoom_MES()[1:2], fad_zoom_MES()[3:4])
-      fad_col_names_MES = c(colnames(fad_base_data_MES)[1:(length(fad_base_data_MES)-1)],"Observations")
-
-      fad_base_data_MES$Omitted_Duplicates = fad_base_data_MES$Omitted_Duplicates + 1
-      colnames(fad_base_data_MES) = fad_col_names_MES
+      
+      # Remove the last column
+      fad_base_data_MES = fad_base_data_MES[ , -ncol(fad_base_data_MES)]
+      
       return(fad_base_data_MES)
     }
+    
 
     output$download_MES_data       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$season_MES),"_",input$year_MES,"_data.",input$data_file_type_MES, sep = "")},
                                                       content  = function(file) {
@@ -12619,19 +12660,13 @@ server <- function(input, output, session) {
     sheet_name_sources <- "sources"
     year_column_sources <- "Year"
     value_columns_sources <- c("Total_global_sources_summer", 
-                               "Total_global_observations_summer",
                                "Total_global_sources_winter", 
-                               "Total_global_observations_winter",
-                               "Total_global_sources", 
-                               "Total_global_observations") # List of columns to plot
+                               "Total_global_sources") # List of columns to plot
     
     # Corresponding line titles for the legend
     line_titles_sources <- c("Total_global_sources_summer" = "Global Sources (Apr. - Sept.)", 
-                             "Total_global_observations_summer" = "Global Observations (Apr. - Sept.)",
                              "Total_global_sources_winter" = "Global Sources (Oct. - Mar.)", 
-                             "Total_global_observations_winter" = "Global Observations (Oct. - Mar.)",
-                             "Total_global_sources" = "Global Sources Total", 
-                             "Total_global_observations" = "Global Observations Total")
+                             "Total_global_sources" = "Global Sources Total")
     
     # Read data from Excel once and reuse it
     data_sources <- read_excel(file_path_sources, sheet = sheet_name_sources)
@@ -12640,17 +12675,14 @@ server <- function(input, output, session) {
     # Render plot for selected lines using plotly
     output$time_series_plot <- renderPlotly({
       selected_columns <- c("Total_global_sources_summer",
-                            "Total_global_observations_summer",
                             "Total_global_sources_winter",
-                            "Total_global_observations_winter",
-                            "Total_global_sources",
-                            "Total_global_observations")
+                            "Total_global_sources")
       year_range <- input$year_range_sources
 
       plot_ts_modera_sources(data_sources, year_column_sources, selected_columns, line_titles_sources,
-                             title = "Total Global Sources and Observations",
+                             title = "Total Global Sources",
                              x_label = "Year",
-                             y_label = "Sources/Observations",
+                             y_label = "Sources",
                              x_ticks_every = 20,
                              year_range = year_range)
     })
