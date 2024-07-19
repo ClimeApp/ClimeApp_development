@@ -538,7 +538,9 @@ ui <- navbarPage(id = "nav1",
                 
                     ### Map plot START ----   
                     tabPanel("Map", 
-                             withSpinner(ui_element = plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
+                             withSpinner(ui_element = 
+                                           plotlyOutput("map"),
+                                           #plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
                                          image = spinner_image,
                                          image.width = spinner_width,
                                          image.height = spinner_height),
