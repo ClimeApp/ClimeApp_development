@@ -17,39 +17,8 @@
 
 ## Packages
 
-# Set library path
+# Set library path for Offline Version
 assign(".lib.loc", "library", envir = environment(.libPaths))
-#assign(".lib.loc", "/home/climeapp/R/x86_64-pc-linux-gnu-library/4.4", envir = environment(.libPaths))
-
-# lib_path <- "/home/climeapp/R/x86_64-pc-linux-gnu-library/4.4"
-# 
-# #WD and Packages
-# library(shiny, lib.loc = lib_path)
-# library(ncdf4, lib.loc = lib_path)
-# library(maps, lib.loc = lib_path)
-# library(shinyWidgets)
-# library(RColorBrewer, lib.loc = lib_path)
-# library(shinyjs, lib.loc = lib_path)
-# library(bslib)
-# library(readxl, lib.loc = lib_path)
-# library(DT, lib.loc = lib_path)
-# library(zoo, lib.loc = lib_path)
-# library(colourpicker, lib.loc = lib_path)
-# library(tmaptools, lib.loc = lib_path)
-# library(ggplot2, lib.loc = lib_path)
-# library(sf, lib.loc = lib_path)
-# library(shinylogs, lib.loc = lib_path)
-# library(shinycssloaders, lib.loc = lib_path)
-# library(profvis, lib.loc = lib_path)
-# library(openxlsx, lib.loc = lib_path) #Don't Change order!
-# library(xlsx, lib.loc = lib_path)
-# #new libraries for leaflet
-# library(leaflet, lib.loc = lib_path)
-# library(htmltools)
-# library(dplyr, lib.loc = lib_path)
-# library(plotly, lib.loc = lib_path)  # Load plotly library for interactivity
-
-
 #WD and Packages
 library(shiny)
 library(ncdf4)
@@ -76,6 +45,35 @@ library(htmltools)
 library(mapdata)
 library(dplyr)
 library(plotly)  # Load plotly library for interactivity
+
+
+# Set library path for Live Version
+# lib_path <- "/home/climeapp/R/x86_64-pc-linux-gnu-library/4.4"
+# #WD and Packages
+# library(shiny, lib.loc = lib_path)
+# library(ncdf4, lib.loc = lib_path)
+# library(maps, lib.loc = lib_path)
+# library(shinyWidgets)
+# library(RColorBrewer, lib.loc = lib_path)
+# library(shinyjs, lib.loc = lib_path)
+# library(bslib)
+# library(readxl, lib.loc = lib_path)
+# library(DT, lib.loc = lib_path)
+# library(zoo, lib.loc = lib_path)
+# library(colourpicker, lib.loc = lib_path)
+# library(tmaptools, lib.loc = lib_path)
+# library(ggplot2, lib.loc = lib_path)
+# library(sf, lib.loc = lib_path)
+# library(shinylogs, lib.loc = lib_path)
+# library(shinycssloaders, lib.loc = lib_path)
+# library(profvis, lib.loc = lib_path)
+# library(openxlsx, lib.loc = lib_path) #Don't Change order!
+# library(xlsx, lib.loc = lib_path)
+# #new libraries for leaflet
+# library(leaflet, lib.loc = lib_path)
+# library(htmltools)
+# library(dplyr, lib.loc = lib_path)
+# library(plotly, lib.loc = lib_path)  # Load plotly library for interactivity
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
