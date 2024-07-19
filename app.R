@@ -10,7 +10,7 @@ ui <- navbarPage(id = "nav1",
                  title = div(style = "display: inline;",
                              uiOutput("logo_output", inline = TRUE),
                              uiOutput("logo_output2", inline = TRUE),
-                             "(v1.2)",
+                             "(v1.3)",
                              #Preparation to use Tracking ShinyJS and CSS
                              shinyjs::useShinyjs(),
                              use_tracking()
@@ -55,7 +55,7 @@ ui <- navbarPage(id = "nav1",
                  ),
                  theme = my_theme,
                  position = c("fixed-top"),
-                 windowTitle = "ClimeApp (v1.2)",
+                 windowTitle = "ClimeApp (v1.3)",
                  collapsible = TRUE,
 
 # Welcome START ----                             
@@ -115,11 +115,28 @@ ui <- navbarPage(id = "nav1",
             ### Second side bar ----
             
             sidebarPanel(fluidRow(
-              h4(helpText("For feedback and suggestions on ClimeApp, please contact:")), br(),
-              h4("Mail to the ClimeApp team:", a("climeapp.hist@unibe.ch", href = "mailto:climeapp.hist@unibe.ch"), style = "color: #094030;"),
+              h4(helpText("For feedback and suggestions on ClimeApp, please contact:")),
+              br(),
+              h4("Mail to the ClimeApp team:", 
+                 tags$span(id = "email1", style = "color: #094030;")),
               column(width = 12, br()),
               h4(helpText("For queries relating to the ModE-RA data, please contact:")),
-              h4("Mail to J\u00F6rg Franke:", a("franke@giub.unibe.ch", href = "mailto:franke@giub.unibe.ch"), style = "color: #094030;")
+              h4("Mail to J\u00F6rg Franke:", 
+                 tags$span(id = "email2", style = "color: #094030;")),
+              
+              # JavaScript to obfuscate email addresses
+              tags$script(HTML('
+                document.addEventListener("DOMContentLoaded", function() {
+                  var email1 = ["climeapp.hist", "unibe.ch"];
+                  var email2 = ["franke", "giub.unibe.ch"];
+                  
+                  var email1_link = "<a href=\'mailto:" + email1[0] + "@" + email1[1] + "\'>" + email1[0] + "@" + email1[1] + "</a>";
+                  var email2_link = "<a href=\'mailto:" + email2[0] + "@" + email2[1] + "\'>" + email2[0] + "@" + email2[1] + "</a>";
+                  
+                  document.getElementById("email1").innerHTML = email1_link;
+                  document.getElementById("email2").innerHTML = email2_link;
+                });
+              '))
               
             ), width = 12),
           
@@ -265,6 +282,12 @@ ui <- navbarPage(id = "nav1",
             #### Tab Version History ----
             tabPanel("Version history",
                      br(), br(),
+                     h5(strong("v1.3 (19.07.2024)", style = "color: #094030;")),
+                     tags$ul(
+                       tags$li("Fixed the depiction of Historical Proxies on ModE-RA source plots"),
+                       tags$li("Changed ModE-RA source plots to only show the number of sources"),
+                     ),
+                     br(),
                      h5(strong("v1.2 (04.07.2024)", style = "color: #094030;")),
                      tags$ul(
                        tags$li("Preprocessed data for all datasets (Mode-Sim, Mode-R-Clim and Mode-RA) to speed loading time"),
