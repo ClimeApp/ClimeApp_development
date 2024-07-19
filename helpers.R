@@ -2259,7 +2259,7 @@ plot_ts_modera_sources <- function(data, year_column, selected_columns, line_tit
   
   # Create an empty plot object using ggplot
   p <- ggplot(data) +
-    labs(title = title, x = x_label, y = y_label, color = "Legend") +
+    labs(title = title, x = x_label, y = y_label, color = "Legend (select individual lines below)") +
     theme_minimal() +
     theme(
       plot.title = element_text(hjust = 0.5, size = 20, color = "#094030"),
