@@ -10581,15 +10581,15 @@ server <- function(input, output, session) {
     output$download_map             <- downloadHandler(filename = function(){paste(plot_titles()$file_title,"-map.",input$file_type_map, sep = "")},
                                                        content  = function(file) {
                                                          if (input$file_type_map == "png"){
-                                                           png(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200)  
+                                                           png(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200, bg = "transparent")  
                                                            map_plot() 
                                                            dev.off()
                                                          } else if (input$file_type_map == "jpeg"){
-                                                           jpeg(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200) 
+                                                           jpeg(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200, bg = "white") 
                                                            map_plot() 
                                                            dev.off()
                                                          } else {
-                                                           pdf(file, width = map_dimensions()[3]/200 , height = map_dimensions()[4]/200) 
+                                                           pdf(file, width = map_dimensions()[3]/200 , height = map_dimensions()[4]/200, bg = "transparent") 
                                                            map_plot()
                                                            dev.off()
                                                          }})
@@ -10597,15 +10597,15 @@ server <- function(input, output, session) {
     output$download_map_sec         <- downloadHandler(filename = function(){paste(plot_titles()$file_title,"-sec_map.",input$file_type_map, sep = "")},
                                                        content  = function(file) {
                                                          if (input$file_type_map == "png"){
-                                                           png(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200)  
+                                                           png(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200, bg = "transparent")  
                                                            ref_map_plot() 
                                                            dev.off()
                                                          } else if (input$file_type_map == "jpeg"){
-                                                           jpeg(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200) 
+                                                           jpeg(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200, bg = "white") 
                                                            ref_map_plot() 
                                                            dev.off()
                                                          } else {
-                                                           pdf(file, width = map_dimensions()[3]/200 , height = map_dimensions()[4]/200) 
+                                                           pdf(file, width = map_dimensions()[3]/200 , height = map_dimensions()[4]/200, bg = "transparent") 
                                                            ref_map_plot()
                                                            dev.off()
                                                          }})
@@ -10613,15 +10613,15 @@ server <- function(input, output, session) {
     output$download_timeseries      <- downloadHandler(filename = function(){paste(plot_titles()$file_title,"-ts.",input$file_type_timeseries, sep = "")},
                                                        content  = function(file) {
                                                          if (input$file_type_timeseries == "png"){
-                                                           png(file, width = 3000, height = 1285, res = 200) 
+                                                           png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
                                                            timeseries_plot() 
                                                            dev.off()
                                                          } else if (input$file_type_timeseries == "jpeg"){
-                                                           jpeg(file, width = 3000, height = 1285, res = 200) 
+                                                           jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
                                                            timeseries_plot() 
                                                            dev.off()
                                                          } else {
-                                                           pdf(file, width = 14, height = 6) 
+                                                           pdf(file, width = 14, height = 6, bg = "transparent") 
                                                            timeseries_plot()
                                                            dev.off()
                                                          }}) 
@@ -10658,15 +10658,15 @@ server <- function(input, output, session) {
                                                         mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map_width, input$dimension[2], FALSE)
                                                         
                                                         if (input$file_type_fad == "png"){
-                                                          png(file, width = mmd[3] , height = mmd[4], res = 400)  
+                                                          png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
                                                           print(fad_plot())
                                                           dev.off()
                                                         } else if (input$file_type_fad == "jpeg"){
-                                                          jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
+                                                          jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
                                                           print(fad_plot()) 
                                                           dev.off()
                                                         } else {
-                                                          pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
+                                                          pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
                                                           print(fad_plot())
                                                           dev.off()
                                                         }})
@@ -11024,15 +11024,15 @@ server <- function(input, output, session) {
     output$download_map2             <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title,"-map.",input$file_type_map2, sep = "")},
                                                         content  = function(file) {
                                                           if (input$file_type_map2 == "png"){
-                                                            png(file, width = map_dimensions_2()[3] , height = map_dimensions_2()[4], res = 200) 
+                                                            png(file, width = map_dimensions_2()[3] , height = map_dimensions_2()[4], res = 200, bg = "transparent") 
                                                             map_plot_2() 
                                                             dev.off()
                                                           } else if (input$file_type_map2 == "jpeg"){
-                                                            jpeg(file, width = map_dimensions_2()[3] , height = map_dimensions_2()[4], res = 200) 
+                                                            jpeg(file, width = map_dimensions_2()[3] , height = map_dimensions_2()[4], res = 200, bg = "white") 
                                                             map_plot_2() 
                                                             dev.off()
                                                           } else {
-                                                            pdf(file, width = map_dimensions_2()[3]/200 , height = map_dimensions_2()[4]/200) 
+                                                            pdf(file, width = map_dimensions_2()[3]/200 , height = map_dimensions_2()[4]/200, bg = "transparent") 
                                                             map_plot_2()
                                                             dev.off()
                                                           }})
@@ -11040,15 +11040,15 @@ server <- function(input, output, session) {
     output$download_map_sec2         <- downloadHandler(filename = function(){paste(plot_titles()$file_title,"-sec_map.",input$file_type_map, sep = "")},
                                                        content  = function(file) {
                                                          if (input$file_type_map == "png"){
-                                                           png(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200)  
+                                                           png(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200, bg = "transparent")  
                                                            ref_map_plot_2() 
                                                            dev.off()
                                                          } else if (input$file_type_map == "jpeg"){
-                                                           jpeg(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200) 
+                                                           jpeg(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200, bg = "white") 
                                                            ref_map_plot_2() 
                                                            dev.off()
                                                          } else {
-                                                           pdf(file, width = map_dimensions()[3]/200 , height = map_dimensions()[4]/200) 
+                                                           pdf(file, width = map_dimensions()[3]/200 , height = map_dimensions()[4]/200, bg = "transparent") 
                                                            ref_map_plot_2()
                                                            dev.off()
                                                          }})
@@ -11056,15 +11056,15 @@ server <- function(input, output, session) {
     output$download_timeseries2      <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title,"-ts.",input$file_type_timeseries2, sep = "")},
                                                         content  = function(file) {
                                                           if (input$file_type_timeseries2 == "png"){
-                                                            png(file, width = 3000, height = 1285, res = 200) 
+                                                            png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
                                                             timeseries_plot_2() 
                                                             dev.off()
                                                           } else if (input$file_type_timeseries2 == "jpeg"){
-                                                            jpeg(file, width = 3000, height = 1285, res = 200) 
+                                                            jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
                                                             timeseries_plot_2() 
                                                             dev.off()
                                                           } else {
-                                                            pdf(file, width = 14, height = 6) 
+                                                            pdf(file, width = 14, height = 6, bg = "transparent") 
                                                             timeseries_plot_2()
                                                             dev.off()
                                                           }}) 
@@ -11101,15 +11101,15 @@ server <- function(input, output, session) {
                                                         mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map2_width, input$dimension[2], FALSE)
                                                         
                                                         if (input$file_type_fad2 == "png"){
-                                                          png(file, width = mmd[3] , height = mmd[4], res = 400)  
+                                                          png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
                                                           print(fad_plot2())
                                                           dev.off()
                                                         } else if (input$file_type_fad2 == "jpeg"){
-                                                          jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
+                                                          jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
                                                           print(fad_plot2()) 
                                                           dev.off()
                                                         } else {
-                                                          pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
+                                                          pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
                                                           print(fad_plot2())
                                                           dev.off()
                                                         }})
@@ -11642,15 +11642,15 @@ server <- function(input, output, session) {
       output$download_timeseries3      <- downloadHandler(filename = function(){paste(plot_titles_cor()$Download_title,"-ts.",input$file_type_timeseries3, sep = "")},
                                                           content  = function(file) {
                                                             if (input$file_type_timeseries3 == "png"){
-                                                              png(file, width = 3000, height = 1285, res = 200) 
+                                                              png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
                                                               corr_ts1()  
                                                               dev.off()
                                                             } else if (input$file_type_timeseries3 == "jpeg"){
-                                                              jpeg(file, width = 3000, height = 1285, res = 200) 
+                                                              jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
                                                               corr_ts1()
                                                               dev.off()
                                                             } else {
-                                                              pdf(file, width = 14, height = 6) 
+                                                              pdf(file, width = 14, height = 6, bg = "transparent") 
                                                               corr_ts1()
                                                               dev.off()
                                                             }}) 
@@ -11658,15 +11658,15 @@ server <- function(input, output, session) {
       output$download_map3             <- downloadHandler(filename = function(){paste(plot_titles_cor()$Download_title,"-map.",input$file_type_map3, sep = "")},
                                                           content  = function(file) {
                                                             if (input$file_type_map3 == "png"){
-                                                              png(file, width = correlation_map_dimensions()[3] , height = correlation_map_dimensions()[4], res = 200)  
+                                                              png(file, width = correlation_map_dimensions()[3] , height = correlation_map_dimensions()[4], res = 200, bg = "transparent")  
                                                               corr_m1()
                                                               dev.off()
                                                             } else if (input$file_type_map3 == "jpeg"){
-                                                              jpeg(file, width = correlation_map_dimensions()[3] , height = correlation_map_dimensions()[4], res = 200) 
+                                                              jpeg(file, width = correlation_map_dimensions()[3] , height = correlation_map_dimensions()[4], res = 200, bg = "white") 
                                                               corr_m1() 
                                                               dev.off()
                                                             } else {
-                                                              pdf(file, width = correlation_mapdimensions()[3]/200 , height = correlation_map_dimensions()[4]/200) 
+                                                              pdf(file, width = correlation_mapdimensions()[3]/200 , height = correlation_map_dimensions()[4]/200, bg = "transparent") 
                                                               corr_m1()
                                                               dev.off()
                                                             }})
@@ -11703,15 +11703,15 @@ server <- function(input, output, session) {
                                                            mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map3_width, input$dimension[2], FALSE)
                                                            
                                                            if (input$file_type_fad3 == "png"){
-                                                             png(file, width = mmd[3] , height = mmd[4], res = 400)  
+                                                             png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
                                                              print(fad_plot3())
                                                              dev.off()
                                                            } else if (input$file_type_fad3 == "jpeg"){
-                                                             jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
+                                                             jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
                                                              print(fad_plot3()) 
                                                              dev.off()
                                                            } else {
-                                                             pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
+                                                             pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
                                                              print(fad_plot3())
                                                              dev.off()
                                                            }})
@@ -12211,15 +12211,15 @@ server <- function(input, output, session) {
     output$download_reg_ts_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-ts.",input$reg_ts_plot_type, sep = "")},
                                                         content  = function(file) {
                                                           if (input$reg_ts_plot_type == "png"){
-                                                            png(file, width = 3000, height = 1285, res = 200) 
+                                                            png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
                                                             reg_ts1a()  
                                                             dev.off()
                                                           } else if (input$reg_ts_plot_type == "jpeg"){
-                                                            jpeg(file, width = 3000, height = 1285, res = 200) 
+                                                            jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
                                                             reg_ts1a()
                                                             dev.off()
                                                           } else {
-                                                            pdf(file, width = 14, height = 6) 
+                                                            pdf(file, width = 14, height = 6, bg = "transparent") 
                                                             reg_ts1a()
                                                             dev.off()
                                                           }})
@@ -12227,15 +12227,15 @@ server <- function(input, output, session) {
     output$download_reg_ts2_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title,"-ts.",input$reg_ts2_plot_type, sep = "")},
                                                          content  = function(file) {
                                                            if (input$reg_ts2_plot_type == "png"){
-                                                             png(file, width = 3000, height = 1285, res = 200) 
+                                                             png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
                                                              reg_ts1b()  
                                                              dev.off()
                                                            } else if (input$reg_ts2_plot_type == "jpeg"){
-                                                             jpeg(file, width = 3000, height = 1285, res = 200) 
+                                                             jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
                                                              reg_ts1b()
                                                              dev.off()
                                                            } else {
-                                                             pdf(file, width = 14, height = 6) 
+                                                             pdf(file, width = 14, height = 6, bg = "transparent") 
                                                              reg_ts1b()
                                                              dev.off()
                                                            }})
@@ -12266,15 +12266,15 @@ server <- function(input, output, session) {
     output$download_reg_coe_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title,"-map.",input$reg_coe_plot_type, sep = "")},
                                                         content  = function(file) {
                                                           if (input$reg_coe_plot_type == "png"){
-                                                            png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200)  
+                                                            png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "transparent")  
                                                             reg_coef_1()
                                                             dev.off()
                                                           } else if (input$reg_coe_plot_type == "jpeg"){
-                                                            jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200) 
+                                                            jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "white") 
                                                             reg_coef_1() 
                                                             dev.off()
                                                           } else {
-                                                            pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200) 
+                                                            pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200, bg = "transparent") 
                                                             reg_coef_1()
                                                             dev.off()
                                                           }})
@@ -12296,15 +12296,15 @@ server <- function(input, output, session) {
     output$download_reg_pval_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title,"-map.",input$reg_pval_plot_type, sep = "")},
                                                          content  = function(file) {
                                                            if (input$reg_pval_plot_type == "png"){
-                                                             png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200)  
+                                                             png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "transparent")  
                                                              reg_pval_1()
                                                              dev.off()
                                                            } else if (input$reg_pval_plot_type == "jpeg"){
-                                                             jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200) 
+                                                             jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "white") 
                                                              reg_pval_1() 
                                                              dev.off()
                                                            } else {
-                                                             pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200) 
+                                                             pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200, bg = "transparent") 
                                                              reg_pval_1()
                                                              dev.off()
                                                            }})
@@ -12326,15 +12326,15 @@ server <- function(input, output, session) {
     output$download_reg_res_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title,"-map.",input$reg_res_plot_type, sep = "")},
                                                           content  = function(file) {
                                                             if (input$reg_res_plot_type == "png"){
-                                                              png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200)  
+                                                              png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "transparent")  
                                                               reg_res_1()
                                                               dev.off()
                                                             } else if (input$reg_res_plot_type == "jpeg"){
-                                                              jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200) 
+                                                              jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "white") 
                                                               reg_res_1() 
                                                               dev.off()
                                                             } else {
-                                                              pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200) 
+                                                              pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200, bg = "transparent") 
                                                               reg_res_1()
                                                               dev.off()
                                                             }})
@@ -12359,15 +12359,15 @@ server <- function(input, output, session) {
                                                          mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map4_width, input$dimension[2], FALSE)
                                                          
                                                          if (input$file_type_fad4 == "png"){
-                                                           png(file, width = mmd[3] , height = mmd[4], res = 400)  
+                                                           png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
                                                            print(fad_plot4())
                                                            dev.off()
                                                          } else if (input$file_type_fad4 == "jpeg"){
-                                                           jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
+                                                           jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
                                                            print(fad_plot4()) 
                                                            dev.off()
                                                          } else {
-                                                           pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
+                                                           pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
                                                            print(fad_plot4())
                                                            dev.off()
                                                          }})
@@ -12473,15 +12473,15 @@ server <- function(input, output, session) {
     output$download_timeseries5      <- downloadHandler(filename = function(){paste("monthly-ts.",input$file_type_timeseries5, sep = "")},
                                                        content  = function(file) {
                                                          if (input$file_type_timeseries5 == "png"){
-                                                           png(file, width = 3000, height = 1285, res = 200) 
+                                                           png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
                                                            plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5)
                                                            dev.off()
                                                          } else if (input$file_type_timeseries5 == "jpeg"){
-                                                           jpeg(file, width = 3000, height = 1285, res = 200) 
+                                                           jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
                                                            plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5)
                                                            dev.off()
                                                          } else {
-                                                           pdf(file, width = 14, height = 6) 
+                                                           pdf(file, width = 14, height = 6, bg = "transparent") 
                                                            plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5)
                                                            dev.off()
                                                          }}) 
@@ -12505,15 +12505,15 @@ server <- function(input, output, session) {
                                                          mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map5_width, input$dimension[2], FALSE)
                                                          
                                                          if (input$file_type_fad5 == "png"){
-                                                           png(file, width = mmd[3] , height = mmd[4], res = 400)  
+                                                           png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
                                                            print(fad_plot5())
                                                            dev.off()
                                                          } else if (input$file_type_fad5 == "jpeg"){
-                                                           jpeg(file, width = mmd[3] , height = mmd[4], res = 400) 
+                                                           jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
                                                            print(fad_plot5()) 
                                                            dev.off()
                                                          } else {
-                                                           pdf(file, width = mmd[3]/400 , height = mmd[4]/400) 
+                                                           pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
                                                            print(fad_plot5())
                                                            dev.off()
                                                          }})
