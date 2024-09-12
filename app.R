@@ -558,12 +558,13 @@ ui <- navbarPage(id = "nav1",
 
                 ## Main Panel START ----
                 mainPanel(tabsetPanel(id = "tabset1",
+                    br(),                  
                 
                     ### Map plot START ----   
                     tabPanel("Map", 
                              withSpinner(ui_element = 
-                                           plotlyOutput("map"),
-                                           #plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
+                                           #plotlyOutput("map"),
+                                           plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
                                          image = spinner_image,
                                          image.width = spinner_width,
                                          image.height = spinner_height),
@@ -584,6 +585,25 @@ ui <- navbarPage(id = "nav1",
                              
                              shinyjs::hidden(
                                          div(id = "hidden_custom_maps",
+                             
+                             selectInput(inputId = "projection",
+                                         label = "Projection:",
+                                         choices = c("UTM (default)", "Robinson", "Orthographic", "LAEA"),
+                                         selected = "UTM (default)"),
+                             
+                             shinyjs::hidden(
+                               div(id = "hidden_map_center",
+                                   
+                                   numericInput(inputId = "center_lat",
+                                                label = "Center latitude:",
+                                                value = 0,
+                                                min = -90,
+                                                max = 90),
+                                   numericInput(inputId = "center_lon",
+                                                label = "Center longitude:",
+                                                value = 0,
+                                                min = -180,
+                                                max = 180))),
           
                              radioButtons(inputId  = "axis_mode",
                                           label    = "Axis customization:",
@@ -624,7 +644,13 @@ ui <- navbarPage(id = "nav1",
                                        label       = "Custom map subtitle (e.g. Ref-Period)",
                                        value       = NA,
                                        width       = NULL,
-                                       placeholder = "Custom title"))),
+                                       placeholder = "Custom title"),
+                             
+                             numericInput(inputId = "title_size_input",
+                                          label   = "Font size:",
+                                          value   = 18,
+                                          min     = 1,
+                                          max     = 40))),
                              
                              br(),
                              
@@ -1143,11 +1169,22 @@ ui <- navbarPage(id = "nav1",
                     ### Other plots ----
                     tabPanel("Map data",
                              
-                             #Download
-                             br(), h4("Download", style = "color: #094030;"),
+                             # Data values and Download
+                             br(), 
                              fluidRow(
-                               column(2, radioButtons(inputId = "file_type_map_data", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_map_data", label = "Download map data"))
+                             column(width = 6,
+                                    h4("Data", style = "color: #094030;"),
+                                    fluidRow(
+                                      column(10, radioButtons(inputId = "value_type_map_data", label = "Choose data values:", 
+                                                              choices = c("Anomalies", "Absolute", "Reference", "SD Ratio"), selected = "Anomalies", inline = TRUE))
+                                    )),
+                             column(width = 6,
+                             h4("Download", style = "color: #094030;"),
+                             fluidRow(
+                               column(6, radioButtons(inputId = "file_type_map_data", label = "Choose file type:", 
+                                                      choices = c("csv", "xlsx", "GeoTIFF"), selected = "csv", inline = TRUE)),
+                               column(6, downloadButton(outputId = "download_map_data", label = "Download map data"))
+                             ))
                              ),
                              
                              br(), 
@@ -1515,6 +1552,25 @@ ui <- navbarPage(id = "nav1",
                       
                       shinyjs::hidden(
                       div(id = "hidden_custom_maps2",
+                          
+                          selectInput(inputId = "projection2",
+                                      label = "Projection:",
+                                      choices = c("UTM (default)", "Robinson", "Orthographic", "LAEA"),
+                                      selected = "UTM (default)"),
+                          
+                          shinyjs::hidden(
+                            div(id = "hidden_map_center2",
+                                
+                                numericInput(inputId = "center_lat2",
+                                             label = "Center latitude:",
+                                             value = 0,
+                                             min = -90,
+                                             max = 90),
+                                numericInput(inputId = "center_lon2",
+                                             label = "Center longitude:",
+                                             value = 0,
+                                             min = -180,
+                                             max = 180))),
                             
                             radioButtons(inputId  = "axis_mode2",
                                          label    = "Axis customization:",
@@ -1555,7 +1611,13 @@ ui <- navbarPage(id = "nav1",
                                             label       = "Custom map subtitle (e.g. Ref-Period):",
                                             value       = NA,
                                             width       = NULL,
-                                            placeholder = "Custom title"))),
+                                            placeholder = "Custom title"),
+                                  
+                                  numericInput(inputId = "title_size_input2",
+                                               label   = "Font size:",
+                                               value   = 18,
+                                               min     = 1,
+                                               max     = 40))),
                           
                           br(),
                           
@@ -2074,11 +2136,22 @@ ui <- navbarPage(id = "nav1",
                     ### Other plots ----
                     tabPanel("Map data",
                              
-                             #Download
-                             br(), h4("Download", style = "color: #094030;"),
+                             # Data values and Download
+                             br(), 
                              fluidRow(
-                               column(2, radioButtons(inputId = "file_type_map_data2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                               column(3, downloadButton(outputId = "download_map_data2", label = "Download map data"))
+                               column(width = 6,
+                                      h4("Data", style = "color: #094030;"),
+                                      fluidRow(
+                                        column(10, radioButtons(inputId = "value_type_map_data2", label = "Choose data values:", 
+                                                                choices = c("Anomalies", "Absolute", "Reference", "SD Ratio"), selected = "Anomalies", inline = TRUE))
+                                      )),
+                               column(width = 6,
+                                      h4("Download", style = "color: #094030;"),
+                                      fluidRow(
+                                        column(6, radioButtons(inputId = "file_type_map_data2", label = "Choose file type:", 
+                                                               choices = c("csv", "xlsx", "GeoTIFF"), selected = "csv", inline = TRUE)),
+                                        column(6, downloadButton(outputId = "download_map_data2", label = "Download map data"))
+                                      ))
                              ),
                              
                              br(), withSpinner(ui_element = tableOutput("data3"),
@@ -2635,6 +2708,7 @@ ui <- navbarPage(id = "nav1",
                             br(),
                             
                             #Choose a correlation method
+                            #Button is synchronized with "cor_method_map" and "cor_method_map_data"
                             radioButtons(inputId  = "cor_method_ts",
                                label    = "Choose a correlation method:",
                                choices  = c("pearson", "spearman"),
@@ -2933,6 +3007,7 @@ ui <- navbarPage(id = "nav1",
                             br(),
                             
                             #Choose a correlation method 
+                            # This radio button is linked to radio buttons with inputId = "cor_method_map_data" and "cor_method_ts"
                             radioButtons(inputId  = "cor_method_map",
                                          label    = "Choose a correlation method:",
                                          choices  = c("pearson", "spearman"),
@@ -2954,6 +3029,25 @@ ui <- navbarPage(id = "nav1",
                              
                              shinyjs::hidden(
                                div(id = "hidden_custom_maps3",
+                                   
+                                   selectInput(inputId = "projection3",
+                                               label = "Projection:",
+                                               choices = c("UTM (default)", "Robinson", "Orthographic", "LAEA"),
+                                               selected = "UTM (default)"),
+                                   
+                                   shinyjs::hidden(
+                                     div(id = "hidden_map_center3",
+                                         
+                                         numericInput(inputId = "center_lat3",
+                                                      label = "Center latitude:",
+                                                      value = 0,
+                                                      min = -90,
+                                                      max = 90),
+                                         numericInput(inputId = "center_lon3",
+                                                      label = "Center longitude:",
+                                                      value = 0,
+                                                      min = -180,
+                                                      max = 180))),
                                    
                                    radioButtons(inputId  = "axis_mode3",
                                                 label    = "Axis customization:",
@@ -2988,7 +3082,19 @@ ui <- navbarPage(id = "nav1",
                                                    label       = "Custom map title:", 
                                                    value       = NA,
                                                    width       = NULL,
-                                                   placeholder = "Custom title"))),
+                                                   placeholder = "Custom title")),
+                                     
+                                     textInput(inputId     = "title2_input3",
+                                               label       = "Custom map subtitle (e.g. Ref-Period)",
+                                               value       = NA,
+                                               width       = NULL,
+                                               placeholder = "Custom subtitle"),
+                                     
+                                     numericInput(inputId = "title_size_input3",
+                                                  label   = "Font size:",
+                                                  value   = 18,
+                                                  min     = 1,
+                                                  max     = 40))),),
                                    
                                    br(),
                                    
@@ -3202,13 +3308,26 @@ ui <- navbarPage(id = "nav1",
                                                      image = spinner_image,
                                                      image.width = spinner_width,
                                                      image.height = spinner_height))),
+                   # Correlation map data
                    tabPanel("Correlation map data", value = "corr_map_data_tab",
                             
-                            #Download
-                            br(), h4("Download", style = "color: #094030;"),
+                            # Data values and Download
+                            br(), 
                             fluidRow(
-                              column(2, radioButtons(inputId = "file_type_map_data3", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                              column(3, downloadButton(outputId = "download_map_data3", label = "Download map data"))
+                              column(width = 6,
+                                     h4("Data", style = "color: #094030;"),
+                                     fluidRow(
+                                       # This radio button is linked to radio buttons with inputId = "cor_method_map" and "cor_method_ts"
+                                       column(10, radioButtons(inputId = "cor_method_map_data", label = "Choose correlation method:", 
+                                                               choices = c("pearson", "spearman"), selected = "pearson", inline = TRUE))
+                                     )),
+                              column(width = 6,
+                                     h4("Download", style = "color: #094030;"),
+                                     fluidRow(
+                                       column(6, radioButtons(inputId = "file_type_map_data3", label = "Choose file type:", 
+                                                              choices = c("csv", "xlsx", "GeoTIFF"), selected = "csv", inline = TRUE)),
+                                       column(6, downloadButton(outputId = "download_map_data3", label = "Download map data"))
+                                     ))
                             ),
                             
                             br(), withSpinner(ui_element = tableOutput("correlation_map_data"),
@@ -3279,7 +3398,7 @@ ui <- navbarPage(id = "nav1",
                ), width = 8)
                
 # Correlation END ----  
-          )),
+          ))),
 
 # Regression START ----
   tabPanel("Regression", value = "tab4",
@@ -6311,7 +6430,6 @@ server <- function(input, output, session) {
     ### Interactivity ----
     
     # Input geo-coded locations
-    
     observeEvent(input$search, {
       location <- input$location
       if (!is.null(location) && nchar(location) > 0) {
@@ -6370,6 +6488,31 @@ server <- function(input, output, session) {
           value = round(c(input$map_brush1[[3]],input$map_brush1[[4]]), digits = 2))
       }
     })
+    
+    # Map projection center hidden/show
+      observeEvent(input$projection, {
+        if (input$projection == "Orthographic") {
+          shinyjs::show("hidden_map_center")
+        } else {
+          shinyjs::hide("hidden_map_center")
+        }
+      })
+      
+      observeEvent(input$projection2, {
+        if (input$projection2 == "Orthographic") {
+          shinyjs::show("hidden_map_center2")
+        } else {
+          shinyjs::hide("hidden_map_center2")
+        }
+      })
+      
+      observeEvent(input$projection3, {
+        if (input$projection3 == "Orthographic") {
+          shinyjs::show("hidden_map_center3")
+        } else {
+          shinyjs::hide("hidden_map_center3")
+        }
+      })
     
     # Map custom points selector
     observeEvent(input$map_dblclick1,{
@@ -6501,7 +6644,6 @@ server <- function(input, output, session) {
     })
     
     
-    
     # Map Highlights
     observeEvent(input$add_highlight, {
       map_highlights_data(rbind(map_highlights_data(),
@@ -6576,6 +6718,7 @@ server <- function(input, output, session) {
                                    input$title_mode,
                                    input$title1_input,
                                    input$title2_input,
+                                   input$title_size_input,
                                    input$custom_statistic,
                                    input$sd_ratio,
                                    input$hide_borders)
@@ -6630,6 +6773,7 @@ server <- function(input, output, session) {
       updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode", selected = metadata[1, "title_mode"])
       updateTextInput(session = getDefaultReactiveDomain(), "title1_input", value = metadata[1, "title1_input"])
       updateTextInput(session = getDefaultReactiveDomain(), "title2_input", value = metadata[1, "title2_input"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "title_size_input", value = metadata[1, "title_size_input"])
       updateRadioButtons(session = getDefaultReactiveDomain(), "custom_statistic", selected = metadata[1, "custom_statistic"])
       updateNumericInput(session = getDefaultReactiveDomain(), "sd_ratio", value = metadata[1, "sd_ratio"])
       updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders", value = metadata[1, "hide_borders"])
@@ -7422,6 +7566,7 @@ server <- function(input, output, session) {
                                          input$title_mode2,
                                          input$title1_input2,
                                          input$title2_input2,
+                                         input$title_size_input2,
                                          input$custom_statistic2,
                                          input$percentage_sign_match2,
                                          input$sd_ratio2,
@@ -7477,6 +7622,7 @@ server <- function(input, output, session) {
       updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode2", selected = metadata2[1, "title_mode2"])
       updateTextInput(session = getDefaultReactiveDomain(), "title1_input2", value = metadata2[1, "title1_input2"])
       updateTextInput(session = getDefaultReactiveDomain(), "title2_input2", value = metadata2[1, "title2_input2"])
+      updateNumericInput(session = getDefaultReactiveDomain(), "title_size_input2", value = metadata2[1, "title_size_input2"])
       updateRadioButtons(session = getDefaultReactiveDomain(), "custom_statistic2", selected = metadata2[1, "custom_statistic2"])
       updateNumericInput(session = getDefaultReactiveDomain(), "percentage_sign_match2", value = metadata2[1, "percentage_sign_match2"])
       updateNumericInput(session = getDefaultReactiveDomain(), "sd_ratio2", value = metadata2[1, "sd_ratio2"])
@@ -8296,21 +8442,18 @@ server <- function(input, output, session) {
     })
     
     # Update ts/map correlation method
-    observeEvent(input$cor_method_ts,{
-      updateRadioButtons(
-        session = getDefaultReactiveDomain(),
-        inputId = "cor_method_map",
-        label = NULL,
-        selected = input$cor_method_ts)
+    observeEvent(input$cor_method_ts, {
+      updateRadioButtonsGroup(input$cor_method_ts, c("cor_method_ts", "cor_method_map", "cor_method_map_data"))
     })
     
-    observeEvent(input$cor_method_map,{
-      updateRadioButtons(
-        session = getDefaultReactiveDomain(),
-        inputId = "cor_method_ts",
-        label = NULL,
-        selected = input$cor_method_map)
+    observeEvent(input$cor_method_map, {
+      updateRadioButtonsGroup(input$cor_method_map, c("cor_method_ts", "cor_method_map", "cor_method_map_data"))
     })
+    
+    observeEvent(input$cor_method_map_data, {
+      updateRadioButtonsGroup(input$cor_method_map_data, c("cor_method_ts", "cor_method_map", "cor_method_map_data"))
+    })
+    
     
     ### Interactivity ----
     
@@ -10327,9 +10470,10 @@ server <- function(input, output, session) {
       
       req(input$nav1 == "tab1") # Only run code if in the current tab
       
+      
       my_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Anomaly", input$title_mode,input$title_mode_ts,
                                   month_range_primary(), input$range_years, input$ref_period, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                  input$title1_input, input$title2_input,input$title1_input_ts)
+                                  input$title1_input, input$title2_input,input$title1_input_ts, input$title_size_input)
       
       return(my_title)
     })
@@ -10360,10 +10504,9 @@ server <- function(input, output, session) {
       return(m_d)  
     })
     
-    map_plot <- function(){plot_default_map(map_data(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_")}
+    map_plot <- function(){plot_default_map(create_geotiff(map_data()), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)}
     
     output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
-    # code line below sets height as a function of the ratio of lat/lon 
     
     
     #Ref/Absolute/SD ratio Map
@@ -10385,23 +10528,23 @@ server <- function(input, output, session) {
       if (input$ref_map_mode == "Absolute Values"){
         rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
                                     month_range_primary(), input$range_years, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                    input$title1_input, input$title2_input,input$title1_input_ts)
+                                    input$title1_input, input$title2_input,input$title1_input_ts, input$title_size_input)
       } else if (input$ref_map_mode == "Reference Values"){
         rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
                                     month_range_primary(), input$ref_period, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                    input$title1_input, input$title2_input,input$title1_input_ts)
+                                    input$title1_input, input$title2_input,input$title1_input_ts, input$title_size_input)
       } else if (input$ref_map_mode == "SD Ratio"){
         rm_title <- generate_titles("sdratio",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
                                     month_range_primary(), input$range_years, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                    input$title1_input, input$title2_input,input$title1_input_ts)
+                                    input$title1_input, input$title2_input,input$title1_input_ts, input$title_size_input)
       }
     })  
     
     ref_map_plot <- function(){
       if (input$ref_map_mode == "Absolute Values" | input$ref_map_mode == "Reference Values" ){
-        plot_default_map(ref_map_data(), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_")
+        plot_default_map(create_geotiff(ref_map_data()), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)
       } else if(input$ref_map_mode == "SD Ratio"){
-        plot_default_map(ref_map_data(), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_")
+        plot_default_map(create_geotiff(ref_map_data()), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)
       }
     }
     
@@ -10633,13 +10776,13 @@ server <- function(input, output, session) {
                                                           if (input$file_type_map_data == "csv"){
                                                             map_data_new <- rewrite_maptable(map_data(), subset_lons_primary(), subset_lats_primary())
                                                             colnames(map_data_new) <- NULL
-                                                            
                                                             write.csv(map_data_new, file,
                                                                       row.names = FALSE)
-                                                          } else {
+                                                          } else if (input$file_type_map_data == "xlsx") {
                                                             write.xlsx(rewrite_maptable(map_data(), subset_lons_primary(), subset_lats_primary()), file,
-                                                                       row.names = FALSE,
-                                                                       col.names = FALSE)
+                                                                       row.names = FALSE, col.names = FALSE)
+                                                          } else if (input$file_type_map_data == "GeoTIFF") {
+                                                            create_geotiff(map_data(), file)
                                                           }})
     
     output$download_timeseries_data  <- downloadHandler(filename = function(){paste(plot_titles()$file_title, "-tsdata.",input$file_type_timeseries_data, sep = "")},
@@ -10750,7 +10893,7 @@ server <- function(input, output, session) {
         
         my_title <- generate_titles ("composites", input$dataset_selected2, input$variable_selected2, input$mode_selected2, input$title_mode2,input$title_mode_ts2,
                                      month_range_primary(), input$range_years2, input$ref_period2, input$prior_years2,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                     input$title1_input2, input$title2_input2,input$title1_input_ts2)
+                                     input$title1_input2, input$title2_input2,input$title1_input_ts2, input$title_size_input2)
         
         return(my_title)
       })
@@ -10783,7 +10926,7 @@ server <- function(input, output, session) {
         return(m_d_2)
       })
       
-      map_plot_2 <- function(){plot_default_map(map_data_2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2, plotOrder2(), input$shpPickers2, input, "shp_colour2_")}
+      map_plot_2 <- function(){plot_default_map(create_geotiff(map_data_2()), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)}
       
       output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
       # code line below sets height as a function of the ratio of lat/lon 
@@ -10807,23 +10950,23 @@ server <- function(input, output, session) {
         if (input$ref_map_mode2 == "Absolute Values"){
           rm_title2 <- generate_titles("composites",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
                                        month_range_primary(), year_set_comp(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                       input$title1_input2, input$title2_input2,input$title1_input_ts2)
+                                       input$title1_input2, input$title2_input2,input$title1_input_ts2, input$title_size_input2)
         } else if (input$ref_map_mode2 == "Reference Values"){
           rm_title2 <- generate_titles("reference",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
                                        month_range_primary(), year_set_comp_ref(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                       input$title1_input2, input$title2_input2,input$title1_input_ts2)
+                                       input$title1_input2, input$title2_input2,input$title1_input_ts2, input$title_size_input2)
         } else if (input$ref_map_mode2 == "SD Ratio"){
           rm_title2 <- generate_titles("sdratio",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
                                        month_range_primary(), c(NA,NA), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                       input$title1_input2, input$title2_input2,input$title1_input_ts2)
+                                       input$title1_input2, input$title2_input2,input$title1_input_ts2, input$title_size_input2)
         }
       })  
       
       ref_map_plot_2 <- function(){
         if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Values" ){
-          plot_default_map(ref_map_data_2(), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2,plotOrder2(), input$shpPickers2, input, "shp_colour2_")
+          plot_default_map(create_geotiff(ref_map_data_2()), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2,plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)
         } else if (input$ref_map_mode2 == "SD Ratio"){
-          plot_default_map(ref_map_data_2(), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2,plotOrder2(), input$shpPickers2, input, "shp_colour2_")
+          plot_default_map(create_geotiff(ref_map_data_2()), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2,plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)
         }
       }
       
@@ -11076,13 +11219,13 @@ server <- function(input, output, session) {
                                                           if (input$file_type_map_data2 == "csv"){
                                                             map_data_new_2 <- rewrite_maptable(map_data_2(), subset_lons_primary(), subset_lats_primary())
                                                             colnames(map_data_new_2) <- NULL
-                                                            
                                                             write.csv(map_data_new_2, file,
                                                                       row.names = FALSE)
-                                                          } else {
-                                                            write.xlsx(rewrite_maptable(map_data_2(), subset_lons_primary(), subset_lats_primary()), file,
-                                                                       row.names = FALSE,
-                                                                       col.names = FALSE)
+                                                          } else if (input$file_type_map_data2 == "xlsx") {
+                                                            write.xlsx(rewrite_maptable(map_data(), subset_lons_primary(), subset_lats_primary()), file,
+                                                                       row.names = FALSE, col.names = FALSE)
+                                                          } else if (input$file_type_map_data2 == "GeoTIFF") {
+                                                            create_geotiff(map_data(), file)
                                                           }})
     
     output$download_timeseries_data2  <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title, "-tsdata.",input$file_type_timeseries_data2, sep = "")},
@@ -11254,7 +11397,7 @@ server <- function(input, output, session) {
       # Generate Map data & plotting function
       map_data_v1 <- function(){create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
       
-      ME_map_plot_v1 <- function(){plot_default_map(map_data_v1(), input$ME_variable_v1, input$mode_selected_v1, plot_titles_v1(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE, plotOrder(), input$shpPickers, input, "shp_colour1_")}
+      ME_map_plot_v1 <- function(){plot_default_map(create_geotiff(map_data_v1()), input$ME_variable_v1, input$mode_selected_v1, plot_titles_v1(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE, plotOrder(), input$shpPickers, input, "shp_colour1_")}
       
       # Generate timeseries data & plotting function
       timeseries_data_v1 <- reactive({
@@ -11287,7 +11430,7 @@ server <- function(input, output, session) {
         req(data_output4_secondary(), subset_lons_secondary(), subset_lats_secondary())
         create_map_datatable(data_output4_secondary(), subset_lons_secondary(), subset_lats_secondary())}
       
-      ME_map_plot_v2 <- function(){plot_default_map(map_data_v2(), input$ME_variable_v2, input$mode_selected_v2, plot_titles_v2(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
+      ME_map_plot_v2 <- function(){plot_default_map(create_geotiff(map_data_v2()), input$ME_variable_v2, input$mode_selected_v2, plot_titles_v2(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
       
       # Generate timeseries data & plotting function
       timeseries_data_v2 <- reactive({
@@ -11690,13 +11833,13 @@ server <- function(input, output, session) {
                                                             if (input$file_type_map_data3 == "csv"){
                                                               map_data_new_3 <- rewrite_maptable(correlation_map_datatable(),NA,NA)
                                                               colnames(map_data_new_3) <- NULL
-                                                              
                                                               write.csv(map_data_new_3, file,
                                                                         row.names = FALSE)
-                                                            } else {
-                                                              write.xlsx(rewrite_maptable(correlation_map_datatable(),NA,NA), file,
-                                                                         row.names = FALSE,
-                                                                         col.names = FALSE)
+                                                            } else if (input$file_type_map_data3 == "xlsx") {
+                                                              write.xlsx(rewrite_maptable(map_data(), subset_lons_primary(), subset_lats_primary()), file,
+                                                                         row.names = FALSE, col.names = FALSE)
+                                                            } else if (input$file_type_map_data3 == "GeoTIFF") {
+                                                              create_geotiff(map_data(), file)
                                                             }})
       
       output$download_fad3            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season3),"_",input$fad_year3,".",input$file_type_fad3, sep = "")},
@@ -11834,7 +11977,7 @@ server <- function(input, output, session) {
         req(data_output4_primary(), subset_lons_primary(), subset_lats_primary())
         create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
       
-      ME_map_plot_dv <- function(){plot_default_map(map_data_dv(), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
+      ME_map_plot_dv <- function(){plot_default_map(create_geotiff(map_data_dv()), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
       
       # Generate timeseries data & plotting function for iv
       ME_ts_data_iv <- reactive({
