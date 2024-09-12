@@ -13,12 +13,14 @@
 
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
-setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
+#setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
 
 ## Packages
 
 # Set library path for Offline Version
-assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
+assign(".lib.loc", "library", envir = environment(.libPaths))
+#assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
+
 #WD and Packages
 library(shiny)
 library(ncdf4)

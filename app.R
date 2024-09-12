@@ -660,6 +660,10 @@ ui <- navbarPage(id = "nav1",
                                            label   = "Show country borders",
                                            value   = TRUE),
                              
+                             checkboxInput(inputId = "white_ocean",
+                                           label   = "White ocean",
+                                           value   = FALSE),
+                             
                              #Shape File Option
                              
                              fileInput("shpFile", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
@@ -1626,6 +1630,11 @@ ui <- navbarPage(id = "nav1",
                           checkboxInput(inputId = "hide_borders2",
                                         label   = "Show country borders",
                                         value   = TRUE),
+                          
+                          checkboxInput(inputId = "white_ocean2",
+                                        label   = "White ocean",
+                                        value   = FALSE),
+                          
                           
                           #Shape File Option
                           
@@ -3094,7 +3103,7 @@ ui <- navbarPage(id = "nav1",
                                                   label   = "Font size:",
                                                   value   = 18,
                                                   min     = 1,
-                                                  max     = 40))),),
+                                                  max     = 40)),
                                    
                                    br(),
                                    
@@ -3103,6 +3112,10 @@ ui <- navbarPage(id = "nav1",
                                    checkboxInput(inputId = "hide_borders3",
                                                  label   = "Show country borders",
                                                  value   = TRUE),
+                                   
+                                   checkboxInput(inputId = "white_ocean3",
+                                                 label   = "White ocean",
+                                                 value   = FALSE),
                                    
                                    #Shape File Option
                                    
@@ -3398,7 +3411,7 @@ ui <- navbarPage(id = "nav1",
                ), width = 8)
                
 # Correlation END ----  
-          ))),
+          )),
 
 # Regression START ----
   tabPanel("Regression", value = "tab4",
@@ -6721,7 +6734,8 @@ server <- function(input, output, session) {
                                    input$title_size_input,
                                    input$custom_statistic,
                                    input$sd_ratio,
-                                   input$hide_borders)
+                                   input$hide_borders,
+                                   input$white_ocean)
       
       return(metadata)  
     })
@@ -6777,6 +6791,7 @@ server <- function(input, output, session) {
       updateRadioButtons(session = getDefaultReactiveDomain(), "custom_statistic", selected = metadata[1, "custom_statistic"])
       updateNumericInput(session = getDefaultReactiveDomain(), "sd_ratio", value = metadata[1, "sd_ratio"])
       updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders", value = metadata[1, "hide_borders"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean", value = metadata[1, "white_ocean"])
       
       # Read metadata from "custom_points" sheet
       metadata_points <- openxlsx::read.xlsx(input$upload_metadata$datapath, sheet = "custom_points")
@@ -7570,7 +7585,8 @@ server <- function(input, output, session) {
                                          input$custom_statistic2,
                                          input$percentage_sign_match2,
                                          input$sd_ratio2,
-                                         input$hide_borders2)
+                                         input$hide_borders2,
+                                         input$white_ocean2)
       
       return(metadata2)  
     })
@@ -7627,6 +7643,7 @@ server <- function(input, output, session) {
       updateNumericInput(session = getDefaultReactiveDomain(), "percentage_sign_match2", value = metadata2[1, "percentage_sign_match2"])
       updateNumericInput(session = getDefaultReactiveDomain(), "sd_ratio2", value = metadata2[1, "sd_ratio2"])
       updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders2", value = metadata2[1, "hide_borders2"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean2", value = metadata2[1, "white_ocean2"])
       
       # Read metadata from "custom_points2" sheet
       metadata_points2 <- openxlsx::read.xlsx(input$upload_metadata2$datapath, sheet = "custom_points2")
@@ -8738,6 +8755,7 @@ server <- function(input, output, session) {
                                          input$title_mode3,
                                          input$title1_input3,
                                          input$hide_borders3,
+                                         input$white_ocean3,
                                          input$cor_method_map)
       
       return(metadata3)  
@@ -8818,6 +8836,7 @@ server <- function(input, output, session) {
       updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode3", selected = metadata3[1, "title_mode3"])
       updateTextInput(session = getDefaultReactiveDomain(), "title1_input3", value = metadata3[1, "title1_input3"])
       updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders3", value = metadata3[1, "hide_borders3"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean3", value = metadata3[1, "white_ocean3"])
       updateCheckboxInput(session = getDefaultReactiveDomain(), "cor_method_map", value = metadata3[1, "cor_method_map3"])
       
       # Read metadata from "custom_points3" sheet
@@ -10504,7 +10523,7 @@ server <- function(input, output, session) {
       return(m_d)  
     })
     
-    map_plot <- function(){plot_default_map(create_geotiff(map_data()), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)}
+    map_plot <- function(){plot_default_map(create_geotiff(map_data()), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,input$white_ocean,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)}
     
     output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
     
@@ -10542,7 +10561,7 @@ server <- function(input, output, session) {
     
     ref_map_plot <- function(){
       if (input$ref_map_mode == "Absolute Values" | input$ref_map_mode == "Reference Values" ){
-        plot_default_map(create_geotiff(ref_map_data()), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)
+        plot_default_map(create_geotiff(ref_map_data()), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders, input$white_ocean, plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)
       } else if(input$ref_map_mode == "SD Ratio"){
         plot_default_map(create_geotiff(ref_map_data()), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)
       }
@@ -10926,7 +10945,7 @@ server <- function(input, output, session) {
         return(m_d_2)
       })
       
-      map_plot_2 <- function(){plot_default_map(create_geotiff(map_data_2()), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)}
+      map_plot_2 <- function(){plot_default_map(create_geotiff(map_data_2()), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2, input$white_ocean2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)}
       
       output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
       # code line below sets height as a function of the ratio of lat/lon 
@@ -10964,9 +10983,9 @@ server <- function(input, output, session) {
       
       ref_map_plot_2 <- function(){
         if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Values" ){
-          plot_default_map(create_geotiff(ref_map_data_2()), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2,plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)
+          plot_default_map(create_geotiff(ref_map_data_2()), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2, input$white_ocean2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)
         } else if (input$ref_map_mode2 == "SD Ratio"){
-          plot_default_map(create_geotiff(ref_map_data_2()), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2,plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)
+          plot_default_map(create_geotiff(ref_map_data_2()), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2, input$white_ocean2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)
         }
       }
       
@@ -11519,7 +11538,7 @@ server <- function(input, output, session) {
                                           input$type_v1,input$type_v2,input$mode_selected_v1,input$mode_selected_v2,
                                           month_range_primary(),month_range_secondary(),lonlat_vals_v1()[1:2],lonlat_vals_v2()[1:2],
                                           lonlat_vals_v1()[3:4],lonlat_vals_v2()[3:4],input$range_years3,input$cor_method_ts,
-                                          input$title_mode3,input$title_mode_ts3,input$title1_input3,input$title1_input_ts3)
+                                          input$title_mode3,input$title_mode_ts3,input$title1_input3, input$title2_input3, input$title1_input_ts3, input$title_size_input3)
         return(ptc)
       }) 
       
@@ -11655,8 +11674,10 @@ server <- function(input, output, session) {
       
       corr_m1 = function(){
         if ((input$type_v1 == "Field") | (input$type_v2 == "Field")){
-          plot_correlation_map(correlation_map_data(),plot_titles_cor(),input$axis_input3,
-                               input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame(),input$hide_borders3,plotOrder3(), input$shpPickers3, input)
+          # plot_correlation_map(correlation_map_data(),plot_titles_cor(),input$axis_input3,
+          #                      input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame(),input$hide_borders3, plotOrder3(), input$shpPickers3)
+          plot_default_map(create_geotiff(correlation_map_data()), variable = NULL ,mode = "Correlation", plot_titles_cor(),input$axis_input3,
+                               input$hide_axis3, map_points_data3(),map_highlights_data3(),data.frame(),input$hide_borders3, input$white_ocean3, plotOrder3(), input$shpPickers3, plotType = NULL)
         }
       }
       
