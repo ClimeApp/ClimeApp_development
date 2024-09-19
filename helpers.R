@@ -33,7 +33,7 @@ library(readxl)
 library(DT)
 library(zoo)
 library(colourpicker)
-library(tmaptools)
+#library(tmaptools)  ** do we need this? **
 library(ggplot2)
 library(sf)
 library(shinylogs)
@@ -202,12 +202,11 @@ initial_lat_values = continent_lonlat_values[3:4,random_map]
 ## Load grid square weights for calculating means
 latlon_weights = as.matrix(read.csv("data/latlon_weights.csv"))
 
-# Download map data from rnatural earth
-coast <- ne_coastline(scale = "medium", returnclass = "sf")
-countries <- ne_countries(scale = "medium", returnclass = "sf")
-oceans <- ne_download(scale = 50, type = 'ocean', category = 'physical')
-lakes <- ne_download(scale = 50, type = 'lakes', category = 'physical')
-# rivers <- ne_rivers(scale = "medium", returnclass = "sf")
+# Load shapefiles for maps (rnaturalearth)
+coast <- st_read("data/geodata_maps/coast.shp")
+countries <- st_read("data/geodata_maps/countries.shp")
+oceans <- st_read("data/geodata_maps/oceans.shp")
+land <- st_read("data/geodata_maps/land.shp")
 
 #### Popovers ####
 
@@ -1363,8 +1362,8 @@ convert_subset_to_anomalies = function(data_input,ref_data){
 }
 
 
-## (General) GENERATE MAP,TS & FILE TITLES - creates a dataframe of map_title1,
-##                                           map_title2, ts_title, ts_axis,file_title,
+## (General) GENERATE MAP,TS & FILE TITLES - creates a dataframe of map_title,
+##                                           map_subtitle, ts_title, ts_axis,file_title,
 ##                                           netcdf_title
 ##           tab = "general" or "composites", "reference", or "sdratio"
 ##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim"
@@ -1384,62 +1383,61 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
   # Generate title months
   title_months = generate_title_months(month_range)
   
-  # Create map_title1 & map_title_2:
+  # Create map_title & map_subtitle:
   # Averages and Anomalies titles
   if (tab=="general"){
     if (mode == "Absolute"){
-      map_title1 = paste(dataset," ",title_months," ",variable," ",year_range[1],"-",year_range[2], sep = "")
-      map_title2 = ""
+      map_title = paste(dataset," ",title_months," ",variable," ",year_range[1],"-",year_range[2], sep = "")
+      map_subtitle = ""
     } else {
-      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly ",year_range[1],"-",year_range[2], sep = "")
-      map_title2 = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
+      map_title = paste(dataset," ",title_months," ",variable," Anomaly ",year_range[1],"-",year_range[2], sep = "")
+      map_subtitle = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
     } 
   }
   
   # Composites titles
   else if (tab=="composites"){
     if (mode == "Absolute"){
-      map_title1 = paste(dataset," ",title_months," ",variable," Absolute values (Composite years)", sep = "")
-      map_title2 = ""
+      map_title = paste(dataset," ",title_months," ",variable," Absolute values (Composite years)", sep = "")
+      map_subtitle = ""
     } else if (mode == "Fixed reference") {
-      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite years)", sep = "")
-      map_title2 = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
+      map_title = paste(dataset," ",title_months," ",variable," Anomaly (Composite years)", sep = "")
+      map_subtitle = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
     } else if (mode == "X years prior") {
-      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite years)", sep = "")
-      map_title2 = paste("Ref. = ",baseline_years_before," yrs prior", sep = "")
+      map_title = paste(dataset," ",title_months," ",variable," Anomaly (Composite years)", sep = "")
+      map_subtitle = paste("Ref. = ",baseline_years_before," yrs prior", sep = "")
     } else {
-      map_title1 = paste(dataset," ",title_months," ",variable," Anomaly (Composite years)", sep = "")
-      map_title2 = paste("Ref. = Reference years")  
+      map_title = paste(dataset," ",title_months," ",variable," Anomaly (Composite years)", sep = "")
+      map_subtitle = paste("Ref. = Reference years")  
     }
   }
   
   # Reference period titles
   else if (tab=="reference"){
-    map_title1 = paste(dataset," ",title_months," ",variable," Absolute values (Reference years)", sep = "")
-    map_title2 = ""
+    map_title = paste(dataset," ",title_months," ",variable," Absolute values (Reference years)", sep = "")
+    map_subtitle = ""
   }
   
   # SD ratio titles
   else if (tab=="sdratio"){
     if (is.na(year_range[1])){
-      map_title1 = paste(dataset," ",title_months," SD Ratio (Composite years)", sep = "")
-      map_title2 = ""
+      map_title = paste(dataset," ",title_months," SD Ratio (Composite years)", sep = "")
+      map_subtitle = ""
     } else{
-      map_title1 = paste(dataset," ",title_months," SD Ratio ",year_range[1],"-",year_range[2], sep = "")
-      map_title2 = "" 
+      map_title = paste(dataset," ",title_months," SD Ratio ",year_range[1],"-",year_range[2], sep = "")
+      map_subtitle = "" 
     }
   }
   
   # Create Timeseries title 
   if (tab=="composites"){
-    ts_title = paste(substr(map_title1, 1, nchar(map_title1) - 18),
+    ts_title = paste(substr(map_title, 1, nchar(map_title) - 18),
                      " [",lon_range[1],":",lon_range[2],"\u00B0E, ",lat_range[1],":",lat_range[2],"\u00B0N]", sep = "")
   } else {
-    ts_title = paste(substr(map_title1, 1, nchar(map_title1) - 10),
+    ts_title = paste(substr(map_title, 1, nchar(map_title) - 10),
                  " [",lon_range[1],":",lon_range[2],"\u00B0E, ",lat_range[1],":",lat_range[2],"\u00B0N]", sep = "")
   }
 
-  
   # Create timeseries axis label
   if (variable == "Temperature"){
     v_unit = "[\u00B0C]"
@@ -1460,10 +1458,10 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
   # Replace with custom titles
   if (map_title_mode == "Custom"){
     if(map_custom_title1 != ""){
-      map_title1 = map_custom_title1
+      map_title = map_custom_title1
     }
     if(map_custom_title2 != ""){
-      map_title2 = map_custom_title2
+      map_subtitle = map_custom_title2
     }
   }
   
@@ -1472,7 +1470,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
   }
   
   # Create title for filenames
-  tf1 = gsub("[[:punct:]]", "", map_title1)
+  tf1 = gsub("[[:punct:]]", "", map_title)
   tf2 = gsub(" ","-",tf1)
   file_title = iconv(tf2, from = 'UTF-8', to = 'ASCII//TRANSLIT')
   
@@ -1484,7 +1482,7 @@ generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mod
   ts_title_size = title_size
   
   # Combine into dataframe
-  m_titles = data.frame(map_title1,map_title2,ts_title,ts_axis,file_title,netcdf_title, map_title_size, ts_title_size)
+  m_titles = data.frame(map_title,map_subtitle,ts_title,ts_axis,file_title,netcdf_title, map_title_size, ts_title_size)
   
   return(m_titles)
 }
@@ -1736,38 +1734,44 @@ set_axis_values = function(data_input,mode){
 # }
 
 # Plot map with ggplot2
-plot_default_map <- function(data_input, variable = NULL, mode, titles, axis_range, hide_axis,
-                             points_data, highlights_data, stat_highlights_data, c_borders=T, white_ocean=F,
-                             plotOrder, shpPickers, input, plotType, projection = "UTM (default)", center_lat = 0, center_lon = 0) {
-  
-  # Define the prefix for the color pickers based on plotType
+plot_map <- function(data_input, variable = NULL, mode = NULL,
+                     titles = NULL, axis_range = NULL, hide_axis = FALSE, points_data = data.frame(), 
+                     highlights_data = data.frame(), stat_highlights_data = data.frame(), c_borders = TRUE, 
+                     white_ocean = FALSE, white_land = FALSE, plotOrder = NULL, shpPickers = NULL, 
+                     input = NULL, plotType = "default", projection = "UTM (default)", 
+                     center_lat = 0, center_lon = 0) {
+
+  # Define color picker prefix for shapefiles
   color_picker_prefix <- ifelse(plotType == "shp_colour_", "shp_colour_", "shp_colour2_")
-    
-  ## Generate units & color scheme
-  if (variable == "Temperature") {
-    v_col <- rev(brewer.pal(11, "RdBu")); v_unit <- "\u00B0C"
-  } else if (variable == "Precipitation") {
-    v_col <- brewer.pal(11, "BrBG"); v_unit <- "mm/mon."
-  } else if (variable == "SLP") {
-    v_col <- rev(brewer.pal(11, "PRGn")); v_unit <- "hPa"
-  } else if (variable == "Z500") {
-    v_col <- rev(brewer.pal(11, "PRGn")); v_unit <- "m"
-  } else if (variable == "SD Ratio") {
-    v_col <- rev(brewer.pal(9, "Greens")); v_unit <- ""
-  } else if (is.null(variable)) {
-    if (mode == "Correlation") {
-    v_col <- brewer.pal(11, "PuOr"); v_unit <- ""
+  
+  # Define the color palette and unit based on the variable and mode
+  if (mode == "Correlation") {
+    v_col <- rev(brewer.pal(11, "PuOr")); v_unit <- "r"  
+  } else if (mode == "Regression_coefficients") {
+    v_col = rev(brewer.pal(11,"Spectral")); v_unit = "coefficient"
+  } else if (mode == "Regression_p_values") {
+    v_col = rev(brewer.pal(5,"Greens")); v_unit = "p value"
+    v_lev = c(0,0.01,0.05,0.1,0.2,1)
+  } else if (mode == "Regression_r_squared") {
+    v_col = rev(brewer.pal(11,"Spectral")); v_unit = "r squared"
+  }
+  else { # if anomalies or absolute values
+    if (variable == "Temperature") {
+      v_col <- rev(brewer.pal(11, "RdBu")); v_unit <- "\u00B0C"
+    } else if (variable == "Precipitation") {
+      v_col <- brewer.pal(11, "BrBG"); v_unit <- "mm/mon."
+    } else if (variable == "SLP") {
+      v_col <- rev(brewer.pal(11, "PRGn")); v_unit <- "hPa"
+    } else if (variable == "Z500") {
+      v_col <- rev(brewer.pal(11, "PRGn")); v_unit <- "m"
+    } else if (variable == "SD Ratio") {
+      v_col <- rev(brewer.pal(9, "Greens")); v_unit <- ""
     }
   }
   
-  # Define the axis range
-  if(is.null(axis_range)) { #axis_range is not NULL if fixed axis values are selected in map customization
-    if (mode != "Absolute") {
-      max_abs_z <- max(abs(values(data_input)))
-      axis_range <- c(-max_abs_z, max_abs_z)
-    } else {
-      axis_range <- range(values(data_input))
-    }
+  if (is.null(axis_range)) {  # If axis range is not provided, calculate dynamically
+    max_abs_z <- max(abs(values(data_input)))
+    axis_range <- c(-max_abs_z, max_abs_z)
   }
   
   p <- ggplot() +
@@ -1809,12 +1813,12 @@ plot_default_map <- function(data_input, variable = NULL, mode, titles, axis_ran
   
   # Add coastline and country borders without inheriting x and y aesthetics
   p <- p + geom_sf(data = coast, color = "#333333", size = 0.5, inherit.aes = FALSE)
-  if (c_borders) {
-    p <- p + geom_sf(data = countries, color = "#333333", fill = NA, size = 0.5, inherit.aes = FALSE)
-  }
   if (white_ocean) {
-    p <- p + geom_sf(data = oceans, fill = "#FFFFFF", size = 0.5, inherit.aes = FALSE)
-  }
+    p <- p + geom_sf(data = oceans, fill = "#DDDDDD", size = 0.5, inherit.aes = FALSE)}
+  if (white_land) {
+    p <- p + geom_sf(data = land, fill = "#DDDDDD", size = 0.5, inherit.aes = FALSE)}
+  if (c_borders) {
+    p <- p + geom_sf(data = countries, color = "#333333", fill = NA, size = 0.5, inherit.aes = FALSE)}
   
   # Add shapefiles (if provided) based on plotOrder and shpPickers
   for (file in plotOrder) {
@@ -1859,11 +1863,11 @@ plot_default_map <- function(data_input, variable = NULL, mode, titles, axis_ran
 
   # Add title and subtitle if provided
   if (!is.null(titles)) {
-    if (titles$map_title1 != " ") {
-      p <- p + ggtitle(titles$map_title1)
+    if (titles$map_title != " ") {
+      p <- p + ggtitle(titles$map_title)
     }
-    if (titles$map_title2 != " ") {
-      p <- p + labs(subtitle = titles$map_title2)
+    if (titles$map_subtitle != " ") {
+      p <- p + labs(subtitle = titles$map_subtitle)
     }
     p <- p + theme(
       plot.title = element_text(size = titles$map_title_size, face = "bold"),
@@ -2495,6 +2499,11 @@ create_geotiff <- function(map_data, output_file = NULL) {
   # Extract lon and lat from column and row names
   x <- as.numeric(gsub("\u00B0", "", colnames(map_data)))
   y <- as.numeric(gsub("\u00B0", "", rownames(map_data)))
+  
+  # Check if dimensions of the matrix match the lon/lat lengths
+  if (ncol(map_data) != length(x) || nrow(map_data) != length(y)) {
+    stop("Matrix dimensions do not match the provided longitude/latitude ranges")
+  }
   
   r <- rast(as.matrix(map_data))
   ext(r) <- ext(min(x), max(x), min(y), max(y)) # define rater extent
@@ -3765,7 +3774,7 @@ plot_user_timeseries = function(data_input,color){
 
 ## (Correlation) GENERATE CORRELATION TITLES - creates a dataframe of V1_axis_label,
 ##                                             V2_axis_label, V1_color,V2_color,
-##                                             TS_title, Map_title,Download_title
+##                                             TS_title, Map_title,file_title
 ##             variable_source = "ModE-RA" or "User Data"
 ##             variable = user or ModE-RA variable name
 ##             variable_type = "Timeseries" or "Field"
@@ -3788,8 +3797,8 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     V1_axis_label = variable1
     V1_color = "darkorange2"
     V1_TS_title = variable1
-    V1_Map_title = variable1
-    V1_Download_title = variable1
+    V1_map_title = variable1
+    V1_file_title = variable1
     
     # If V1 = ModE-RA
   } else {
@@ -3832,7 +3841,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     } else {
       V1_Map_title = paste(variable1_dataset,title_months1,variable1,variable1_mode)
     }
-    V1_Download_title = paste(variable1_dataset,title_months1,variable1,variable1_mode)
+    V1_file_title = paste(variable1_dataset,title_months1,variable1,variable1_mode)
   }
   
   # Set values for variable 2:
@@ -3841,7 +3850,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     V2_color = "saddlebrown"
     V2_TS_title = variable2
     V2_Map_title = variable2
-    V2_Download_title = variable2
+    V2_file_title = variable2
     # If V2 = ModE-RA
   } else {
     # Generate ME title months and extension
@@ -3883,7 +3892,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     } else {
       V2_Map_title = paste(variable2_dataset,title_months2,variable2,variable2_mode)
     }
-    V2_Download_title = paste(variable2_dataset,title_months2,variable2,variable2_mode)
+    V2_file_title = paste(variable2_dataset,title_months2,variable2,variable2_mode)
   }
   
   # Edit colors and titles if v1 and v2 are the same
@@ -3913,21 +3922,25 @@ generate_correlation_titles = function(variable1_source,variable2_source,
   }
   
   if (map_title_mode == "Custom"){
-    Map_title = map_custom_title
-    Map_subtitle = map_custom_subtitle
+    map_title = map_custom_title
+    map_subtitle = map_custom_subtitle
   } else {
-    Map_title = "Correlation coefficient"
-    Map_subtitle = paste("Variable 1:", V1_TS_title,"/nVariable 2:",V2_TS_title)
+    map_title = "Correlation coefficient"
+    map_subtitle = paste("Variable 1:", V1_TS_title,"/nVariable 2:",V2_TS_title)
   }
   
   # Generate download titles
-  tf0 = paste("Corr",V1_Download_title,"&",V2_Download_title)
+  tf0 = paste("Corr",V1_file_title,"&",V2_file_title)
   tf1 = gsub("[[:punct:]]", "", tf0)
   tf2 = gsub(" ","-",tf1)
-  Download_title = iconv(tf2, from = 'UTF-8', to = 'ASCII//TRANSLIT')
+  file_title = iconv(tf2, from = 'UTF-8', to = 'ASCII//TRANSLIT')
+  
+  # Title font size
+  map_title_size = title_size
+  ts_title_size = title_size
   
   cor_titles = data.frame(V1_axis_label, V2_axis_label,V1_color,V2_color,TS_title,
-                          Map_title, Map_subtitle, Download_title, title_size)
+                          map_title, map_subtitle, file_title, map_title_size, ts_title_size)
   
   return(cor_titles)
 }
@@ -4188,7 +4201,7 @@ plot_correlation_map = function(data_input, correlation_titles,axis_range,
   }  
   
   # Add title
-  title(correlation_titles$Map_title, cex.main = 1.5,   font.main= 1, adj=0)
+  title(correlation_titles$map_title, cex.main = 1.5,   font.main= 1, adj=0)
 }
 
 ## (Correlation) GENERATE CORRELATION MAP DATATABLE - creates a correlation map 
@@ -4203,6 +4216,7 @@ generate_correlation_map_datatable = function(data_input){
   z = data_input[[3]]  
   
   # Transpose and rotate z
+
   zt = t(z)[rev(1:length(y)),]
   
   # Add row/col names
@@ -4469,16 +4483,15 @@ generate_regression_titles = function(independent_source,dependent_source,
   tf0 = paste("Reg",title_months_i,"ind. var.", ">", title_months_d, modERA_dependent_variable)
   tf1 = gsub("[[:punct:]]", "", tf0)
   tf2 = gsub(" ","-",tf1)
-  Download_title = iconv(tf2, from = 'UTF-8', to = 'ASCII//TRANSLIT')
+  file_title = iconv(tf2, from = 'UTF-8', to = 'ASCII//TRANSLIT')
   
   # Combine all titles into a dataframe
   titles_df = data.frame(title_months_i,title_mode_i,title_lonlat_i,
                          title_months_d,title_mode_d,title_lonlat_d,
-                         color_d,unit_d,title_year_range,Download_title)
+                         color_d,unit_d,title_year_range,file_title)
   
   return(titles_df)
 }
-
 
 ## (Regression) CALCULATE SUMMARY DATA
 ##              independent_variable_data = timeseries data for one or more variables

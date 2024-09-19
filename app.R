@@ -664,6 +664,10 @@ ui <- navbarPage(id = "nav1",
                                            label   = "White ocean",
                                            value   = FALSE),
                              
+                             checkboxInput(inputId = "white_land",
+                                           label   = "White land",
+                                           value   = FALSE),
+                             
                              #Shape File Option
                              
                              fileInput("shpFile", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
@@ -1635,6 +1639,9 @@ ui <- navbarPage(id = "nav1",
                                         label   = "White ocean",
                                         value   = FALSE),
                           
+                          checkboxInput(inputId = "white_land2",
+                                        label   = "White land",
+                                        value   = FALSE),
                           
                           #Shape File Option
                           
@@ -1811,7 +1818,7 @@ ui <- navbarPage(id = "nav1",
                       #### Customization panels END ----
                       ),
                       
-                     #### Downloads ----
+                     #### Downloads Map ----
                      h4("Downloads", style = "color: #094030;",downloads_popover("pop_composites_map_downloads")),
                      checkboxInput(inputId = "download_options2",
                                    label   = "Enable download options",
@@ -3115,6 +3122,10 @@ ui <- navbarPage(id = "nav1",
                                    
                                    checkboxInput(inputId = "white_ocean3",
                                                  label   = "White ocean",
+                                                 value   = FALSE), 
+                                   
+                                   checkboxInput(inputId = "white_land3",
+                                                 label   = "White land",
                                                  value   = FALSE),
                                    
                                    #Shape File Option
@@ -3279,7 +3290,7 @@ ui <- navbarPage(id = "nav1",
                       #### Customization panels END ----
                       ),
                     
-                      #### Downloads ----
+                      #### Downloads Map ----
                       h4("Downloads", style = "color: #094030;",downloads_popover("pop_correlation_map_downloads")),
                       checkboxInput(inputId = "download_options3",
                                     label   = "Enable download options",
@@ -6735,7 +6746,8 @@ server <- function(input, output, session) {
                                    input$custom_statistic,
                                    input$sd_ratio,
                                    input$hide_borders,
-                                   input$white_ocean)
+                                   input$white_ocean,
+                                   input$white_land)
       
       return(metadata)  
     })
@@ -6792,6 +6804,7 @@ server <- function(input, output, session) {
       updateNumericInput(session = getDefaultReactiveDomain(), "sd_ratio", value = metadata[1, "sd_ratio"])
       updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders", value = metadata[1, "hide_borders"])
       updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean", value = metadata[1, "white_ocean"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land", value = metadata[1, "white_land"])
       
       # Read metadata from "custom_points" sheet
       metadata_points <- openxlsx::read.xlsx(input$upload_metadata$datapath, sheet = "custom_points")
@@ -7586,7 +7599,8 @@ server <- function(input, output, session) {
                                          input$percentage_sign_match2,
                                          input$sd_ratio2,
                                          input$hide_borders2,
-                                         input$white_ocean2)
+                                         input$white_ocean2,
+                                         input$white_land2)
       
       return(metadata2)  
     })
@@ -7644,6 +7658,7 @@ server <- function(input, output, session) {
       updateNumericInput(session = getDefaultReactiveDomain(), "sd_ratio2", value = metadata2[1, "sd_ratio2"])
       updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders2", value = metadata2[1, "hide_borders2"])
       updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean2", value = metadata2[1, "white_ocean2"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land2", value = metadata2[1, "white_land2"])
       
       # Read metadata from "custom_points2" sheet
       metadata_points2 <- openxlsx::read.xlsx(input$upload_metadata2$datapath, sheet = "custom_points2")
@@ -8756,6 +8771,7 @@ server <- function(input, output, session) {
                                          input$title1_input3,
                                          input$hide_borders3,
                                          input$white_ocean3,
+                                         input$white_land3,
                                          input$cor_method_map)
       
       return(metadata3)  
@@ -8837,6 +8853,7 @@ server <- function(input, output, session) {
       updateTextInput(session = getDefaultReactiveDomain(), "title1_input3", value = metadata3[1, "title1_input3"])
       updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders3", value = metadata3[1, "hide_borders3"])
       updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean3", value = metadata3[1, "white_ocean3"])
+      updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land3", value = metadata3[1, "white_land3"])
       updateCheckboxInput(session = getDefaultReactiveDomain(), "cor_method_map", value = metadata3[1, "cor_method_map3"])
       
       # Read metadata from "custom_points3" sheet
@@ -10523,7 +10540,7 @@ server <- function(input, output, session) {
       return(m_d)  
     })
     
-    map_plot <- function(){plot_default_map(create_geotiff(map_data()), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,input$white_ocean,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)}
+    map_plot <- function(){plot_map(create_geotiff(map_data()), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,input$white_ocean,input$white_land,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)}
     
     output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
     
@@ -10561,9 +10578,9 @@ server <- function(input, output, session) {
     
     ref_map_plot <- function(){
       if (input$ref_map_mode == "Absolute Values" | input$ref_map_mode == "Reference Values" ){
-        plot_default_map(create_geotiff(ref_map_data()), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders, input$white_ocean, plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)
+        plot_map(create_geotiff(ref_map_data()), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders, input$white_ocean, input$white_land, plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)
       } else if(input$ref_map_mode == "SD Ratio"){
-        plot_default_map(create_geotiff(ref_map_data()), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)
+        plot_map(create_geotiff(ref_map_data()), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)
       }
     }
     
@@ -10742,37 +10759,31 @@ server <- function(input, output, session) {
     
     ### Downloads ----
     #Downloading General data
-    output$download_map             <- downloadHandler(filename = function(){paste(plot_titles()$file_title,"-map.",input$file_type_map, sep = "")},
-                                                       content  = function(file) {
-                                                         if (input$file_type_map == "png"){
-                                                           png(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200, bg = "transparent")  
-                                                           map_plot() 
-                                                           dev.off()
-                                                         } else if (input$file_type_map == "jpeg"){
-                                                           jpeg(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200, bg = "white") 
-                                                           map_plot() 
-                                                           dev.off()
-                                                         } else {
-                                                           pdf(file, width = map_dimensions()[3]/200 , height = map_dimensions()[4]/200, bg = "transparent") 
-                                                           map_plot()
-                                                           dev.off()
-                                                         }})
+    output$download_map       <- downloadHandler(filename = function() {paste(plot_titles()$file_title, "-map.", input$file_type_map, sep = "")},
+                                                 content = function(file) {
+                                                    if (input$file_type_map == "png") {
+                                                      png(file, width = map_dimensions()[3], height = map_dimensions()[4], res = 200, bg = "transparent")
+                                                    } else if (input$file_type_map == "jpeg") {
+                                                      jpeg(file, width = map_dimensions()[3], height = map_dimensions()[4], res = 200, bg = "white")
+                                                    } else {
+                                                      pdf(file, width = map_dimensions()[3] / 200, height = map_dimensions()[4] / 200, bg = "transparent")
+                                                    }
+                                                    print(map_plot())  # Use print to ensure the plot is fully rendered
+                                                    dev.off()}
+                                                )
     
-    output$download_map_sec         <- downloadHandler(filename = function(){paste(plot_titles()$file_title,"-sec_map.",input$file_type_map, sep = "")},
-                                                       content  = function(file) {
-                                                         if (input$file_type_map == "png"){
-                                                           png(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200, bg = "transparent")  
-                                                           ref_map_plot() 
-                                                           dev.off()
-                                                         } else if (input$file_type_map == "jpeg"){
-                                                           jpeg(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200, bg = "white") 
-                                                           ref_map_plot() 
-                                                           dev.off()
-                                                         } else {
-                                                           pdf(file, width = map_dimensions()[3]/200 , height = map_dimensions()[4]/200, bg = "transparent") 
-                                                           ref_map_plot()
-                                                           dev.off()
-                                                         }})
+    output$download_map_sec   <- downloadHandler(filename = function() {paste(plot_titles()$file_title, "-sec_map.", input$file_type_map_sec, sep = "")},
+                                                 content = function(file) {
+                                                    if (input$file_type_map_sec == "png") {
+                                                      png(file, width = map_dimensions()[3], height = map_dimensions()[4], res = 200, bg = "transparent")
+                                                    } else if (input$file_type_map_sec == "jpeg") {
+                                                      jpeg(file, width = map_dimensions()[3], height = map_dimensions()[4], res = 200, bg = "white")
+                                                    } else {
+                                                      pdf(file, width = map_dimensions()[3] / 200, height = map_dimensions()[4] / 200, bg = "transparent")
+                                                    }
+                                                    print(ref_map_plot())
+                                                    dev.off()}
+                                                )
     
     output$download_timeseries      <- downloadHandler(filename = function(){paste(plot_titles()$file_title,"-ts.",input$file_type_timeseries, sep = "")},
                                                        content  = function(file) {
@@ -10945,7 +10956,7 @@ server <- function(input, output, session) {
         return(m_d_2)
       })
       
-      map_plot_2 <- function(){plot_default_map(create_geotiff(map_data_2()), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2, input$white_ocean2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)}
+      map_plot_2 <- function(){plot_map(create_geotiff(map_data_2()), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2, input$white_ocean2, input$white_land2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)}
       
       output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
       # code line below sets height as a function of the ratio of lat/lon 
@@ -10983,9 +10994,9 @@ server <- function(input, output, session) {
       
       ref_map_plot_2 <- function(){
         if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Values" ){
-          plot_default_map(create_geotiff(ref_map_data_2()), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2, input$white_ocean2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)
+          plot_map(create_geotiff(ref_map_data_2()), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2, input$white_ocean2, input$white_land2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)
         } else if (input$ref_map_mode2 == "SD Ratio"){
-          plot_default_map(create_geotiff(ref_map_data_2()), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2, input$white_ocean2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)
+          plot_map(create_geotiff(ref_map_data_2()), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2, input$white_ocean2, input$white_land2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)
         }
       }
       
@@ -11185,37 +11196,31 @@ server <- function(input, output, session) {
     
     ### Downloads ----
     #Downloading General data
-    output$download_map2             <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title,"-map.",input$file_type_map2, sep = "")},
-                                                        content  = function(file) {
-                                                          if (input$file_type_map2 == "png"){
-                                                            png(file, width = map_dimensions_2()[3] , height = map_dimensions_2()[4], res = 200, bg = "transparent") 
-                                                            map_plot_2() 
-                                                            dev.off()
-                                                          } else if (input$file_type_map2 == "jpeg"){
-                                                            jpeg(file, width = map_dimensions_2()[3] , height = map_dimensions_2()[4], res = 200, bg = "white") 
-                                                            map_plot_2() 
-                                                            dev.off()
+    output$download_map2            <- downloadHandler(filename = function() {paste(plot_titles_2()$file_title, "-map.", input$file_type_map2, sep = "")},
+                                                        content = function(file) {
+                                                          if (input$file_type_map2 == "png") {
+                                                            png(file, width = map_dimensions_2()[3], height = map_dimensions_2()[4], res = 200, bg = "transparent")
+                                                          } else if (input$file_type_map2 == "jpeg") {
+                                                            jpeg(file, width = map_dimensions_2()[3], height = map_dimensions_2()[4], res = 200, bg = "white")
                                                           } else {
-                                                            pdf(file, width = map_dimensions_2()[3]/200 , height = map_dimensions_2()[4]/200, bg = "transparent") 
-                                                            map_plot_2()
-                                                            dev.off()
-                                                          }})
-    
-    output$download_map_sec2         <- downloadHandler(filename = function(){paste(plot_titles()$file_title,"-sec_map.",input$file_type_map, sep = "")},
-                                                       content  = function(file) {
-                                                         if (input$file_type_map == "png"){
-                                                           png(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200, bg = "transparent")  
-                                                           ref_map_plot_2() 
-                                                           dev.off()
-                                                         } else if (input$file_type_map == "jpeg"){
-                                                           jpeg(file, width = map_dimensions()[3] , height = map_dimensions()[4], res = 200, bg = "white") 
-                                                           ref_map_plot_2() 
-                                                           dev.off()
-                                                         } else {
-                                                           pdf(file, width = map_dimensions()[3]/200 , height = map_dimensions()[4]/200, bg = "transparent") 
-                                                           ref_map_plot_2()
-                                                           dev.off()
-                                                         }})
+                                                            pdf(file, width = map_dimensions_2()[3] / 200, height = map_dimensions_2()[4] / 200, bg = "transparent")
+                                                          }
+                                                          print(map_plot_2())
+                                                          dev.off()}
+                                                      )
+
+    output$download_map_sec2        <- downloadHandler(filename = function() {paste(plot_titles_2()$file_title, "-sec_map.", input$file_type_map_sec2, sep = "")},
+                                                       content = function(file) {
+                                                          if (input$file_type_map_sec2 == "png") {
+                                                            png(file, width = map_dimensions_2()[3], height = map_dimensions_2()[4], res = 200, bg = "transparent")
+                                                          } else if (input$file_type_map_sec2 == "jpeg") {
+                                                            jpeg(file, width = map_dimensions_2()[3], height = map_dimensions_2()[4], res = 200, bg = "white")
+                                                          } else {
+                                                            pdf(file, width = map_dimensions_2()[3] / 200, height = map_dimensions_2()[4] / 200, bg = "transparent")
+                                                          }
+                                                          print(ref_map_plot_2())
+                                                          dev.off()}
+                                                      )
     
     output$download_timeseries2      <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title,"-ts.",input$file_type_timeseries2, sep = "")},
                                                         content  = function(file) {
@@ -11416,7 +11421,8 @@ server <- function(input, output, session) {
       # Generate Map data & plotting function
       map_data_v1 <- function(){create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
       
-      ME_map_plot_v1 <- function(){plot_default_map(create_geotiff(map_data_v1()), input$ME_variable_v1, input$mode_selected_v1, plot_titles_v1(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE, plotOrder(), input$shpPickers, input, "shp_colour1_")}
+      ME_map_plot_v1 <- function(){plot_map(data_input=create_geotiff(map_data_v1()), variable=input$ME_variable_v1, mode=input$mode_selected_v1, 
+                                            titles=plot_titles_v1())}
       
       # Generate timeseries data & plotting function
       timeseries_data_v1 <- reactive({
@@ -11449,7 +11455,10 @@ server <- function(input, output, session) {
         req(data_output4_secondary(), subset_lons_secondary(), subset_lats_secondary())
         create_map_datatable(data_output4_secondary(), subset_lons_secondary(), subset_lats_secondary())}
       
-      ME_map_plot_v2 <- function(){plot_default_map(create_geotiff(map_data_v2()), input$ME_variable_v2, input$mode_selected_v2, plot_titles_v2(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
+      map_data_v2_tiff <- function(){create_geotiff(map_data_v2())}
+      
+      ME_map_plot_v2 <- function(){data_input = plot_map(data_input=map_data_v2_tiff(), variable=input$ME_variable_v2, mode = input$mode_selected_v2, 
+                                                         titles=plot_titles_v2(), shpPickers=input$shpPickers, plotType="shp_colour1_")}
       
       # Generate timeseries data & plotting function
       timeseries_data_v2 <- reactive({
@@ -11670,14 +11679,22 @@ server <- function(input, output, session) {
         return(c_m_d)
       })
       
+      # Geotiff of correlation map data
+      correlation_map_data_tiff = reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        create_geotiff(generate_correlation_map_datatable(correlation_map_data()))
+      })
+
       # Plot
-      
       corr_m1 = function(){
         if ((input$type_v1 == "Field") | (input$type_v2 == "Field")){
-          # plot_correlation_map(correlation_map_data(),plot_titles_cor(),input$axis_input3,
-          #                      input$hide_axis3,map_points_data3(),map_highlights_data3(),data.frame(),input$hide_borders3, plotOrder3(), input$shpPickers3)
-          plot_default_map(create_geotiff(correlation_map_data()), variable = NULL ,mode = "Correlation", plot_titles_cor(),input$axis_input3,
-                               input$hide_axis3, map_points_data3(),map_highlights_data3(),data.frame(),input$hide_borders3, input$white_ocean3, plotOrder3(), input$shpPickers3, plotType = NULL)
+          plot_map(data_input=correlation_map_data_tiff(), mode="Correlation", 
+                   titles=plot_titles_cor(),axis_range=input$axis_input3, hide_axis=input$hide_axis3, 
+                   points_data=map_points_data3(), highlights_data=map_highlights_data3(),
+                   c_borders=input$hide_borders3, white_ocean=input$white_ocean3, white_land=input$white_land3, 
+                   plotOrder=plotOrder3(), shpPickers=input$shpPickers3)
         }
       }
       
@@ -11821,21 +11838,18 @@ server <- function(input, output, session) {
                                                               dev.off()
                                                             }}) 
       
-      output$download_map3             <- downloadHandler(filename = function(){paste(plot_titles_cor()$Download_title,"-map.",input$file_type_map3, sep = "")},
-                                                          content  = function(file) {
-                                                            if (input$file_type_map3 == "png"){
-                                                              png(file, width = correlation_map_dimensions()[3] , height = correlation_map_dimensions()[4], res = 200, bg = "transparent")  
-                                                              corr_m1()
-                                                              dev.off()
-                                                            } else if (input$file_type_map3 == "jpeg"){
-                                                              jpeg(file, width = correlation_map_dimensions()[3] , height = correlation_map_dimensions()[4], res = 200, bg = "white") 
-                                                              corr_m1() 
-                                                              dev.off()
-                                                            } else {
-                                                              pdf(file, width = correlation_mapdimensions()[3]/200 , height = correlation_map_dimensions()[4]/200, bg = "transparent") 
-                                                              corr_m1()
-                                                              dev.off()
-                                                            }})
+      output$download_map3              <- downloadHandler(filename = function() {paste(plot_titles_cor()$Download_title, "-map.", input$file_type_map3, sep = "")},
+                                                           content = function(file) {
+                                                              if (input$file_type_map3 == "png") {
+                                                                png(file, width = correlation_map_dimensions()[3], height = correlation_map_dimensions()[4], res = 200, bg = "transparent")
+                                                              } else if (input$file_type_map3 == "jpeg") {
+                                                                jpeg(file, width = correlation_map_dimensions()[3], height = correlation_map_dimensions()[4], res = 200, bg = "white")
+                                                              } else {
+                                                                pdf(file, width = correlation_map_dimensions()[3] / 200, height = correlation_map_dimensions()[4] / 200, bg = "transparent")
+                                                              }
+                                                              print(corr_m1())
+                                                              dev.off()}
+                                                          )
       
       output$download_timeseries_data3  <- downloadHandler(filename = function(){paste(plot_titles_cor()$Download_title, "-tsdata.",input$file_type_timeseries_data3, sep = "")},
                                                            content  = function(file) {
@@ -11998,7 +12012,7 @@ server <- function(input, output, session) {
         req(data_output4_primary(), subset_lons_primary(), subset_lats_primary())
         create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
       
-      ME_map_plot_dv <- function(){plot_default_map(create_geotiff(map_data_dv()), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
+      ME_map_plot_dv <- function(){plot_map(create_geotiff(map_data_dv()), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
       
       # Generate timeseries data & plotting function for iv
       ME_ts_data_iv <- reactive({
