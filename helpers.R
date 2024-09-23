@@ -13,13 +13,14 @@
 
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
-#setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
+setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
 
 ## Packages
 
 # Set library path for Offline Version
-assign(".lib.loc", "library", envir = environment(.libPaths))
-#assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
+#assign(".lib.loc", "library", envir = environment(.libPaths))
+assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
+#assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 
 #WD and Packages
 library(shiny)
@@ -1735,45 +1736,64 @@ set_axis_values = function(data_input,mode){
 
 # Plot map with ggplot2
 plot_map <- function(data_input, variable = NULL, mode = NULL,
-                     titles = NULL, axis_range = NULL, hide_axis = FALSE, points_data = data.frame(), 
-                     highlights_data = data.frame(), stat_highlights_data = data.frame(), c_borders = TRUE, 
-                     white_ocean = FALSE, white_land = FALSE, plotOrder = NULL, shpPickers = NULL, 
-                     input = NULL, plotType = "default", projection = "UTM (default)", 
+                     titles = NULL, axis_range = NULL, hide_axis = FALSE, points_data = data.frame(),
+                     highlights_data = data.frame(), stat_highlights_data = data.frame(), c_borders = TRUE,
+                     white_ocean = FALSE, white_land = FALSE, plotOrder = NULL, shpPickers = NULL,
+                     input = NULL, plotType = "default", projection = "UTM (default)",
                      center_lat = 0, center_lon = 0) {
 
   # Define color picker prefix for shapefiles
   color_picker_prefix <- ifelse(plotType == "shp_colour_", "shp_colour_", "shp_colour2_")
   
   # Define the color palette and unit based on the variable and mode
-  if (mode == "Correlation") {
-    v_col <- rev(brewer.pal(11, "PuOr")); v_unit <- "r"  
-  } else if (mode == "Regression_coefficients") {
-    v_col = rev(brewer.pal(11,"Spectral")); v_unit = "coefficient"
-  } else if (mode == "Regression_p_values") {
-    v_col = rev(brewer.pal(5,"Greens")); v_unit = "p value"
-    v_lev = c(0,0.01,0.05,0.1,0.2,1)
-  } else if (mode == "Regression_r_squared") {
-    v_col = rev(brewer.pal(11,"Spectral")); v_unit = "r squared"
-  }
-  else { # if anomalies or absolute values
+  if (!is.null(variable)) {  # Check if variable is not NULL
     if (variable == "Temperature") {
-      v_col <- rev(brewer.pal(11, "RdBu")); v_unit <- "\u00B0C"
+      v_col <- rev(brewer.pal(11, "RdBu"))
+      v_unit <- "\u00B0C"
     } else if (variable == "Precipitation") {
-      v_col <- brewer.pal(11, "BrBG"); v_unit <- "mm/mon."
+      v_col <- brewer.pal(11, "BrBG")
+      v_unit <- "mm/mon."
     } else if (variable == "SLP") {
-      v_col <- rev(brewer.pal(11, "PRGn")); v_unit <- "hPa"
+      v_col <- rev(brewer.pal(11, "PRGn"))
+      v_unit <- "hPa"
     } else if (variable == "Z500") {
-      v_col <- rev(brewer.pal(11, "PRGn")); v_unit <- "m"
-    } else if (variable == "SD Ratio") {
-      v_col <- rev(brewer.pal(9, "Greens")); v_unit <- ""
-    }
-  }
+      v_col <- rev(brewer.pal(11, "PRGn"))
+      v_unit <- "m"
+    }}
   
+  # Handle the 'mode' condition as well
+  if (!is.null(mode)) {  # Ensure mode is not NULL
+    if (mode == "Correlation") {
+      v_col <- rev(brewer.pal(11, "PuOr"))
+      v_unit <- "r"
+    } else if (mode == "Regression_coefficients") {
+      v_col <- rev(brewer.pal(11, "Spectral"))
+      v_unit <- "Coefficient"
+      titles$map_title <- "Regression Coefficients"
+      titles$map_subtitle <- titles$map_subtitle_coeff #overwrite titles$map_subtitle because ggplot uses it
+      titles$map_title_size <- 18
+    } else if (mode == "Regression_p_values") {
+      v_col <- rev(brewer.pal(5, "Greens"))
+      v_unit <- "p\nValues"
+      v_lev <- c(0, 0.01, 0.05, 0.1, 0.2, 1)
+      titles$map_title <- "Regression P Values"
+      titles$map_subtitle <- titles$map_subtitle_pvals
+      titles$map_title_size <- 18
+    } else if (mode == "Regression_residuals") {
+      v_unit <- paste("Residuals\n", v_unit)  # v_col and v_unit previously defined by variable
+      titles$map_title <- "Regression Residuals"
+      titles$map_subtitle <- titles$map_subtitle_res
+      titles$map_title_size <- 18
+    } else if (mode == "SD Ratio") {
+      v_col <- rev(brewer.pal(9, "Greens"))
+      v_unit <- ""
+    }}
+
   if (is.null(axis_range)) {  # If axis range is not provided, calculate dynamically
     max_abs_z <- max(abs(values(data_input)))
     axis_range <- c(-max_abs_z, max_abs_z)
   }
-  
+
   p <- ggplot() +
     geom_spatraster_contour_filled(data = data_input, aes(fill = after_stat(level_mid)), bins = 20)+
       scale_fill_stepsn(
@@ -1803,14 +1823,14 @@ plot_map <- function(data_input, variable = NULL, mode = NULL,
         ticks.linewidth = 0.5
       )
     )
-  
+
   # Theme
   if(projection == "UTM (default)"){
     p <- p + theme_bw()
   } else {
     p <- p + theme_minimal()
   }
-  
+
   # Add coastline and country borders without inheriting x and y aesthetics
   p <- p + geom_sf(data = coast, color = "#333333", size = 0.5, inherit.aes = FALSE)
   if (white_ocean) {
@@ -1819,13 +1839,13 @@ plot_map <- function(data_input, variable = NULL, mode = NULL,
     p <- p + geom_sf(data = land, fill = "#DDDDDD", size = 0.5, inherit.aes = FALSE)}
   if (c_borders) {
     p <- p + geom_sf(data = countries, color = "#333333", fill = NA, size = 0.5, inherit.aes = FALSE)}
-  
+
   # Add shapefiles (if provided) based on plotOrder and shpPickers
   for (file in plotOrder) {
     file_name <- tools::file_path_sans_ext(basename(file))
     if (file_name %in% shpPickers) {
       shape <- st_read(file)
-      
+
       # Set or transform CRS to WGS84
       if (is.na(st_crs(shape))) {
         message(paste("CRS missing for", file_name, "- setting CRS to WGS84 (EPSG:4326)"))
@@ -1837,7 +1857,7 @@ plot_map <- function(data_input, variable = NULL, mode = NULL,
       # Plot based on geometry type
       geom_type <- st_geometry_type(shape)
       color <- input[[paste0(color_picker_prefix, file_name)]]
-      
+
       if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
         p <- p + geom_sf(data = shape, fill = NA, color = color, size = 0.5, inherit.aes = FALSE)
       } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
@@ -1878,9 +1898,10 @@ plot_map <- function(data_input, variable = NULL, mode = NULL,
 
   # Add point and highlights
   p <- add_ggmap_points_and_highlights(p, points_data, highlights_data, stat_highlights_data)
-  
+
   return(p)
 }
+
 
 
 ## (General) CREATE MAP DATATABLE
@@ -2496,6 +2517,9 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
 
 create_geotiff <- function(map_data, output_file = NULL) {
   
+  print("Map data input:")
+  print(str(map_data))
+  print(head(map_data))
   # Extract lon and lat from column and row names
   x <- as.numeric(gsub("\u00B0", "", colnames(map_data)))
   y <- as.numeric(gsub("\u00B0", "", rownames(map_data)))
@@ -3916,9 +3940,9 @@ generate_correlation_titles = function(variable1_source,variable2_source,
   
   # Generate combined titles:
   if (ts_title_mode == "Custom"){
-    TS_title = ts_custom_title
+    ts_title = ts_custom_title
   } else {
-    TS_title = paste(V1_TS_title,"&",V2_TS_title)
+    ts_title = paste(V1_TS_title,"&",V2_TS_title)
   }
   
   if (map_title_mode == "Custom"){
@@ -3926,7 +3950,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     map_subtitle = map_custom_subtitle
   } else {
     map_title = "Correlation coefficient"
-    map_subtitle = paste("Variable 1:", V1_TS_title,"/nVariable 2:",V2_TS_title)
+    map_subtitle = paste("Variable 1:", V1_TS_title,"\nVariable 2:",V2_TS_title)
   }
   
   # Generate download titles
@@ -3939,8 +3963,8 @@ generate_correlation_titles = function(variable1_source,variable2_source,
   map_title_size = title_size
   ts_title_size = title_size
   
-  cor_titles = data.frame(V1_axis_label, V2_axis_label,V1_color,V2_color,TS_title,
-                          map_title, map_subtitle, file_title, map_title_size, ts_title_size)
+  cor_titles = data.frame(map_title, map_subtitle, ts_title, file_title, map_title_size, ts_title_size, 
+                          V1_axis_label, V2_axis_label, V1_color, V2_color)
   
   return(cor_titles)
 }
@@ -4397,7 +4421,9 @@ generate_regression_titles = function(independent_source,dependent_source,
                                       dataset_i,dataset_d,modERA_dependent_variable,
                                       mode_i,mode_d,month_range_i,month_range_d,
                                       lon_range_i,lon_range_d,lat_range_i,lat_range_d,
-                                      year_range){
+                                      year_range, year_selected,
+                                      independent_variables,dependent_variable,
+                                      iv_number_coeff, iv_number_pvals){
   
   # Create Independent variable titles
   if (independent_source == "User Data"){
@@ -4479,6 +4505,25 @@ generate_regression_titles = function(independent_source,dependent_source,
   # Create year range title
   title_year_range = paste(year_range[1],"-",year_range[2],sep = "")
   
+  # Generate regression map titles for coefficients
+  map_subtitle_coeff = paste(title_months_i, independent_variables[iv_number_coeff],
+                             " ", title_mode_i, title_lonlat_i, " -> ",
+                             title_months_d, dependent_variable,
+                             title_mode_d, ". ", title_year_range, sep = "")
+
+  # Generate regression map titles for p-values
+  map_subtitle_pvals = paste(title_months_i, independent_variables[iv_number_pvals],
+                             " ", title_mode_i, " -> ",
+                             title_months_d, dependent_variable,
+                             title_mode_d, ". ", title_year_range, sep = "")
+
+  # Generate regression map titles for residuals
+  title_variables_i = paste(independent_variables, collapse = " ; ")
+  map_subtitle_res = paste(title_months_i, title_variables_i,
+                           " ", title_mode_i, title_lonlat_i, " -> ",
+                           title_months_d, dependent_variable,
+                           title_mode_d, ". ", year_selected, sep = "")
+  
   # Generate download titles
   tf0 = paste("Reg",title_months_i,"ind. var.", ">", title_months_d, modERA_dependent_variable)
   tf1 = gsub("[[:punct:]]", "", tf0)
@@ -4486,9 +4531,10 @@ generate_regression_titles = function(independent_source,dependent_source,
   file_title = iconv(tf2, from = 'UTF-8', to = 'ASCII//TRANSLIT')
   
   # Combine all titles into a dataframe
-  titles_df = data.frame(title_months_i,title_mode_i,title_lonlat_i,
-                         title_months_d,title_mode_d,title_lonlat_d,
-                         color_d,unit_d,title_year_range,file_title)
+  titles_df = data.frame(title_months_i, title_mode_i, title_lonlat_i,
+                         title_months_d, title_mode_d, title_lonlat_d,
+                         color_d, unit_d, title_year_range, file_title,
+                         map_subtitle_coeff, map_subtitle_pvals, map_subtitle_res)
   
   return(titles_df)
 }

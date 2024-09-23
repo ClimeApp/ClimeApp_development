@@ -4016,7 +4016,7 @@ ui <- navbarPage(id = "nav1",
                             column(2,radioButtons(inputId = "reg_res_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
                             column(3, downloadButton(outputId = "download_reg_res_plot_data", label = "Download data")),
                           )), br(),
-                      withSpinner(ui_element = tableOutput("data_reg_resi"),
+                      withSpinner(ui_element = tableOutput("data_reg_res"),
                                   image = spinner_image,
                                   image.width = spinner_width,
                                   image.height = spinner_height)
@@ -11455,7 +11455,12 @@ server <- function(input, output, session) {
         req(data_output4_secondary(), subset_lons_secondary(), subset_lats_secondary())
         create_map_datatable(data_output4_secondary(), subset_lons_secondary(), subset_lats_secondary())}
       
-      map_data_v2_tiff <- function(){create_geotiff(map_data_v2())}
+      map_data_v2_tiff = reactive({
+        
+        req(input$nav1 == "tab3") # Only run code if in the current tab
+        
+        create_geotiff(map_data_v2())
+      })
       
       ME_map_plot_v2 <- function(){data_input = plot_map(data_input=map_data_v2_tiff(), variable=input$ME_variable_v2, mode = input$mode_selected_v2, 
                                                          titles=plot_titles_v2(), shpPickers=input$shpPickers, plotType="shp_colour1_")}
@@ -11683,7 +11688,7 @@ server <- function(input, output, session) {
       correlation_map_data_tiff = reactive({
         
         req(input$nav1 == "tab3") # Only run code if in the current tab
-        
+
         create_geotiff(generate_correlation_map_datatable(correlation_map_data()))
       })
 
@@ -12114,9 +12119,11 @@ server <- function(input, output, session) {
                                          input$dataset_selected_iv,input$dataset_selected_dv,
                                          input$ME_variable_dv,
                                          input$mode_selected_iv, input$mode_selected_dv,
-                                         month_range_secondary(),month_range_primary(),lonlat_vals_iv()[1:2],
-                                         lonlat_vals_dv()[1:2],lonlat_vals_iv()[3:4],
-                                         lonlat_vals_dv()[3:4],input$range_years4)
+                                         month_range_secondary(),month_range_primary(),
+                                         lonlat_vals_iv()[1:2],lonlat_vals_dv()[1:2],lonlat_vals_iv()[3:4],lonlat_vals_dv()[3:4],
+                                         input$range_years4, reg_resi_year_val(),
+                                         variables_iv(), variable_dv(), 
+                                         match(input$coeff_variable,variables_iv()), match(input$pvalue_variable,variables_iv()))
         return(ptr)
       })
       
@@ -12183,77 +12190,94 @@ server <- function(input, output, session) {
         return(reg_cd)
       })
       
-      reg_coef_1 = function(){
+      reg_coef_tiff = reactive({
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        create_geotiff(reg_coef_table()) 
+      })
+      
+      # reg_coef_map = function(){
+      #   req(input$coeff_variable)
+      #   plot_regression_coefficients(regression_coeff_data(),variables_iv(),match(input$coeff_variable,variables_iv()),
+      #                                variable_dv(),plot_titles_reg(),subset_lons_primary(),subset_lats_primary(),TRUE)
+      # }
+      
+      reg_coef_map = function(){
         req(input$coeff_variable)
-        plot_regression_coefficients(regression_coeff_data(),variables_iv(),match(input$coeff_variable,variables_iv()),
-                                     variable_dv(),plot_titles_reg(),subset_lons_primary(),subset_lats_primary(),TRUE)
+        plot_map(data_input=reg_coef_tiff(),variable=input$coeff_variable, mode="Regression_coefficients", titles=plot_titles_reg())
       }
       
-      output$plot_reg_coeff = renderPlot({reg_coef_1()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
+      output$plot_reg_coeff = renderPlot({reg_coef_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
       
-      reg_coef_2 = function(){
-        
+      reg_coef_table = function(){
         req(input$coeff_variable)
-        
         if (length(variables_iv()) == 1){ #  Deals with the 'variable' dimension disappearing
           rcd1 = regression_coeff_data()
         } else{
           rcd1 = regression_coeff_data()[match(input$coeff_variable,variables_iv()),,]
         }
-        
         # Transform and add rownames to data
         rcd2 = create_regression_map_datatable(rcd1,subset_lons_primary(),subset_lats_primary())
-        
         return (rcd2)
       }
       
-      output$data_reg_coeff = renderTable({reg_coef_2()}, rownames = TRUE)
+      output$data_reg_coeff = renderTable({reg_coef_table()}, rownames = TRUE)
+      
+      
       
       ## Regression pvalue plot
       
       regression_pvalue_data = reactive({
-        
         req(input$nav1 == "tab4") # Only run code if in the current tab
-        
         rpvd = create_regression_pvalue_data(ts_data_iv(), data_output4_primary(), variables_iv())
-        
         return(rpvd)
       })
       
-      reg_pval_1 = function(){
+      reg_pval_tiff = reactive({
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        create_geotiff(reg_pval_table()) 
+      })
+      
+      # reg_pval_map = function(){
+      #   req(input$pvalue_variable)
+      #   plot_regression_pvalues(regression_pvalue_data(),variables_iv(),match(input$pvalue_variable,variables_iv()),
+      #                           variable_dv(),plot_titles_reg(),subset_lons_primary(),subset_lats_primary(),TRUE)
+      # }
+      
+      reg_pval_map = function(){
         req(input$pvalue_variable)
-        plot_regression_pvalues(regression_pvalue_data(),variables_iv(),match(input$pvalue_variable,variables_iv()),
-                                variable_dv(),plot_titles_reg(),subset_lons_primary(),subset_lats_primary(),TRUE)
+        plot_map(data_input=reg_pval_tiff(),variable=input$pvalue_variable, mode="Regression_p_values", titles=plot_titles_reg())
       }
       
-      output$plot_reg_pval = renderPlot({reg_pval_1()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
+      output$plot_reg_pval = renderPlot({reg_pval_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
       
-      reg_pval_2 = function(){
+      reg_pval_table = function(){
         req(input$pvalue_variable)
-        
         if (length(variables_iv()) == 1){ #  Deals with the 'variable' dimension disappearing
           rpd1 = regression_pvalue_data()
         } else{
           rpd1 = regression_pvalue_data()[match(input$pvalue_variable,variables_iv()),,]
         }
-        
         # Transform and add rownames to data
         rpd2 = create_regression_map_datatable(rpd1,subset_lons_primary(),subset_lats_primary())
         
         return(rpd2)
       }
       
-      output$data_reg_pval = renderTable({reg_pval_2()},rownames = TRUE)
+      output$data_reg_pval = renderTable({reg_pval_table()},rownames = TRUE)
+      
+      
       
       ## Regression residuals plot
       
       regression_residuals_data = reactive({
-        
         req(input$nav1 == "tab4") # Only run code if in the current tab
-        
         rresd = create_regression_residuals(ts_data_iv(), data_output4_primary(), variables_iv())
-        
         return(rresd)
+      })
+      
+      reg_res_tiff = reactive({
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        create_geotiff(reg_res_table()) 
       })
       
       # Make sure plot only updates when year is valid
@@ -12264,34 +12288,33 @@ server <- function(input, output, session) {
         }
       })
       
-      reg_res_1 = function(){
-        plot_regression_residuals(regression_residuals_data(),reg_resi_year_val(),input$range_years4,
-                                  variables_iv(),variable_dv(),plot_titles_reg(),
-                                  subset_lons_primary(),subset_lats_primary(),TRUE)
-        
+      # reg_res_map = function(){
+      #   plot_regression_residuals(regression_residuals_data(),reg_resi_year_val(),input$range_years4,
+      #                             variables_iv(),variable_dv(),plot_titles_reg(),
+      #                             subset_lons_primary(),subset_lats_primary(),TRUE)
+      # }
+      reg_res_map = function(){
+        req(input$pvalue_variable)
+        plot_map(data_input=reg_res_tiff(),variable=variable_dv(), mode="Regression_residuals", titles=plot_titles_reg())
       }
       
-      output$plot_reg_resi = renderPlot({reg_res_1()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
+      output$plot_reg_resi = renderPlot({reg_res_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
       
-      reg_res_2 = function(){
-        
+      reg_res_table = function(){
         # Find ID of year selected
         year_ID = (reg_resi_year_val()-input$range_years4[1])+1
         rrd1 = regression_residuals_data()[year_ID,,]
-        
         # Transform and add rownames to data
         rrd2 = create_regression_map_datatable(rrd1,subset_lons_primary(),subset_lats_primary())
       }
       
-      output$data_reg_resi = renderTable({reg_res_2()},rownames = TRUE)
+      output$data_reg_res = renderTable({reg_res_table()},rownames = TRUE)
       
       
       ## Regression timeseries plot
       
       regression_ts_data = reactive({
-        
         req(input$nav1 == "tab4") # Only run code if in the current tab
-        
         rtsd = create_regression_timeseries_datatable(ts_data_dv(),regression_summary_data(),
                                                       plot_titles_reg())
         return(rtsd)
@@ -12447,28 +12470,28 @@ server <- function(input, output, session) {
                                                         content  = function(file) {
                                                           if (input$reg_coe_plot_type == "png"){
                                                             png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "transparent")  
-                                                            reg_coef_1()
+                                                            reg_coef_map()
                                                             dev.off()
                                                           } else if (input$reg_coe_plot_type == "jpeg"){
                                                             jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "white") 
-                                                            reg_coef_1() 
+                                                            reg_coef_map() 
                                                             dev.off()
                                                           } else {
                                                             pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200, bg = "transparent") 
-                                                            reg_coef_1()
+                                                            reg_coef_map()
                                                             dev.off()
                                                           }})
     
     output$download_reg_coe_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-mapdata.",input$reg_coe_plot_data_type, sep = "")},
                                                                 content  = function(file) {
                                                                   if (input$reg_coe_plot_data_type == "csv"){
-                                                                    map_data_new_4a <- rewrite_maptable(reg_coef_2(),NA,NA)
+                                                                    map_data_new_4a <- rewrite_maptable(reg_coef_table(),NA,NA)
                                                                     colnames(map_data_new_4a) <- NULL
                                                                     
                                                                     write.csv(map_data_new_4a, file,
                                                                               row.names = FALSE)
                                                                   } else {
-                                                                    write.xlsx(rewrite_maptable(reg_coef_2(),NA,NA), file,
+                                                                    write.xlsx(rewrite_maptable(reg_coef_table(),NA,NA), file,
                                                                                row.names = FALSE,
                                                                                col.names = FALSE)
                                                                   }})
@@ -12477,28 +12500,28 @@ server <- function(input, output, session) {
                                                          content  = function(file) {
                                                            if (input$reg_pval_plot_type == "png"){
                                                              png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "transparent")  
-                                                             reg_pval_1()
+                                                             reg_pval_map()
                                                              dev.off()
                                                            } else if (input$reg_pval_plot_type == "jpeg"){
                                                              jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "white") 
-                                                             reg_pval_1() 
+                                                             reg_pval_map() 
                                                              dev.off()
                                                            } else {
                                                              pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200, bg = "transparent") 
-                                                             reg_pval_1()
+                                                             reg_pval_map()
                                                              dev.off()
                                                            }})
     
     output$download_reg_pval_plot_data       <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-mapdata.",input$reg_pval_plot_data_type, sep = "")},
                                                                 content  = function(file) {
                                                                   if (input$reg_pval_plot_data_type == "csv"){
-                                                                    map_data_new_4b <- rewrite_maptable(reg_pval_2(),NA,NA)
+                                                                    map_data_new_4b <- rewrite_maptable(reg_pval_table(),NA,NA)
                                                                     colnames(map_data_new_4b) <- NULL
                                                                     
                                                                     write.csv(map_data_new_4b, file,
                                                                               row.names = FALSE)
                                                                   } else {
-                                                                    write.xlsx(rewrite_maptable(reg_pval_2(),NA,NA), file,
+                                                                    write.xlsx(rewrite_maptable(reg_pval_table(),NA,NA), file,
                                                                                row.names = FALSE,
                                                                                col.names = FALSE)
                                                                   }})
@@ -12507,28 +12530,28 @@ server <- function(input, output, session) {
                                                           content  = function(file) {
                                                             if (input$reg_res_plot_type == "png"){
                                                               png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "transparent")  
-                                                              reg_res_1()
+                                                              reg_res_map()
                                                               dev.off()
                                                             } else if (input$reg_res_plot_type == "jpeg"){
                                                               jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "white") 
-                                                              reg_res_1() 
+                                                              reg_res_map() 
                                                               dev.off()
                                                             } else {
                                                               pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200, bg = "transparent") 
-                                                              reg_res_1()
+                                                              reg_res_map()
                                                               dev.off()
                                                             }})
     
     output$download_reg_res_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-mapdata.",input$reg_res_plot_data_type, sep = "")},
                                                                 content  = function(file) {
                                                                   if (input$reg_res_plot_data_type == "csv"){
-                                                                    map_data_new_4c <- rewrite_maptable(reg_res_2(),NA,NA)
+                                                                    map_data_new_4c <- rewrite_maptable(reg_res_table(),NA,NA)
                                                                     colnames(map_data_new_4c) <- NULL
                                                                     
                                                                     write.csv(map_data_new_4c, file,
                                                                               row.names = FALSE)
                                                                   } else {
-                                                                    write.xlsx(rewrite_maptable(reg_res_2(),NA,NA), file,
+                                                                    write.xlsx(rewrite_maptable(reg_res_table(),NA,NA), file,
                                                                                row.names = FALSE,
                                                                                col.names = FALSE)
                                                                   }})
