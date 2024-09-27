@@ -4297,23 +4297,23 @@ generate_regression_titles = function(independent_source,dependent_source,
   title_year_range = paste(year_range[1],"-",year_range[2],sep = "")
   
   # Generate regression map titles for coefficients
-  map_subtitle_coeff = paste(title_months_i, independent_variables[iv_number_coeff],
-                             " ", title_mode_i, title_lonlat_i, " -> ",
+  map_subtitle_coeff = paste("Independent variable: ", title_months_i, independent_variables[iv_number_coeff],
+                             " ", title_mode_i, title_lonlat_i, "\nDependent variable: ",
                              title_months_d, dependent_variable,
-                             title_mode_d, ". ", title_year_range, sep = "")
+                             title_mode_d, ". \nTime range:", title_year_range, sep = "")
 
   # Generate regression map titles for p-values
-  map_subtitle_pvals = paste(title_months_i, independent_variables[iv_number_pvals],
-                             " ", title_mode_i, " -> ",
+  map_subtitle_pvals = paste("Independent variable: ", title_months_i, independent_variables[iv_number_pvals],
+                             " ", title_mode_i, "\nDependent variable: ",
                              title_months_d, dependent_variable,
-                             title_mode_d, ". ", title_year_range, sep = "")
+                             title_mode_d, ". \nTime range:", title_year_range, sep = "")
 
   # Generate regression map titles for residuals
   title_variables_i = paste(independent_variables, collapse = " ; ")
-  map_subtitle_res = paste(title_months_i, title_variables_i,
-                           " ", title_mode_i, title_lonlat_i, " -> ",
+  map_subtitle_res = paste("Independent variables: ", title_months_i, title_variables_i,
+                           " ", title_mode_i, title_lonlat_i, "\nDependent variable: ",
                            title_months_d, dependent_variable,
-                           title_mode_d, ". ", year_selected, sep = "")
+                           title_mode_d, ". \nYear:", year_selected, sep = "")
   
   # Generate download titles
   tf0 = paste("Reg",title_months_i,"ind. var.", ">", title_months_d, modERA_dependent_variable)
