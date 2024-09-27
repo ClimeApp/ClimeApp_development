@@ -282,6 +282,14 @@ ui <- navbarPage(id = "nav1",
             #### Tab Version History ----
             tabPanel("Version history",
                      br(), br(),
+                     h5(strong("v1.4 (insert date)", style = "color: #094030;")),
+                     tags$ul(
+                       tags$li("Export map data as georeferenced TIFF"),
+                       tags$li("New maps and timeseries design with ggplot"),
+                       tags$li("New map customization options: Change font size, projection, grey our land or ocean"),
+                       tags$li("New map customization is now also available for correlation and regression"),
+                     ),
+                     br(),
                      h5(strong("v1.3 (19.07.2024)", style = "color: #094030;")),
                      tags$ul(
                        tags$li("Fixed the depiction of Historical Proxies on ModE-RA source plots"),
@@ -6179,6 +6187,23 @@ server <- function(input, output, session) {
       lonlat_vals(c(-180,180,-90,90))
     }) 
     
+    observeEvent(input$projection, { # also update to global if projection is changed
+      if (input$projection != "UTM (default)") {
+        updateNumericRangeInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "range_longitude",
+          label = NULL,
+          value = c(-180, 180))
+        
+        updateNumericRangeInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "range_latitude",
+          label = NULL,
+          value = c(-90, 90))
+        lonlat_vals(c(-180, 180, -90, 90))
+      }
+    })
+    
     observeEvent(input$button_europe, {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
@@ -7038,7 +7063,24 @@ server <- function(input, output, session) {
         value = c(-90,90))
       
       lonlat_vals2(c(-180,180,-90,90))
-    }) 
+    })
+    
+    observeEvent(input$projection2, { # also update to global if projection is changed
+      if (input$projection2 != "UTM (default)") {
+        updateNumericRangeInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "range_longitude2",
+          label = NULL,
+          value = c(-180, 180))
+        
+        updateNumericRangeInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "range_latitude2",
+          label = NULL,
+          value = c(-90, 90))
+        lonlat_vals2(c(-180, 180, -90, 90))
+      }
+    })
     
     observeEvent(input$button_europe2, {
       updateNumericRangeInput(
@@ -8267,6 +8309,23 @@ server <- function(input, output, session) {
         addClass("button_s_america_v1", "green-background")
       } else {
         removeClass("button_s_america_v1", "green-background")
+      }
+    })
+    
+    # Update to global if projection is changed
+    observeEvent(input$projection_v1, {
+      if (input$projection_v1 != "UTM (default)" & (lonlat_vals_v1() != c(-180,180,-90,90) | lonlat_vals_v2 != c(-180,180,-90,90)) & (input$type_v1 == "Field" & input$type_v2 == "Field")) {
+        # create a pop up message and with button selection
+        showModal(modalDialog(
+          title = "Action required",
+          "Changing the projection will reset the map area to global. This requires a V1 or V2 to be global. Which do you want to change?",
+          footer = tagList(
+            actionButton("v1", "V1"),
+            actionButton("v1", "V2")
+          )
+        ))
+
+
       }
     })
     
@@ -10503,25 +10562,18 @@ server <- function(input, output, session) {
     #Map customization (statistics and map titles)
     
     plot_titles <- reactive({
-      
       req(input$nav1 == "tab1") # Only run code if in the current tab
-      
-      
       my_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Anomaly", input$title_mode,input$title_mode_ts,
                                   month_range_primary(), input$range_years, input$ref_period, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
                                   input$title1_input, input$title2_input,input$title1_input_ts, input$title_size_input)
-      
       return(my_title)
     })
     
     map_statistics = reactive({
-      
       req(input$nav1 == "tab1") # Only run code if in the current tab
-      
       my_stats = create_stat_highlights_data(data_output4_primary(),SDratio_subset(),
                                              input$custom_statistic,input$sd_ratio,
                                              NA,subset_lons_primary(),subset_lats_primary())
-      
       return(my_stats)
     })
     
@@ -10532,11 +10584,8 @@ server <- function(input, output, session) {
     
     #Plotting the Map
     map_dimensions <- reactive({
-      
       req(input$nav1 == "tab1") # Only run code if in the current tab
-      
       m_d = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_map_width, input$dimension[2], input$hide_axis)
-      
       return(m_d)  
     })
     
@@ -10578,10 +10627,14 @@ server <- function(input, output, session) {
     
     ref_map_plot <- function(){
       if (input$ref_map_mode == "Absolute Values" | input$ref_map_mode == "Reference Values" ){
-        plot_map(create_geotiff(ref_map_data()), input$variable_selected, "Absolute", ref_map_titles(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders, input$white_ocean, input$white_land, plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)
+        v=input$variable_selected; m="Absolute"; axis_range=NULL
+        
       } else if(input$ref_map_mode == "SD Ratio"){
-        plot_map(create_geotiff(ref_map_data()), "SD Ratio", "Absolute", ref_map_titles(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)
+        v=NULL; m="SD Ratio"; axis_range=c(0,1)
       }
+      plot_map(data_input=create_geotiff(ref_map_data()), variable=v, mode=m, titles=ref_map_titles(), axis_range=axis_range, 
+               c_borders=input$hide_borders,plotOrder(), white_ocean=input$white_ocean, white_land=input$white_land, plotOrder=plotOrder(), 
+               shpPickers=input$shpPickers, input=input, plotType="shp_colour_", projection=input$projection, center_lat=input$center_lat, center_lon=input$center_lon)
     }
     
     output$ref_map <- renderPlot({
@@ -10994,10 +11047,15 @@ server <- function(input, output, session) {
       
       ref_map_plot_2 <- function(){
         if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Values" ){
-          plot_map(create_geotiff(ref_map_data_2()), input$variable_selected2, "Absolute", ref_map_titles_2(), NULL, FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2, input$white_ocean2, input$white_land2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)
+          v=input$variable_selected2; m="Absolute"; axis_range=NULL
+         
         } else if (input$ref_map_mode2 == "SD Ratio"){
-          plot_map(create_geotiff(ref_map_data_2()), "SD Ratio", "Absolute", ref_map_titles_2(), c(0,1), FALSE, data.frame(), data.frame(),data.frame(),input$hide_borders2, input$white_ocean2, input$white_land2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)
+          v=NULL; m="SD Ratio"; axis_range=c(0,1)
         }
+        plot_map(data_input=create_geotiff(ref_map_data_2()), variable=v, mode=m, titles=ref_map_titles_2(), axis_range, 
+                 c_borders=input$hide_borders2, white_ocean=input$white_ocean2, white_land=input$white_land2, 
+                 plotOrder=plotOrder2(), shpPickers=input$shpPickers2, input=input, plotType="shp_colour2_", 
+                 projection=input$projection2, center_lat=input$center_lat2, center_lon=input$center_lon2)
       }
       
       output$ref_map2 <- renderPlot({
