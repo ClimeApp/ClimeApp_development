@@ -9,18 +9,19 @@
 #Richard:
 #Laptop/desktop:
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
-setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
+#setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
 
 ## Packages
 
 # Set library path for Offline Version
 #assign(".lib.loc", "library", envir = environment(.libPaths))
-assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
+#assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
 #assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
+assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 
 #WD and Packages
 library(shiny)
@@ -1666,9 +1667,10 @@ plot_map <- function(data_input, variable = NULL, mode = NULL,
     formula = paste0("+proj=laea +lat_0=", center_lat, " +lon_0=", center_lon, " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
     p <- p + coord_sf(crs = st_crs(formula))
   } else { # if UTM (default)
-    p <- p + coord_sf(xlim = c(xmin(data_input), xmax(data_input)), ylim = c(ymin(data_input), ymax(data_input)), expand = FALSE)
+    p <- p + coord_sf(xlim = c((xmin(data_input)+0.94), (xmax(data_input)-0.94)), ylim = c((ymin(data_input)+0.94), (ymax(data_input)-0.94)), expand = FALSE)
   }
-
+  
+  
   # Add title and subtitle if provided
   if (!is.null(titles)) {
     if (titles$map_title != " ") {
@@ -1683,7 +1685,8 @@ plot_map <- function(data_input, variable = NULL, mode = NULL,
       axis.text=element_text(size = titles$map_title_size / 1.6),
     )
   }
-
+  
+  
   # Add point and highlights
   p <- add_ggmap_points_and_highlights(p, points_data, highlights_data, stat_highlights_data)
 
