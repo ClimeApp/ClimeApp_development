@@ -9,11 +9,14 @@
 #Richard:
 #Laptop/desktop:
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
+#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 
-#Noémie
+#Noémie:
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
 #setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
+
+#Tanja:
+setwd("C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp") #private laptop
 
 ## Packages
 
@@ -21,7 +24,8 @@ setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 #assign(".lib.loc", "library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
 #assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
-assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
+#assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
+assign(".lib.loc", "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library for Tanja's laptop
 
 #WD and Packages
 library(shiny)
@@ -35,6 +39,7 @@ library(readxl)
 library(DT)
 library(zoo)
 library(colourpicker)
+library(shinylive)
 #library(tmaptools)  ** do we need this? **
 library(ggplot2)
 library(sf)
@@ -57,6 +62,7 @@ library(rnaturalearthdata)
 
 # Set library path for Live Version
 # lib_path <- "/home/climeapp/R/x86_64-pc-linux-gnu-library/4.4"
+lib_path <- "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library"
 # #WD and Packages
 # library(shiny, lib.loc = lib_path)
 # library(ncdf4, lib.loc = lib_path)
@@ -85,6 +91,7 @@ library(rnaturalearthdata)
 # library(terra, lib.loc = lib_path)
 # library(rnaturalearth, lib.loc = lib_path)
 # library(rnaturlaearthdata, lib.loc = lib_path)
+# library(shinylive, lib.loc = lib_path)
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
@@ -1524,7 +1531,8 @@ set_axis_values = function(data_input,mode){
 
 
 # Plot map with ggplot2
-plot_map <- function(data_input, variable = NULL, mode = NULL,
+plot_map <- function(data_input,
+                     variable = NULL, mode = NULL,
                      titles = NULL, axis_range = NULL, hide_axis = FALSE, points_data = data.frame(),
                      highlights_data = data.frame(), stat_highlights_data = data.frame(), c_borders = TRUE,
                      white_ocean = FALSE, white_land = FALSE, plotOrder = NULL, shpPickers = NULL,
