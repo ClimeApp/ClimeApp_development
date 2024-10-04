@@ -25,7 +25,10 @@ setwd("C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp") #private laptop
 #assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
 #assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
+<<<<<<< HEAD
 assign(".lib.loc", "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library for Tanja's laptop
+=======
+>>>>>>> fb1b1e1ef9efdaffb0d2cbb98fc1c9c7ca62e24f
 
 #WD and Packages
 library(shiny)
@@ -800,82 +803,6 @@ generate_title_months = function(MR){
     title_months = paste(month_letters[(MR[1]:MR[2])+1],collapse = "")
   }
   return(title_months)
-}
-
-
-## ADD POINTS AND HIGHLIGHTS TO MAP - only used by the plot_ ... _map functions
-## data input = custom point data, custom highlights data and statistical 
-##              highlights data
-
-add_map_points_and_highlights = function(CP_data,CH_data,SH_data){
-  
-  # Add statistical points to plot
-  if (dim(SH_data)[1]>0){
-    points(SH_data$x_vals,SH_data$y_vals,cex = (SH_data$criteria_val)*0.5,pch = 20)
-  }
-  # Add custom points to plot
-  if (dim(CP_data)[1]>0){
-    points(CP_data$x_value,CP_data$y_value,col = CP_data$color,
-           pch = CP_data$shape, cex = CP_data$size)
-    text(CP_data$x_value,CP_data$y_value, label = CP_data$label,pos = 1)
-  }
-  # Add highlights to plot
-  if (dim(CH_data)[1]>0){
-    for (i in 1:length(CH_data$x1)){
-      if (CH_data$type[i] == "Box"){
-        my_density = NULL
-        my_lwd = 3
-        my_col = NA
-        my_border = CH_data$color[i]
-      } else if (CH_data$type[i] == "Hatched"){
-        my_density = 10
-        my_lwd = NULL
-        my_col = CH_data$color[i] 
-        my_border = NA
-      }
-      rect(CH_data$x1[i],CH_data$y1[i],CH_data$x2[i],CH_data$y2[i],density = my_density,
-           lwd = my_lwd, col = my_col, border = my_border)
-    }
-  }  
-}
-
-## ADD POINTS AND HIGHLIGHTS TO GGPLOT MAP
-## The same function as add_map_points_and_highlights but for ggplot maps
-## plot = a ggplot object
-## SH_data = statistical highlights data
-## CP_data = custom point data
-## CH_data = custom highlights data
-add_ggmap_points_and_highlights <- function(plot, CP_data, CH_data, SH_data) {
-
-  # Add statistical points to plot
-  if (nrow(SH_data) > 0) {
-    plot <- plot + 
-      geom_point(data = SH_data, aes(x = x_vals, y = y_vals, size = I(criteria_val * 0.5)), shape = 20)
-  }
-  
-  # Add custom points to plot
-  if (nrow(CP_data) > 0) {
-    plot <- plot + 
-      geom_point(data = CP_data, aes_string(x = "x_value", y = "y_value", color = "color", shape = "shape", size = "size")) +
-      geom_text(data = CP_data, aes_string(x = "x_value", y = "y_value", label = "label"), position = position_nudge(y = -0.5))
-  }
-  
-  # Add highlights to plot
-  if (nrow(CH_data) > 0) {
-    for (i in 1:nrow(CH_data)) {
-      if (CH_data$type[i] == "Box") {
-        plot <- plot + 
-          geom_rect(aes_string(xmin = CH_data$x1[i], xmax = CH_data$x2[i], ymin = CH_data$y1[i], ymax = CH_data$y2[i]),
-                    color = CH_data$color[i], fill = NA, size = 1)
-      } else if (CH_data$type[i] == "Hatched") {
-        plot <- plot + 
-          geom_rect(aes_string(xmin = CH_data$x1[i], xmax = CH_data$x2[i], ymin = CH_data$y1[i], ymax = CH_data$y2[i]),
-                    color = NA, fill = CH_data$color[i], alpha = 0.5)
-      }
-    }
-  }
-  
-  return(plot)
 }
 
 
@@ -1678,7 +1605,6 @@ plot_map <- function(data_input,
     p <- p + coord_sf(xlim = c((xmin(data_input)+0.94), (xmax(data_input)-0.94)), ylim = c((ymin(data_input)+0.94), (ymax(data_input)-0.94)), expand = FALSE)
   }
   
-  
   # Add title and subtitle if provided
   if (!is.null(titles)) {
     if (titles$map_title != " ") {
@@ -1694,9 +1620,37 @@ plot_map <- function(data_input,
     )
   }
   
+  # Add point and highlights (without legend)
+  if (nrow(stat_highlights_data) > 0) {
+    filtered_stat_highlights_data <- subset(stat_highlights_data, criteria_vals == 1) # if criteria_vals == 0, the point is not added to the map
+    
+    if (nrow(filtered_stat_highlights_data) > 0) {
+      print(filtered_stat_highlights_data)
+      p <- p + 
+        geom_point(data = filtered_stat_highlights_data, aes(x = x_vals, y = y_vals), size = 1, shape=20, show.legend = FALSE)
+    }
+  }
   
-  # Add point and highlights
-  p <- add_ggmap_points_and_highlights(p, points_data, highlights_data, stat_highlights_data)
+  if (nrow(points_data) > 0 && all(c("x_value", "y_value", "color", "shape", "size", "label") %in% colnames(points_data))) {
+    p <- p + 
+      geom_point(data = points_data, aes(x = x_value, y = y_value, color = color, shape = shape, size = size), show.legend = FALSE) +
+      geom_text(data = points_data, aes(x = x_value, y = y_value, label = label), position = position_nudge(y = -0.5), show.legend = FALSE)
+  }
+  
+  if (nrow(highlights_data) > 0 && all(c("x1", "x2", "y1", "y2", "color", "type") %in% colnames(highlights_data))) {
+    for (i in 1:nrow(highlights_data)) {
+      highlight_data <- highlights_data[i,]
+      if (highlight_data$type == "Box") {
+        p <- p + 
+          geom_rect(aes(xmin = highlight_data$x1, xmax = highlight_data$x2, ymin = highlight_data$y1, ymax = highlight_data$y2),
+                    color = highlight_data$color, fill = NA, size = 1, show.legend = FALSE)
+      } else if (highlight_data$type == "Hatched") {
+        p <- p + 
+          geom_rect(aes(xmin = highlight_data$x1, xmax = highlight_data$x2, ymin = highlight_data$y1, ymax = highlight_data$y2),
+                    color = NA, fill = highlight_data$color, alpha = 0.5, show.legend = FALSE)
+      }
+    }
+  }
 
   return(p)
 }
@@ -1905,51 +1859,109 @@ add_stats_to_TS_datatable = function(data_input, add_moving_average,
 ##           title_mode = "Default" or "Custom"
 ##           ref = NA or the mean of the reference data
 
-plot_default_timeseries = function(data_input,tab,variable, titles, title_mode, ref){
+# plot_default_timeseries = function(data_input,tab,variable, titles, title_mode, ref){
+#   
+#   # Set up variables for plotting
+#   x = data_input$Year
+#   y = data_input[,2]
+#   y_mean = mean(y)
+#   y_sd = sd(y)
+#   y_range = range(y)
+#   
+#   # Generate units & color scheme
+#   if (variable == "Temperature"){
+#     v_col = "red3" ; v_unit = "\u00B0C"
+#   } else if (variable == "Precipitation"){
+#     v_col = "turquoise4" ; v_unit = "mm/month"
+#   } else if (variable == "SLP"){
+#     v_col = "purple4" ; v_unit = "hPa"
+#   } else if (variable == "Z500"){
+#     v_col = "green4" ; v_unit = "m"
+#   }  
+#   
+#   # Plot 
+#   if (tab == "general"){
+#     plot(x, y, type = "l", col = v_col, lwd = 2, xaxs="i",
+#          xlab = "Year", ylab = titles$ts_axis)
+#   } else {
+#     plot(x, y, type = "p", col = v_col, xaxs="i",
+#          xlab = "Year", ylab = titles$ts_axis)
+#   }
+#   
+#   
+#   # Add titles
+#   title(titles$ts_title,adj = 0, line = 0.5)
+#   
+#   if (title_mode == "Default"){
+#     title(paste("Mean = ",signif(y_mean,3),v_unit,"  Range = ", signif(y_range[1],3), v_unit,":", signif(y_range[2],3),
+#                 v_unit, "   SD = ",signif(y_sd,3),v_unit,sep=""),
+#           cex.main = 1,   font.main= 1, adj=1, line = 0.5)
+#   }
+#   
+#   # Add reference line
+#   if (!is.na(ref)){
+#     text_x = min(x) + ((range(x)[2]-range(x)[1])/25.5) 
+#     abline(h = 0, lwd = 1)
+#     text(text_x,0,labels = paste0(ref,v_unit),pos=3)
+#   }
+# }
+
+# With ggplot2
+plot_default_timeseries <- function(data_input, tab, variable, titles, title_mode, ref = NA) {
   
   # Set up variables for plotting
   x = data_input$Year
-  y = data_input[,2]
-  y_mean = mean(y)
-  y_sd = sd(y)
-  y_range = range(y)
+  y = data_input[, 2]
+  y_mean = mean(y, na.rm = TRUE)
+  y_sd = sd(y, na.rm = TRUE)
+  y_range = range(y, na.rm = TRUE)
   
   # Generate units & color scheme
-  if (variable == "Temperature"){
-    v_col = "red3" ; v_unit = "\u00B0C"
-  } else if (variable == "Precipitation"){
-    v_col = "turquoise4" ; v_unit = "mm/month"
-  } else if (variable == "SLP"){
-    v_col = "purple4" ; v_unit = "hPa"
-  } else if (variable == "Z500"){
-    v_col = "green4" ; v_unit = "m"
-  }  
-  
-  # Plot 
-  if (tab == "general"){
-    plot(x, y, type = "l", col = v_col, lwd = 2, xaxs="i",
-         xlab = "Year", ylab = titles$ts_axis)
-  } else {
-    plot(x, y, type = "p", col = v_col, xaxs="i",
-         xlab = "Year", ylab = titles$ts_axis)
+  if (variable == "Temperature") {
+    v_col = "red3" 
+    v_unit = "\u00B0C"
+  } else if (variable == "Precipitation") {
+    v_col = "turquoise4" 
+    v_unit = "mm/month"
+  } else if (variable == "SLP") {
+    v_col = "purple4" 
+    v_unit = "hPa"
+  } else if (variable == "Z500") {
+    v_col = "green4" 
+    v_unit = "m"
   }
   
+  # Create initial ggplot object
+  p <- ggplot(data_input, aes(x = x, y = y)) +
+    # Plot depending on the 'tab' argument
+    {if (tab == "general") geom_line(color = v_col, linewidth = 1) else geom_point(color = v_col, linewidth = 2)} +
+    # Add labels
+    labs(x = "Year", y = titles$ts_axis, title = titles$ts_title) +
+    theme_minimal(base_size = 15) +  # Define a clean theme
+    theme(
+      plot.title = element_text(hjust = 0, margin = margin(t = 10, b = 10)),  # Adjust title position
+      plot.subtitle = element_text(hjust = 1, margin = margin(t = 10, b = 10))
+    )
   
-  # Add titles
-  title(titles$ts_title,adj = 0, line = 0.5)
-  
-  if (title_mode == "Default"){
-    title(paste("Mean = ",signif(y_mean,3),v_unit,"  Range = ", signif(y_range[1],3), v_unit,":", signif(y_range[2],3),
-                v_unit, "   SD = ",signif(y_sd,3),v_unit,sep=""),
-          cex.main = 1,   font.main= 1, adj=1, line = 0.5)
+  # Add default title with statistics if 'title_mode' is 'Default'
+  if (title_mode == "Default") {
+    subtitle_text <- paste(
+      "Mean = ", signif(y_mean, 3), v_unit,
+      "  Range = ", signif(y_range[1], 3), v_unit, ":", signif(y_range[2], 3), v_unit,
+      "  SD = ", signif(y_sd, 3), v_unit, sep = ""
+    )
+    p <- p + labs(subtitle = subtitle_text)
   }
   
-  # Add reference line
-  if (!is.na(ref)){
-    text_x = min(x) + ((range(x)[2]-range(x)[1])/25.5) 
-    abline(h = 0, lwd = 1)
-    text(text_x,0,labels = paste0(ref,v_unit),pos=3)
+  # Add reference line if 'ref' is provided
+  if (!is.na(ref)) {
+    p <- p + geom_hline(yintercept = ref, linetype = "dashed", color = "black") +
+      annotate("text", x = min(x) + ((max(x) - min(x)) / 25.5), y = ref, 
+               label = paste0(ref, v_unit), vjust = -1)
   }
+  
+  # Return the ggplot object
+  return(p)
 }
 
 
@@ -2316,9 +2328,6 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
 
 create_geotiff <- function(map_data, output_file = NULL) {
   
-  print("Map data input:")
-  print(str(map_data))
-  print(head(map_data))
   # Extract lon and lat from column and row names
   x <- as.numeric(gsub("\u00B0", "", colnames(map_data)))
   y <- as.numeric(gsub("\u00B0", "", rownames(map_data)))
@@ -3894,138 +3903,138 @@ generate_correlation_map_data = function(variable1_data, variable2_data, method,
 ##                  create_..._data functions OR and empty dataframe if not 
 ##                  available/used
 
-plot_correlation_map = function(data_input, correlation_titles,axis_range,
-                                hide_axis,points_data, highlights_data,stat_highlights_data,c_borders,plotOrder, shpPickers, input){
-  
-  # Set up variables
-  x = data_input[[1]]
-  y = data_input[[2]]
-  z = data_input[[3]]
-  
-  z_max = max(abs(z))
-  minmax = c(-z_max,z_max)
-  
-  # Plot
-  v_col = colorRampPalette(rev(brewer.pal(11,"PuOr")))
-  
-  if (hide_axis == FALSE){
-    # Plot with default axis
-    if(is.null(axis_range[1])){
-      filled.contour(x,y,z, zlim = minmax, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
-        axis(1, seq(-170, 180, by = 10))
-        axis(2, seq(-90, 90, by = 10))
-        add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
-        
-        for (file in plotOrder) {
-          file_name <- tools::file_path_sans_ext(basename(file))
-          if (file_name %in% shpPickers) {
-            shape <- st_read(file)
-            shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
-            
-            # Plot based on geometry type
-            geom_type <- st_geometry_type(shape)
-            if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour3_", file_name)]], col = NA)
-              
-            } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]])
-              
-            } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]], pch = 1)
-            }
-          }
-        }
-        
-        },
-        key.title = title(main = "r",font.main = 1))
-    } 
-    # Plot with custom axis
-    else {
-      filled.contour(x,y,z, zlim = axis_range, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
-        axis(1, seq(-180, 180, by = 10))
-        axis(2, seq(-90, 90, by = 10))
-        add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
-        
-        for (file in plotOrder) {
-          file_name <- tools::file_path_sans_ext(basename(file))
-          if (file_name %in% shpPickers) {
-            shape <- st_read(file)
-            shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
-            
-            # Plot based on geometry type
-            geom_type <- st_geometry_type(shape)
-            if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour3_", file_name)]], col = NA)
-              
-            } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]])
-              
-            } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-              plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]], pch = 1)
-            }
-          }
-        }
-        
-        },
-        key.title = title(main = "r",font.main = 1))
-    }
-  }
-  
-  # Plot without axis
-  else {
-    plot(NA,xlim=range(x),
-         ylim=range(y),xlab="",ylab="",
-         frame=FALSE,axes=F,xaxs="i",yaxs="i")
-    # Plot without default axis
-    if(is.null(axis_range[1])){
-      
-      mylevs = pretty(minmax,20)
-      
-      .filled.contour(x=x, y=y, z=z,
-                      levels=mylevs,
-                      col=v_col(length(mylevs)-1))
-    } 
-    # Plot without custom axis
-    else {
-      mylevs = pretty((axis_range),20)
-      
-      .filled.contour(x=x, y=y, z=z,
-                      levels=mylevs,
-                      col=v_col(length(mylevs)-1))
-    }
-    # Add world map and side axes
-    plot.axes=map("world",interior=c_borders,add=T)
-    axis(1, seq(-180, 180, by = 10))
-    axis(2, seq(-90, 90, by = 10))
-    axis(3,c(-180, 180), label=FALSE, tcl=0, las=1)
-    axis(4,c(-90, 90), label=FALSE, tcl=0, las=1)
-    add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
-    
-    for (file in plotOrder) {
-      file_name <- tools::file_path_sans_ext(basename(file))
-      if (file_name %in% shpPickers) {
-        shape <- st_read(file)
-        shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
-        
-        # Plot based on geometry type
-        geom_type <- st_geometry_type(shape)
-        if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
-          plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour3_", file_name)]], col = NA)
-          
-        } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
-          plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]])
-          
-        } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
-          plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]], pch = 1)
-        }
-      }
-    }
-    
-  }  
-  
-  # Add title
-  title(correlation_titles$map_title, cex.main = 1.5,   font.main= 1, adj=0)
-}
+# plot_correlation_map = function(data_input, correlation_titles,axis_range,
+#                                 hide_axis,points_data, highlights_data,stat_highlights_data,c_borders,plotOrder, shpPickers, input){
+#   
+#   # Set up variables
+#   x = data_input[[1]]
+#   y = data_input[[2]]
+#   z = data_input[[3]]
+#   
+#   z_max = max(abs(z))
+#   minmax = c(-z_max,z_max)
+#   
+#   # Plot
+#   v_col = colorRampPalette(rev(brewer.pal(11,"PuOr")))
+#   
+#   if (hide_axis == FALSE){
+#     # Plot with default axis
+#     if(is.null(axis_range[1])){
+#       filled.contour(x,y,z, zlim = minmax, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
+#         axis(1, seq(-170, 180, by = 10))
+#         axis(2, seq(-90, 90, by = 10))
+#         add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+#         
+#         for (file in plotOrder) {
+#           file_name <- tools::file_path_sans_ext(basename(file))
+#           if (file_name %in% shpPickers) {
+#             shape <- st_read(file)
+#             shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+#             
+#             # Plot based on geometry type
+#             geom_type <- st_geometry_type(shape)
+#             if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+#               plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour3_", file_name)]], col = NA)
+#               
+#             } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+#               plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]])
+#               
+#             } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+#               plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]], pch = 1)
+#             }
+#           }
+#         }
+#         
+#         },
+#         key.title = title(main = "r",font.main = 1))
+#     } 
+#     # Plot with custom axis
+#     else {
+#       filled.contour(x,y,z, zlim = axis_range, color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
+#         axis(1, seq(-180, 180, by = 10))
+#         axis(2, seq(-90, 90, by = 10))
+#         add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+#         
+#         for (file in plotOrder) {
+#           file_name <- tools::file_path_sans_ext(basename(file))
+#           if (file_name %in% shpPickers) {
+#             shape <- st_read(file)
+#             shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+#             
+#             # Plot based on geometry type
+#             geom_type <- st_geometry_type(shape)
+#             if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+#               plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour3_", file_name)]], col = NA)
+#               
+#             } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+#               plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]])
+#               
+#             } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+#               plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]], pch = 1)
+#             }
+#           }
+#         }
+#         
+#         },
+#         key.title = title(main = "r",font.main = 1))
+#     }
+#   }
+#   
+#   # Plot without axis
+#   else {
+#     plot(NA,xlim=range(x),
+#          ylim=range(y),xlab="",ylab="",
+#          frame=FALSE,axes=F,xaxs="i",yaxs="i")
+#     # Plot without default axis
+#     if(is.null(axis_range[1])){
+#       
+#       mylevs = pretty(minmax,20)
+#       
+#       .filled.contour(x=x, y=y, z=z,
+#                       levels=mylevs,
+#                       col=v_col(length(mylevs)-1))
+#     } 
+#     # Plot without custom axis
+#     else {
+#       mylevs = pretty((axis_range),20)
+#       
+#       .filled.contour(x=x, y=y, z=z,
+#                       levels=mylevs,
+#                       col=v_col(length(mylevs)-1))
+#     }
+#     # Add world map and side axes
+#     plot.axes=map("world",interior=c_borders,add=T)
+#     axis(1, seq(-180, 180, by = 10))
+#     axis(2, seq(-90, 90, by = 10))
+#     axis(3,c(-180, 180), label=FALSE, tcl=0, las=1)
+#     axis(4,c(-90, 90), label=FALSE, tcl=0, las=1)
+#     add_map_points_and_highlights(points_data,highlights_data,stat_highlights_data)
+#     
+#     for (file in plotOrder) {
+#       file_name <- tools::file_path_sans_ext(basename(file))
+#       if (file_name %in% shpPickers) {
+#         shape <- st_read(file)
+#         shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+#         
+#         # Plot based on geometry type
+#         geom_type <- st_geometry_type(shape)
+#         if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+#           plot(st_geometry(shape), add = TRUE, border = input[[paste0("shp_colour3_", file_name)]], col = NA)
+#           
+#         } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+#           plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]])
+#           
+#         } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+#           plot(st_geometry(shape), add = TRUE, col = input[[paste0("shp_colour3_", file_name)]], pch = 1)
+#         }
+#       }
+#     }
+#     
+#   }  
+#   
+#   # Add title
+#   title(correlation_titles$map_title, cex.main = 1.5,   font.main= 1, adj=0)
+# }
 
 ## (Correlation) GENERATE CORRELATION MAP DATATABLE - creates a correlation map 
 ##               datatable for display from the correlation_map_data
@@ -4308,20 +4317,20 @@ generate_regression_titles = function(independent_source,dependent_source,
   map_subtitle_coeff = paste("Independent variable: ", title_months_i, independent_variables[iv_number_coeff],
                              " ", title_mode_i, title_lonlat_i, "\nDependent variable: ",
                              title_months_d, dependent_variable,
-                             title_mode_d, ". \nTime range:", title_year_range, sep = "")
+                             title_mode_d, "\nTime range:", title_year_range, sep = "")
 
   # Generate regression map titles for p-values
   map_subtitle_pvals = paste("Independent variable: ", title_months_i, independent_variables[iv_number_pvals],
                              " ", title_mode_i, "\nDependent variable: ",
                              title_months_d, dependent_variable,
-                             title_mode_d, ". \nTime range:", title_year_range, sep = "")
+                             title_mode_d, "\nTime range:", title_year_range, sep = "")
 
   # Generate regression map titles for residuals
   title_variables_i = paste(independent_variables, collapse = " ; ")
   map_subtitle_res = paste("Independent variables: ", title_months_i, title_variables_i,
                            " ", title_mode_i, title_lonlat_i, "\nDependent variable: ",
                            title_months_d, dependent_variable,
-                           title_mode_d, ". \nYear:", year_selected, sep = "")
+                           title_mode_d, "\nYear:", year_selected, sep = "")
   
   # Generate download titles
   tf0 = paste("Reg",title_months_i,"ind. var.", ">", title_months_d, modERA_dependent_variable)
@@ -4422,150 +4431,150 @@ create_regression_map_datatable = function(data_input,subset_lon_IDs,subset_lat_
 ##                                            of the variable to be plotted
 ##                                            (set to 1 as default)
 ##              subset_lon/lat_IDs = subset_lon/lat_IDs for dependent variable
-
-
-plot_regression_coefficients = function(data_input,independent_variables,independent_variable_number,
-                                        dependent_variable,regression_titles,
-                                        subset_lon_IDs_d,subset_lat_IDs_d,c_borders){
-  
-  # Create x, y & z values
-  x = lon[subset_lon_IDs_d]
-  y = rev(lat[subset_lat_IDs_d])
-  if (length(independent_variables)==1){ #  Deals with the 'variable' dimension disappearing
-    z = data_input[,rev(1:length(y))]  
-  } else {
-    z = data_input[independent_variable_number,,rev(1:length(y))]
-  }
-  
-  # Generate color scheme
-  v_col = colorRampPalette(rev(brewer.pal(11,"Spectral")))
-  
-  # Generate title
-  title_main = paste("Regression Coefficients. ",
-                     regression_titles$title_months_i,
-                     independent_variables[independent_variable_number]," ",
-                     regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
-                     regression_titles$title_months_d,dependent_variable,
-                     regression_titles$title_mode_d,". ",regression_titles$title_year_range,
-                     sep = "")
-  
-  # Plot
-  z_max = max(abs(z))
-  
-  filled.contour(x,y,z, zlim = c(-z_max,z_max), color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
-    axis(1, seq(-180, 180, by = 10))
-    axis(2, seq(-90, 90, by = 10)) },
-    key.title = title(main = "Coefficients",cex.main = 0.8))
-  title(title_main, cex.main = 1.5,   font.main= 1, adj=0)  
-}
-
-
-## (Regression) PLOT P VALUES MAP
-##              data_input = regression_pvalue_data
-##              independent_variable_number = number in "user_independent_variables" 
-##                                            of the variable to be plotted
-##              subset_lon/lat_IDs = subset_lon/lat_IDs for dependent variable
-
-plot_regression_pvalues = function(data_input,independent_variables,independent_variable_number,
-                                   dependent_variable, regression_titles,
-                                   subset_lon_IDs_d,subset_lat_IDs_d,c_borders){
-  # Create x, y & z values
-  x = lon[subset_lon_IDs_d]
-  y = rev(lat[subset_lat_IDs_d])
-  if (length(independent_variables)==1){ #  Deals with the 'variable' dimension disappearing
-    z = data_input[,rev(1:length(y))]  
-  } else {
-    z = data_input[independent_variable_number,,rev(1:length(y))]
-  }
-  
-  # Rewrite z values to fit into 5 equally spaced levels (levels = c(1:6))
-  rewrite_pvalues = function(i){
-    if (0<=i & i<0.01){
-      i = 1
-    } else if (0.01<=i & i<0.05){
-      i = 2
-    } else if (0.05<=i & i<0.1){
-      i = 3
-    } else if (0.1<=i & i<0.2){
-      i = 4
-    } else {
-      i = 5
-    }  
-  }
-  z_rewrite = apply(z,c(1,2),rewrite_pvalues)  
-  
-  # Generate color scheme and levels
-  v_col = rev(brewer.pal(5,"Greens"))
-  v_lev = c(0,0.01,0.05,0.1,0.2,1)
-  
-  # Generate title
-  title_main = paste("Regression P Values. ",
-                     regression_titles$title_months_i,
-                     independent_variables[independent_variable_number]," ",
-                     regression_titles$title_mode_i," -> ",
-                     regression_titles$title_months_d,dependent_variable,
-                     regression_titles$title_mode_d,". ",regression_titles$title_year_range,
-                     sep = "")
-  
-  # Plot
-  filled.contour(x,y,z_rewrite, col = v_col,levels = c(1:6), plot.axes={map("world",interior=c_borders,add=T)
-    axis(1, seq(-180, 180, by = 10))
-    axis(2, seq(-90, 90, by = 10)) },
-    key.axes = axis(4,at=c(1:6),labels=v_lev),
-    key.title = title(main = "p \nValues",cex.main = 1.2))
-  title(title_main, cex.main = 1.5,   font.main= 1, adj=0)  
-}
-
-
-## (Regression) PLOT RESIDUALS MAP for a selected year
-##              data_input = regression_residuals_data
-##              year_selected = user-selected year to be plotted (any year within the year_range)
-##              regression_titles = as created by generate_regression_titles
-
-plot_regression_residuals = function(data_input,year_selected,year_range,
-                                     independent_variables,dependent_variable,
-                                     regression_titles,subset_lon_IDs_d,subset_lat_IDs_d,c_borders){
-  
-  # Find ID of year selected
-  year_selected_ID = (year_selected-year_range[1])+1
-  
-  # Create x, y & z values
-  x = lon[subset_lon_IDs_d]
-  y = rev(lat[subset_lat_IDs_d])
-  z = data_input[year_selected_ID,,rev(1:length(y))]
-  
-  # Generate color scheme
-  if (dependent_variable == "Temperature"){
-    v_col = colorRampPalette(rev(brewer.pal(11,"RdBu")))
-  }
-  else if (dependent_variable == "Precipitation"){
-    v_col = colorRampPalette(brewer.pal(11,"BrBG"))
-  }
-  else if (dependent_variable == "SLP"|variable == "Z500"){
-    v_col = colorRampPalette(rev(brewer.pal(11,"PRGn")))
-  } 
-  else {
-    v_col = colorRampPalette(brewer.pal(11,"PiYG"))
-  }
-  
-  # Generate title & axis label
-  title_variables_i = paste(independent_variables,collapse = " ; ")
-  title_main = paste("Regression Residuals. ",
-                     regression_titles$title_months_i,title_variables_i," ",
-                     regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
-                     regression_titles$title_months_d,dependent_variable,
-                     regression_titles$title_mode_d,". ",year_selected, sep = "")
-  title_axis = paste("Residuals\n",regression_titles$unit_d)
-  
-  # Plot
-  z_max = max(abs(z))
-  
-  filled.contour(x,y,z, zlim = c(-z_max,z_max), color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
-    axis(1, seq(-180, 180, by = 10))
-    axis(2, seq(-90, 90, by = 10)) },
-    key.title = title(main = title_axis,cex.main = 0.95))
-  title(title_main, cex.main = 1.5,   font.main= 1, adj=0)
-}
+# 
+# 
+# plot_regression_coefficients = function(data_input,independent_variables,independent_variable_number,
+#                                         dependent_variable,regression_titles,
+#                                         subset_lon_IDs_d,subset_lat_IDs_d,c_borders){
+#   
+#   # Create x, y & z values
+#   x = lon[subset_lon_IDs_d]
+#   y = rev(lat[subset_lat_IDs_d])
+#   if (length(independent_variables)==1){ #  Deals with the 'variable' dimension disappearing
+#     z = data_input[,rev(1:length(y))]  
+#   } else {
+#     z = data_input[independent_variable_number,,rev(1:length(y))]
+#   }
+#   
+#   # Generate color scheme
+#   v_col = colorRampPalette(rev(brewer.pal(11,"Spectral")))
+#   
+#   # Generate title
+#   title_main = paste("Regression Coefficients. ",
+#                      regression_titles$title_months_i,
+#                      independent_variables[independent_variable_number]," ",
+#                      regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
+#                      regression_titles$title_months_d,dependent_variable,
+#                      regression_titles$title_mode_d,". ",regression_titles$title_year_range,
+#                      sep = "")
+#   
+#   # Plot
+#   z_max = max(abs(z))
+#   
+#   filled.contour(x,y,z, zlim = c(-z_max,z_max), color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
+#     axis(1, seq(-180, 180, by = 10))
+#     axis(2, seq(-90, 90, by = 10)) },
+#     key.title = title(main = "Coefficients",cex.main = 0.8))
+#   title(title_main, cex.main = 1.5,   font.main= 1, adj=0)  
+# }
+# 
+# 
+# ## (Regression) PLOT P VALUES MAP
+# ##              data_input = regression_pvalue_data
+# ##              independent_variable_number = number in "user_independent_variables" 
+# ##                                            of the variable to be plotted
+# ##              subset_lon/lat_IDs = subset_lon/lat_IDs for dependent variable
+# 
+# plot_regression_pvalues = function(data_input,independent_variables,independent_variable_number,
+#                                    dependent_variable, regression_titles,
+#                                    subset_lon_IDs_d,subset_lat_IDs_d,c_borders){
+#   # Create x, y & z values
+#   x = lon[subset_lon_IDs_d]
+#   y = rev(lat[subset_lat_IDs_d])
+#   if (length(independent_variables)==1){ #  Deals with the 'variable' dimension disappearing
+#     z = data_input[,rev(1:length(y))]  
+#   } else {
+#     z = data_input[independent_variable_number,,rev(1:length(y))]
+#   }
+#   
+#   # Rewrite z values to fit into 5 equally spaced levels (levels = c(1:6))
+#   rewrite_pvalues = function(i){
+#     if (0<=i & i<0.01){
+#       i = 1
+#     } else if (0.01<=i & i<0.05){
+#       i = 2
+#     } else if (0.05<=i & i<0.1){
+#       i = 3
+#     } else if (0.1<=i & i<0.2){
+#       i = 4
+#     } else {
+#       i = 5
+#     }  
+#   }
+#   z_rewrite = apply(z,c(1,2),rewrite_pvalues)  
+#   
+#   # Generate color scheme and levels
+#   v_col = rev(brewer.pal(5,"Greens"))
+#   v_lev = c(0,0.01,0.05,0.1,0.2,1)
+#   
+#   # Generate title
+#   title_main = paste("Regression P Values. ",
+#                      regression_titles$title_months_i,
+#                      independent_variables[independent_variable_number]," ",
+#                      regression_titles$title_mode_i," -> ",
+#                      regression_titles$title_months_d,dependent_variable,
+#                      regression_titles$title_mode_d,". ",regression_titles$title_year_range,
+#                      sep = "")
+#   
+#   # Plot
+#   filled.contour(x,y,z_rewrite, col = v_col,levels = c(1:6), plot.axes={map("world",interior=c_borders,add=T)
+#     axis(1, seq(-180, 180, by = 10))
+#     axis(2, seq(-90, 90, by = 10)) },
+#     key.axes = axis(4,at=c(1:6),labels=v_lev),
+#     key.title = title(main = "p \nValues",cex.main = 1.2))
+#   title(title_main, cex.main = 1.5,   font.main= 1, adj=0)  
+# }
+# 
+# 
+# ## (Regression) PLOT RESIDUALS MAP for a selected year
+# ##              data_input = regression_residuals_data
+# ##              year_selected = user-selected year to be plotted (any year within the year_range)
+# ##              regression_titles = as created by generate_regression_titles
+# 
+# plot_regression_residuals = function(data_input,year_selected,year_range,
+#                                      independent_variables,dependent_variable,
+#                                      regression_titles,subset_lon_IDs_d,subset_lat_IDs_d,c_borders){
+#   
+#   # Find ID of year selected
+#   year_selected_ID = (year_selected-year_range[1])+1
+#   
+#   # Create x, y & z values
+#   x = lon[subset_lon_IDs_d]
+#   y = rev(lat[subset_lat_IDs_d])
+#   z = data_input[year_selected_ID,,rev(1:length(y))]
+#   
+#   # Generate color scheme
+#   if (dependent_variable == "Temperature"){
+#     v_col = colorRampPalette(rev(brewer.pal(11,"RdBu")))
+#   }
+#   else if (dependent_variable == "Precipitation"){
+#     v_col = colorRampPalette(brewer.pal(11,"BrBG"))
+#   }
+#   else if (dependent_variable == "SLP"|variable == "Z500"){
+#     v_col = colorRampPalette(rev(brewer.pal(11,"PRGn")))
+#   } 
+#   else {
+#     v_col = colorRampPalette(brewer.pal(11,"PiYG"))
+#   }
+#   
+#   # Generate title & axis label
+#   title_variables_i = paste(independent_variables,collapse = " ; ")
+#   title_main = paste("Regression Residuals. ",
+#                      regression_titles$title_months_i,title_variables_i," ",
+#                      regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
+#                      regression_titles$title_months_d,dependent_variable,
+#                      regression_titles$title_mode_d,". ",year_selected, sep = "")
+#   title_axis = paste("Residuals\n",regression_titles$unit_d)
+#   
+#   # Plot
+#   z_max = max(abs(z))
+#   
+#   filled.contour(x,y,z, zlim = c(-z_max,z_max), color.palette = v_col, plot.axes={map("world",interior=c_borders,add=T)
+#     axis(1, seq(-180, 180, by = 10))
+#     axis(2, seq(-90, 90, by = 10)) },
+#     key.title = title(main = title_axis,cex.main = 0.95))
+#   title(title_main, cex.main = 1.5,   font.main= 1, adj=0)
+# }
 
 
 ## (Regression) CREATE REGRESSION TIMESERIES DATATABLE including Original, Trend & Residual
@@ -4794,77 +4803,139 @@ create_monthly_TS_data = function(data_input,dataset,variable,years,lon_range,la
 ##              title_mode = "Default" or "Custom"
 ##              plot_mode = "base" or "lines" - base plots the default plot, lines just adds lines to existing graph
 
-plot_monthly_timeseries = function(data_input,custom_title,title_mode,key_position,plot_mode){
-  
-  n_o_rows = length(data_input[,1])
+# plot_monthly_timeseries = function(data_input,custom_title,title_mode,key_position,plot_mode){
+#   
+#   n_o_rows = length(data_input[,1])
+#   
+#   # Generate colors
+#   if (n_o_rows<3){
+#     color_set = brewer.pal(3,"Dark2")
+#   }
+#   else if (n_o_rows<13){
+#     color_set = brewer.pal(n_o_rows,"Dark2")
+#   } else {
+#     color_set = colorRampPalette(brewer.pal(12,"Dark2"))(n_o_rows)
+#   }
+#   
+#   # Generate line widths
+#   lwd_set = c()
+#   
+#   for (i in 1:n_o_rows){
+#     if (data_input$Type[i] == "Average"){
+#       lwd = 3.5
+#     } else {
+#       lwd = 2
+#     }
+#     lwd_set = c(lwd_set,lwd)
+#   }  
+#   if (plot_mode == "base"){ # plot default plot
+#     # Generate y axis label
+#     y_label = paste0(data_input$Variable[1]," [",data_input$Unit[1],"]")
+#     
+#     # Generate legend labels
+#     legend_labels = c()
+#     
+#     for (i in 1:n_o_rows){
+#       label = paste0(data_input$Dataset[i]," ",data_input$Years[i]," [",data_input$Coordinates[i],"]")
+#       legend_labels = c(legend_labels,label)
+#     }
+#     
+#     # Find min/max values
+#     y_min = min(data_input[,5:16])  
+#     y_max = max(data_input[,5:16])
+#     y_space = 0.02*(y_max-y_min)
+#     
+#     # Plot
+#     plot(1:12,data_input[1,5:16],type = "l",col=color_set[1], lwd=lwd_set[1],
+#          ylim = c((y_min-y_space),(y_max+y_space)),
+#          xlab = "Month", ylab = y_label, xaxt = "n", xaxs="i")
+#     axis(1, at = 1:12, labels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+#     
+#     for (i in 2:n_o_rows){
+#       lines(1:12,data_input[i,5:16],col = color_set[i],lwd = lwd_set[i])
+#     }
+#     
+#     # Add title (if custom is selected)
+#     if (title_mode == "Custom"){
+#       title(custom_title,adj = 0)
+#     }
+#     
+#     # Add legend
+#     legend(key_position, inset = c(0.008,0.03),
+#            legend=legend_labels,
+#            # Line options
+#            col = color_set,
+#            lwd = lwd_set,
+#            # Draw box round key
+#            bg = "grey90",
+#            box.lty = 0
+#     ) 
+#   } 
+#   else { # Just add lines to plot
+#     lines(1:12,data_input[1,5:16],type = "l",col=color_set[1], lwd=lwd_set[1])
+#   }
+#   
+# } 
+# 
+
+
+plot_monthly_timeseries <- function(data_input, custom_title, title_mode, key_position, plot_mode) {
+  n_o_rows = length(data_input)
   
   # Generate colors
-  if (n_o_rows<3){
-    color_set = brewer.pal(3,"Dark2")
-  }
-  else if (n_o_rows<13){
-    color_set = brewer.pal(n_o_rows,"Dark2")
+  if (n_o_rows < 3) {
+    color_set = brewer.pal(3, "Dark2")
+  } else if (n_o_rows < 13) {
+    color_set = brewer.pal(n_o_rows, "Dark2")
   } else {
-    color_set = colorRampPalette(brewer.pal(12,"Dark2"))(n_o_rows)
+    color_set = colorRampPalette(brewer.pal(12, "Dark2"))(n_o_rows)
   }
   
   # Generate line widths
-  lwd_set = c()
+  lwd_set <- ifelse(data_input$Type == "Average", 3.5, 2)
   
-  for (i in 1:n_o_rows){
-    if (data_input$Type[i] == "Average"){
-      lwd = 3.5
-    } else {
-      lwd = 2
-    }
-    lwd_set = c(lwd_set,lwd)
-  }  
-  if (plot_mode == "base"){ # plot default plot
-    # Generate y axis label
-    y_label = paste0(data_input$Variable[1]," [",data_input$Unit[1],"]")
-    
-    # Generate legend labels
-    legend_labels = c()
-    
-    for (i in 1:n_o_rows){
-      label = paste0(data_input$Dataset[i]," ",data_input$Years[i]," [",data_input$Coordinates[i],"]")
-      legend_labels = c(legend_labels,label)
-    }
-    
-    # Find min/max values
-    y_min = min(data_input[,5:16])  
-    y_max = max(data_input[,5:16])
-    y_space = 0.02*(y_max-y_min)
-    
-    # Plot
-    plot(1:12,data_input[1,5:16],type = "l",col=color_set[1], lwd=lwd_set[1],
-         ylim = c((y_min-y_space),(y_max+y_space)),
-         xlab = "Month", ylab = y_label, xaxt = "n", xaxs="i")
-    axis(1, at = 1:12, labels = c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
-    
-    for (i in 2:n_o_rows){
-      lines(1:12,data_input[i,5:16],col = color_set[i],lwd = lwd_set[i])
-    }
-    
-    # Add title (if custom is selected)
-    if (title_mode == "Custom"){
-      title(custom_title,adj = 0)
-    }
-    
-    # Add legend
-    legend(key_position, inset = c(0.008,0.03),
-           legend=legend_labels,
-           # Line options
-           col = color_set,
-           lwd = lwd_set,
-           # Draw box round key
-           bg = "grey90",
-           box.lty = 0
-    ) 
-  } 
-  else { # Just add lines to plot
-    lines(1:12,data_input[1,5:16],type = "l",col=color_set[1], lwd=lwd_set[1])
+  # Manually reshape data from wide to long format
+  months <- factor(c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), levels = month.abb)
+  long_data <- data.frame()
+  
+  for (i in 1:n_o_rows) {
+    # Extract the monthly values for each row
+    monthly_values <- as.numeric(data_input[i, 5:16]) # Assumes that columns 5 to 16 are the months
+    long_data <- rbind(long_data, data.frame(
+      Dataset = data_input$Dataset[i],
+      Years = data_input$Years[i],
+      Coordinates = data_input$Coordinates[i],
+      Type = data_input$Type[i],
+      Variable = data_input$Variable[i],
+      Unit = data_input$Unit[i],
+      Month = months,
+      Value = monthly_values,
+      lwd = lwd_set[i]
+    ))
   }
   
-} 
-
+  # Generate y-axis label
+  y_label <- paste0(data_input$Variable[1], " [", data_input$Unit[1], "]")
+  
+  # Create the base plot
+  p <- ggplot()
+  
+  for (i in 1:n_o_rows) {
+    data_values <- as.numeric(data_input[i, 5:16])
+    p <- p + geom_line(aes(x = 1:12, y = data_values), color = color_set[i], size = ifelse(data_input$Type[i] == "Average", 1.5, 1))
+  }
+  
+  # Modify based on the plot_mode (either base plot or lines)
+  if (plot_mode == "base") {
+    p <- p + scale_x_continuous(breaks = 1:12, labels = month.abb) +
+      labs(x = "Month", y = paste0(data_input$Variable[1], " [", data_input$Unit[1], "]")) +
+      theme_minimal() +
+      theme(legend.position = key_position)
+    
+    if (title_mode == "Custom") {
+      p <- p + ggtitle(custom_title)
+    }
+  }
+  
+  return(p)
+}
