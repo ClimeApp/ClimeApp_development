@@ -10713,29 +10713,29 @@ server <- function(input, output, session) {
         }
         
         plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
-        add_highlighted_areas(ts_highlights_data())
-        add_percentiles(timeseries_data())
-        add_custom_lines(ts_lines_data())
-        add_timeseries(timeseries_data(),"general",input$variable_selected)
-        add_boxes(ts_highlights_data())
-        add_custom_points(ts_points_data())
-        if (input$show_key_ts == TRUE){
-          add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
-                     input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
-        }
+        # add_highlighted_areas(ts_highlights_data())
+        # add_percentiles(timeseries_data())
+        # add_custom_lines(ts_lines_data())
+        # add_timeseries(timeseries_data(),"general",input$variable_selected)
+        # add_boxes(ts_highlights_data())
+        # add_custom_points(ts_points_data())
+        # if (input$show_key_ts == TRUE){
+        #   add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
+        #              input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+        # }
       } 
       # Plot monthly TS if year range = 1 year
       else {
         plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","base")
-        add_highlighted_areas(ts_highlights_data())
-        add_custom_lines(ts_lines_data())
-        plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","lines")
-        add_boxes(ts_highlights_data())
-        add_custom_points(ts_points_data())
-        if (input$show_key_ts == TRUE){
-          add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
-                     input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
-        }
+        # add_highlighted_areas(ts_highlights_data())
+        # add_custom_lines(ts_lines_data())
+        # plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","lines")
+        # add_boxes(ts_highlights_data())
+        # add_custom_points(ts_points_data())
+        # if (input$show_key_ts == TRUE){
+        #   add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
+        #              input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+        # }
       }
     }
     
@@ -11484,9 +11484,7 @@ server <- function(input, output, session) {
       
       # Generate timeseries data & plotting function
       timeseries_data_v1 <- reactive({
-        
         req(input$nav1 == "tab3") # Only run code if in the current tab
-        
         ts_data1_v1 <- create_timeseries_datatable(data_output4_primary(), input$range_years3, "range", subset_lons_primary(), subset_lats_primary())
         return(ts_data1_v1)
       })
@@ -11498,9 +11496,7 @@ server <- function(input, output, session) {
       
       #Map titles
       plot_titles_v2 <- reactive({
-        
         req(input$nav1 == "tab3") # Only run code if in the current tab
-        
         my_title_v2 <- generate_titles ("general", input$dataset_selected_v2,input$ME_variable_v2, input$mode_selected_v2,
                                         "Default","Default", month_range_secondary(),input$range_years3,
                                         input$ref_period_v2, NA,lonlat_vals_v2()[1:2],lonlat_vals_v2()[3:4],
@@ -11514,20 +11510,16 @@ server <- function(input, output, session) {
         create_map_datatable(data_output4_secondary(), subset_lons_secondary(), subset_lats_secondary())}
       
       map_data_v2_tiff = reactive({
-        
         req(input$nav1 == "tab3") # Only run code if in the current tab
-        
         create_geotiff(map_data_v2())
       })
       
-      ME_map_plot_v2 <- function(){data_input = plot_map(data_input=map_data_v2_tiff(), variable=input$ME_variable_v2, mode = input$mode_selected_v2, 
-                                                         titles=plot_titles_v2(), shpPickers=input$shpPickers, plotType="shp_colour1_")}
+      ME_map_plot_v2 <- function(){plot_map(data_input=map_data_v2_tiff(), variable=input$ME_variable_v2, mode = input$mode_selected_v2, 
+                                                         titles=plot_titles_v2())}
       
       # Generate timeseries data & plotting function
       timeseries_data_v2 <- reactive({
-        
         req(input$nav1 == "tab3") # Only run code if in the current tab
-        
         ts_data1_v2 <- create_timeseries_datatable(data_output4_secondary(), input$range_years3, "range", subset_lons_secondary(), subset_lats_secondary())
         return(ts_data1_v2)
       })
@@ -11540,9 +11532,7 @@ server <- function(input, output, session) {
       
       # Generate plot dimensions
       plot_dimensions_v1 <- reactive({
-        
         req(input$nav1 == "tab3") # Only run code if in the current tab
-        
         if (input$type_v1 == "Timeseries"){
           map_dims_v1 = c(session$clientData$output_plot_v1_width,400)
         } else {
@@ -11552,9 +11542,7 @@ server <- function(input, output, session) {
       })
       
       plot_dimensions_v2 <- reactive({
-        
         req(input$nav1 == "tab3") # Only run code if in the current tab
-        
         if (input$type_v2 == "Timeseries"){
           map_dims_v2 = c(session$clientData$output_plot_v2_width,400)
         } else {
@@ -12075,7 +12063,7 @@ server <- function(input, output, session) {
         req(data_output4_primary(), subset_lons_primary(), subset_lats_primary())
         create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
       
-      ME_map_plot_dv <- function(){plot_map(create_geotiff(map_data_dv()), input$ME_variable_dv, input$mode_selected_dv, plot_titles_dv(), c(NULL,NULL),FALSE, data.frame(), data.frame(),data.frame(),TRUE,plotOrder(), input$shpPickers, input, "shp_colour1_")}
+      ME_map_plot_dv <- function(){plot_map(data_input=create_geotiff(map_data_dv()), variable=input$ME_variable_dv, mode=input$mode_selected_dv, titles=plot_titles_dv())}
       
       # Generate timeseries data & plotting function for iv
       ME_ts_data_iv <- reactive({
@@ -12219,6 +12207,36 @@ server <- function(input, output, session) {
         
         return(p_d_r)
       })
+      
+      ## Regression timeseries plot
+      
+      regression_ts_data = reactive({
+        req(input$nav1 == "tab4") # Only run code if in the current tab
+        rtsd = create_regression_timeseries_datatable(ts_data_dv(),regression_summary_data(),
+                                                      plot_titles_reg())
+        return(rtsd)
+      })
+      
+      reg_ts1a = function(){
+        plot_regression_timeseries(regression_ts_data(),"original_trend",plot_titles_reg(),
+                                   variables_iv(),variable_dv())
+      }
+      
+      output$plot_reg_ts1 = renderPlot({reg_ts1a()},height=400)
+      
+      reg_ts1b = function(){
+        plot_regression_timeseries(regression_ts_data(),"residuals",plot_titles_reg(),
+                                   variables_iv(),variable_dv())
+      }
+      
+      output$plot_reg_ts2 = renderPlot({reg_ts1b()},height=400)
+      
+      output$data_reg_ts= renderDataTable({regression_ts_data()}, rownames = FALSE, options = list(
+        autoWidth = TRUE, 
+        searching = FALSE,
+        paging = TRUE,
+        pagingType = "numbers"
+      ))
       
       ## Regression Summary data 
       
@@ -12368,36 +12386,6 @@ server <- function(input, output, session) {
       
       output$data_reg_res = renderTable({reg_res_table()},rownames = TRUE)
       
-      
-      ## Regression timeseries plot
-      
-      regression_ts_data = reactive({
-        req(input$nav1 == "tab4") # Only run code if in the current tab
-        rtsd = create_regression_timeseries_datatable(ts_data_dv(),regression_summary_data(),
-                                                      plot_titles_reg())
-        return(rtsd)
-      })
-      
-      reg_ts1a = function(){
-        plot_regression_timeseries(regression_ts_data(),"original_trend",plot_titles_reg(),
-                                   variables_iv(),variable_dv())
-      }
-      
-      output$plot_reg_ts1 = renderPlot({reg_ts1a()},height=400)
-      
-      reg_ts1b = function(){
-        plot_regression_timeseries(regression_ts_data(),"residuals",plot_titles_reg(),
-                                   variables_iv(),variable_dv())
-      }
-      
-      output$plot_reg_ts2 = renderPlot({reg_ts1b()},height=400)
-      
-      output$data_reg_ts= renderDataTable({regression_ts_data()}, rownames = FALSE, options = list(
-        autoWidth = TRUE, 
-        searching = FALSE,
-        paging = TRUE,
-        pagingType = "numbers"
-      ))
     
     ### ModE-RA sources ----
       
