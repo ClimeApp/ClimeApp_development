@@ -16,7 +16,7 @@
 #setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
 
 #Tanja:
-setwd("C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp") #private laptop
+#setwd("C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp") #private laptop
 
 ## Packages
 
@@ -25,10 +25,7 @@ setwd("C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp") #private laptop
 #assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
 #assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
-<<<<<<< HEAD
-assign(".lib.loc", "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library for Tanja's laptop
-=======
->>>>>>> fb1b1e1ef9efdaffb0d2cbb98fc1c9c7ca62e24f
+#assign(".lib.loc", "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library for Tanja's laptop
 
 #WD and Packages
 library(shiny)
