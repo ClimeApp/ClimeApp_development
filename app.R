@@ -3,12 +3,6 @@
 # Source for helpers ----
 source("helpers.R")
 
-# Live View
-shinylive::export("C:/Users/tanja/OneDrive/Dokumente/ClimeApp/ClimeApp_development/app.R",
-                  "C:/Users/tanja/OneDrive/Dokumente/ClimeApp/ClimeApp_development")
-
-httpuv::runStaticServer("C:/Users/tanja/OneDrive/Dokumente/ClimeApp/ClimeApp_development")
-  
 # Define UI ----
 ui <- navbarPage(id = "nav1",
                  ## Configs for navbarPage: theme, images (Header and Footer) ----
