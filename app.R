@@ -3,6 +3,7 @@
 # Source for helpers ----
 source("helpers.R")
   
+
 # Define UI ----
 
 ui <- navbarPage(id = "nav1",
@@ -4729,7 +4730,6 @@ ui <- navbarPage(id = "nav1",
      
 # Define server logic ----
 server <- function(input, output, session) {
-  
   # ClimeApp Desktop Download ----
   output$climeapp_desktop_download <- downloadHandler(
     filename = function() {"ClimeApp Desktop Installer.zip"},
@@ -13215,7 +13215,7 @@ app <- shinyApp(ui = ui, server = server)
 # Run the app normally
   runApp(app)
 # Run the app with profiling
-  # profvis({runApp(app)})
+  #profvis({runApp(app)})
 
 
   
