@@ -18,7 +18,7 @@
 ## Packages
 
 # Set library path for Offline Version
-#assign(".lib.loc", "library", envir = environment(.libPaths))
+assign(".lib.loc", "library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
 #assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
@@ -810,12 +810,11 @@ create_month_range = function(month_names_vector){
 
 
 ## (General) Create a subset of longitude IDs for plotting, tables and reading in data
+##           UPDATE: Always creates a subset that is 1 grid point longer at either end
+##                   than the given lat/lon range (to allow for cutting)
 
 create_subset_lon_IDs = function(lon_range){
-  subset_lon_IDs = which((lon >= lon_range[1]) & (lon <= lon_range[2]))
-  if (length(subset_lon_IDs)<=1){
-    subset_lon_IDs = which((lon >= lon_range[1]-1.875) & (lon <= lon_range[2]+1.875))
-  }
+  subset_lon_IDs = which((lon >= lon_range[1]-2.8125) & (lon <= lon_range[2]+2.8125))
   return(subset_lon_IDs)
 }
 
@@ -823,10 +822,7 @@ create_subset_lon_IDs = function(lon_range){
 ## (General) Create a subset of latitude IDs for plotting, tables and reading in data
 
 create_subset_lat_IDs = function(lat_range){
-  subset_lat_IDs = which((lat >= lat_range[1]) & (lat <= lat_range[2]))
-  if (length(subset_lat_IDs)<=1){
-    subset_lat_IDs = which((lat >= lat_range[1]-1.849638) & (lat <= lat_range[2]+1.849638))
-  }
+  subset_lat_IDs = which((lat >= lat_range[1]-2.774456) & (lat <= lat_range[2]+2.774456))
   return(subset_lat_IDs)
 }
 
@@ -1448,7 +1444,7 @@ set_axis_values = function(data_input,mode){
 
 
 # Plot map with ggplot2
-plot_map <- function(data_input, variable = NULL, mode = NULL,
+plot_map <- function(data_input, lon_lat_range, variable = NULL, mode = NULL,
                      titles = NULL, axis_range = NULL, hide_axis = FALSE, points_data = data.frame(),
                      highlights_data = data.frame(), stat_highlights_data = data.frame(), c_borders = TRUE,
                      white_ocean = FALSE, white_land = FALSE, plotOrder = NULL, shpPickers = NULL,
@@ -1591,7 +1587,30 @@ plot_map <- function(data_input, variable = NULL, mode = NULL,
     formula = paste0("+proj=laea +lat_0=", center_lat, " +lon_0=", center_lon, " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
     p <- p + coord_sf(crs = st_crs(formula))
   } else { # if UTM (default)
-    p <- p + coord_sf(xlim = c((xmin(data_input)+0.94), (xmax(data_input)-0.94)), ylim = c((ymin(data_input)+0.94), (ymax(data_input)-0.94)), expand = FALSE)
+    # Edit lon_lat_range if its a point
+    if (lon_lat_range[1]==lon_lat_range[2]){
+      lon_lat_range[1] = lon_lat_range[1] - 0.5 
+      lon_lat_range[2] = lon_lat_range[2] + 0.5 
+    }
+    if (lon_lat_range[3]==lon_lat_range[4]){
+      lon_lat_range[3] = lon_lat_range[3] - 0.5
+      lon_lat_range[4] = lon_lat_range[4] + 0.5 
+    }
+    # Edit lon_lat_range if its at the edge of the map
+    if (lon_lat_range[1]<(-179.0625)){
+      lon_lat_range[1] = -179.0625
+    }
+    if (lon_lat_range[2]>177.1875){
+      lon_lat_range[2] = 177.1875
+    }
+    if (lon_lat_range[3]<(-87.64735)){
+      lon_lat_range[3] = -87.64735
+    }
+    if (lon_lat_range[4]>87.64735){
+      lon_lat_range[4] = 87.64735
+    }
+    # Set limits of plot to lon_lat range 
+    p <- p + coord_sf(xlim = lon_lat_range[1:2], ylim = lon_lat_range[3:4], expand = FALSE)
   }
   
   # Add title and subtitle if provided
@@ -1676,6 +1695,11 @@ create_map_datatable = function(data_input,subset_lon_IDs,subset_lat_IDs){
 create_timeseries_datatable = function(data_input,year_input,year_input_type,
                                        subset_lon_IDs,subset_lat_IDs){
   
+  # Remove outer rows and columns from map data
+  cut_data_input = data_input[-c(1,dim(data_input)[1]),-c(1,dim(data_input)[2]),]
+  cut_subset_lon_IDs = subset_lon_IDs[-c(1,length(subset_lon_IDs))]
+  cut_subset_lat_IDs = subset_lat_IDs[-c(1,length(subset_lat_IDs))]
+
   # Create years column
   if (year_input_type == "range"){
     Year = year_input[1]:year_input[2]
@@ -1683,16 +1707,24 @@ create_timeseries_datatable = function(data_input,year_input,year_input_type,
     Year = year_input
   }
   
-  # Calculate weighted Mean column
-  latlon_weights_reduced = latlon_weights[subset_lat_IDs,subset_lon_IDs]
-  weight_function = function(df,llwr){df_weighted = (df*llwr)/sum(llwr)}
-  data_weighted = apply(data_input,c(3),weight_function, t(latlon_weights_reduced))
-  Mean = apply(data_weighted,c(2),sum)
-  
-  # create Min and Max columns
-  Min = apply(data_input,c(3),min)
-  Max = apply(data_input,c(3),max)
-  
+  # Check that cut_data is more than a single point
+  if (is.null(dim(cut_data_input))){
+    Mean = cut_data_input
+    Min = cut_data_input
+    Max = cut_data_input
+  } 
+  else {
+    # Calculate weighted Mean column
+    latlon_weights_reduced = latlon_weights[cut_subset_lat_IDs,cut_subset_lon_IDs]
+    weight_function = function(df,llwr){df_weighted = (df*llwr)/sum(llwr)}
+    data_weighted = apply(cut_data_input,c(3),weight_function, t(latlon_weights_reduced))
+    Mean = apply(data_weighted,c(2),sum)
+    
+    # create Min and Max columns
+    Min = apply(cut_data_input,c(3),min)
+    Max = apply(cut_data_input,c(3),max)
+  }
+
   # Create dataframe
   timeseries_data = data.frame(Year,Mean,Min,Max)
   
