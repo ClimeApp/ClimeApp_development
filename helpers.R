@@ -16,7 +16,7 @@
 #setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
 
 #Tanja:
-# setwd("C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp") #private laptop
+setwd("C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp") #private laptop
 
 ## Packages
 
@@ -25,7 +25,7 @@
 #assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
 #assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
-# assign(".lib.loc", "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library for Tanja's laptop
+assign(".lib.loc", "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library for Tanja's laptop
 
 #WD and Packages
 library(shiny)
@@ -62,7 +62,7 @@ library(viridis)
 
 # Set library path for Live Version
 # lib_path <- "/home/climeapp/R/x86_64-pc-linux-gnu-library/4.4"
-# lib_path <- "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library"
+lib_path <- "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library"
 # #WD and Packages
 # library(shiny, lib.loc = lib_path)
 # library(ncdf4, lib.loc = lib_path)
