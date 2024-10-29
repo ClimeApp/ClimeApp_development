@@ -1,6 +1,6 @@
 # ClimeApp Development
 
-ClimeApp is a data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis.
+ClimeApp is a data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis. For more information, visit the [ClimeApp website](https://mode-ra.unibe.ch/climeapp/).
 
 ## Table of Contents
 * [Authors](#Authors)
