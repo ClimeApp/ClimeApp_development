@@ -3,6 +3,7 @@
 # Source for helpers ----
 source("helpers.R")
   
+
 # Define UI ----
 
 ui <- navbarPage(id = "nav1",
@@ -4729,7 +4730,6 @@ ui <- navbarPage(id = "nav1",
      
 # Define server logic ----
 server <- function(input, output, session) {
-  
   # ClimeApp Desktop Download ----
   output$climeapp_desktop_download <- downloadHandler(
     filename = function() {"ClimeApp Desktop Installer.zip"},
@@ -10589,7 +10589,7 @@ server <- function(input, output, session) {
       return(m_d)  
     })
     
-    map_plot <- function(){plot_map(create_geotiff(map_data()), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,input$white_ocean,input$white_land,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)}
+    map_plot <- function(){plot_map(create_geotiff(map_data()), lonlat_vals(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,input$white_ocean,input$white_land,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)}
     
     output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
     
@@ -13225,7 +13225,7 @@ app <- shinyApp(ui = ui, server = server)
 # Run the app normally
   runApp(app)
 # Run the app with profiling
-  # profvis({runApp(app)})
+  #profvis({runApp(app)})
 
 
   
