@@ -13,13 +13,13 @@
 
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
-#setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
+setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
 
 ## Packages
 
 # Set library path for Offline Version
 #assign(".lib.loc", "library", envir = environment(.libPaths))
-#assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
+assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
 #assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 
@@ -53,6 +53,7 @@ library(terra)
 library(tidyterra)
 library(rnaturalearth)
 library(rnaturalearthdata)
+library(ggpattern)
 
 
 # Set library path for Live Version
@@ -1923,7 +1924,7 @@ plot_default_timeseries <- function(data_input, tab, variable, titles, title_mod
   # Create initial ggplot object
   p <- ggplot(data_input, aes(x = x, y = y)) +
     # Plot depending on the 'tab' argument
-    {if (tab == "general") geom_line(color = v_col, linewidth = 1) else geom_point(color = v_col, linewidth = 2)} +
+    {if (tab == "general") geom_line(color = v_col, linewidth = 1) else geom_point(color = v_col, size = 2)} +
     # Add labels
     labs(x = "Year", y = titles$ts_axis, title = titles$ts_title) +
     theme_minimal(base_size = 15) +  # Define a clean theme
@@ -2665,57 +2666,6 @@ add_highlighted_areas = function(data_input){
       rect(data_input$x1[i],data_input$y1[i],data_input$x2[i],data_input$y2[i],density = my_density,
            lwd = my_lwd, col = my_col, border = my_border)
     }
-  }
-}
-
-
-## (Plot Features) ADD PERCENTILES TO TS PLOT
-##                 data_input = output from add_stats_to_TS_datatable
-
-add_percentiles = function(data_input){
-  
-  if (dim(data_input)[1]>0){
-    # Set up variables for plotting
-    x = data_input$Year
-    cnames = colnames(data_input)
-    
-    # Add percentiles (if available)
-    if ("Percentile_0.005" %in% cnames){
-      lines(x,data_input$Percentile_0.005, lwd=2, col = adjustcolor("firebrick4",alpha.f = 0.7))
-    }
-    if ("Percentile_0.025" %in% cnames){
-      lines(x,data_input$Percentile_0.025, lwd=2, col = adjustcolor("orangered3",alpha.f = 0.7))
-    }
-    if ("Percentile_0.05" %in% cnames){
-      lines(x,data_input$Percentile_0.05, lwd=2, col = adjustcolor("darkgoldenrod3",alpha.f = 0.7))
-    }
-    if ("Percentile_0.95" %in% cnames){
-      lines(x,data_input$Percentile_0.95, lwd=2, col = adjustcolor("darkgoldenrod3",alpha.f = 0.7))
-    }
-    if ("Percentile_0.975" %in% cnames){
-      lines(x,data_input$Percentile_0.975, lwd=2, col = adjustcolor("orangered3",alpha.f = 0.7))
-    }
-    if ("Percentile_0.995" %in% cnames){
-      lines(x,data_input$Percentile_0.995, lwd=2, col = adjustcolor("firebrick4",alpha.f = 0.7))
-    }
-  }
-}
-
-
-## (Plot Features) ADD CUSTOM LINES TO PLOT
-##                 data_input = lines_data
-##                              (as created by create_new_lines_data)
-
-add_custom_lines = function(data_input){
-  if (dim(data_input)[1]>0){
-    # Subset lines into x (vertical) and y (horizontal)
-    vlines = subset(data_input,orientation=="Vertical")
-    hlines = subset(data_input,orientation=="Horizontal")
-    
-    # Plot Vertical lines
-    abline(v = vlines$location, lwd = 2, lty = vlines$type, col = vlines$color)
-    # Plot Horizontal lines
-    abline(h = hlines$location, lwd = 2, lty = hlines$type, col = hlines$color)
   }
 }
 
@@ -4911,7 +4861,7 @@ plot_monthly_timeseries <- function(data_input, custom_title, title_mode, key_po
   
   for (i in 1:n_o_rows) {
     data_values <- as.numeric(data_input[i, 5:16])
-    p <- p + geom_line(aes(x = 1:12, y = data_values), color = color_set[i], size = ifelse(data_input$Type[i] == "Average", 1.5, 1))
+    p <- p + geom_line(aes(x = 1:12, y = data_values), color = color_set[i], size = ifelse(data_input$Type[i] == "Average", linewidth=0.8))
   }
   
   # Modify based on the plot_mode (either base plot or lines)
@@ -4924,6 +4874,142 @@ plot_monthly_timeseries <- function(data_input, custom_title, title_mode, key_po
     if (title_mode == "Custom") {
       p <- p + ggtitle(custom_title)
     }
+  }
+  
+  return(p)
+}
+
+
+## (General) ADD CUSTOM FEATURES TO TIMESERIES PLOT (Points, Lines, Highlights)
+##              p = ggplot object containting the timeseries plot
+##              highlights_data = dataframe with columns x1, x2, y1, y2, color, type
+##              lines_data = dataframe with columns location, color, type, orientation
+##              points_data = dataframe with columns x_value, y_value, color, shape, size, label
+
+add_timeseries_custom_features <- function(p, highlights_data = NULL, lines_data = NULL, points_data = NULL) {
+  
+  # Add boxes (from the highlights_data)
+  if (!is.null(highlights_data) && nrow(highlights_data) > 0) {
+    if(any(highlights_data$type == "Fill")) {
+      fill_data <- subset(highlights_data, type == "Fill")
+      p <- p + geom_rect(data=fill_data, 
+                         aes(xmin = x1, xmax = x2,
+                             ymin = y1, ymax = y2),
+                         color = NA, fill = fill_data$color, size = 1)
+    }
+    if (any(highlights_data$type == "Box")) {
+      box_data <- subset(highlights_data, type == "Box")
+      p <- p + geom_rect(aes(xmin = box_data$x1, xmax = box_data$x2,
+                             ymin = box_data$y1, ymax = box_data$y2),
+                         color = box_data$color, fill = NA, size = 1)
+    }
+    if(any(highlights_data$type == "Hatched")) {
+      hatched_data <- subset(highlights_data, type == "Hatched")
+      p <- p + geom_rect(aes(xmin = hatched_data$x1, xmax = hatched_data$x2,
+                             ymin = hatched_data$y1, ymax = hatched_data$y2),
+                         color = NA, fill = hatched_data$color, size = 1, alpha = 0.5)
+    }
+  }
+  
+  # Add custom lines (vertical and horizontal)
+  if (!is.null(lines_data) && nrow(lines_data) > 0) {
+    # Vertical lines
+    if (any(lines_data$orientation == "Vertical")) {
+      vlines <- subset(lines_data, orientation == "Vertical")
+      p <- p + geom_vline(data = vlines, aes(xintercept = location), color = vlines$color, 
+                          linetype = vlines$type, size = 1)
+    }
+    
+    # Horizontal lines
+    if (any(lines_data$orientation == "Horizontal")) {
+      hlines <- subset(lines_data, orientation == "Horizontal")
+      p <- p + geom_hline(data = hlines, aes(yintercept = location), color = hlines$color, 
+                          linetype = hlines$type, size = 1)
+    }
+  }
+  
+  # Add custom points
+  if (!is.null(points_data) && nrow(points_data) > 0) {
+    p <- p + geom_point(data = points_data, aes(x = x_value, y = y_value, 
+                                                color = I(points_data$color), shape = I(points_data$shape), size = I(points_data$size))) +
+      geom_text(data = points_data, aes(x = x_value, y = y_value, label = label),
+                vjust = -1, size = 3)
+  }
+  
+  return(p)
+}
+
+
+## (Plot Features) ADD PERCENTILES TO TS PLOT
+##                 p = ggplot object containing the timeseries plot
+##                 data_input = output from add_stats_to_TS_datatable
+add_percentiles <- function(p, data_input) {
+  print(data_input)
+  
+  if (dim(data_input)[1] > 0) {
+    print(dim(data_input)[1])
+    # Set up variables for plotting
+    cnames <- colnames(data_input)
+    print(cnames)
+    
+    # Add percentiles (if available)
+    if ("Percentile_0.005" %in% cnames) {
+      p <- p + geom_hline(yintercept = data_input$Percentile_0.005[1], color = "firebrick4", size = 0.8)
+    }
+    if ("Percentile_0.025" %in% cnames) {
+      p <- p + geom_hline(yintercept = data_input$Percentile_0.025[1], color = "orangered3", size = 0.8)
+    }
+    if ("Percentile_0.05" %in% cnames) {
+      p <- p + geom_hline(yintercept = data_input$Percentile_0.05[1], color = "darkgoldenrod3", size = 0.8)
+    }
+    if ("Percentile_0.95" %in% cnames) {
+      p <- p + geom_hline(yintercept = data_input$Percentile_0.95[1], color = "darkgoldenrod3", size = 0.8)
+    }
+    if ("Percentile_0.975" %in% cnames) {
+      p <- p + geom_hline(yintercept = data_input$Percentile_0.975[1], color = "orangered3", size = 0.8)
+    }
+    if ("Percentile_0.995" %in% cnames) {
+      p <- p + geom_hline(yintercept = data_input$Percentile_0.995[1], color = "firebrick4", size = 0.8)
+    }
+  }
+    
+  
+  return(p)
+}
+
+
+## (Plot Features) ADD TIMESERIES - replots timeseries over other features and
+##                                     adds moving average (if selected)
+##                 data_input = output from add_stats_to_TS_datatable
+##                 tab = "general" or "composite"
+
+add_timeseries <- function(p, data_input, tab, variable) {
+  # Ensure there are rows in data
+  if (nrow(data_input) == 0) return(p)
+  
+  # Set up variables for plotting
+  x <- data_input$Year
+  y <- data_input[, 2]
+  cnames <- colnames(data_input)
+  
+  # Generate color scheme based on variable
+  v_col <- switch(variable,
+                  "Temperature" = "red3",
+                  "Precipitation" = "turquoise4",
+                  "SLP" = "purple4",
+                  "Z500" = "green4",
+                  "black") # default color
+  
+  # Add lines or points based on the tab
+  if (tab == "general") {
+    p <- p + geom_line(aes(x = x, y = y), color = v_col, size = 0.8)
+  } else {
+    p <- p + geom_point(aes(x = x, y = y), color = v_col, size = 1)
+  } # not sure why this if-statement is there, maybe check and change
+  
+  # Add moving average if available
+  if ("Moving_Average" %in% cnames) {
+    p <- p + geom_line(aes(x = x, y = data_input$Moving_Average), color = "black", size = 0.8)
   }
   
   return(p)

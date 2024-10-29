@@ -10702,6 +10702,43 @@ server <- function(input, output, session) {
     ))
     
     #Plotting the timeseries
+    # timeseries_plot <- function(){
+    #   #Plot normal timeseries if year range is > 1 year
+    #   if (input$range_years[1] != input$range_years[2]){
+    #     # Generate NA or reference mean
+    #     if(input$show_ref_ts == TRUE){
+    #       ref_ts = signif(mean(data_output3_primary()),3)
+    #     } else {
+    #       ref_ts = NA
+    #     }
+    #     
+    #     plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
+    #     # add_highlighted_areas(ts_highlights_data())
+    #     # add_percentiles(timeseries_data())
+    #     # add_custom_lines(ts_lines_data())
+    #     # add_timeseries(timeseries_data(),"general",input$variable_selected)
+    #     # add_boxes(ts_highlights_data())
+    #     # add_custom_points(ts_points_data())
+    #     # if (input$show_key_ts == TRUE){
+    #     #   add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
+    #     #              input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+    #     # }
+    #   } 
+    #   # Plot monthly TS if year range = 1 year
+    #   else {
+    #     plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","base")
+    #     # add_highlighted_areas(ts_highlights_data())
+    #     # add_custom_lines(ts_lines_data())
+    #     # plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","lines")
+    #     # add_boxes(ts_highlights_data())
+    #     # add_custom_points(ts_points_data())
+    #     # if (input$show_key_ts == TRUE){
+    #     #   add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
+    #     #              input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+    #     # }
+    #   }
+    # }
+    
     timeseries_plot <- function(){
       #Plot normal timeseries if year range is > 1 year
       if (input$range_years[1] != input$range_years[2]){
@@ -10711,32 +10748,18 @@ server <- function(input, output, session) {
         } else {
           ref_ts = NA
         }
-        
-        plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
-        # add_highlighted_areas(ts_highlights_data())
-        # add_percentiles(timeseries_data())
-        # add_custom_lines(ts_lines_data())
-        # add_timeseries(timeseries_data(),"general",input$variable_selected)
-        # add_boxes(ts_highlights_data())
-        # add_custom_points(ts_points_data())
-        # if (input$show_key_ts == TRUE){
-        #   add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
-        #              input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
-        # }
-      } 
+        p <- plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
+        p <- add_percentiles(p, timeseries_data())
+      }
       # Plot monthly TS if year range = 1 year
       else {
-        plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","base")
-        # add_highlighted_areas(ts_highlights_data())
-        # add_custom_lines(ts_lines_data())
-        # plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","lines")
-        # add_boxes(ts_highlights_data())
-        # add_custom_points(ts_points_data())
-        # if (input$show_key_ts == TRUE){
-        #   add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
-        #              input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
-        # }
+        p <- plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","base")
       }
+      
+      p <- add_timeseries_custom_features(p, ts_highlights_data(), ts_lines_data(), ts_points_data())
+      p <- add_timeseries(p, timeseries_data(), "general", input$variable_selected)
+
+      return(p)
     }
     
     output$timeseries <- renderPlot({timeseries_plot()}, height = 400)
@@ -10842,17 +10865,16 @@ server <- function(input, output, session) {
                                                        content  = function(file) {
                                                          if (input$file_type_timeseries == "png"){
                                                            png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
-                                                           timeseries_plot() 
-                                                           dev.off()
+
                                                          } else if (input$file_type_timeseries == "jpeg"){
                                                            jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
-                                                           timeseries_plot() 
-                                                           dev.off()
+
                                                          } else {
                                                            pdf(file, width = 14, height = 6, bg = "transparent") 
-                                                           timeseries_plot()
-                                                           dev.off()
-                                                         }}) 
+                                                         }
+                                                         print(timeseries_plot())
+                                                         dev.off()
+                                                         }) 
     
     output$download_map_data        <- downloadHandler(filename = function() {paste(plot_titles()$file_title, "-mapdata.", input$file_type_map_data, sep = "")},
                                                         content = function(file) {
