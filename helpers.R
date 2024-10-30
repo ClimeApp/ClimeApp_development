@@ -25,7 +25,7 @@ assign(".lib.loc", "library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
 #assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
-assign(".lib.loc", "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library for Tanja's laptop
+# assign(".lib.loc", "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library for Tanja's laptop
 
 #WD and Packages
 library(shiny)
@@ -62,7 +62,7 @@ library(viridis)
 
 # Set library path for Live Version
 # lib_path <- "/home/climeapp/R/x86_64-pc-linux-gnu-library/4.4"
-lib_path <- "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library"
+# lib_path <- "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library"
 # #WD and Packages
 # library(shiny, lib.loc = lib_path)
 # library(ncdf4, lib.loc = lib_path)
@@ -1449,15 +1449,11 @@ set_axis_values = function(data_input,mode){
 ##           plotOrder = vector of shapefile names in the order they should be plotted
 ##           shpPickers = vector of shapefile names that have colour pickers (?)
 ##           plot_type = "shp_colour_" or "shp_colour2_" depending on the type of shapefile (?)
-
+##
 
 # Plot map with ggplot2
-<<<<<<< HEAD
 plot_map <- function(data_input,
                      variable = NULL, mode = NULL,
-=======
-plot_map <- function(data_input, lon_lat_range, variable = NULL, mode = NULL,
->>>>>>> c79abd07bde3aaea30b67ced1b120f4de44638c1
                      titles = NULL, axis_range = NULL, hide_axis = FALSE, points_data = data.frame(),
                      highlights_data = data.frame(), stat_highlights_data = data.frame(), c_borders = TRUE,
                      white_ocean = FALSE, white_land = FALSE, plotOrder = NULL, shpPickers = NULL,
