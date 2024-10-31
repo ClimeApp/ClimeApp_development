@@ -11,17 +11,21 @@
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
 #setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 
-#Noémie
+#Noémie:
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
 #setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
+
+#Tanja:
+setwd("C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp") #private laptop
 
 ## Packages
 
 # Set library path for Offline Version
-#assign(".lib.loc", "library", envir = environment(.libPaths))
+assign(".lib.loc", "library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
 #assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
+# assign(".lib.loc", "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library for Tanja's laptop
 
 #WD and Packages
 library(shiny)
@@ -35,6 +39,7 @@ library(readxl)
 library(DT)
 library(zoo)
 library(colourpicker)
+library(shinylive)
 #library(tmaptools)  ** do we need this? **
 library(ggplot2)
 library(sf)
@@ -53,10 +58,11 @@ library(terra)
 library(tidyterra)
 library(rnaturalearth)
 library(rnaturalearthdata)
-
+library(viridis)
 
 # Set library path for Live Version
 # lib_path <- "/home/climeapp/R/x86_64-pc-linux-gnu-library/4.4"
+# lib_path <- "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library"
 # #WD and Packages
 # library(shiny, lib.loc = lib_path)
 # library(ncdf4, lib.loc = lib_path)
@@ -85,6 +91,7 @@ library(rnaturalearthdata)
 # library(terra, lib.loc = lib_path)
 # library(rnaturalearth, lib.loc = lib_path)
 # library(rnaturlaearthdata, lib.loc = lib_path)
+# library(shinylive, lib.loc = lib_path)
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
@@ -437,7 +444,8 @@ timeseries_customization_popover = function(popover_ID){
   } else {
     popover(
       HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-      "Edit the titles of your timeseries and add a key or reference line.",br(),br(),
+      "Edit the titles of your timeseries and add a key or reference line.",
+      br(),br(),
       "The",em("Show reference"),"option adds a line to the timeseries shows the mean for your selected reference period (i.e. the absolute value corresponding to an anomaly of 0).",
       id = popover_ID,
       placement = "right",
@@ -810,12 +818,11 @@ create_month_range = function(month_names_vector){
 
 
 ## (General) Create a subset of longitude IDs for plotting, tables and reading in data
+##           UPDATE: Always creates a subset that is 1 grid point longer at either end
+##                   than the given lat/lon range (to allow for cutting)
 
 create_subset_lon_IDs = function(lon_range){
-  subset_lon_IDs = which((lon >= lon_range[1]) & (lon <= lon_range[2]))
-  if (length(subset_lon_IDs)<=1){
-    subset_lon_IDs = which((lon >= lon_range[1]-1.875) & (lon <= lon_range[2]+1.875))
-  }
+  subset_lon_IDs = which((lon >= lon_range[1]-2.8125) & (lon <= lon_range[2]+2.8125))
   return(subset_lon_IDs)
 }
 
@@ -823,10 +830,7 @@ create_subset_lon_IDs = function(lon_range){
 ## (General) Create a subset of latitude IDs for plotting, tables and reading in data
 
 create_subset_lat_IDs = function(lat_range){
-  subset_lat_IDs = which((lat >= lat_range[1]) & (lat <= lat_range[2]))
-  if (length(subset_lat_IDs)<=1){
-    subset_lat_IDs = which((lat >= lat_range[1]-1.849638) & (lat <= lat_range[2]+1.849638))
-  }
+  subset_lat_IDs = which((lat >= lat_range[1]-2.774456) & (lat <= lat_range[2]+2.774456))
   return(subset_lat_IDs)
 }
 
@@ -1445,10 +1449,11 @@ set_axis_values = function(data_input,mode){
 ##           plotOrder = vector of shapefile names in the order they should be plotted
 ##           shpPickers = vector of shapefile names that have colour pickers (?)
 ##           plot_type = "shp_colour_" or "shp_colour2_" depending on the type of shapefile (?)
-
+##
 
 # Plot map with ggplot2
-plot_map <- function(data_input, variable = NULL, mode = NULL,
+plot_map <- function(data_input,
+                     variable = NULL, mode = NULL,
                      titles = NULL, axis_range = NULL, hide_axis = FALSE, points_data = data.frame(),
                      highlights_data = data.frame(), stat_highlights_data = data.frame(), c_borders = TRUE,
                      white_ocean = FALSE, white_land = FALSE, plotOrder = NULL, shpPickers = NULL,
@@ -1480,7 +1485,7 @@ plot_map <- function(data_input, variable = NULL, mode = NULL,
       v_col <- rev(brewer.pal(11, "PuOr"))
       v_unit <- "r"
     } else if (mode == "Regression_coefficients") {
-      v_col <- rev(brewer.pal(11, "Spectral"))
+      v_col <- viridis(11, option = "turbo")
       v_unit <- "Coefficient"
       titles$map_title <- "Regression Coefficients"
       titles$map_subtitle <- titles$map_subtitle_coeff #overwrite titles$map_subtitle because ggplot uses it
@@ -1591,7 +1596,30 @@ plot_map <- function(data_input, variable = NULL, mode = NULL,
     formula = paste0("+proj=laea +lat_0=", center_lat, " +lon_0=", center_lon, " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
     p <- p + coord_sf(crs = st_crs(formula))
   } else { # if UTM (default)
-    p <- p + coord_sf(xlim = c((xmin(data_input)+0.94), (xmax(data_input)-0.94)), ylim = c((ymin(data_input)+0.94), (ymax(data_input)-0.94)), expand = FALSE)
+    # Edit lon_lat_range if its a point
+    if (lon_lat_range[1]==lon_lat_range[2]){
+      lon_lat_range[1] = lon_lat_range[1] - 0.5 
+      lon_lat_range[2] = lon_lat_range[2] + 0.5 
+    }
+    if (lon_lat_range[3]==lon_lat_range[4]){
+      lon_lat_range[3] = lon_lat_range[3] - 0.5
+      lon_lat_range[4] = lon_lat_range[4] + 0.5 
+    }
+    # Edit lon_lat_range if its at the edge of the map
+    if (lon_lat_range[1]<(-179.0625)){
+      lon_lat_range[1] = -179.0625
+    }
+    if (lon_lat_range[2]>177.1875){
+      lon_lat_range[2] = 177.1875
+    }
+    if (lon_lat_range[3]<(-87.64735)){
+      lon_lat_range[3] = -87.64735
+    }
+    if (lon_lat_range[4]>87.64735){
+      lon_lat_range[4] = 87.64735
+    }
+    # Set limits of plot to lon_lat range 
+    p <- p + coord_sf(xlim = lon_lat_range[1:2], ylim = lon_lat_range[3:4], expand = FALSE)
   }
   
   # Add title and subtitle if provided
@@ -1623,7 +1651,8 @@ plot_map <- function(data_input, variable = NULL, mode = NULL,
   if (nrow(points_data) > 0 && all(c("x_value", "y_value", "color", "shape", "size", "label") %in% colnames(points_data))) {
     p <- p + 
       geom_point(data = points_data, aes(x = x_value, y = y_value, color = color, shape = shape, size = size), show.legend = FALSE) +
-      geom_text(data = points_data, aes(x = x_value, y = y_value, label = label), position = position_nudge(y = -0.5), show.legend = FALSE)
+      geom_text(data = points_data, aes(x = x_value, y = y_value, label = label), position = position_nudge(y = -0.5), show.legend = FALSE) +
+      labs(x = NULL, y = NULL)
   }
   
   if (nrow(highlights_data) > 0 && all(c("x1", "x2", "y1", "y2", "color", "type") %in% colnames(highlights_data))) {
@@ -1632,7 +1661,8 @@ plot_map <- function(data_input, variable = NULL, mode = NULL,
       if (highlight_data$type == "Box") {
         p <- p + 
           geom_rect(aes(xmin = highlight_data$x1, xmax = highlight_data$x2, ymin = highlight_data$y1, ymax = highlight_data$y2),
-                    color = highlight_data$color, fill = NA, size = 1, show.legend = FALSE)
+                    color = highlight_data$color, fill = NA, size = 1, show.legend = FALSE) +
+          labs(x = NULL, y = NULL)
       } else if (highlight_data$type == "Hatched") {
         p <- p + 
           geom_rect(aes(xmin = highlight_data$x1, xmax = highlight_data$x2, ymin = highlight_data$y1, ymax = highlight_data$y2),
@@ -1661,8 +1691,17 @@ create_map_datatable = function(data_input,subset_lon_IDs,subset_lat_IDs){
   # Transpose and rotate z
   map_data =t(z)[order(ncol(z):1),]
 
-  colnames(map_data) = paste(x,"\u00B0",sep = "")
-  rownames(map_data) = paste(round(y, digits = 3),"\u00B0",sep = "")
+  # Add degree symbols and cardinal directions for longitude and latitude
+  x_labels = ifelse(x >= 0,
+                    paste(x, "\u00B0E", sep = ""),
+                    paste(abs(x), "\u00B0W", sep = ""))
+  y_labels = ifelse(y >= 0,
+                    paste(round(y, digits = 3), "\u00B0N", sep = ""),
+                    paste(abs(round(y, digits = 3)), "\u00B0S", sep = ""))
+  
+  # Apply labels to map data
+  colnames(map_data) = x_labels
+  rownames(map_data) = y_labels
 
   return(map_data)
 }
@@ -1676,6 +1715,11 @@ create_map_datatable = function(data_input,subset_lon_IDs,subset_lat_IDs){
 create_timeseries_datatable = function(data_input,year_input,year_input_type,
                                        subset_lon_IDs,subset_lat_IDs){
   
+  # Remove outer rows and columns from map data
+  cut_data_input = data_input[-c(1,dim(data_input)[1]),-c(1,dim(data_input)[2]),]
+  cut_subset_lon_IDs = subset_lon_IDs[-c(1,length(subset_lon_IDs))]
+  cut_subset_lat_IDs = subset_lat_IDs[-c(1,length(subset_lat_IDs))]
+
   # Create years column
   if (year_input_type == "range"){
     Year = year_input[1]:year_input[2]
@@ -1683,16 +1727,24 @@ create_timeseries_datatable = function(data_input,year_input,year_input_type,
     Year = year_input
   }
   
-  # Calculate weighted Mean column
-  latlon_weights_reduced = latlon_weights[subset_lat_IDs,subset_lon_IDs]
-  weight_function = function(df,llwr){df_weighted = (df*llwr)/sum(llwr)}
-  data_weighted = apply(data_input,c(3),weight_function, t(latlon_weights_reduced))
-  Mean = apply(data_weighted,c(2),sum)
-  
-  # create Min and Max columns
-  Min = apply(data_input,c(3),min)
-  Max = apply(data_input,c(3),max)
-  
+  # Check that cut_data is more than a single point
+  if (is.null(dim(cut_data_input))){
+    Mean = cut_data_input
+    Min = cut_data_input
+    Max = cut_data_input
+  } 
+  else {
+    # Calculate weighted Mean column
+    latlon_weights_reduced = latlon_weights[cut_subset_lat_IDs,cut_subset_lon_IDs]
+    weight_function = function(df,llwr){df_weighted = (df*llwr)/sum(llwr)}
+    data_weighted = apply(cut_data_input,c(3),weight_function, t(latlon_weights_reduced))
+    Mean = apply(data_weighted,c(2),sum)
+    
+    # create Min and Max columns
+    Min = apply(cut_data_input,c(3),min)
+    Max = apply(cut_data_input,c(3),max)
+  }
+
   # Create dataframe
   timeseries_data = data.frame(Year,Mean,Min,Max)
   
@@ -2317,9 +2369,12 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
 
 create_geotiff <- function(map_data, output_file = NULL) {
   
-  # Extract lon and lat from column and row names
-  x <- as.numeric(gsub("\u00B0", "", colnames(map_data)))
-  y <- as.numeric(gsub("\u00B0", "", rownames(map_data)))
+  # Extract longitudes and latitudes from column and row names and retaining original sign
+  x <- as.numeric(gsub("°[EW]", "", colnames(map_data))) *
+    ifelse(grepl("E", colnames(map_data)), 1, -1)
+  
+  y <- as.numeric(gsub("°[NS]", "", rownames(map_data))) * 
+    ifelse(grepl("N", rownames(map_data)), 1, -1)
   
   # Check if dimensions of the matrix match the lon/lat lengths
   if (ncol(map_data) != length(x) || nrow(map_data) != length(y)) {
@@ -2327,7 +2382,7 @@ create_geotiff <- function(map_data, output_file = NULL) {
   }
   
   r <- rast(as.matrix(map_data))
-  ext(r) <- ext(min(x), max(x), min(y), max(y)) # define rater extent
+  ext(r) <- ext(min(x), max(x), min(y), max(y)) # define raster extent
   
   crs(r) <- "EPSG:4326"  # EPSG:4326 = WGS84
   
@@ -4040,9 +4095,17 @@ generate_correlation_map_datatable = function(data_input){
 
   zt = t(z)[rev(1:length(y)),]
   
-  # Add row/col names
-  colnames(zt) = paste(x,"\u00B0",sep = "")
-  rownames(zt) = paste(round(rev(y), digits = 3),"\u00B0",sep = "")
+  # Add degree symbols and cardinal directions for longitude and latitude
+  x_labels = ifelse(x >= 0,
+                    paste(x, "\u00B0E", sep = ""),
+                    paste(abs(x), "\u00B0W", sep = ""))
+  y_labels = ifelse(y >= 0,
+                    paste(round(y, digits = 3), "\u00B0N", sep = ""),
+                    paste(abs(round(y, digits = 3)), "\u00B0S", sep = ""))
+  
+  # Apply labels to correlation map data
+  colnames(zt) = x_labels
+  rownames(zt) = y_labels  
   
   return(zt)
 }
@@ -4405,8 +4468,17 @@ create_regression_map_datatable = function(data_input,subset_lon_IDs,subset_lat_
   # Transpose
   map_data =t(z)
   
-  colnames(map_data) = paste(x,"\u00B0",sep = "")
-  rownames(map_data) = paste(round(y, digits = 3),"\u00B0",sep = "")
+  # Add degree symbols and cardinal directions for longitude and latitude
+  x_labels = ifelse(x >= 0,
+                    paste(x, "\u00B0E", sep = ""),
+                    paste(abs(x), "\u00B0W", sep = ""))
+  y_labels = ifelse(y >= 0,
+                    paste(round(y, digits = 3), "\u00B0N", sep = ""),
+                    paste(abs(round(y, digits = 3)), "\u00B0S", sep = ""))
+  
+  # Apply labels to map data
+  colnames(map_data) = x_labels
+  rownames(map_data) = y_labels
   
   return(map_data)
 }

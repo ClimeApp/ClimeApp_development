@@ -2,9 +2,16 @@
 
 # Source for helpers ----
 source("helpers.R")
-  
+##
 # Define UI ----
 
+# shinylive::export("C:/Users/tanja/OneDrive/Dokumente/ClimeApp/ClimeApp_development",
+#                   "C:/Users/tanja/OneDrive/Dokumente/ClimeApp/ClimeApp_development/View")
+# 
+# httpuv::runStaticServer("C:/Users/tanja/OneDrive/Dokumente/ClimeApp/ClimeApp_development/View")
+
+
+# Define UI ----
 ui <- navbarPage(id = "nav1",
                  ## Configs for navbarPage: theme, images (Header and Footer) ----
                  title = div(style = "display: inline;",
@@ -17,10 +24,22 @@ ui <- navbarPage(id = "nav1",
                  ),
                  footer = div(class = "navbar-footer",
                               style = "display: inline;",
-                              img(src = 'pics/oeschger_logo_rgb.jpg', id = "ClimeApp3", height = "100px", width = "100px", style = "margin-top: 20px; margin-bottom: 20px;"),
-                              img(src = 'pics/LOGO_ERC-FLAG_EU_.jpg', id = "ClimeApp4", height = "100px", width = "141px", style = "margin-top: 20px; margin-bottom: 20px;"),
-                              img(src = 'pics/WBF_SBFI_EU_Frameworkprogramme_E_RGB_pos_quer.jpg', id = "ClimeApp5", height = "100px", width = "349px", style = "margin-top: 20px; margin-bottom: 20px;"),
-                              img(src = 'pics/SNF_Logo_Logo.png', id = "ClimeApp6", height = "75px", width = "560px", style = "margin-top: 20px; margin-bottom: 20px;"),
+                              # Oeschger Centre
+                              a(href = "https://www.oeschger.unibe.ch/", target = "_blank",
+                                style = "text-decoration: none; border: none;",
+                                img(src = 'pics/oeschger_logo_rgb.jpg', id = "ClimeApp3", height = "100px", width = "100px", style = "margin-top: 20px; margin-bottom: 20px;")),
+                              # ERC
+                              a(href = "https://erc.europa.eu/homepage", target = "_blank",
+                                style = "text-decoration: none; border: none;",
+                                img(src = 'pics/LOGO_ERC-FLAG_EU_.jpg', id = "ClimeApp4", height = "100px", width = "141px", style = "margin-top: 20px; margin-bottom: 20px;")),
+                              # Schweizerische Eidgenossenschaft
+                              a(href = "https://www.admin.ch/gov/de/start.html", target = "_blank",
+                                style = "text-decoration: none; border: none;",
+                                img(src = 'pics/WBF_SBFI_EU_Frameworkprogramme_E_RGB_pos_quer.jpg', id = "ClimeApp5", height = "100px", width = "349px", style = "margin-top: 20px; margin-bottom: 20px;")),
+                              # Schweizerischer Nationalfonds
+                              a(href = "https://www.snf.ch/de", target = "_blank",
+                                style = "text-decoration: none; border: none;",
+                                img(src = 'pics/SNF_Logo_Logo.png', id = "ClimeApp6", height = "75px", width = "560px", style = "margin-top: 20px; margin-bottom: 20px;")),
                               # Navbar properties
                               tags$style(type="text/css", "body {padding-top: 90px;}"),
                               # Window dimensions
@@ -57,6 +76,7 @@ ui <- navbarPage(id = "nav1",
                  position = c("fixed-top"),
                  windowTitle = "ClimeApp (v1.4)",
                  collapsible = TRUE,
+                 tags$head(tags$link(rel = "icon", type = "image/png", href = "pics/Logo_Favicon.png")),
 
 # Welcome START ----                             
   tabPanel("Welcome", value = "tab0",
@@ -367,7 +387,7 @@ ui <- navbarPage(id = "nav1",
           )
 # Welcome END ----  
        )),
-# Average & anomaly START ----                             
+# Anomalies START ----                             
   tabPanel("Anomalies", value = "tab1",
                 shinyjs::useShinyjs(),
                 sidebarLayout(
@@ -1290,7 +1310,7 @@ ui <- navbarPage(id = "nav1",
                     )          
                 ## Main Panel END ----
                 ), width = 8),
-# Average & anomaly END ----  
+# Anomalies END ----  
         )),
 
 # Composites START----      
@@ -3961,6 +3981,8 @@ ui <- navbarPage(id = "nav1",
                             column(2, radioButtons(inputId = "reg_coe_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
                             column(3, downloadButton(outputId = "download_reg_coe_plot_data", label = "Download data")),
                           )), br(),
+                      ######## Add Map and Feature Customization
+                      
                       withSpinner(ui_element = tableOutput("data_reg_coeff"),
                                   image = spinner_image,
                                   image.width = spinner_width,
@@ -4729,7 +4751,6 @@ ui <- navbarPage(id = "nav1",
      
 # Define server logic ----
 server <- function(input, output, session) {
-  
   # ClimeApp Desktop Download ----
   output$climeapp_desktop_download <- downloadHandler(
     filename = function() {"ClimeApp Desktop Installer.zip"},
@@ -6163,7 +6184,7 @@ server <- function(input, output, session) {
                     condition = input$show_line_on_legend_ts5 == TRUE,
                     asis = FALSE)})
  
-  ## GENERAL observe, update & interactive controls ----
+  ## ANOMALIES observe, update & interactive controls ----
   
     ### Input updaters ----
     
@@ -6475,6 +6496,18 @@ server <- function(input, output, session) {
       }
     })
     
+    #Show Absolute Warning 
+    observe({
+      if (input$ref_map_mode == "Absolute Values"){
+        showModal(
+          # Add modal dialog for warning message
+          modalDialog(
+            title = "Information",
+            "Unrealistic values (such as negative precipitation) can occur if absolute values are used! Cf. “Usage Notes”",
+            easyClose = TRUE,
+            footer = tagList(modalButton("OK"))
+          ))}
+    })
     
     ### Interactivity ----
     
@@ -6665,8 +6698,6 @@ server <- function(input, output, session) {
           value = round(c(input$ts_brush1[[3]],input$ts_brush1[[4]]), digits = 2))
       }
     })
-    
-    
     ### Initialise and update custom points lines highlights ----
     
     map_points_data = reactiveVal(data.frame())
@@ -7356,7 +7387,7 @@ server <- function(input, output, session) {
     })
     
     
-    #Show Absolute Warning
+    #Show Absolute Warning 
     observe({
       if (input$ref_map_mode2 == "Absolute Values"){
         showModal(
@@ -10589,7 +10620,7 @@ server <- function(input, output, session) {
       return(m_d)  
     })
     
-    map_plot <- function(){plot_map(create_geotiff(map_data()), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,input$white_ocean,input$white_land,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)}
+    map_plot <- function(){plot_map(create_geotiff(map_data()), lonlat_vals(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,input$white_ocean,input$white_land,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)}
     
     output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
     
@@ -10997,7 +11028,8 @@ server <- function(input, output, session) {
       #Plotting the Data (Maps)
       map_data_2 <- function(){create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
       
-      output$data3 <- renderTable({map_data_2()}, rownames = TRUE)
+      output$data3 <- renderTable({map_data_2()},
+                                  rownames = TRUE)
       
       #Plotting the Map
       map_dimensions_2 <- reactive({
@@ -13203,7 +13235,7 @@ app <- shinyApp(ui = ui, server = server)
 # Run the app normally
   runApp(app)
 # Run the app with profiling
-  # profvis({runApp(app)})
+  #profvis({runApp(app)})
 
 
   
