@@ -571,7 +571,7 @@ composites_summary_popover = function(popover_ID){
 correlation_summary_popover = function(popover_ID){
   popover(
     h3(HTML("Correlation <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
-    "Correlation measures the statistical relationship (causal or non-causal) between two variables. This tab allows you to correlate two sets of ModE data, or upload you own data to correlate against the ModE data or correlate two sets of uploaded data.",br(),br(),
+    "Correlation measures the statistical relationship (causal or non-causal) between two variables. This tab allows you to correlate two sets of ModE data, or upload your own data to correlate against the ModE data or correlate two sets of uploaded data.",br(),br(),
     "The", em("Timeseries"),"tab shows the timeseries and timeseries correlation for", em("Variable 1"),"and",em("Variable 2."),br(),br(),
     "The",em("Correlation map"),"shows the correlation between", em("Variable 1"),"and",em("Variable 2")," for each point on the map.",br(),br(),
     "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",

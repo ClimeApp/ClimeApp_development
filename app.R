@@ -10,7 +10,7 @@ ui <- navbarPage(id = "nav1",
                  title = div(style = "display: inline;",
                              uiOutput("logo_output", inline = TRUE),
                              uiOutput("logo_output2", inline = TRUE),
-                             "(v1.3)",
+                             "(v1.4)",
                              #Preparation to use Tracking ShinyJS and CSS
                              shinyjs::useShinyjs(),
                              use_tracking()
@@ -55,7 +55,7 @@ ui <- navbarPage(id = "nav1",
                  ),
                  theme = my_theme,
                  position = c("fixed-top"),
-                 windowTitle = "ClimeApp (v1.3)",
+                 windowTitle = "ClimeApp (v1.4)",
                  collapsible = TRUE,
 
 # Welcome START ----                             
