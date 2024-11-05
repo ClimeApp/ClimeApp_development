@@ -1,31 +1,43 @@
 #### Preparation ####
 
 ## Working Directory
+# Define a function to set up user configurations
+setup_user_environment <- function() {
+  # Define user-specific settings
+  user_configs <- list(
+    nik = list(
+      setwd = "C:/Users/nbartlome/OneDrive/1_Universität/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp",
+      lib_path = "C:/Users/nbartlome/OneDrive/ClimeApp_all/ClimeApp/library"
+    ),
+    richard = list(
+      setwd = "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp",
+      lib_path = "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library"
+    ),
+    noemie = list(
+      setwd = "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp",
+      lib_path = "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library"
+    ),
+    tanja = list(
+      setwd = "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp",
+      lib_path = "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library"
+    )
+  )
+  # Get the current user's name
+  current_user <- Sys.info()[["user"]]
+  # Check if current user exists in config
+  if (!is.null(user_configs[[current_user]])) {
+    user_config <- user_configs[[current_user]]
+    # Set the working directory
+    setwd(user_config$setwd)
+    # Set the library path
+    .libPaths(user_config$lib_path)
+    message("Working directory and library paths set for user: ", current_user)
+  } else {
+    stop("User configuration not found. Please check the user setup.")
+  }
+}
+setup_user_environment()
 
-#Nik:
-#Laptop: nikla, UniPC: nbartlome, Zuhause: Niklaus Emanuel
-#setwd("C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp")
-
-#Richard:
-#Laptop/desktop:
-#setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
-#setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
-
-#Noémie:
-#setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
-#setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
-
-#Tanja:
-setwd("C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp") #private laptop
-
-## Packages
-
-# Set library path for Offline Version
-assign(".lib.loc", "library", envir = environment(.libPaths))
-#assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
-#assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
-#assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
-# assign(".lib.loc", "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library for Tanja's laptop
 
 #WD and Packages
 library(shiny)
@@ -1452,7 +1464,7 @@ set_axis_values = function(data_input,mode){
 ##
 
 # Plot map with ggplot2
-plot_map <- function(data_input,
+plot_map <- function(data_input, lon_lat_range,
                      variable = NULL, mode = NULL,
                      titles = NULL, axis_range = NULL, hide_axis = FALSE, points_data = data.frame(),
                      highlights_data = data.frame(), stat_highlights_data = data.frame(), c_borders = TRUE,
