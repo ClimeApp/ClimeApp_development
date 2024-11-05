@@ -38,7 +38,6 @@ setup_user_environment <- function() {
 }
 setup_user_environment()
 
-
 #WD and Packages
 library(shiny)
 library(ncdf4)
@@ -70,7 +69,9 @@ library(terra)
 library(tidyterra)
 library(rnaturalearth)
 library(rnaturalearthdata)
+library(ggpattern)
 library(viridis)
+
 
 # Set library path for Live Version
 # lib_path <- "/home/climeapp/R/x86_64-pc-linux-gnu-library/4.4"
@@ -591,7 +592,7 @@ composites_summary_popover = function(popover_ID){
 correlation_summary_popover = function(popover_ID){
   popover(
     h3(HTML("Correlation <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
-    "Correlation measures the statistical relationship (causal or non-causal) between two variables. This tab allows you to correlate two sets of ModE data, or upload you own data to correlate against the ModE data or correlate two sets of uploaded data.",br(),br(),
+    "Correlation measures the statistical relationship (causal or non-causal) between two variables. This tab allows you to correlate two sets of ModE data, or upload your own data to correlate against the ModE data or correlate two sets of uploaded data.",br(),br(),
     "The", em("Timeseries"),"tab shows the timeseries and timeseries correlation for", em("Variable 1"),"and",em("Variable 2."),br(),br(),
     "The",em("Correlation map"),"shows the correlation between", em("Variable 1"),"and",em("Variable 2")," for each point on the map.",br(),br(),
     "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
@@ -1472,6 +1473,7 @@ plot_map <- function(data_input, lon_lat_range,
                      input = NULL, plotType = "default", projection = "UTM (default)",
                      center_lat = 0, center_lon = 0) {
 
+  print(mode)
   # Define color picker prefix for shapefiles
   color_picker_prefix <- ifelse(plotType == "shp_colour_", "shp_colour_", "shp_colour2_")
   
@@ -1986,16 +1988,9 @@ plot_default_timeseries <- function(data_input, tab, variable, titles, title_mod
   
   # Create initial ggplot object
   p <- ggplot(data_input, aes(x = x, y = y)) +
-    # Plot depending on the 'tab' argument
-    {if (tab == "general") geom_line(color = v_col, linewidth = 1) else geom_point(color = v_col, linewidth = 2)} +
-    # Add labels
-    labs(x = "Year", y = titles$ts_axis, title = titles$ts_title) +
-    theme_minimal(base_size = 15) +  # Define a clean theme
-    theme(
-      plot.title = element_text(hjust = 0, margin = margin(t = 10, b = 10)),  # Adjust title position
-      plot.subtitle = element_text(hjust = 1, margin = margin(t = 10, b = 10))
-    )
-  
+    {if (tab == "general") geom_line(color = v_col, linewidth = 1) else geom_point(color = v_col, size = 2)} +
+    theme_minimal(base_size = 15)
+    
   # Add default title with statistics if 'title_mode' is 'Default'
   if (title_mode == "Default") {
     subtitle_text <- paste(
@@ -2004,8 +1999,32 @@ plot_default_timeseries <- function(data_input, tab, variable, titles, title_mod
       "  SD = ", signif(y_sd, 3), v_unit, sep = ""
     )
     p <- p + labs(subtitle = subtitle_text)
-  }
+  }  
+    # Add title and subtitle if provided
+    if (!is.null(titles)) {
+      # Add labels
+      p <- p + labs(x = "Year", y = titles$ts_axis)
+      # Add title and subtitle
+      if (titles$ts_title != " ") {
+        p <- p + ggtitle(titles$ts_title)
+      }
+      if (titles$map_subtitle != " ") {
+        p <- p + labs(subtitle = titles$map_subtitle) # overwrites subtitle created above
+      }
+      # p <- p + theme(
+      #   plot.title = element_text(size = titles$ts_title_size, face = "bold"),
+      #   plot.subtitle = element_text(size = titles$ts_title_size / 1.3, face = "plain"),
+      #   axis.text=element_text(size = titles$ts_title_size / 1.6),
+      # )
+      p <- p + theme(
+        plot.title = element_text(size = 18, face = "bold"),
+        plot.subtitle = element_text(size = 18 / 1.3, face = "plain"),
+        axis.text=element_text(size = 18 / 1.6),
+        labels = element_text(size = 18 / 1.6)
+      )
+    }  
   
+
   # Add reference line if 'ref' is provided
   if (!is.na(ref)) {
     p <- p + geom_hline(yintercept = ref, linetype = "dashed", color = "black") +
@@ -2732,57 +2751,6 @@ add_highlighted_areas = function(data_input){
       rect(data_input$x1[i],data_input$y1[i],data_input$x2[i],data_input$y2[i],density = my_density,
            lwd = my_lwd, col = my_col, border = my_border)
     }
-  }
-}
-
-
-## (Plot Features) ADD PERCENTILES TO TS PLOT
-##                 data_input = output from add_stats_to_TS_datatable
-
-add_percentiles = function(data_input){
-  
-  if (dim(data_input)[1]>0){
-    # Set up variables for plotting
-    x = data_input$Year
-    cnames = colnames(data_input)
-    
-    # Add percentiles (if available)
-    if ("Percentile_0.005" %in% cnames){
-      lines(x,data_input$Percentile_0.005, lwd=2, col = adjustcolor("firebrick4",alpha.f = 0.7))
-    }
-    if ("Percentile_0.025" %in% cnames){
-      lines(x,data_input$Percentile_0.025, lwd=2, col = adjustcolor("orangered3",alpha.f = 0.7))
-    }
-    if ("Percentile_0.05" %in% cnames){
-      lines(x,data_input$Percentile_0.05, lwd=2, col = adjustcolor("darkgoldenrod3",alpha.f = 0.7))
-    }
-    if ("Percentile_0.95" %in% cnames){
-      lines(x,data_input$Percentile_0.95, lwd=2, col = adjustcolor("darkgoldenrod3",alpha.f = 0.7))
-    }
-    if ("Percentile_0.975" %in% cnames){
-      lines(x,data_input$Percentile_0.975, lwd=2, col = adjustcolor("orangered3",alpha.f = 0.7))
-    }
-    if ("Percentile_0.995" %in% cnames){
-      lines(x,data_input$Percentile_0.995, lwd=2, col = adjustcolor("firebrick4",alpha.f = 0.7))
-    }
-  }
-}
-
-
-## (Plot Features) ADD CUSTOM LINES TO PLOT
-##                 data_input = lines_data
-##                              (as created by create_new_lines_data)
-
-add_custom_lines = function(data_input){
-  if (dim(data_input)[1]>0){
-    # Subset lines into x (vertical) and y (horizontal)
-    vlines = subset(data_input,orientation=="Vertical")
-    hlines = subset(data_input,orientation=="Horizontal")
-    
-    # Plot Vertical lines
-    abline(v = vlines$location, lwd = 2, lty = vlines$type, col = vlines$color)
-    # Plot Horizontal lines
-    abline(h = hlines$location, lwd = 2, lty = hlines$type, col = hlines$color)
   }
 }
 
@@ -4995,7 +4963,7 @@ plot_monthly_timeseries <- function(data_input, custom_title, title_mode, key_po
   
   for (i in 1:n_o_rows) {
     data_values <- as.numeric(data_input[i, 5:16])
-    p <- p + geom_line(aes(x = 1:12, y = data_values), color = color_set[i], size = ifelse(data_input$Type[i] == "Average", 1.5, 1))
+    p <- p + geom_line(aes(x = 1:12, y = data_values), color = color_set[i], size = ifelse(data_input$Type[i] == "Average", linewidth=0.8))
   }
   
   # Modify based on the plot_mode (either base plot or lines)
@@ -5011,4 +4979,261 @@ plot_monthly_timeseries <- function(data_input, custom_title, title_mode, key_po
   }
   
   return(p)
+}
+
+
+## (General) ADD CUSTOM FEATURES TO TIMESERIES PLOT (Points, Lines, Highlights)
+##              p = ggplot object containting the timeseries plot
+##              highlights_data = dataframe with columns x1, x2, y1, y2, color, type
+##              lines_data = dataframe with columns location, color, type, orientation
+##              points_data = dataframe with columns x_value, y_value, color, shape, size, label
+
+add_timeseries_custom_features <- function(p, highlights_data = NULL, lines_data = NULL, points_data = NULL) {
+  
+  # Add boxes (from the highlights_data)
+  if (!is.null(highlights_data) && nrow(highlights_data) > 0) {
+    if(any(highlights_data$type == "Fill")) {
+      fill_data <- subset(highlights_data, type == "Fill")
+      p <- p + geom_rect(data=fill_data, 
+                         aes(xmin = x1, xmax = x2,
+                             ymin = y1, ymax = y2),
+                         color = NA, fill = fill_data$color, size = 1)
+    }
+    if (any(highlights_data$type == "Box")) {
+      box_data <- subset(highlights_data, type == "Box")
+      p <- p + geom_rect(aes(xmin = box_data$x1, xmax = box_data$x2,
+                             ymin = box_data$y1, ymax = box_data$y2),
+                         color = box_data$color, fill = NA, size = 1)
+    }
+    if(any(highlights_data$type == "Hatched")) {
+      hatched_data <- subset(highlights_data, type == "Hatched")
+      p <- p + geom_rect(aes(xmin = hatched_data$x1, xmax = hatched_data$x2,
+                             ymin = hatched_data$y1, ymax = hatched_data$y2),
+                         color = NA, fill = hatched_data$color, size = 1, alpha = 0.5)
+    }
+  }
+  
+  # Add custom lines (vertical and horizontal)
+  if (!is.null(lines_data) && nrow(lines_data) > 0) {
+    # Vertical lines
+    if (any(lines_data$orientation == "Vertical")) {
+      vlines <- subset(lines_data, orientation == "Vertical")
+      p <- p + geom_vline(data = vlines, aes(xintercept = location), color = vlines$color, 
+                          linetype = vlines$type, size = 1)
+    }
+    
+    # Horizontal lines
+    if (any(lines_data$orientation == "Horizontal")) {
+      hlines <- subset(lines_data, orientation == "Horizontal")
+      p <- p + geom_hline(data = hlines, aes(yintercept = location), color = hlines$color, 
+                          linetype = hlines$type, size = 1)
+    }
+  }
+  
+  # Add custom points
+  if (!is.null(points_data) && nrow(points_data) > 0) {
+    p <- p + geom_point(data = points_data, aes(x = x_value, y = y_value, 
+                                                color = I(points_data$color), shape = I(points_data$shape), size = I(points_data$size))) +
+      geom_text(data = points_data, aes(x = x_value, y = y_value, label = label),
+                vjust = -1, size = 3)
+  }
+  
+  return(p)
+}
+
+
+## (Plot Features) ADD PERCENTILES TO TS PLOT
+##                 p = ggplot object containing the timeseries plot
+##                 data_input = output from add_stats_to_TS_datatable
+add_percentiles <- function(p, data_input) {
+
+  if (dim(data_input)[1] > 0) {
+
+    # Set up variables for plotting
+    cnames <- colnames(data_input)
+    
+    # Add percentiles (if available)
+    if ("Percentile_0.005" %in% cnames) {
+      p <- p + geom_hline(yintercept = data_input$Percentile_0.005[1], color = "firebrick4", size = 0.8)
+    }
+    if ("Percentile_0.025" %in% cnames) {
+      p <- p + geom_hline(yintercept = data_input$Percentile_0.025[1], color = "orangered3", size = 0.8)
+    }
+    if ("Percentile_0.05" %in% cnames) {
+      p <- p + geom_hline(yintercept = data_input$Percentile_0.05[1], color = "darkgoldenrod3", size = 0.8)
+    }
+    if ("Percentile_0.95" %in% cnames) {
+      p <- p + geom_hline(yintercept = data_input$Percentile_0.95[1], color = "darkgoldenrod3", size = 0.8)
+    }
+    if ("Percentile_0.975" %in% cnames) {
+      p <- p + geom_hline(yintercept = data_input$Percentile_0.975[1], color = "orangered3", size = 0.8)
+    }
+    if ("Percentile_0.995" %in% cnames) {
+      p <- p + geom_hline(yintercept = data_input$Percentile_0.995[1], color = "firebrick4", size = 0.8)
+    }
+  }
+    
+  
+  return(p)
+}
+
+
+## (Plot Features) ADD TIMESERIES - replots timeseries over other features and
+##                                     adds moving average (if selected)
+##                 data_input = output from add_stats_to_TS_datatable
+##                 tab = "general" or "composite"
+
+add_timeseries <- function(p, data_input, tab, variable) {
+  # Ensure there are rows in data
+  if (nrow(data_input) == 0) return(p)
+  
+  # Set up variables for plotting
+  x <- data_input$Year
+  y <- data_input[, 2]
+  cnames <- colnames(data_input)
+  
+  # Generate color scheme based on variable
+  v_col <- switch(variable,
+                  "Temperature" = "red3",
+                  "Precipitation" = "turquoise4",
+                  "SLP" = "purple4",
+                  "Z500" = "green4",
+                  "black") # default color
+  
+  # Add reference lines or points
+  if (tab == "general") {
+    p <- p + geom_line(aes(x = x, y = 0), color = v_col, size = 0.8)
+  } else {
+    p <- p + geom_point(aes(x = x, y = y), color = v_col, size = 1)
+  } # not sure why this if-statement is there, maybe check and change
+  
+  # Add moving average if available
+  if ("Moving_Average" %in% cnames) {
+    p <- p + geom_line(aes(x = x, y = data_input$Moving_Average), color = "black", size = 0.8)
+  }
+  
+  return(p)
+}
+
+
+## (Plot Features) ADD TS KEY - adds a key to the timeseries with the selected 
+##                              variable and moving average, and any lines or
+##                              highlights selected to be included in the key
+##                 p = ggplot object containing the timeseries plot
+##                 key_position = "topleft", "topright","bottomleft" or "bottomright"
+##                 add_moving_average = TRUE or FALSE
+##                 moving_average_range = single number (3 to 33)
+##                 add_percentiles = TRUE of FALSE
+##                 percentiles = a vector of percentile values c(0.9,0.95 or 0.99)
+##                 secondary variable = variable name or NA if not used
+##                 show_primary_variable = TRUE or FALSE (only false for annual cycles)
+
+add_TS_key <- function(p, key_position, data_highlights, data_lines, variable, month_range,
+                       add_moving_average, moving_average_range, add_percentiles, percentiles,
+                       secondary_variable, secondary_month_range, show_primary_variable) {
+  
+  ## Initialize legend data frame
+  legend_data <- data.frame(label = character(), color = character(), lwd = numeric(), lty = character())
+  
+  ## Primary variable legend parameters
+  label <- paste(generate_month_label(month_range), variable)
+  color <- case_when(
+    variable == "Temperature" ~ "red3",
+    variable == "Precipitation" ~ "turquoise4",
+    variable == "SLP" ~ "purple4",
+    variable == "Z500" ~ "green4",
+    TRUE ~ "darkorange2"
+  )
+  legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
+  
+  ## Secondary variable legend parameters
+  if (!is.na(secondary_variable)) {
+    label <- paste(generate_month_label(secondary_month_range), secondary_variable)
+    color <- case_when(
+      secondary_variable == "Temperature" ~ "red2",
+      secondary_variable == "Precipitation" ~ "turquoise2",
+      secondary_variable == "SLP" ~ "purple2",
+      secondary_variable == "Z500" ~ "green2",
+      TRUE ~ "saddlebrown"
+    )
+    legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
+  }
+  
+  ## Moving average legend parameters
+  if (add_moving_average) {
+    label <- paste(moving_average_range, "yr Moving Ave.")
+    legend_data <- legend_data %>% add_row(label = label, color = "black", lwd = 1.2, lty = "solid")
+  }
+  
+  ## Percentile legend parameters
+  if (add_percentiles && length(percentiles) > 0) {
+    for (percentile in percentiles) {
+      label <- paste(percentile, "Percentile")
+      color <- case_when(
+        percentile == 0.99 ~ adjustcolor("firebrick4", alpha.f = 0.7),
+        percentile == 0.95 ~ adjustcolor("orangered3", alpha.f = 0.7),
+        TRUE ~ adjustcolor("darkgoldenrod3", alpha.f = 0.7)
+      )
+      legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
+    }
+  }
+  
+  ## Custom lines from data_lines
+  if (nrow(data_lines) > 0) {
+    data_lines <- data_lines %>% 
+      filter(key_show == TRUE) %>% 
+      distinct() %>% 
+      arrange(type)
+    for (i in 1:nrow(data_lines)) {
+      legend_data <- legend_data %>% add_row(
+        label = data_lines$label[i], 
+        color = data_lines$color[i], 
+        lwd = 1.2, 
+        lty = data_lines$type[i]
+      )
+    }
+  }
+  
+  ## Custom highlights from data_highlights
+  if (nrow(data_highlights) > 0) {
+    data_highlights <- data_highlights %>% 
+      filter(key_show == TRUE) %>% 
+      distinct() %>% 
+      arrange(type)
+    for (i in 1:nrow(data_highlights)) {
+      color <- if (data_highlights$type[i] == "Box") NA else data_highlights$color[i]
+      legend_data <- legend_data %>% add_row(
+        label = data_highlights$label[i], 
+        color = color, 
+        lwd = NA, 
+        lty = "solid"
+      )
+    }
+  }
+  
+  ## Remove primary variable if required
+  if (!show_primary_variable) {
+    legend_data <- legend_data[-1,]
+  }
+  
+  ## Add legend to the ggplot object
+  p <- p + 
+    scale_color_manual(
+      name = "Legend", 
+      values = setNames(legend_data$color, legend_data$label),
+      guide = guide_legend(title = NULL, position = key_position)
+    ) +
+    theme(legend.position = key_position)
+  
+  return(p)
+}
+
+# Helper function fot to generate month label
+generate_month_label <- function(range) {
+  if (range[1] == 1 && range[2] == 12) {
+    "Annual"
+  } else {
+    month_letters <- c("D", "J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D")
+    paste(month_letters[(range[1]:range[2]) + 1], collapse = "")
+  }
 }

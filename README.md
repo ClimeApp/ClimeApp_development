@@ -11,6 +11,9 @@ ClimeApp is a data processing tool for the state-of-the-art ModE-RA Global Clima
 
 ## Authors
 Created by Niklaus Bartlome & Richard Warren
+Co-developed by Noémie Wellinger & Tanja Falasca
+
+## Sources
 
 ## Citation
 To cite, please reference:
