@@ -13,13 +13,13 @@
 
 #Noémie
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
-#setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
+setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
 
 ## Packages
 
 # Set library path for Offline Version
-#assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
-assign(".lib.loc", "library", envir = environment(.libPaths))
+assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
+#assign(".lib.loc", "library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
 #assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
@@ -1453,6 +1453,7 @@ plot_map <- function(data_input, lon_lat_range, variable = NULL, mode = NULL,
                      input = NULL, plotType = "default", projection = "UTM (default)",
                      center_lat = 0, center_lon = 0) {
 
+  print(mode)
   # Define color picker prefix for shapefiles
   color_picker_prefix <- ifelse(plotType == "shp_colour_", "shp_colour_", "shp_colour2_")
   
@@ -1956,16 +1957,9 @@ plot_default_timeseries <- function(data_input, tab, variable, titles, title_mod
   
   # Create initial ggplot object
   p <- ggplot(data_input, aes(x = x, y = y)) +
-    # Plot depending on the 'tab' argument
     {if (tab == "general") geom_line(color = v_col, linewidth = 1) else geom_point(color = v_col, size = 2)} +
-    # Add labels
-    labs(x = "Year", y = titles$ts_axis, title = titles$ts_title) +
-    theme_minimal(base_size = 15) +  # Define a clean theme
-    theme(
-      plot.title = element_text(hjust = 0, margin = margin(t = 10, b = 10)),  # Adjust title position
-      plot.subtitle = element_text(hjust = 1, margin = margin(t = 10, b = 10))
-    )
-  
+    theme_minimal(base_size = 15)
+    
   # Add default title with statistics if 'title_mode' is 'Default'
   if (title_mode == "Default") {
     subtitle_text <- paste(
@@ -1974,8 +1968,32 @@ plot_default_timeseries <- function(data_input, tab, variable, titles, title_mod
       "  SD = ", signif(y_sd, 3), v_unit, sep = ""
     )
     p <- p + labs(subtitle = subtitle_text)
-  }
+  }  
+    # Add title and subtitle if provided
+    if (!is.null(titles)) {
+      # Add labels
+      p <- p + labs(x = "Year", y = titles$ts_axis)
+      # Add title and subtitle
+      if (titles$ts_title != " ") {
+        p <- p + ggtitle(titles$ts_title)
+      }
+      if (titles$map_subtitle != " ") {
+        p <- p + labs(subtitle = titles$map_subtitle) # overwrites subtitle created above
+      }
+      # p <- p + theme(
+      #   plot.title = element_text(size = titles$ts_title_size, face = "bold"),
+      #   plot.subtitle = element_text(size = titles$ts_title_size / 1.3, face = "plain"),
+      #   axis.text=element_text(size = titles$ts_title_size / 1.6),
+      # )
+      p <- p + theme(
+        plot.title = element_text(size = 18, face = "bold"),
+        plot.subtitle = element_text(size = 18 / 1.3, face = "plain"),
+        axis.text=element_text(size = 18 / 1.6),
+        labels = element_text(size = 18 / 1.6)
+      )
+    }  
   
+
   # Add reference line if 'ref' is provided
   if (!is.na(ref)) {
     p <- p + geom_hline(yintercept = ref, linetype = "dashed", color = "black") +
@@ -4977,13 +4995,11 @@ add_timeseries_custom_features <- function(p, highlights_data = NULL, lines_data
 ##                 p = ggplot object containing the timeseries plot
 ##                 data_input = output from add_stats_to_TS_datatable
 add_percentiles <- function(p, data_input) {
-  print(data_input)
-  
+
   if (dim(data_input)[1] > 0) {
-    print(dim(data_input)[1])
+
     # Set up variables for plotting
     cnames <- colnames(data_input)
-    print(cnames)
     
     # Add percentiles (if available)
     if ("Percentile_0.005" %in% cnames) {
@@ -5033,9 +5049,9 @@ add_timeseries <- function(p, data_input, tab, variable) {
                   "Z500" = "green4",
                   "black") # default color
   
-  # Add lines or points based on the tab
+  # Add reference lines or points
   if (tab == "general") {
-    p <- p + geom_line(aes(x = x, y = y), color = v_col, size = 0.8)
+    p <- p + geom_line(aes(x = x, y = 0), color = v_col, size = 0.8)
   } else {
     p <- p + geom_point(aes(x = x, y = y), color = v_col, size = 1)
   } # not sure why this if-statement is there, maybe check and change
@@ -5046,4 +5062,127 @@ add_timeseries <- function(p, data_input, tab, variable) {
   }
   
   return(p)
+}
+
+
+## (Plot Features) ADD TS KEY - adds a key to the timeseries with the selected 
+##                              variable and moving average, and any lines or
+##                              highlights selected to be included in the key
+##                 p = ggplot object containing the timeseries plot
+##                 key_position = "topleft", "topright","bottomleft" or "bottomright"
+##                 add_moving_average = TRUE or FALSE
+##                 moving_average_range = single number (3 to 33)
+##                 add_percentiles = TRUE of FALSE
+##                 percentiles = a vector of percentile values c(0.9,0.95 or 0.99)
+##                 secondary variable = variable name or NA if not used
+##                 show_primary_variable = TRUE or FALSE (only false for annual cycles)
+
+add_TS_key <- function(p, key_position, data_highlights, data_lines, variable, month_range,
+                       add_moving_average, moving_average_range, add_percentiles, percentiles,
+                       secondary_variable, secondary_month_range, show_primary_variable) {
+  
+  ## Initialize legend data frame
+  legend_data <- data.frame(label = character(), color = character(), lwd = numeric(), lty = character())
+  
+  ## Primary variable legend parameters
+  label <- paste(generate_month_label(month_range), variable)
+  color <- case_when(
+    variable == "Temperature" ~ "red3",
+    variable == "Precipitation" ~ "turquoise4",
+    variable == "SLP" ~ "purple4",
+    variable == "Z500" ~ "green4",
+    TRUE ~ "darkorange2"
+  )
+  legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
+  
+  ## Secondary variable legend parameters
+  if (!is.na(secondary_variable)) {
+    label <- paste(generate_month_label(secondary_month_range), secondary_variable)
+    color <- case_when(
+      secondary_variable == "Temperature" ~ "red2",
+      secondary_variable == "Precipitation" ~ "turquoise2",
+      secondary_variable == "SLP" ~ "purple2",
+      secondary_variable == "Z500" ~ "green2",
+      TRUE ~ "saddlebrown"
+    )
+    legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
+  }
+  
+  ## Moving average legend parameters
+  if (add_moving_average) {
+    label <- paste(moving_average_range, "yr Moving Ave.")
+    legend_data <- legend_data %>% add_row(label = label, color = "black", lwd = 1.2, lty = "solid")
+  }
+  
+  ## Percentile legend parameters
+  if (add_percentiles && length(percentiles) > 0) {
+    for (percentile in percentiles) {
+      label <- paste(percentile, "Percentile")
+      color <- case_when(
+        percentile == 0.99 ~ adjustcolor("firebrick4", alpha.f = 0.7),
+        percentile == 0.95 ~ adjustcolor("orangered3", alpha.f = 0.7),
+        TRUE ~ adjustcolor("darkgoldenrod3", alpha.f = 0.7)
+      )
+      legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
+    }
+  }
+  
+  ## Custom lines from data_lines
+  if (nrow(data_lines) > 0) {
+    data_lines <- data_lines %>% 
+      filter(key_show == TRUE) %>% 
+      distinct() %>% 
+      arrange(type)
+    for (i in 1:nrow(data_lines)) {
+      legend_data <- legend_data %>% add_row(
+        label = data_lines$label[i], 
+        color = data_lines$color[i], 
+        lwd = 1.2, 
+        lty = data_lines$type[i]
+      )
+    }
+  }
+  
+  ## Custom highlights from data_highlights
+  if (nrow(data_highlights) > 0) {
+    data_highlights <- data_highlights %>% 
+      filter(key_show == TRUE) %>% 
+      distinct() %>% 
+      arrange(type)
+    for (i in 1:nrow(data_highlights)) {
+      color <- if (data_highlights$type[i] == "Box") NA else data_highlights$color[i]
+      legend_data <- legend_data %>% add_row(
+        label = data_highlights$label[i], 
+        color = color, 
+        lwd = NA, 
+        lty = "solid"
+      )
+    }
+  }
+  
+  ## Remove primary variable if required
+  if (!show_primary_variable) {
+    legend_data <- legend_data[-1,]
+  }
+  
+  ## Add legend to the ggplot object
+  p <- p + 
+    scale_color_manual(
+      name = "Legend", 
+      values = setNames(legend_data$color, legend_data$label),
+      guide = guide_legend(title = NULL, position = key_position)
+    ) +
+    theme(legend.position = key_position)
+  
+  return(p)
+}
+
+# Helper function fot to generate month label
+generate_month_label <- function(range) {
+  if (range[1] == 1 && range[2] == 12) {
+    "Annual"
+  } else {
+    month_letters <- c("D", "J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D")
+    paste(month_letters[(range[1]:range[2]) + 1], collapse = "")
+  }
 }

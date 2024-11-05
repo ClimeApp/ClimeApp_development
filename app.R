@@ -73,7 +73,7 @@ ui <- navbarPage(id = "nav1",
             h1("Welcome to ClimeApp", style = "color: #094030;"),
             br(),
             h4(em(helpText("Created by Niklaus Bartlome & Richard Warren."))),
-            h4(em(helpText("Co-developed by No\u00E9mie Wellinger."))),
+            h4(em(helpText("Co-developed by No\u00E9mie Wellinger & Tanja Falasca."))),
             br(),
             h4("Data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis", style = "color: #094030;"),
             h5(helpText("V. Valler, J. Franke, Y. Brugnara, E. Samakinwa, R. Hand, E. Lundstad, A.-M. Burgdorf, L. Lipfert, A. R. Friedman, S. Br\u00F6nnimann, 2024")),
@@ -287,8 +287,8 @@ ui <- navbarPage(id = "nav1",
                      tags$ul(
                        tags$li("Export map data as georeferenced TIFF"),
                        tags$li("New maps and timeseries design with ggplot"),
-                       tags$li("New map customization options: Change font size, projection, grey our land or ocean"),
-                       tags$li("New map customization is now also available for correlation and regression"),
+                       tags$li("New map customization options: Change font size, projection, grey out land or ocean"),
+                       tags$li("Map customization is now also available for correlation and regression"),
                      ),
                      br(),
                      h5(strong("v1.3 (19.07.2024)", style = "color: #094030;")),
@@ -918,26 +918,72 @@ ui <- navbarPage(id = "nav1",
                                                label       = "Custom map title:", 
                                                value       = NA,
                                                width       = NULL,
-                                               placeholder = "Custom title")
-                                 )),
-                                  
+                                               placeholder = "Custom title"),
+                                     
+                                     numericInput(inputId = "title_size_input_ts",
+                                                  label   = "Font size:",
+                                                  value   = 18,
+                                                  min     = 1,
+                                                  max     = 40))),
+                                 
                                  checkboxInput(inputId = "show_key_ts",
                                                label   = "Show key",
                                                value   = FALSE),
                                  
                                  shinyjs::hidden(
-                                 div(id = "hidden_key_position_ts",
-                                 radioButtons(inputId  = "key_position_ts",
-                                              label    = "Key position:",
-                                              choiceNames  = c("top left", "top right","bottom left","bottom right"),
-                                              choiceValues = c("topleft", "topright","bottomleft","bottomright"),
-                                              selected = "topright" ,
-                                              inline = TRUE))),
+                                   div(id = "hidden_key_position_ts",
+                                       radioButtons(inputId  = "key_position_ts",
+                                                    label    = "Key position:",
+                                                    # choiceNames  = c("top left", "top right","bottom left","bottom right"),
+                                                    # choiceValues = c("topleft", "topright","bottomleft","bottomright"),
+                                                    choiceNames  = c("top", "right", "bottom", "left", "inside"),
+                                                    choiceValues = c("top", "right", "bottom", "left", "inside"),
+                                                    selected = "topright" ,
+                                                    inline = TRUE))),
                                  
                                  checkboxInput(inputId = "show_ref_ts",
                                                label   = "Show reference",
                                                value   = FALSE),
-                              )),    
+                                 
+                                 shinyjs::hidden( 
+                                   div(id = "hidden_custom_yaxis_ts",
+                                       radioButtons(inputId  = "yaxis_custom_choice_ts",
+                                                    label    = "Y axis range:",
+                                                    choices  = c("Automatic", "Fixed"),
+                                                    selected = "Automatic" ,
+                                                    inline = TRUE),
+                                       
+                                       shinyjs::hidden( 
+                                         div(id = "hidden_yaxis_range_ts",
+                                             
+                                             numericRangeInput(inputId = "yaxis_numeric_range_ts",
+                                                               label   = "Font size:",
+                                                               value   = 18,
+                                                               min     = 1,
+                                                               max     = 40))),
+                                   )),
+                                 
+                                 shinyjs::hidden( 
+                                   div(id = "hidden_custom_xaxis_ts",
+                                       radioButtons(inputId  = "xaxis_custom_choice_ts",
+                                                    label    = "X axis year intervals:",
+                                                    choices  = c("Automatic", "Fixed"),
+                                                    selected = "Automatic",
+                                                    inline = TRUE),
+                                       
+                                       shinyjs::hidden( 
+                                         div(id = "hidden_xaxis_interval_ts",
+                                             
+                                             numericInput(inputId = "xaxis_numeric_interval_ts",
+                                                          label   = "Year axis intervals:",
+                                                          value   = 50,
+                                                          min     = 1,
+                                                          max     = 600))),
+                                   )),
+                                 )),
+                                  
+                                
+    
                        ),
 
                       #### Add Custom features (points, highlights, lines) ----                        
@@ -10632,7 +10678,7 @@ server <- function(input, output, session) {
       } else if(input$ref_map_mode == "SD Ratio"){
         v=NULL; m="SD Ratio"; axis_range=c(0,1)
       }
-      plot_map(data_input=create_geotiff(ref_map_data()), variable=v, mode=m, titles=ref_map_titles(), axis_range=axis_range, 
+      plot_map(data_input=create_geotiff(ref_map_data()), lon_lat_range=lonlat_vals(), variable=v, mode=m, titles=ref_map_titles(), axis_range=axis_range, 
                c_borders=input$hide_borders,plotOrder(), white_ocean=input$white_ocean, white_land=input$white_land, plotOrder=plotOrder(), 
                shpPickers=input$shpPickers, input=input, plotType="shp_colour_", projection=input$projection, center_lat=input$center_lat, center_lon=input$center_lon)
     }
@@ -10740,6 +10786,7 @@ server <- function(input, output, session) {
     # }
     
     timeseries_plot <- function(){
+      
       #Plot normal timeseries if year range is > 1 year
       if (input$range_years[1] != input$range_years[2]){
         # Generate NA or reference mean
@@ -10751,6 +10798,7 @@ server <- function(input, output, session) {
         p <- plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
         p <- add_percentiles(p, timeseries_data())
       }
+      
       # Plot monthly TS if year range = 1 year
       else {
         p <- plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","base")
@@ -10758,7 +10806,11 @@ server <- function(input, output, session) {
       
       p <- add_timeseries_custom_features(p, ts_highlights_data(), ts_lines_data(), ts_points_data())
       p <- add_timeseries(p, timeseries_data(), "general", input$variable_selected)
-
+   
+      if (input$show_key_ts == TRUE){
+        p <- add_TS_key(p, input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
+                   input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+      }
       return(p)
     }
     
@@ -11031,7 +11083,7 @@ server <- function(input, output, session) {
         return(m_d_2)
       })
       
-      map_plot_2 <- function(){plot_map(create_geotiff(map_data_2()), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2, input$white_ocean2, input$white_land2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)}
+      map_plot_2 <- function(){plot_map(create_geotiff(map_data_2()), lonlat_vals2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2, input$white_ocean2, input$white_land2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)}
       
       output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
       # code line below sets height as a function of the ratio of lat/lon 
@@ -11074,7 +11126,7 @@ server <- function(input, output, session) {
         } else if (input$ref_map_mode2 == "SD Ratio"){
           v=NULL; m="SD Ratio"; axis_range=c(0,1)
         }
-        plot_map(data_input=create_geotiff(ref_map_data_2()), variable=v, mode=m, titles=ref_map_titles_2(), axis_range, 
+        plot_map(data_input=create_geotiff(ref_map_data_2()), lonlat_vals2(), variable=v, mode=m, titles=ref_map_titles_2(), axis_range, 
                  c_borders=input$hide_borders2, white_ocean=input$white_ocean2, white_land=input$white_land2, 
                  plotOrder=plotOrder2(), shpPickers=input$shpPickers2, input=input, plotType="shp_colour2_", 
                  projection=input$projection2, center_lat=input$center_lat2, center_lon=input$center_lon2)
@@ -11501,7 +11553,7 @@ server <- function(input, output, session) {
       # Generate Map data & plotting function
       map_data_v1 <- function(){create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
       
-      ME_map_plot_v1 <- function(){plot_map(data_input=create_geotiff(map_data_v1()), variable=input$ME_variable_v1, mode=input$mode_selected_v1, 
+      ME_map_plot_v1 <- function(){plot_map(data_input=create_geotiff(map_data_v1()), lon_lat_range=lonlat_vals_v1(), variable=input$ME_variable_v1, mode=input$mode_selected_v1, 
                                             titles=plot_titles_v1())}
       
       # Generate timeseries data & plotting function
@@ -11536,7 +11588,7 @@ server <- function(input, output, session) {
         create_geotiff(map_data_v2())
       })
       
-      ME_map_plot_v2 <- function(){plot_map(data_input=map_data_v2_tiff(), variable=input$ME_variable_v2, mode = input$mode_selected_v2, 
+      ME_map_plot_v2 <- function(){plot_map(data_input=map_data_v2_tiff(), lon_lat_range=lonlat_vals_v2(), variable=input$ME_variable_v2, mode = input$mode_selected_v2, 
                                                          titles=plot_titles_v2())}
       
       # Generate timeseries data & plotting function
@@ -11763,7 +11815,12 @@ server <- function(input, output, session) {
       # Plot
       corr_m1 = function(){
         if ((input$type_v1 == "Field") | (input$type_v2 == "Field")){
-          plot_map(data_input=correlation_map_data_tiff(), mode="Correlation", 
+          if(input$type_v1 == "Field"){
+            lonlat_vals = lonlat_vals_v1()
+          } else {
+            lonlat_vals = lonlat_vals_v2()
+          }
+          plot_map(data_input=correlation_map_data_tiff(), lon_lat_range=lonlat_vals,  mode="Correlation", 
                    titles=plot_titles_cor(),axis_range=input$axis_input3, hide_axis=input$hide_axis3, 
                    points_data=map_points_data3(), highlights_data=map_highlights_data3(),
                    c_borders=input$hide_borders3, white_ocean=input$white_ocean3, white_land=input$white_land3, 
@@ -12301,7 +12358,7 @@ server <- function(input, output, session) {
       
       reg_coef_map = function(){
         req(input$coeff_variable)
-        plot_map(data_input=reg_coef_tiff(),variable=input$coeff_variable, mode="Regression_coefficients", titles=plot_titles_reg())
+        plot_map(data_input=reg_coef_tiff(), lon_lat_range=lonlat_vals_dv(), variable=input$coeff_variable, mode="Regression_coefficients", titles=plot_titles_reg())
       }
       
       output$plot_reg_coeff = renderPlot({reg_coef_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
@@ -12343,7 +12400,7 @@ server <- function(input, output, session) {
       
       reg_pval_map = function(){
         req(input$pvalue_variable)
-        plot_map(data_input=reg_pval_tiff(),variable=input$pvalue_variable, mode="Regression_p_values", titles=plot_titles_reg())
+        plot_map(data_input=reg_pval_tiff(),lon_lat_range=lonlat_vals_dv(),variable=input$pvalue_variable, mode="Regression_p_values", titles=plot_titles_reg())
       }
       
       output$plot_reg_pval = renderPlot({reg_pval_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
@@ -12393,7 +12450,7 @@ server <- function(input, output, session) {
       # }
       reg_res_map = function(){
         req(input$pvalue_variable)
-        plot_map(data_input=reg_res_tiff(),variable=variable_dv(), mode="Regression_residuals", titles=plot_titles_reg())
+        plot_map(data_input=reg_res_tiff(),lon_lat_range=lonlat_vals_dv(),variable=variable_dv(), mode="Regression_residuals", titles=plot_titles_reg())
       }
       
       output$plot_reg_resi = renderPlot({reg_res_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
@@ -12408,7 +12465,7 @@ server <- function(input, output, session) {
       
       output$data_reg_res = renderTable({reg_res_table()},rownames = TRUE)
       
-    
+  
     ### ModE-RA sources ----
       
       # Set up values and functions for plotting
