@@ -1,4 +1,5 @@
 #### Preparation ####
+Sys.info()[["user"]]
 
 ## Working Directory
 # Define a function to set up user configurations
@@ -13,8 +14,12 @@ setup_user_environment <- function() {
       setwd = "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp",
       lib_path = "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library"
     ),
-    noemie = list(
-      setwd = "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp",
+    noemi = list(
+      setwd = "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/",
+      lib_path = "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library"
+    ),
+    nw22d367 = list(
+      setwd = "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/",
       lib_path = "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library"
     ),
     tanja = list(
