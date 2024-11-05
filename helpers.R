@@ -4,16 +4,27 @@ Sys.info()[["user"]]
 ## Working Directory
 # Define a function to set up user configurations
 setup_user_environment <- function() {
+  
   # Define user-specific settings
   user_configs <- list(
-    nik = list(
-      setwd = "C:/Users/nbartlome/OneDrive/1_Universität/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp",
-      lib_path = "C:/Users/nbartlome/OneDrive/ClimeApp_all/ClimeApp/library"
+    
+    # Nik
+    nbartlome = list(
+      setwd = "C:/Users/nbartlome/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp",
+      lib_path = "library"
     ),
-    richard = list(
+    
+    # Richard
+    Richard = list(
+      setwd = "C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp",
+      lib_path = "library"
+    ),
+    rw22z389 = list(
       setwd = "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp",
       lib_path = "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library"
     ),
+    
+    # Noémie
     noemi = list(
       setwd = "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/",
       lib_path = "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library"
@@ -22,21 +33,20 @@ setup_user_environment <- function() {
       setwd = "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/",
       lib_path = "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library"
     ),
+    
+    # Tanja
     tanja = list(
       setwd = "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp",
       lib_path = "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library"
     )
   )
-  # Get the current user's name
+  # Get the current username
   current_user <- Sys.info()[["user"]]
-  # Check if current user exists in config
   if (!is.null(user_configs[[current_user]])) {
     user_config <- user_configs[[current_user]]
-    # Set the working directory
     setwd(user_config$setwd)
-    # Set the library path
     .libPaths(user_config$lib_path)
-    message("Working directory and library paths set for user: ", current_user)
+    message("Working directory and library path set for user: ", current_user)
   } else {
     stop("User configuration not found. Please check the user setup.")
   }
