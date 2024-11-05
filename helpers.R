@@ -1441,6 +1441,7 @@ set_axis_values = function(data_input,mode){
 
 ## (General) ***DESCRIPTION WILL BE UPDATED *** DEFAULT MAP PLOTTING FUNCTION - including taking average of dataset
 ##           data_input = map_datatable
+
 ##           variable = modE variable OR "SD Ratio" OR NULL (default) if mode == "Correlation"
 ##           mode = "Absolute", "Correlation", or ">any other text<" <- code will assume it's anomalies
 ##           axis_range = as created by "set_axis_values" function
@@ -1463,7 +1464,6 @@ plot_map <- function(data_input,
                      input = NULL, plotType = "default", projection = "UTM (default)",
                      center_lat = 0, center_lon = 0) {
 
-  print(mode)
   # Define color picker prefix for shapefiles
   color_picker_prefix <- ifelse(plotType == "shp_colour_", "shp_colour_", "shp_colour2_")
   
