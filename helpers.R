@@ -11,9 +11,12 @@
 #setwd("C:/Users/Richard/OneDrive/ClimeApp_all/ClimeApp")
 #setwd("C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp")
 
-#Noémie
+#Noémie:
 #setwd("C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/")
 #setwd("C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/") #private laptop
+
+#Tanja:
+#setwd("C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp") #private laptop
 
 ## Packages
 
@@ -23,6 +26,7 @@ assign(".lib.loc", "library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library bc Noémie's laptop is too dumb to find the library folder
 #assign(".lib.loc", "C:/Users/nw22d367/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
 #assign(".lib.loc", "C:/Users/rw22z389/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths))
+# assign(".lib.loc", "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library", envir = environment(.libPaths)) #Path to library for Tanja's laptop
 
 #WD and Packages
 library(shiny)
@@ -36,6 +40,7 @@ library(readxl)
 library(DT)
 library(zoo)
 library(colourpicker)
+library(shinylive)
 #library(tmaptools)  ** do we need this? **
 library(ggplot2)
 library(sf)
@@ -55,10 +60,12 @@ library(tidyterra)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(ggpattern)
+library(viridis)
 
 
 # Set library path for Live Version
 # lib_path <- "/home/climeapp/R/x86_64-pc-linux-gnu-library/4.4"
+# lib_path <- "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library"
 # #WD and Packages
 # library(shiny, lib.loc = lib_path)
 # library(ncdf4, lib.loc = lib_path)
@@ -87,6 +94,7 @@ library(ggpattern)
 # library(terra, lib.loc = lib_path)
 # library(rnaturalearth, lib.loc = lib_path)
 # library(rnaturlaearthdata, lib.loc = lib_path)
+# library(shinylive, lib.loc = lib_path)
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
@@ -439,7 +447,8 @@ timeseries_customization_popover = function(popover_ID){
   } else {
     popover(
       HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-      "Edit the titles of your timeseries and add a key or reference line.",br(),br(),
+      "Edit the titles of your timeseries and add a key or reference line.",
+      br(),br(),
       "The",em("Show reference"),"option adds a line to the timeseries shows the mean for your selected reference period (i.e. the absolute value corresponding to an anomaly of 0).",
       id = popover_ID,
       placement = "right",
@@ -573,7 +582,7 @@ composites_summary_popover = function(popover_ID){
 correlation_summary_popover = function(popover_ID){
   popover(
     h3(HTML("Correlation <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
-    "Correlation measures the statistical relationship (causal or non-causal) between two variables. This tab allows you to correlate two sets of ModE data, or upload you own data to correlate against the ModE data or correlate two sets of uploaded data.",br(),br(),
+    "Correlation measures the statistical relationship (causal or non-causal) between two variables. This tab allows you to correlate two sets of ModE data, or upload your own data to correlate against the ModE data or correlate two sets of uploaded data.",br(),br(),
     "The", em("Timeseries"),"tab shows the timeseries and timeseries correlation for", em("Variable 1"),"and",em("Variable 2."),br(),br(),
     "The",em("Correlation map"),"shows the correlation between", em("Variable 1"),"and",em("Variable 2")," for each point on the map.",br(),br(),
     "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
@@ -1443,10 +1452,11 @@ set_axis_values = function(data_input,mode){
 ##           plotOrder = vector of shapefile names in the order they should be plotted
 ##           shpPickers = vector of shapefile names that have colour pickers (?)
 ##           plot_type = "shp_colour_" or "shp_colour2_" depending on the type of shapefile (?)
-
+##
 
 # Plot map with ggplot2
-plot_map <- function(data_input, lon_lat_range, variable = NULL, mode = NULL,
+plot_map <- function(data_input,
+                     variable = NULL, mode = NULL,
                      titles = NULL, axis_range = NULL, hide_axis = FALSE, points_data = data.frame(),
                      highlights_data = data.frame(), stat_highlights_data = data.frame(), c_borders = TRUE,
                      white_ocean = FALSE, white_land = FALSE, plotOrder = NULL, shpPickers = NULL,
@@ -1479,7 +1489,7 @@ plot_map <- function(data_input, lon_lat_range, variable = NULL, mode = NULL,
       v_col <- rev(brewer.pal(11, "PuOr"))
       v_unit <- "r"
     } else if (mode == "Regression_coefficients") {
-      v_col <- rev(brewer.pal(11, "Spectral"))
+      v_col <- viridis(11, option = "turbo")
       v_unit <- "Coefficient"
       titles$map_title <- "Regression Coefficients"
       titles$map_subtitle <- titles$map_subtitle_coeff #overwrite titles$map_subtitle because ggplot uses it
@@ -1645,7 +1655,8 @@ plot_map <- function(data_input, lon_lat_range, variable = NULL, mode = NULL,
   if (nrow(points_data) > 0 && all(c("x_value", "y_value", "color", "shape", "size", "label") %in% colnames(points_data))) {
     p <- p + 
       geom_point(data = points_data, aes(x = x_value, y = y_value, color = color, shape = shape, size = size), show.legend = FALSE) +
-      geom_text(data = points_data, aes(x = x_value, y = y_value, label = label), position = position_nudge(y = -0.5), show.legend = FALSE)
+      geom_text(data = points_data, aes(x = x_value, y = y_value, label = label), position = position_nudge(y = -0.5), show.legend = FALSE) +
+      labs(x = NULL, y = NULL)
   }
   
   if (nrow(highlights_data) > 0 && all(c("x1", "x2", "y1", "y2", "color", "type") %in% colnames(highlights_data))) {
@@ -1654,7 +1665,8 @@ plot_map <- function(data_input, lon_lat_range, variable = NULL, mode = NULL,
       if (highlight_data$type == "Box") {
         p <- p + 
           geom_rect(aes(xmin = highlight_data$x1, xmax = highlight_data$x2, ymin = highlight_data$y1, ymax = highlight_data$y2),
-                    color = highlight_data$color, fill = NA, size = 1, show.legend = FALSE)
+                    color = highlight_data$color, fill = NA, size = 1, show.legend = FALSE) +
+          labs(x = NULL, y = NULL)
       } else if (highlight_data$type == "Hatched") {
         p <- p + 
           geom_rect(aes(xmin = highlight_data$x1, xmax = highlight_data$x2, ymin = highlight_data$y1, ymax = highlight_data$y2),
@@ -1683,8 +1695,17 @@ create_map_datatable = function(data_input,subset_lon_IDs,subset_lat_IDs){
   # Transpose and rotate z
   map_data =t(z)[order(ncol(z):1),]
 
-  colnames(map_data) = paste(x,"\u00B0",sep = "")
-  rownames(map_data) = paste(round(y, digits = 3),"\u00B0",sep = "")
+  # Add degree symbols and cardinal directions for longitude and latitude
+  x_labels = ifelse(x >= 0,
+                    paste(x, "\u00B0E", sep = ""),
+                    paste(abs(x), "\u00B0W", sep = ""))
+  y_labels = ifelse(y >= 0,
+                    paste(round(y, digits = 3), "\u00B0N", sep = ""),
+                    paste(abs(round(y, digits = 3)), "\u00B0S", sep = ""))
+  
+  # Apply labels to map data
+  colnames(map_data) = x_labels
+  rownames(map_data) = y_labels
 
   return(map_data)
 }
@@ -2369,9 +2390,12 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
 
 create_geotiff <- function(map_data, output_file = NULL) {
   
-  # Extract lon and lat from column and row names
-  x <- as.numeric(gsub("\u00B0", "", colnames(map_data)))
-  y <- as.numeric(gsub("\u00B0", "", rownames(map_data)))
+  # Extract longitudes and latitudes from column and row names and retaining original sign
+  x <- as.numeric(gsub("°[EW]", "", colnames(map_data))) *
+    ifelse(grepl("E", colnames(map_data)), 1, -1)
+  
+  y <- as.numeric(gsub("°[NS]", "", rownames(map_data))) * 
+    ifelse(grepl("N", rownames(map_data)), 1, -1)
   
   # Check if dimensions of the matrix match the lon/lat lengths
   if (ncol(map_data) != length(x) || nrow(map_data) != length(y)) {
@@ -2379,7 +2403,7 @@ create_geotiff <- function(map_data, output_file = NULL) {
   }
   
   r <- rast(as.matrix(map_data))
-  ext(r) <- ext(min(x), max(x), min(y), max(y)) # define rater extent
+  ext(r) <- ext(min(x), max(x), min(y), max(y)) # define raster extent
   
   crs(r) <- "EPSG:4326"  # EPSG:4326 = WGS84
   
@@ -4041,9 +4065,17 @@ generate_correlation_map_datatable = function(data_input){
 
   zt = t(z)[rev(1:length(y)),]
   
-  # Add row/col names
-  colnames(zt) = paste(x,"\u00B0",sep = "")
-  rownames(zt) = paste(round(rev(y), digits = 3),"\u00B0",sep = "")
+  # Add degree symbols and cardinal directions for longitude and latitude
+  x_labels = ifelse(x >= 0,
+                    paste(x, "\u00B0E", sep = ""),
+                    paste(abs(x), "\u00B0W", sep = ""))
+  y_labels = ifelse(y >= 0,
+                    paste(round(y, digits = 3), "\u00B0N", sep = ""),
+                    paste(abs(round(y, digits = 3)), "\u00B0S", sep = ""))
+  
+  # Apply labels to correlation map data
+  colnames(zt) = x_labels
+  rownames(zt) = y_labels  
   
   return(zt)
 }
@@ -4406,8 +4438,17 @@ create_regression_map_datatable = function(data_input,subset_lon_IDs,subset_lat_
   # Transpose
   map_data =t(z)
   
-  colnames(map_data) = paste(x,"\u00B0",sep = "")
-  rownames(map_data) = paste(round(y, digits = 3),"\u00B0",sep = "")
+  # Add degree symbols and cardinal directions for longitude and latitude
+  x_labels = ifelse(x >= 0,
+                    paste(x, "\u00B0E", sep = ""),
+                    paste(abs(x), "\u00B0W", sep = ""))
+  y_labels = ifelse(y >= 0,
+                    paste(round(y, digits = 3), "\u00B0N", sep = ""),
+                    paste(abs(round(y, digits = 3)), "\u00B0S", sep = ""))
+  
+  # Apply labels to map data
+  colnames(map_data) = x_labels
+  rownames(map_data) = y_labels
   
   return(map_data)
 }
