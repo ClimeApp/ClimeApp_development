@@ -76,7 +76,7 @@ library(DT)
 library(zoo)
 library(colourpicker)
 library(shinylive)
-#library(tmaptools)  ** do we need this? **
+library(tmaptools)
 library(ggplot2)
 library(sf)
 library(shinylogs)
