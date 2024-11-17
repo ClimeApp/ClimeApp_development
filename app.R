@@ -933,7 +933,7 @@ ui <- navbarPage(id = "nav1",
                                  div(id = "hidden_custom_title_ts",
                                       
                                      textInput(inputId     = "title1_input_ts",
-                                               label       = "Custom map title:", 
+                                               label       = "Custom plot title:", 
                                                value       = NA,
                                                width       = NULL,
                                                placeholder = "Custom title"),
@@ -1975,7 +1975,7 @@ ui <- navbarPage(id = "nav1",
                                      div(id = "hidden_custom_title_ts2",
                                          
                                          textInput(inputId     = "title1_input_ts2",
-                                                   label       = "Custom map title:", 
+                                                   label       = "Custom plot title:", 
                                                    value       = NA,
                                                    width       = NULL,
                                                    placeholder = "Custom title")
@@ -3105,6 +3105,10 @@ ui <- navbarPage(id = "nav1",
                                         image = spinner_image,
                                         image.width = spinner_width,
                                         image.height = spinner_height),
+                            
+                            #Easter Leaves
+                            uiOutput("leaves", inline = TRUE),
+                            
                       #### Customization panels START ----       
                       fluidRow(
                       #### Map customization ----       
@@ -4425,7 +4429,7 @@ ui <- navbarPage(id = "nav1",
                                        div(id = "hidden_custom_title_ts5",
                                            
                                            textInput(inputId     = "title1_input_ts5",
-                                                     label       = "Custom map title:", 
+                                                     label       = "Custom plot title:", 
                                                      value       = NA,
                                                      width       = NULL,
                                                      placeholder = "Custom title")
@@ -4931,6 +4935,14 @@ server <- function(input, output, session) {
   output$keep_calm <- renderUI({
     if (input$title1_input_ts3 == "Keep Calm") {
       img(src = 'pics/KCAUCA.png', id = "img_britannia", height = "514", width = "488", style = "display: block; margin: 0 auto;")
+    } else {
+      NULL
+    }
+  })
+  
+  output$leaves <- renderUI({
+    if (input$title1_input3 == "Leaves from the Vine") {
+      img(src = 'pics/LeavesFromTheVine.jpg', id = "img_leaves", height = "450", width = "600", style = "display: block; margin: 0 auto;")
     } else {
       NULL
     }

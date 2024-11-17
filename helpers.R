@@ -19,7 +19,7 @@ setup_user_environment <- function() {
       lib_path = "C:/Users/nikla/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp/library"
     ),
     
-    Niklaus_Emanuel = list(
+    "Niklaus Emanuel" = list(
       setwd = "C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp",
       lib_path = "C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp/library"
     ),
@@ -5262,3 +5262,4 @@ generate_month_label <- function(range) {
     paste(month_letters[(range[1]:range[2]) + 1], collapse = "")
   }
 }
+
