@@ -12173,7 +12173,7 @@ server <- function(input, output, session) {
         req(data_output4_primary(), subset_lons_primary(), subset_lats_primary())
         create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
       
-      ME_map_plot_dv <- function(){plot_map(data_input=create_geotiff(map_data_dv()), variable=input$ME_variable_dv, mode=input$mode_selected_dv, titles=plot_titles_dv())}
+      ME_map_plot_dv <- function(){plot_map(data_input=create_geotiff(map_data_dv()), lon_lat_range=lonlat_vals_dv(), variable=input$ME_variable_dv, mode=input$mode_selected_dv, titles=plot_titles_dv())}
       
       # Generate timeseries data & plotting function for iv
       ME_ts_data_iv <- reactive({

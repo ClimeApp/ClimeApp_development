@@ -1994,7 +1994,7 @@ plot_default_timeseries <- function(data_input, tab, variable, titles, title_mod
   # Create initial ggplot object
   p <- ggplot(data_input, aes(x = x, y = y)) +
     {if (tab == "general") geom_line(color = v_col, linewidth = 1) else geom_point(color = v_col, size = 2)} +
-    theme_minimal(base_size = 15)
+    theme_bw(base_size = 15)
     
   # Add default title with statistics if 'title_mode' is 'Default'
   if (title_mode == "Default") {
@@ -2725,78 +2725,78 @@ create_new_points_data = function(point_x_values,point_y_values,point_label,
 }
 
 
-## (Plot Features) ADD HIGHLIGHTED AREA TO PLOT (fill,box or hatched)
-##                 data_input = highlights_data 
-##                             (as created by create_new_highlights_data)
+# ## (Plot Features) ADD HIGHLIGHTED AREA TO PLOT (fill,box or hatched)
+# ##                 data_input = highlights_data 
+# ##                             (as created by create_new_highlights_data)
+# 
+# add_highlighted_areas = function(data_input){
+#   
+#   if (dim(data_input)[1]>0){
+#     # Cycle through each row in the highlights_data
+#     for (i in 1:length(data_input$x1)){
+#       # Set up variables for plotting
+#       if (data_input$type[i] == "Fill"){
+#         my_density = NULL
+#         my_lwd = NULL
+#         my_col = data_input$color[i] 
+#         my_border = NA
+#       } else if (data_input$type[i] == "Box"){
+#         my_density = NULL
+#         my_lwd = 3
+#         my_col = NA
+#         my_border = data_input$color[i]
+#       } else if (data_input$type[i] == "Hatched"){
+#         my_density = 10
+#         my_lwd = NULL
+#         my_col = data_input$color[i] 
+#         my_border = NA
+#       }
+#       
+#       # Add highlights to plot
+#       rect(data_input$x1[i],data_input$y1[i],data_input$x2[i],data_input$y2[i],density = my_density,
+#            lwd = my_lwd, col = my_col, border = my_border)
+#     }
+#   }
+# }
 
-add_highlighted_areas = function(data_input){
-  
-  if (dim(data_input)[1]>0){
-    # Cycle through each row in the highlights_data
-    for (i in 1:length(data_input$x1)){
-      # Set up variables for plotting
-      if (data_input$type[i] == "Fill"){
-        my_density = NULL
-        my_lwd = NULL
-        my_col = data_input$color[i] 
-        my_border = NA
-      } else if (data_input$type[i] == "Box"){
-        my_density = NULL
-        my_lwd = 3
-        my_col = NA
-        my_border = data_input$color[i]
-      } else if (data_input$type[i] == "Hatched"){
-        my_density = 10
-        my_lwd = NULL
-        my_col = data_input$color[i] 
-        my_border = NA
-      }
-      
-      # Add highlights to plot
-      rect(data_input$x1[i],data_input$y1[i],data_input$x2[i],data_input$y2[i],density = my_density,
-           lwd = my_lwd, col = my_col, border = my_border)
-    }
-  }
-}
-
-
-## (Plot Features) ADD TIMESERIES - replots timeseries over other features and
-##                                     adds moving average (if selected)
-##                 data_input = output from add_stats_to_TS_datatable
-##                 tab = "general" or "composite"
-
-add_timeseries = function(data_input,tab,variable){
-  
-  # Set up variables for plotting
-  x = data_input$Year
-  y = data_input[,2]
-  
-  cnames = colnames(data_input)
-  
-  # Generate color scheme
-  if (variable == "Temperature"){
-    v_col = "red3"
-  } else if (variable == "Precipitation"){
-    v_col = "turquoise4"
-  } else if (variable == "SLP"){
-    v_col = "purple4"
-  } else if (variable == "Z500"){
-    v_col = "green4"
-  }
-  
-  # Plot 
-  if (tab == "general"){
-    lines(x,y,col = v_col, lwd = 2)
-  } else {
-    points(x,y,col = v_col)
-  }
-  
-  
-  #Add moving average (if available)
-  if ("Moving_Average" %in% cnames){
-    lines(x,data_input$Moving_Average,lwd = 3)
-  }
-}
+# 
+# ## (Plot Features) ADD TIMESERIES - replots timeseries over other features and
+# ##                                     adds moving average (if selected)
+# ##                 data_input = output from add_stats_to_TS_datatable
+# ##                 tab = "general" or "composite"
+# 
+# add_timeseries = function(data_input,tab,variable){
+#   
+#   # Set up variables for plotting
+#   x = data_input$Year
+#   y = data_input[,2]
+#   
+#   cnames = colnames(data_input)
+#   
+#   # Generate color scheme
+#   if (variable == "Temperature"){
+#     v_col = "red3"
+#   } else if (variable == "Precipitation"){
+#     v_col = "turquoise4"
+#   } else if (variable == "SLP"){
+#     v_col = "purple4"
+#   } else if (variable == "Z500"){
+#     v_col = "green4"
+#   }
+#   
+#   # Plot 
+#   if (tab == "general"){
+#     lines(x,y,col = v_col, lwd = 2)
+#   } else {
+#     points(x,y,col = v_col)
+#   }
+#   
+#   
+#   #Add moving average (if available)
+#   if ("Moving_Average" %in% cnames){
+#     lines(x,data_input$Moving_Average,lwd = 3)
+#   }
+# }
 
 
 ## (Plot Features) ADD CORRELATION TIMESERIES - replots both correlation timeseries 
@@ -2847,268 +2847,268 @@ add_correlation_timeseries = function(data_input1,data_input2,variable1,variable
 }
 
 
-## (Plot Features) ADD BOXES TO TS PLOT - plots only the box highlights from the 
-##                 highlights_data dataframe
-##                 data_input = highlights_data
+# ## (Plot Features) ADD BOXES TO TS PLOT - plots only the box highlights from the 
+# ##                 highlights_data dataframe
+# ##                 data_input = highlights_data
+# 
+# add_boxes = function(data_input){
+#   if (dim(data_input)[1]>0){
+#     # Create a box subset of the highlights data
+#     box_data = subset(data_input,data_input$type == "Box")
+#     
+#     # Add boxes to plot
+#     rect(box_data$x1,box_data$y1,box_data$x2,box_data$y2,density = NULL,
+#          lwd = 3, col = NA, border = box_data$color)
+#   }
+# }
+# 
+# 
+# ## (Plot Features) ADD CUSTOM POINTS TO A TS PLOT - adds custom points to a TS plot
+# ##                 data_input = points_data (as created by create_new_points_data)
+# 
+# add_custom_points = function(data_input){
+#   if (dim(data_input)[1]>0){  
+#     points(data_input$x_value,data_input$y_value,col = data_input$color,
+#            pch = data_input$shape, cex = data_input$size)
+#     text(data_input$x_value,data_input$y_value, label = data_input$label,pos = 1)
+#   }
+# }
 
-add_boxes = function(data_input){
-  if (dim(data_input)[1]>0){
-    # Create a box subset of the highlights data
-    box_data = subset(data_input,data_input$type == "Box")
-    
-    # Add boxes to plot
-    rect(box_data$x1,box_data$y1,box_data$x2,box_data$y2,density = NULL,
-         lwd = 3, col = NA, border = box_data$color)
-  }
-}
 
-
-## (Plot Features) ADD CUSTOM POINTS TO A TS PLOT - adds custom points to a TS plot
-##                 data_input = points_data (as created by create_new_points_data)
-
-add_custom_points = function(data_input){
-  if (dim(data_input)[1]>0){  
-    points(data_input$x_value,data_input$y_value,col = data_input$color,
-           pch = data_input$shape, cex = data_input$size)
-    text(data_input$x_value,data_input$y_value, label = data_input$label,pos = 1)
-  }
-}
-
-
-## (Plot Features) ADD TS KEY - adds a key to the timeseries with the selected 
-##                              variable and moving average, and any lines or
-##                              highlights selected to be included in the key
-##                 key_position = "topleft", "topright","bottomleft" or "bottomright"
-##                 add_moving_average = TRUE or FALSE
-##                 moving_average_range = single number (3 to 33)
-##                 add_percentiles = TRUE of FALSE
-##                 percentiles = a vector of percentile values c(0.9,0.95 or 0.99)
-##                 secondary variable = variable name or NA if not used
-##                 show_primary_variable = TRUE or FALSE (only false for annual cycles)
-
-add_TS_key = function(key_position,data_highlights,data_lines,variable,month_range,add_moving_average,
-                      moving_average_range,add_percentiles,percentiles,secondary_variable,secondary_month_range,
-                      show_primary_variable){
-  
-  ## Generate "variable" legend parameters:
-  # label
-  if (month_range[1]==1 & month_range[2]==12){
-    title_months = "Annual"
-  } else {
-    month_letters  = c("D","J","F","M","A","M","J","J","A","S","O","N","D")
-    title_months = paste(month_letters[(month_range[1]:month_range[2])+1],collapse = "")
-  }
-  label = paste(title_months,variable)
-  # color
-  if (variable == "Temperature"){
-    color = "red3" 
-  } else if (variable == "Precipitation"){
-    color = "turquoise4"
-  } else if (variable == "SLP"){
-    color = "purple4"
-  } else if (variable == "Z500"){
-    color = "green4"
-  } else {
-    color = "darkorange2"
-    label = variable
-  }
-  # line parameters
-  lwd = 2 ; lty = "solid"
-  # box parameters
-  fill = NA; density = 0 ; border = "grey90"
-  # alignment parameters
-  x_intersp = 1.4
-  
-  # Use parameters to create legend_data dataframe:
-  legend_data = data.frame(label,color,lwd,lty,fill,density,border,x_intersp)
-  
-  
-  ## Generate second variable legend parameters:
-  # label
-  if (!is.na(secondary_variable)){
-    if (secondary_month_range[1]==1 & secondary_month_range[2]==12){
-      title_months = "Annual"
-    } else {
-      month_letters  = c("D","J","F","M","A","M","J","J","A","S","O","N","D")
-      title_months = paste(month_letters[(secondary_month_range[1]:secondary_month_range[2])+1],collapse = "")
-    }
-    label = paste(title_months,secondary_variable)
-    # color
-    if (variable == secondary_variable){
-      
-      if (secondary_variable == "Temperature"){
-        color = "red2" 
-      } else if (secondary_variable == "Precipitation"){
-        color = "turquoise2"
-      } else if (secondary_variable == "SLP"){
-        color = "purple2"
-      } else if (secondary_variable == "Z500"){
-        color = "green2"
-      } else {
-        color = "saddlebrown"
-        label = secondary_variable
-      }
-      
-    } else {
-      if (secondary_variable == "Temperature"){
-        color = "red3" 
-      } else if (secondary_variable == "Precipitation"){
-        color = "turquoise4"
-      } else if (secondary_variable == "SLP"){
-        color = "purple4"
-      } else if (secondary_variable == "Z500"){
-        color = "green4"
-      } else {
-        color = "saddlebrown"
-        label = secondary_variable
-      }
-    }
-    
-    
-    # line parameters
-    lwd = 2 ; lty = "solid"
-    # box parameters
-    fill = NA; density = 0 ; border = "grey90"
-    # alignment parameters
-    x_intersp = 1.4
-    
-    # Add to legend_data:
-    legend_data = rbind(legend_data,list(label,color,lwd,lty,fill,density,border,x_intersp))
-  }
-  
-  
-  ## Generate "moving average" legend parameters:
-  if (add_moving_average==TRUE){
-    label = paste(moving_average_range,"yr Moving Ave.",sep = "")
-    color = "black"
-    # line parameters
-    lwd = 2 ; lty = "solid"
-    # box parameters
-    fill = NA; density = 0 ; border = "grey90"
-    # alignment parameters
-    x_intersp = 1.4
-    
-    # Add to legend_data:
-    legend_data = rbind(legend_data,list(label,color,lwd,lty,fill,density,border,x_intersp))
-  }  
-  
-  
-  ## Generate "percentile" legend parameters:
-  if (add_percentiles==TRUE & length(percentiles)>0){
-    for(i in percentiles){
-      # Label
-      label = paste(i," Percentile")
-      # Colors
-      if (i==0.99){
-        color = adjustcolor("firebrick4",alpha.f = 0.7)
-      } else if (i == 0.95){
-        color = adjustcolor("orangered3",alpha.f = 0.7)
-      } else {
-        color = adjustcolor("darkgoldenrod3",alpha.f = 0.7)
-      }
-      # line parameters
-      lwd = 2 ; lty = "solid"
-      # box parameters
-      fill = NA; density = 0 ; border = "grey90"
-      # alignment parameters
-      x_intersp = 1.4
-      
-      # Add to legend_data:
-      legend_data = rbind(legend_data,list(label,color,lwd,lty,fill,density,border,x_intersp))
-    }
-  }
-  
-  
-  ## Create "custom lines" legend parameters
-  
-  if (dim(data_lines)[1]>0){
-    # subset data_lines for line that are to be added to the key AND unique
-    data_lines_subset = data.frame()
-    
-    if (dim(data_lines)[2]>0){
-      data_lines_subset = subset(data_lines, select = -c(orientation,location)) # remove unnecessary columns
-      data_lines_subset = subset(data_lines_subset,key_show == TRUE) # remove lines not selected for key
-      data_lines_subset = data_lines_subset[!duplicated(data_lines_subset),] # remove duplicates
-      data_lines_subset = data_lines_subset[order(data_lines_subset$type),] # sort by type
-    }
-    
-    # Extract parameters and add to dataframe
-    if (dim(data_lines_subset)[1]>0){
-      for (i in 1:dim(data_lines_subset)[1]){
-        label = data_lines_subset$label[i]
-        color = data_lines_subset$color[i]
-        # line parameters
-        lwd = 2 ; lty = data_lines_subset$type[i]
-        # box parameters
-        fill = NA; density = 0 ; border = "grey90"
-        # alignment parameters
-        x_intersp = 1.4
-        
-        # Add to legend_data:
-        legend_data = rbind(legend_data,list(label,color,lwd,lty,fill,density,border,x_intersp))
-      }
-    }
-  }
-  
-  ## Create "custom highlights" legend parameters
-  if (dim(data_highlights)[1]>0){
-    # subset data_highlights for highlights that are to be added to the key AND unique
-    data_highlights_subset = data.frame()
-    
-    if (dim(data_highlights)[2]>0){
-      data_highlights_subset = subset(data_highlights, select = -c(x1,x2,y1,y2)) # remove unnecessary columns
-      data_highlights_subset = subset(data_highlights_subset,key_show == TRUE) # remove highlights not selected for key
-      data_highlights_subset = data_highlights_subset[!duplicated(data_highlights_subset),] # remove duplicates
-      data_highlights_subset <- data_highlights_subset[order(data_highlights_subset$type),] # sort by type
-    }
-    
-    # Extract parameters and add to dataframe
-    if (dim(data_highlights_subset)[1]>0){
-      for (i in 1:dim(data_highlights_subset)[1]){
-        label = data_highlights_subset$label[i]
-        # line parameters
-        color = NA ; lwd = NA ; lty = "None"
-        # box parameters
-        if (data_highlights_subset$type[i]=="Box"){
-          fill = NA; density = 0 ; border = data_highlights_subset$color[i]
-        } else if (data_highlights_subset$type[i]=="Fill"){
-          fill = data_highlights_subset$color[i] ; density = NA ; border = "grey90"
-        } else {
-          fill = data_highlights_subset$color[i] ; density = 20 ; border = "grey90"
-        }
-        # alignment parameters
-        x_intersp = 0
-        
-        # Add to legend_data:
-        legend_data = rbind(legend_data,list(label,color,lwd,lty,fill,density,border,x_intersp))
-      }
-    }
-  }
-  
-  # Remove first line (primary variable) if required
-  if (show_primary_variable == FALSE){
-    legend_data = legend_data[-1,]
-  }
-  
-  ## Add Key to plot:
-  legend(key_position, inset = c(0.008,0.03),
-         legend=legend_data$label,
-         # Line options
-         col = legend_data$color,
-         lwd = legend_data$lwd,
-         lty = legend_data$lty,
-         # Box options
-         fill=legend_data$fill,
-         density=legend_data$density,
-         border = legend_data$border,
-         # Align boxes with lines
-         x.intersp=legend_data$x_intersp,
-         # Draw box round key
-         bg = "grey90",
-         box.lty = 0
-  ) 
-  
-} 
+# ## (Plot Features) ADD TS KEY - adds a key to the timeseries with the selected 
+# ##                              variable and moving average, and any lines or
+# ##                              highlights selected to be included in the key
+# ##                 key_position = "topleft", "topright","bottomleft" or "bottomright"
+# ##                 add_moving_average = TRUE or FALSE
+# ##                 moving_average_range = single number (3 to 33)
+# ##                 add_percentiles = TRUE of FALSE
+# ##                 percentiles = a vector of percentile values c(0.9,0.95 or 0.99)
+# ##                 secondary variable = variable name or NA if not used
+# ##                 show_primary_variable = TRUE or FALSE (only false for annual cycles)
+# 
+# add_TS_key = function(key_position,data_highlights,data_lines,variable,month_range,add_moving_average,
+#                       moving_average_range,add_percentiles,percentiles,secondary_variable,secondary_month_range,
+#                       show_primary_variable){
+#   
+#   ## Generate "variable" legend parameters:
+#   # label
+#   if (month_range[1]==1 & month_range[2]==12){
+#     title_months = "Annual"
+#   } else {
+#     month_letters  = c("D","J","F","M","A","M","J","J","A","S","O","N","D")
+#     title_months = paste(month_letters[(month_range[1]:month_range[2])+1],collapse = "")
+#   }
+#   label = paste(title_months,variable)
+#   # color
+#   if (variable == "Temperature"){
+#     color = "red3" 
+#   } else if (variable == "Precipitation"){
+#     color = "turquoise4"
+#   } else if (variable == "SLP"){
+#     color = "purple4"
+#   } else if (variable == "Z500"){
+#     color = "green4"
+#   } else {
+#     color = "darkorange2"
+#     label = variable
+#   }
+#   # line parameters
+#   lwd = 2 ; lty = "solid"
+#   # box parameters
+#   fill = NA; density = 0 ; border = "grey90"
+#   # alignment parameters
+#   x_intersp = 1.4
+#   
+#   # Use parameters to create legend_data dataframe:
+#   legend_data = data.frame(label,color,lwd,lty,fill,density,border,x_intersp)
+#   
+#   
+#   ## Generate second variable legend parameters:
+#   # label
+#   if (!is.na(secondary_variable)){
+#     if (secondary_month_range[1]==1 & secondary_month_range[2]==12){
+#       title_months = "Annual"
+#     } else {
+#       month_letters  = c("D","J","F","M","A","M","J","J","A","S","O","N","D")
+#       title_months = paste(month_letters[(secondary_month_range[1]:secondary_month_range[2])+1],collapse = "")
+#     }
+#     label = paste(title_months,secondary_variable)
+#     # color
+#     if (variable == secondary_variable){
+#       
+#       if (secondary_variable == "Temperature"){
+#         color = "red2" 
+#       } else if (secondary_variable == "Precipitation"){
+#         color = "turquoise2"
+#       } else if (secondary_variable == "SLP"){
+#         color = "purple2"
+#       } else if (secondary_variable == "Z500"){
+#         color = "green2"
+#       } else {
+#         color = "saddlebrown"
+#         label = secondary_variable
+#       }
+#       
+#     } else {
+#       if (secondary_variable == "Temperature"){
+#         color = "red3" 
+#       } else if (secondary_variable == "Precipitation"){
+#         color = "turquoise4"
+#       } else if (secondary_variable == "SLP"){
+#         color = "purple4"
+#       } else if (secondary_variable == "Z500"){
+#         color = "green4"
+#       } else {
+#         color = "saddlebrown"
+#         label = secondary_variable
+#       }
+#     }
+#     
+#     
+#     # line parameters
+#     lwd = 2 ; lty = "solid"
+#     # box parameters
+#     fill = NA; density = 0 ; border = "grey90"
+#     # alignment parameters
+#     x_intersp = 1.4
+#     
+#     # Add to legend_data:
+#     legend_data = rbind(legend_data,list(label,color,lwd,lty,fill,density,border,x_intersp))
+#   }
+#   
+#   
+#   ## Generate "moving average" legend parameters:
+#   if (add_moving_average==TRUE){
+#     label = paste(moving_ave_range,"yr Moving Ave.",sep = "")
+#     color = "black"
+#     # line parameters
+#     lwd = 2 ; lty = "solid"
+#     # box parameters
+#     fill = NA; density = 0 ; border = "grey90"
+#     # alignment parameters
+#     x_intersp = 1.4
+#     
+#     # Add to legend_data:
+#     legend_data = rbind(legend_data,list(label,color,lwd,lty,fill,density,border,x_intersp))
+#   }  
+#   
+#   
+#   ## Generate "percentile" legend parameters:
+#   if (add_percentiles==TRUE & length(percentiles)>0){
+#     for(i in percentiles){
+#       # Label
+#       label = paste(i," Percentile")
+#       # Colors
+#       if (i==0.99){
+#         color = adjustcolor("firebrick4",alpha.f = 0.7)
+#       } else if (i == 0.95){
+#         color = adjustcolor("orangered3",alpha.f = 0.7)
+#       } else {
+#         color = adjustcolor("darkgoldenrod3",alpha.f = 0.7)
+#       }
+#       # line parameters
+#       lwd = 2 ; lty = "solid"
+#       # box parameters
+#       fill = NA; density = 0 ; border = "grey90"
+#       # alignment parameters
+#       x_intersp = 1.4
+#       
+#       # Add to legend_data:
+#       legend_data = rbind(legend_data,list(label,color,lwd,lty,fill,density,border,x_intersp))
+#     }
+#   }
+#   
+#   
+#   ## Create "custom lines" legend parameters
+#   
+#   if (dim(data_lines)[1]>0){
+#     # subset data_lines for line that are to be added to the key AND unique
+#     data_lines_subset = data.frame()
+#     
+#     if (dim(data_lines)[2]>0){
+#       data_lines_subset = subset(data_lines, select = -c(orientation,location)) # remove unnecessary columns
+#       data_lines_subset = subset(data_lines_subset,key_show == TRUE) # remove lines not selected for key
+#       data_lines_subset = data_lines_subset[!duplicated(data_lines_subset),] # remove duplicates
+#       data_lines_subset = data_lines_subset[order(data_lines_subset$type),] # sort by type
+#     }
+#     
+#     # Extract parameters and add to dataframe
+#     if (dim(data_lines_subset)[1]>0){
+#       for (i in 1:dim(data_lines_subset)[1]){
+#         label = data_lines_subset$label[i]
+#         color = data_lines_subset$color[i]
+#         # line parameters
+#         lwd = 2 ; lty = data_lines_subset$type[i]
+#         # box parameters
+#         fill = NA; density = 0 ; border = "grey90"
+#         # alignment parameters
+#         x_intersp = 1.4
+#         
+#         # Add to legend_data:
+#         legend_data = rbind(legend_data,list(label,color,lwd,lty,fill,density,border,x_intersp))
+#       }
+#     }
+#   }
+#   
+#   ## Create "custom highlights" legend parameters
+#   if (dim(data_highlights)[1]>0){
+#     # subset data_highlights for highlights that are to be added to the key AND unique
+#     data_highlights_subset = data.frame()
+#     
+#     if (dim(data_highlights)[2]>0){
+#       data_highlights_subset = subset(data_highlights, select = -c(x1,x2,y1,y2)) # remove unnecessary columns
+#       data_highlights_subset = subset(data_highlights_subset,key_show == TRUE) # remove highlights not selected for key
+#       data_highlights_subset = data_highlights_subset[!duplicated(data_highlights_subset),] # remove duplicates
+#       data_highlights_subset <- data_highlights_subset[order(data_highlights_subset$type),] # sort by type
+#     }
+#     
+#     # Extract parameters and add to dataframe
+#     if (dim(data_highlights_subset)[1]>0){
+#       for (i in 1:dim(data_highlights_subset)[1]){
+#         label = data_highlights_subset$label[i]
+#         # line parameters
+#         color = NA ; lwd = NA ; lty = "None"
+#         # box parameters
+#         if (data_highlights_subset$type[i]=="Box"){
+#           fill = NA; density = 0 ; border = data_highlights_subset$color[i]
+#         } else if (data_highlights_subset$type[i]=="Fill"){
+#           fill = data_highlights_subset$color[i] ; density = NA ; border = "grey90"
+#         } else {
+#           fill = data_highlights_subset$color[i] ; density = 20 ; border = "grey90"
+#         }
+#         # alignment parameters
+#         x_intersp = 0
+#         
+#         # Add to legend_data:
+#         legend_data = rbind(legend_data,list(label,color,lwd,lty,fill,density,border,x_intersp))
+#       }
+#     }
+#   }
+#   
+#   # Remove first line (primary variable) if required
+#   if (show_primary_variable == FALSE){
+#     legend_data = legend_data[-1,]
+#   }
+#   
+#   ## Add Key to plot:
+#   legend(key_position, inset = c(0.008,0.03),
+#          legend=legend_data$label,
+#          # Line options
+#          col = legend_data$color,
+#          lwd = legend_data$lwd,
+#          lty = legend_data$lty,
+#          # Box options
+#          fill=legend_data$fill,
+#          density=legend_data$density,
+#          border = legend_data$border,
+#          # Align boxes with lines
+#          x.intersp=legend_data$x_intersp,
+#          # Draw box round key
+#          bg = "grey90",
+#          box.lty = 0
+#   ) 
+#   
+# } 
 
 
 ## (Plot Features) ADD SHAPE FILE LAYERS TO STANDARD PLOTS
@@ -5107,10 +5107,10 @@ add_timeseries <- function(p, data_input, tab, variable) {
   
   # Add reference lines or points
   if (tab == "general") {
-    p <- p + geom_line(aes(x = x, y = 0), color = v_col, size = 0.8)
-  } else {
+    p <- p + geom_line(aes(x = x, y = y), color = v_col, size = 0.8)
+  } else { # Composites
     p <- p + geom_point(aes(x = x, y = y), color = v_col, size = 1)
-  } # not sure why this if-statement is there, maybe check and change
+  }
   
   # Add moving average if available
   if ("Moving_Average" %in% cnames) {
@@ -5126,109 +5126,134 @@ add_timeseries <- function(p, data_input, tab, variable) {
 ##                              highlights selected to be included in the key
 ##                 p = ggplot object containing the timeseries plot
 ##                 key_position = "topleft", "topright","bottomleft" or "bottomright"
-##                 add_moving_average = TRUE or FALSE
-##                 moving_average_range = single number (3 to 33)
+##                 moving_ave = TRUE or FALSE
+##                 moving_ave_range = single number (3 to 33)
 ##                 add_percentiles = TRUE of FALSE
 ##                 percentiles = a vector of percentile values c(0.9,0.95 or 0.99)
 ##                 secondary variable = variable name or NA if not used
 ##                 show_primary_variable = TRUE or FALSE (only false for annual cycles)
+# 
+# add_TS_key <- function(p, key_position, data_highlights, data_lines, variable, month_range,
+#                        moving_ave, moving_ave_range, add_percentiles, percentiles,
+#                        secondary_variable, secondary_month_range, show_primary_variable) {
+#   
+#   ## Initialize legend data frame
+#   legend_data <- data.frame(label = character(), color = character(), lwd = numeric(), lty = character())
+#   
+#   ## Primary variable legend parameters
+#   label <- paste(generate_month_label(month_range), variable)
+#   color <- case_when(
+#     variable == "Temperature" ~ "red3",
+#     variable == "Precipitation" ~ "turquoise4",
+#     variable == "SLP" ~ "purple4",
+#     variable == "Z500" ~ "green4",
+#     TRUE ~ "darkorange2"
+#   )
+#   legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
+#   
+#   ## Secondary variable legend parameters
+#   if (!is.na(secondary_variable)) {
+#     label <- paste(generate_month_label(secondary_month_range), secondary_variable)
+#     color <- case_when(
+#       secondary_variable == "Temperature" ~ "red2",
+#       secondary_variable == "Precipitation" ~ "turquoise2",
+#       secondary_variable == "SLP" ~ "purple2",
+#       secondary_variable == "Z500" ~ "green2",
+#       TRUE ~ "saddlebrown"
+#     )
+#     legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
+#   }
+#   
+#   ## Moving average legend parameters
+#   if (moving_ave) {
+#     label <- paste(moving_ave_range, "yr Moving Ave.")
+#     legend_data <- legend_data %>% add_row(label = label, color = "black", lwd = 1.2, lty = "solid")
+#   }
+#   
+#   ## Percentile legend parameters
+#   if (add_percentiles && length(percentiles) > 0) {
+#     for (percentile in percentiles) {
+#       label <- paste(percentile, "Percentile")
+#       color <- case_when(
+#         percentile == 0.99 ~ adjustcolor("firebrick4", alpha.f = 0.7),
+#         percentile == 0.95 ~ adjustcolor("orangered3", alpha.f = 0.7),
+#         TRUE ~ adjustcolor("darkgoldenrod3", alpha.f = 0.7)
+#       )
+#       legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
+#     }
+#   }
+#   
+#   ## Custom lines from data_lines
+#   if (nrow(data_lines) > 0) {
+#     data_lines <- data_lines %>% 
+#       filter(key_show == TRUE) %>% 
+#       distinct() %>% 
+#       arrange(type)
+#     for (i in 1:nrow(data_lines)) {
+#       legend_data <- legend_data %>% add_row(
+#         label = data_lines$label[i], 
+#         color = data_lines$color[i], 
+#         lwd = 1.2, 
+#         lty = data_lines$type[i]
+#       )
+#     }
+#   }
+#   
+#   ## Custom highlights from data_highlights
+#   if (nrow(data_highlights) > 0) {
+#     data_highlights <- data_highlights %>% 
+#       filter(key_show == TRUE) %>% 
+#       distinct() %>% 
+#       arrange(type)
+#     for (i in 1:nrow(data_highlights)) {
+#       color <- if (data_highlights$type[i] == "Box") NA else data_highlights$color[i]
+#       legend_data <- legend_data %>% add_row(
+#         label = data_highlights$label[i], 
+#         color = color, 
+#         lwd = NA, 
+#         lty = "solid"
+#       )
+#     }
+#   }
+#   
+#   ## Remove primary variable if required
+#   if (!show_primary_variable) {
+#     legend_data <- legend_data[-1,]
+#   }
+#   
+#   ## Add legend to ggplot object with scale_color_identity
+#   p <- p +
+#     scale_color_identity(
+#       name = "Legend",
+#       labels = legend_data$label,
+#       guide = "legend"
+#     ) +
+#     guides(color = guide_legend(
+#       override.aes = list(
+#         color = legend_data$color,
+#         linetype = legend_data$lty,
+#         size = legend_data$lwd
+#       ),
+#       position = key_position
+#     )) +
+#     theme(
+#       legend.position = key_position,
+#       legend.box.background = element_rect(color = "grey90"),
+#       legend.box.margin = margin(6, 6, 6, 6),
+#       legend.title = element_blank()
+#     )
+#   
+#   return(p)
+# }
 
 add_TS_key <- function(p, key_position, data_highlights, data_lines, variable, month_range,
-                       add_moving_average, moving_average_range, add_percentiles, percentiles,
+                       moving_ave, moving_ave_range, add_percentiles, percentiles,
                        secondary_variable, secondary_month_range, show_primary_variable) {
-  
-  ## Initialize legend data frame
-  legend_data <- data.frame(label = character(), color = character(), lwd = numeric(), lty = character())
-  
-  ## Primary variable legend parameters
-  label <- paste(generate_month_label(month_range), variable)
-  color <- case_when(
-    variable == "Temperature" ~ "red3",
-    variable == "Precipitation" ~ "turquoise4",
-    variable == "SLP" ~ "purple4",
-    variable == "Z500" ~ "green4",
-    TRUE ~ "darkorange2"
-  )
-  legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
-  
-  ## Secondary variable legend parameters
-  if (!is.na(secondary_variable)) {
-    label <- paste(generate_month_label(secondary_month_range), secondary_variable)
-    color <- case_when(
-      secondary_variable == "Temperature" ~ "red2",
-      secondary_variable == "Precipitation" ~ "turquoise2",
-      secondary_variable == "SLP" ~ "purple2",
-      secondary_variable == "Z500" ~ "green2",
-      TRUE ~ "saddlebrown"
-    )
-    legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
-  }
-  
-  ## Moving average legend parameters
-  if (add_moving_average) {
-    label <- paste(moving_average_range, "yr Moving Ave.")
-    legend_data <- legend_data %>% add_row(label = label, color = "black", lwd = 1.2, lty = "solid")
-  }
-  
-  ## Percentile legend parameters
-  if (add_percentiles && length(percentiles) > 0) {
-    for (percentile in percentiles) {
-      label <- paste(percentile, "Percentile")
-      color <- case_when(
-        percentile == 0.99 ~ adjustcolor("firebrick4", alpha.f = 0.7),
-        percentile == 0.95 ~ adjustcolor("orangered3", alpha.f = 0.7),
-        TRUE ~ adjustcolor("darkgoldenrod3", alpha.f = 0.7)
-      )
-      legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
-    }
-  }
-  
-  ## Custom lines from data_lines
-  if (nrow(data_lines) > 0) {
-    data_lines <- data_lines %>% 
-      filter(key_show == TRUE) %>% 
-      distinct() %>% 
-      arrange(type)
-    for (i in 1:nrow(data_lines)) {
-      legend_data <- legend_data %>% add_row(
-        label = data_lines$label[i], 
-        color = data_lines$color[i], 
-        lwd = 1.2, 
-        lty = data_lines$type[i]
-      )
-    }
-  }
-  
-  ## Custom highlights from data_highlights
-  if (nrow(data_highlights) > 0) {
-    data_highlights <- data_highlights %>% 
-      filter(key_show == TRUE) %>% 
-      distinct() %>% 
-      arrange(type)
-    for (i in 1:nrow(data_highlights)) {
-      color <- if (data_highlights$type[i] == "Box") NA else data_highlights$color[i]
-      legend_data <- legend_data %>% add_row(
-        label = data_highlights$label[i], 
-        color = color, 
-        lwd = NA, 
-        lty = "solid"
-      )
-    }
-  }
-  
-  ## Remove primary variable if required
-  if (!show_primary_variable) {
-    legend_data <- legend_data[-1,]
-  }
-  
-  ## Add legend to the ggplot object
-  p <- p + 
-    scale_color_manual(
-      name = "Legend", 
-      values = setNames(legend_data$color, legend_data$label),
-      guide = guide_legend(title = NULL, position = key_position)
-    ) +
-    theme(legend.position = key_position)
+
+  # Add a simple legend title and position
+  p <- p +
+    labs(color = variable) +
+    theme(legend.position = "bottom")
   
   return(p)
 }
