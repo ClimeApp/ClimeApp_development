@@ -956,7 +956,7 @@ ui <- navbarPage(id = "nav1",
                                                     # choiceValues = c("topleft", "topright","bottomleft","bottomright"),
                                                     choiceNames  = c("top", "right", "bottom", "left", "inside"),
                                                     choiceValues = c("top", "right", "bottom", "left", "inside"),
-                                                    selected = "topright" ,
+                                                    selected = "top" ,
                                                     inline = TRUE))),
                                  
                                  checkboxInput(inputId = "show_ref_ts",
