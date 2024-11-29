@@ -246,6 +246,21 @@ random_map = sample(1:6,1)
 initial_lon_values = continent_lonlat_values[1:2,random_map]
 initial_lat_values = continent_lonlat_values[3:4,random_map]
 
+## Create dataframe of centuries and set initial year values
+C15 = c(1422,1500)
+C16 = c(1500,1600)
+C17 = c(1600,1700)
+C18 = c(1700,1800)
+C19 = c(1800,1900)
+C20 = c(1900,2000)
+
+century_years = data.frame(C15,C16,C17,C18,C19,C20)
+row.names(century_years) = c("year_min","year_max")
+
+random_century = sample(1:6,1)
+
+initial_year_values = century_years[,random_century]
+  
 ## Load grid square weights for calculating means
 latlon_weights = as.matrix(read.csv("data/latlon_weights.csv"))
 
