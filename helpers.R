@@ -1986,7 +1986,6 @@ add_stats_to_TS_datatable = function(data_input, add_moving_average,
 #   }
 # }
 
-# With ggplot2
 plot_default_timeseries <- function(data_input, tab, variable, titles, title_mode, ref = NA) {
   
   # Set up variables for plotting
@@ -2011,11 +2010,11 @@ plot_default_timeseries <- function(data_input, tab, variable, titles, title_mod
     v_unit = "m"
   }
   
-  # Create initial ggplot object
-  p <- ggplot(data_input, aes(x = x, y = y)) +
-    {if (tab == "general") geom_line(color = v_col, linewidth = 1) else geom_point(color = v_col, size = 2)} +
+  # Map color to the variable for legend
+  p <- ggplot(data_input, aes(x = x, y = y, color = variable)) +
+    {if (tab == "general") geom_line(linewidth = 1, show.legend = TRUE) else geom_point(size = 2, show.legend = TRUE)} +
     theme_bw(base_size = 15)
-    
+  
   # Add default title with statistics if 'title_mode' is 'Default'
   if (title_mode == "Default") {
     subtitle_text <- paste(
@@ -2025,37 +2024,35 @@ plot_default_timeseries <- function(data_input, tab, variable, titles, title_mod
     )
     p <- p + labs(subtitle = subtitle_text)
   }  
-    # Add title and subtitle if provided
-    if (!is.null(titles)) {
-      # Add labels
-      p <- p + labs(x = "Year", y = titles$ts_axis)
-      # Add title and subtitle
-      if (titles$ts_title != " ") {
-        p <- p + ggtitle(titles$ts_title)
-      }
-      if (titles$map_subtitle != " ") {
-        p <- p + labs(subtitle = titles$map_subtitle) # overwrites subtitle created above
-      }
-      # p <- p + theme(
-      #   plot.title = element_text(size = titles$ts_title_size, face = "bold"),
-      #   plot.subtitle = element_text(size = titles$ts_title_size / 1.3, face = "plain"),
-      #   axis.text=element_text(size = titles$ts_title_size / 1.6),
-      # )
-      p <- p + theme(
-        plot.title = element_text(size = 18, face = "bold"),
-        plot.subtitle = element_text(size = 18 / 1.3, face = "plain"),
-        axis.text=element_text(size = 18 / 1.6),
-        labels = element_text(size = 18 / 1.6)
-      )
-    }  
   
-
+  # Add title and subtitle if provided
+  if (!is.null(titles)) {
+    p <- p + labs(x = "Year", y = titles$ts_axis)
+    if (titles$ts_title != " ") {
+      p <- p + ggtitle(titles$ts_title)
+    }
+    if (titles$map_subtitle != " ") {
+      p <- p + labs(subtitle = titles$map_subtitle) # overwrites subtitle created above
+    }
+    p <- p + theme(
+      plot.title = element_text(size = 18, face = "bold"),
+      plot.subtitle = element_text(size = 18 / 1.3, face = "plain"),
+      axis.text = element_text(size = 18 / 1.6)
+    )
+  }  
+  
   # Add reference line if 'ref' is provided
   if (!is.na(ref)) {
-    p <- p + geom_hline(yintercept = ref, linetype = "dashed", color = "black") +
-      annotate("text", x = min(x) + ((max(x) - min(x)) / 25.5), y = ref, 
+    p <- p + geom_hline(aes(yintercept = 0, linetype = "Reference"), color = "black") +
+      scale_linetype_manual(values = c("Reference" = "dashed")) + # Ensure it appears in legend
+      annotate("text", x = min(x) + ((max(x) - min(x)) / 25.5), y = 0, 
                label = paste0(ref, v_unit), vjust = -1)
   }
+  
+  # Add a simple legend title and position
+  # p <- p +
+  #   labs(color = "Variable Legend") +  # Set the legend title
+  #   theme(legend.position = "top")    # Adjust the legend position (e.g., "top", "bottom", "left", "right")
   
   # Return the ggplot object
   return(p)
@@ -5019,10 +5016,9 @@ add_timeseries_custom_features <- function(p, highlights_data = NULL, lines_data
   if (!is.null(highlights_data) && nrow(highlights_data) > 0) {
     if(any(highlights_data$type == "Fill")) {
       fill_data <- subset(highlights_data, type == "Fill")
-      p <- p + geom_rect(data=fill_data, 
-                         aes(xmin = x1, xmax = x2,
-                             ymin = y1, ymax = y2),
-                         color = NA, fill = fill_data$color, size = 1)
+      p <- p + geom_rect(aes(xmin = fill_data$x1, xmax = fill_data$x2,
+                             ymin = fill_data$y1, ymax = fill_data$y2),
+                         fill = fill_data$color, color = NA, size = 1)
     }
     if (any(highlights_data$type == "Box")) {
       box_data <- subset(highlights_data, type == "Box")
@@ -5034,7 +5030,7 @@ add_timeseries_custom_features <- function(p, highlights_data = NULL, lines_data
       hatched_data <- subset(highlights_data, type == "Hatched")
       p <- p + geom_rect(aes(xmin = hatched_data$x1, xmax = hatched_data$x2,
                              ymin = hatched_data$y1, ymax = hatched_data$y2),
-                         color = NA, fill = hatched_data$color, size = 1, alpha = 0.5)
+                         fill = hatched_data$color, color = NA, fill_alpha = 0.5)
     }
   }
   
@@ -5141,142 +5137,137 @@ add_timeseries <- function(p, data_input, tab, variable) {
 }
 
 
-## (Plot Features) ADD TS KEY - adds a key to the timeseries with the selected 
-##                              variable and moving average, and any lines or
-##                              highlights selected to be included in the key
-##                 p = ggplot object containing the timeseries plot
-##                 key_position = "topleft", "topright","bottomleft" or "bottomright"
-##                 moving_ave = TRUE or FALSE
-##                 moving_ave_range = single number (3 to 33)
-##                 add_percentiles = TRUE of FALSE
-##                 percentiles = a vector of percentile values c(0.9,0.95 or 0.99)
-##                 secondary variable = variable name or NA if not used
-##                 show_primary_variable = TRUE or FALSE (only false for annual cycles)
+# (Plot Features) ADD TS KEY - adds a key to the timeseries with the selected
+#                              variable and moving average, and any lines or
+#                              highlights selected to be included in the key
+#                 p = ggplot object containing the timeseries plot
+#                 key_position = "topleft", "topright","bottomleft" or "bottomright"
+#                 moving_ave = TRUE or FALSE
+#                 moving_ave_range = single number (3 to 33)
+#                 add_percentiles = TRUE of FALSE
+#                 percentiles = a vector of percentile values c(0.9,0.95 or 0.99)
+#                 secondary variable = variable name or NA if not used
+#                 show_primary_variable = TRUE or FALSE (only false for annual cycles)
+
+add_TS_key <- function(p, key_position, highlights_data, lines_data, variable, month_range, custom_average, 
+                       year_moving, custom_percentile, percentile, secondary_variable = NA, 
+                       secondary_month_range = NA, show_default_legend = TRUE) {
+  
+  # Initialize legend data
+  legend_data <- data.frame(
+    label = character(), 
+    color = character(), 
+    lwd = numeric(), 
+    lty = character(), 
+    shape = character(), 
+    fill = character(), 
+    stringsAsFactors = FALSE
+  )
+  
+  # Add main variable to legend
+  main_label <- if (month_range[1] == 1 && month_range[2] == 12) "Annual" else paste(month.abb[month_range], collapse = "-")
+  main_label <- paste(main_label, variable)
+  main_color <- switch(variable,
+                       "Temperature" = "red3",
+                       "Precipitation" = "turquoise4",
+                       "SLP" = "purple4",
+                       "Z500" = "green4",
+                       "black")
+  
+  legend_data <- rbind(legend_data, 
+                       list(label = main_label, color = main_color, lwd = 1.5, lty = "solid", shape = NA, fill = NA))
+  
+  # Add highlights (if provided)
+  if (!is.null(highlights_data) && nrow(highlights_data) > 0) {
+    highlights <- highlights_data %>%
+      mutate(label = ifelse(type == "Fill", "Highlighted Area", "Highlighted Box")) %>%
+      select(label, color, lwd = 1, lty = "solid", shape = NA, fill = color) %>%
+      unique()
+    legend_data <- rbind(legend_data, highlights)
+  }
+  
+  # Add custom lines (if provided)
+  if (!is.null(lines_data) && nrow(lines_data) > 0) {
+    lines <- lines_data %>%
+      mutate(label = paste("Line:", location), 
+             lwd = 1, 
+             lty = ifelse(orientation == "Vertical", "dashed", "solid"), 
+             shape = NA, 
+             fill = NA) %>%
+      select(label, color, lwd, lty, shape, fill) %>%
+      unique()
+    legend_data <- rbind(legend_data, lines)
+  }
+  
+  # Add rolling averages or percentiles (if provided)
+  if (!is.null(custom_average) && custom_average) {
+    legend_data <- rbind(legend_data, 
+                         list(label = "Custom Average", color = "black", lwd = 1, lty = "dashed", shape = NA, fill = NA))
+  }
+  if (!is.null(percentile) && length(percentile) > 0) {
+    for (p in percentile) {
+      legend_data <- rbind(legend_data, 
+                           list(label = paste("Percentile", p), color = "darkgoldenrod3", lwd = 1, lty = "dotted", shape = NA, fill = NA))
+    }
+  }
+  
+  # Add secondary variable (if provided)
+  if (!is.na(secondary_variable)) {
+    secondary_label <- if (secondary_month_range[1] == 1 && secondary_month_range[2] == 12) 
+      "Annual" 
+    else 
+      paste(month.abb[secondary_month_range], collapse = "-")
+    secondary_label <- paste(secondary_label, secondary_variable)
+    secondary_color <- switch(secondary_variable,
+                              "Temperature" = "red2",
+                              "Precipitation" = "turquoise2",
+                              "SLP" = "purple2",
+                              "Z500" = "green2",
+                              "saddlebrown")
+    legend_data <- rbind(legend_data, 
+                         list(label = secondary_label, color = secondary_color, lwd = 1.5, lty = "solid", shape = NA, fill = NA))
+  }
+  
+  # Add legend to plot
+  p <- p + scale_color_manual(values = setNames(legend_data$color, legend_data$label)) +
+    guides(color = guide_legend(override.aes = list(linetype = legend_data$lty, size = legend_data$lwd)))
+  
+  # Adjust legend position
+  p <- p + theme(legend.position = key_position)
+  
+  return(p)
+}
+
+
+# ## (Plot Features) ADD TS KEY - adds a key to the timeseries with the selected 
+# ##                              variable and moving average, and any lines or
+# ##                              highlights selected to be included in the key
+# ##                 p = ggplot object containing the timeseries plot
+# ##                 key_position = "topleft", "topright","bottomleft" or "bottomright"
+# ##                 moving_ave = TRUE or FALSE
+# ##                 moving_ave_range = single number (3 to 33)
+# ##                 add_percentiles = TRUE of FALSE
+# ##                 percentiles = a vector of percentile values c(0.9,0.95 or 0.99)
+# ##                 secondary variable = variable name or NA if not used
+# ##                 show_primary_variable = TRUE or FALSE (only false for annual cycles)
 # 
 # add_TS_key <- function(p, key_position, data_highlights, data_lines, variable, month_range,
 #                        moving_ave, moving_ave_range, add_percentiles, percentiles,
 #                        secondary_variable, secondary_month_range, show_primary_variable) {
+#   legend_title <- "Legend"
+#   p <- p + labs(color = legend_title, linetype = legend_title, fill = legend_title)
 #   
-#   ## Initialize legend data frame
-#   legend_data <- data.frame(label = character(), color = character(), lwd = numeric(), lty = character())
-#   
-#   ## Primary variable legend parameters
-#   label <- paste(generate_month_label(month_range), variable)
-#   color <- case_when(
-#     variable == "Temperature" ~ "red3",
-#     variable == "Precipitation" ~ "turquoise4",
-#     variable == "SLP" ~ "purple4",
-#     variable == "Z500" ~ "green4",
-#     TRUE ~ "darkorange2"
+#   # Adjust the legend position
+#   p <- p + theme(
+#     legend.position = key_position, 
+#     legend.title = element_text(size = 12, face = "bold"),  # Style the legend title
+#     legend.text = element_text(size = 10)                 # Style the legend labels
 #   )
-#   legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
-#   
-#   ## Secondary variable legend parameters
-#   if (!is.na(secondary_variable)) {
-#     label <- paste(generate_month_label(secondary_month_range), secondary_variable)
-#     color <- case_when(
-#       secondary_variable == "Temperature" ~ "red2",
-#       secondary_variable == "Precipitation" ~ "turquoise2",
-#       secondary_variable == "SLP" ~ "purple2",
-#       secondary_variable == "Z500" ~ "green2",
-#       TRUE ~ "saddlebrown"
-#     )
-#     legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
-#   }
-#   
-#   ## Moving average legend parameters
-#   if (moving_ave) {
-#     label <- paste(moving_ave_range, "yr Moving Ave.")
-#     legend_data <- legend_data %>% add_row(label = label, color = "black", lwd = 1.2, lty = "solid")
-#   }
-#   
-#   ## Percentile legend parameters
-#   if (add_percentiles && length(percentiles) > 0) {
-#     for (percentile in percentiles) {
-#       label <- paste(percentile, "Percentile")
-#       color <- case_when(
-#         percentile == 0.99 ~ adjustcolor("firebrick4", alpha.f = 0.7),
-#         percentile == 0.95 ~ adjustcolor("orangered3", alpha.f = 0.7),
-#         TRUE ~ adjustcolor("darkgoldenrod3", alpha.f = 0.7)
-#       )
-#       legend_data <- legend_data %>% add_row(label = label, color = color, lwd = 1.2, lty = "solid")
-#     }
-#   }
-#   
-#   ## Custom lines from data_lines
-#   if (nrow(data_lines) > 0) {
-#     data_lines <- data_lines %>% 
-#       filter(key_show == TRUE) %>% 
-#       distinct() %>% 
-#       arrange(type)
-#     for (i in 1:nrow(data_lines)) {
-#       legend_data <- legend_data %>% add_row(
-#         label = data_lines$label[i], 
-#         color = data_lines$color[i], 
-#         lwd = 1.2, 
-#         lty = data_lines$type[i]
-#       )
-#     }
-#   }
-#   
-#   ## Custom highlights from data_highlights
-#   if (nrow(data_highlights) > 0) {
-#     data_highlights <- data_highlights %>% 
-#       filter(key_show == TRUE) %>% 
-#       distinct() %>% 
-#       arrange(type)
-#     for (i in 1:nrow(data_highlights)) {
-#       color <- if (data_highlights$type[i] == "Box") NA else data_highlights$color[i]
-#       legend_data <- legend_data %>% add_row(
-#         label = data_highlights$label[i], 
-#         color = color, 
-#         lwd = NA, 
-#         lty = "solid"
-#       )
-#     }
-#   }
-#   
-#   ## Remove primary variable if required
-#   if (!show_primary_variable) {
-#     legend_data <- legend_data[-1,]
-#   }
-#   
-#   ## Add legend to ggplot object with scale_color_identity
-#   p <- p +
-#     scale_color_identity(
-#       name = "Legend",
-#       labels = legend_data$label,
-#       guide = "legend"
-#     ) +
-#     guides(color = guide_legend(
-#       override.aes = list(
-#         color = legend_data$color,
-#         linetype = legend_data$lty,
-#         size = legend_data$lwd
-#       ),
-#       position = key_position
-#     )) +
-#     theme(
-#       legend.position = key_position,
-#       legend.box.background = element_rect(color = "grey90"),
-#       legend.box.margin = margin(6, 6, 6, 6),
-#       legend.title = element_blank()
-#     )
-#   
+# #   # p <- p +
+# #   #   guides(color = guide_legend(title = "Legend", title.position = "top", title.hjust = 0.5, title.vjust = 0.5, ncol = 1, title.theme = element_text(size = 12)))
 #   return(p)
 # }
 
-add_TS_key <- function(p, key_position, data_highlights, data_lines, variable, month_range,
-                       moving_ave, moving_ave_range, add_percentiles, percentiles,
-                       secondary_variable, secondary_month_range, show_primary_variable) {
-
-  # Add a simple legend title and position
-  p <- p +
-    labs(color = variable) +
-    theme(legend.position = "bottom")
-  
-  return(p)
-}
 
 # Helper function fot to generate month label
 generate_month_label <- function(range) {

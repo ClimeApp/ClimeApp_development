@@ -10852,6 +10852,7 @@ server <- function(input, output, session) {
       if (input$show_key_ts == TRUE){
         p <- add_TS_key(p, input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
                    input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+        #p <- add_TS_key(p, input$key_position_ts)
       }
       return(p)
     }
