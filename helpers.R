@@ -99,16 +99,17 @@ library(viridis)
 
 
 # Set library path for Live Version
-# lib_path <- "/home/climeapp/R/x86_64-pc-linux-gnu-library/4.4"
-# lib_path <- "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library"
+# .libPaths("/home/ClimeApp/R-packages")
+# lib_path <- "/home/ClimeApp/R-packages"
+# 
 # #WD and Packages
 # library(shiny, lib.loc = lib_path)
 # library(ncdf4, lib.loc = lib_path)
 # library(maps, lib.loc = lib_path)
-# library(shinyWidgets)
+# library(shinyWidgets, lib.loc = lib_path)
 # library(RColorBrewer, lib.loc = lib_path)
 # library(shinyjs, lib.loc = lib_path)
-# library(bslib)
+# library(bslib, lib.loc = lib_path)
 # library(readxl, lib.loc = lib_path)
 # library(DT, lib.loc = lib_path)
 # library(zoo, lib.loc = lib_path)
@@ -123,13 +124,9 @@ library(viridis)
 # library(xlsx, lib.loc = lib_path)
 # #new libraries for leaflet
 # library(leaflet, lib.loc = lib_path)
-# library(htmltools)
+# library(htmltools, lib.loc = lib_path)
 # library(dplyr, lib.loc = lib_path)
 # library(plotly, lib.loc = lib_path)  # Load plotly library for interactivity
-# library(terra, lib.loc = lib_path)
-# library(rnaturalearth, lib.loc = lib_path)
-# library(rnaturlaearthdata, lib.loc = lib_path)
-# library(shinylive, lib.loc = lib_path)
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
