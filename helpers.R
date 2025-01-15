@@ -76,7 +76,6 @@ library(DT)
 library(zoo)
 library(colourpicker)
 library(shinylive)
-#library(tmaptools)  ** do we need this? **
 library(ggplot2)
 library(sf)
 library(shinylogs)
@@ -96,40 +95,7 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 library(ggpattern)
 library(viridis)
-
-
-# Set library path for Live Version
-# lib_path <- "/home/climeapp/R/x86_64-pc-linux-gnu-library/4.4"
-# lib_path <- "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library"
-# #WD and Packages
-# library(shiny, lib.loc = lib_path)
-# library(ncdf4, lib.loc = lib_path)
-# library(maps, lib.loc = lib_path)
-# library(shinyWidgets)
-# library(RColorBrewer, lib.loc = lib_path)
-# library(shinyjs, lib.loc = lib_path)
-# library(bslib)
-# library(readxl, lib.loc = lib_path)
-# library(DT, lib.loc = lib_path)
-# library(zoo, lib.loc = lib_path)
-# library(colourpicker, lib.loc = lib_path)
-# library(tmaptools, lib.loc = lib_path)
-# library(ggplot2, lib.loc = lib_path)
-# library(sf, lib.loc = lib_path)
-# library(shinylogs, lib.loc = lib_path)
-# library(shinycssloaders, lib.loc = lib_path)
-# library(profvis, lib.loc = lib_path)
-# library(openxlsx, lib.loc = lib_path) #Don't Change order!
-# library(xlsx, lib.loc = lib_path)
-# #new libraries for leaflet
-# library(leaflet, lib.loc = lib_path)
-# library(htmltools)
-# library(dplyr, lib.loc = lib_path)
-# library(plotly, lib.loc = lib_path)  # Load plotly library for interactivity
-# library(terra, lib.loc = lib_path)
-# library(rnaturalearth, lib.loc = lib_path)
-# library(rnaturlaearthdata, lib.loc = lib_path)
-# library(shinylive, lib.loc = lib_path)
+library(markdown)
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
@@ -320,7 +286,7 @@ year_season_ref_popover = function(popover_ID){
 }
 
 ## MAP CUSTOMIZATION 
-## popover_IDs = pop_anomalies_cusmap, pop_composites_cusmap, pop_correlation_cusmap
+## popover_IDs = pop_anomalies_cusmap, pop_composites_cusmap, pop_correlation_cusmap, pop_regression_cusmap
 
 map_customization_popover = function(popover_ID){
   popover(
@@ -1490,13 +1456,26 @@ set_axis_values = function(data_input,mode){
 ##
 
 # Plot map with ggplot2
-plot_map <- function(data_input, lon_lat_range,
-                     variable = NULL, mode = NULL,
-                     titles = NULL, axis_range = NULL, hide_axis = FALSE, points_data = data.frame(),
-                     highlights_data = data.frame(), stat_highlights_data = data.frame(), c_borders = TRUE,
-                     white_ocean = FALSE, white_land = FALSE, plotOrder = NULL, shpPickers = NULL,
-                     input = NULL, plotType = "default", projection = "UTM (default)",
-                     center_lat = 0, center_lon = 0) {
+plot_map <- function(data_input,
+                     lon_lat_range,
+                     variable = NULL,
+                     mode = NULL,
+                     titles = NULL,
+                     axis_range = NULL,
+                     hide_axis = FALSE,
+                     points_data = data.frame(),
+                     highlights_data = data.frame(),
+                     stat_highlights_data = data.frame(),
+                     c_borders = TRUE,
+                     white_ocean = FALSE,
+                     white_land = FALSE,
+                     plotOrder = NULL,
+                     shpPickers = NULL,
+                     input = NULL,
+                     plotType = "default",
+                     projection = "UTM (default)",
+                     center_lat = 0,
+                     center_lon = 0) {
 
   print(mode)
   # Define color picker prefix for shapefiles
@@ -1564,22 +1543,26 @@ plot_map <- function(data_input, lon_lat_range,
     labs(fill = v_unit) +
     # Style the color bar
     guides(
-      fill = guide_colorbar(
-        barwidth = 2,
-        barheight = unit(0.75, "npc"), # Match the height of the plot
-        title = v_unit,
-        title.position = "top",
-        title.hjust = 0.25, # Center the title
-        display = "rectangles",
-        draw.ulim = FALSE, draw.llim = FALSE,
-        label.theme = element_text(size = titles$map_title_size / 1.6),
-        title.theme = element_text(size = titles$map_title_size / 1.6), # text size of the color bar labels and title is propotional with the plot title size
-        frame.colour = "black",
-        frame.linewidth = 0.5,
-        ticks.colour = "black",
-        ticks.linewidth = 0.5
+      fill = if(hide_axis) {
+        "none"
+        } else {
+          guide_colorbar(
+            barwidth = 2,
+            barheight = unit(0.75, "npc"), # Match the height of the plot
+            title = v_unit,
+            title.position = "top",
+            title.hjust = 0.25, # Center the title
+            display = "rectangles",
+            draw.ulim = FALSE, draw.llim = FALSE,
+            label.theme = element_text(size = titles$map_title_size / 1.6),
+            title.theme = element_text(size = titles$map_title_size / 1.6), # text size of the color bar labels and title is propotional with the plot title size
+            frame.colour = "black",
+            frame.linewidth = 0.5,
+            ticks.colour = "black",
+            ticks.linewidth = 0.5
+          )
+        }
       )
-    )
 
   # Theme
   if(projection == "UTM (default)"){
@@ -3806,8 +3789,8 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     map_title = map_custom_title
     map_subtitle = map_custom_subtitle
   } else {
-    map_title = "Correlation coefficient"
-    map_subtitle = paste("Variable 1:", V1_TS_title,"\nVariable 2:",V2_TS_title)
+    map_title = "Regression Residuals Map"
+    map_subtitle = paste("Subtitle")
   }
   
   # Generate download titles
@@ -4282,14 +4265,29 @@ create_ME_timeseries_data = function(dataset,variables,subset_lon_IDs,subset_lat
 ##              subset_lon/lat_IDs = subset_lon/lat_IDs for dependent variable
 ##              month_range_i/d = ind/dep ModE-RA month range
 
-generate_regression_titles = function(independent_source,dependent_source,
-                                      dataset_i,dataset_d,modERA_dependent_variable,
-                                      mode_i,mode_d,month_range_i,month_range_d,
-                                      lon_range_i,lon_range_d,lat_range_i,lat_range_d,
-                                      year_range, year_selected,
-                                      independent_variables,dependent_variable,
-                                      iv_number_coeff, iv_number_pvals){
-  
+generate_regression_titles = function(independent_source,
+                                      dependent_source,
+                                      dataset_i,dataset_d,
+                                      modERA_dependent_variable,
+                                      mode_i,
+                                      mode_d,
+                                      month_range_i,
+                                      month_range_d,
+                                      lon_range_i,
+                                      lon_range_d,
+                                      lat_range_i,
+                                      lat_range_d,
+                                      year_range,
+                                      year_selected,
+                                      independent_variables,
+                                      dependent_variable,
+                                      iv_number_coeff,
+                                      iv_number_pvals,
+                                      map_title_mode,
+                                      map_custom_title,
+                                      map_custom_subtitle,
+                                      title_size=18){
+
   # Create Independent variable titles
   if (independent_source == "User Data"){
     title_months_i = ""
@@ -4389,6 +4387,25 @@ generate_regression_titles = function(independent_source,dependent_source,
                            title_months_d, dependent_variable,
                            title_mode_d, "\nYear:", year_selected, sep = "")
   
+  # Replace with custom titles
+  if (map_title_mode == "Custom"){
+    if(map_custom_title1 != ""){
+      map_title = map_custom_title1
+    }
+    if(map_custom_title2 != ""){
+      map_subtitle = map_custom_title2
+    }
+  }
+  
+  # Generate combined titles:
+  if (map_title_mode == "Custom"){
+    map_title = map_custom_title
+    map_subtitle = map_custom_subtitle
+  } else {
+    map_title = "Correlation coefficient"
+    map_subtitle = paste("Test")
+  }
+
   # Generate download titles
   tf0 = paste("Reg",title_months_i,"ind. var.", ">", title_months_d, modERA_dependent_variable)
   tf1 = gsub("[[:punct:]]", "", tf0)
