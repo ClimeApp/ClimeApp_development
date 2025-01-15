@@ -1,5 +1,8 @@
 ### ClimeApp_beta ###
 # Source for helpers ----
+library(profvis)
+
+  
 source("helpers.R")
 
 # Define UI ----
@@ -8,6 +11,7 @@ source("helpers.R")
 #                   "C:/Users/tanja/OneDrive/Dokumente/ClimeApp/ClimeApp_development/View")
 # 
 # httpuv::runStaticServer("C:/Users/tanja/OneDrive/Dokumente/ClimeApp/ClimeApp_development/View")
+
 
 
 # Define UI ----
@@ -157,19 +161,8 @@ ui <- navbarPage(id = "nav1",
                 });
               '))
               
-            ), width = 12),
-          
-            br(),
-          
-            ### Third side bar ----
-            sidebarPanel(fluidRow(
-              h4(helpText("An offline version ClimeApp for Windows - CLIMEAPP DESKTOP - is available to download here:")), br(),
-              column(width = 12,
-                downloadButton("climeapp_desktop_download",
-                               label = "Download ClimeApp Desktop")
-              ),
-              h5(helpText("System Requirements: Download = 5.84 Gb. Full Installation = 11.6 Gb."))
             ), width = 12)
+          
           ## Sidebar Panels END ---- 
           )),
           ## Main panel START ----
@@ -298,6 +291,20 @@ ui <- navbarPage(id = "nav1",
                      helpText("On timeseries plots, users have the option to add percentiles and moving averages. The moving averages are calculated using a rolling mean of timeseries values over a number of years selected by the user (default 11). To generate the percentiles, a Shapiro-Wilk test (Shapiro and Wilk, 1965) is first conducted on the timeseries data. If the data is normally distributed, which is rare for ModE timeseries, then percentiles are calculated from the mean and standard deviation of the timeseries using the", em("qnorm()"), "function from the", em("stats"), "package. If the distribution is non-normal, ClimeApp instead finds the value corresponding to the quantile matching the users selection (i.e. for the 0.95 percentile, it returns values that 5% of all values are above/below), using the", em("quantile()"), "function from the stats package."),
                      
             ),
+            
+            #### Offline version ----
+            tabPanel("ClimeApp Desktop",
+                     br(), br(),
+                     h5(strong("An offline version ClimeApp for Windows - CLIMEAPP DESKTOP - is available to download here:", style = "color: #094030;")),
+                     br(),
+                     downloadButton("climeapp_desktop_download",
+                                    label = "Download ClimeApp Desktop"),
+                     br(), br(), br(),
+                     h5(strong("ClimeApp Desktop User Guide", style = "color: #094030;")),
+                     br(),
+                     includeMarkdown("ClimeApp Desktop User Guide.md")
+                     ),
+            
             #### Tab Version History ----
             tabPanel("Version history",
                      br(), br(),
@@ -648,7 +655,7 @@ ui <- navbarPage(id = "nav1",
                                                max        = Inf))),
                              
                              checkboxInput(inputId = "hide_axis",
-                                           label   = "Hide axis completely",
+                                           label   = "Hide colorbar",
                                            value   = FALSE),
                              
                              br(),
@@ -1669,7 +1676,7 @@ ui <- navbarPage(id = "nav1",
                                                     max        = Inf))),
                             
                             checkboxInput(inputId = "hide_axis2",
-                                          label   = "Hide axis completely",
+                                          label   = "Hide colorbar",
                                           value   = FALSE),
                             
                             br(),
@@ -3158,7 +3165,7 @@ ui <- navbarPage(id = "nav1",
                                                            max        = Inf))),
                                    
                                    checkboxInput(inputId = "hide_axis3",
-                                                 label   = "Hide axis completely",
+                                                 label   = "Hide colorbar",
                                                  value   = FALSE),
                                    
                                    br(),
@@ -3168,6 +3175,7 @@ ui <- navbarPage(id = "nav1",
                                                 choices  = c("Default", "Custom"),
                                                 selected = "Default" , inline = TRUE),
                                    
+                                   
                                    shinyjs::hidden(
                                      div(id = "hidden_custom_title3",
                                          
@@ -3175,19 +3183,19 @@ ui <- navbarPage(id = "nav1",
                                                    label       = "Custom map title:", 
                                                    value       = NA,
                                                    width       = NULL,
-                                                   placeholder = "Custom title")),
-                                     
-                                     textInput(inputId     = "title2_input3",
-                                               label       = "Custom map subtitle (e.g. Ref-Period)",
-                                               value       = NA,
-                                               width       = NULL,
-                                               placeholder = "Custom subtitle"),
-                                     
-                                     numericInput(inputId = "title_size_input3",
-                                                  label   = "Font size:",
-                                                  value   = 18,
-                                                  min     = 1,
-                                                  max     = 40)),
+                                                   placeholder = "Custom title"),
+                                         
+                                         textInput(inputId     = "title2_input3",
+                                                   label       = "Custom map subtitle (e.g. Ref-Period)",
+                                                   value       = NA,
+                                                   width       = NULL,
+                                                   placeholder = "Custom title"),
+                                         
+                                         numericInput(inputId = "title_size_input3",
+                                                      label   = "Font size:",
+                                                      value   = 18,
+                                                      min     = 1,
+                                                      max     = 40))),
                                    
                                    br(),
                                    
@@ -4086,6 +4094,116 @@ ui <- navbarPage(id = "nav1",
                                   image.width = spinner_width,
                                   image.height = spinner_height),
                       br(),
+                      br(),
+                      
+                      #### Customization panels START ----       
+                      fluidRow(
+                        #### Map customization ----       
+                        column(width = 4,
+                               h4("Customize your map", style = "color: #094030;",map_customization_popover("pop_regression_cusmap")),  
+                               
+                               checkboxInput(inputId = "custom_map_reg",
+                                             label   = "Map customization",
+                                             value   = FALSE),
+                               
+                               shinyjs::hidden(
+                                 div(id = "hidden_custom_maps_reg",
+                                     
+                                     selectInput(inputId = "projection4",
+                                                 label = "Projection:",
+                                                 choices = c("UTM (default)", "Robinson", "Orthographic", "LAEA"),
+                                                 selected = "UTM (default)"),
+                                     
+                                     shinyjs::hidden(
+                                       div(id = "hidden_map_center_reg",
+                                           
+                                           numericInput(inputId = "center_lat4",
+                                                        label = "Center latitude:",
+                                                        value = 0,
+                                                        min = -90,
+                                                        max = 90),
+                                           numericInput(inputId = "center_lon4",
+                                                        label = "Center longitude:",
+                                                        value = 0,
+                                                        min = -180,
+                                                        max = 180))),
+                                     
+                                     radioButtons(inputId  = "axis_mode_reg",
+                                                  label    = "Axis customization:",
+                                                  choices  = c("Automatic","Fixed"),
+                                                  selected = "Automatic" , inline = TRUE),
+                                     
+                                     shinyjs::hidden(
+                                       div(id = "hidden_custom_axis_reg",
+                                           
+                                           numericRangeInput(inputId    = "axis_input_reg",
+                                                             label      = "Set your axis values:",
+                                                             value      = c(NULL, NULL),
+                                                             separator  = " to ",
+                                                             min        = -Inf,
+                                                             max        = Inf))),
+                                     
+                                     checkboxInput(inputId = "hide_axis_reg",
+                                                   label   = "Hide colorbar",
+                                                   value   = FALSE),
+                                     
+                                     br(),
+                                     
+                                     radioButtons(inputId  = "title_mode_reg",
+                                                  label    = "Title customization:",
+                                                  choices  = c("Default", "Custom"),
+                                                  selected = "Default" , inline = TRUE),
+                                     
+                                     shinyjs::hidden(
+                                       div(id = "hidden_custom_title_reg",
+                                           
+                                           textInput(inputId     = "title1_input_reg",
+                                                     label       = "Custom map title:", 
+                                                     value       = NA,
+                                                     width       = NULL,
+                                                     placeholder = "Custom title"),
+                                           
+                                           textInput(inputId     = "title2_input_reg",
+                                                     label       = "Custom map subtitle (e.g. Ref-Period)",
+                                                     value       = NA,
+                                                     width       = NULL,
+                                                     placeholder = "Custom title"),
+                                           
+                                           numericInput(inputId = "title_size_input_reg",
+                                                        label   = "Font size:",
+                                                        value   = 18,
+                                                        min     = 1,
+                                                        max     = 40))),
+                                     
+                                     br(),
+                                     
+                                     h4(helpText("Shape file and border options", map_customization_layers_popover("pop_anomalies_layers"))),
+                                     
+                                     checkboxInput(inputId = "hide_borders_reg",
+                                                   label   = "Show country borders",
+                                                   value   = TRUE),
+                                     
+                                     checkboxInput(inputId = "white_ocean_reg",
+                                                   label   = "White ocean",
+                                                   value   = FALSE),
+                                     
+                                     checkboxInput(inputId = "white_land_reg",
+                                                   label   = "White land",
+                                                   value   = FALSE),
+                                     
+                                     #Shape File Option
+                                     
+                                     fileInput("shpFile", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
+                                     actionButton("reorderButton", "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
+                                     pickerInput("shpPickers4", "Select Shapefiles to Display", choices = NULL, multiple = TRUE),
+                                     uiOutput("colorpickers4"),  # Dynamically generate color pickers for each shapefile
+                                     
+                                 )),
+                        )),
+                      
+                      
+                      
+                      br(),
                       div(id = "reg4",
                           fluidRow(
                             h4("Downloads", style = "color: #094030;"),   
@@ -4143,6 +4261,7 @@ ui <- navbarPage(id = "nav1",
                       ),
                       
                       br(),
+                      
                       
                       #Download
                       h4("Downloads", style = "color: #094030;"),
@@ -5629,6 +5748,148 @@ server <- function(input, output, session) {
                     condition = input$download_options_ts3 == TRUE,
                     asis = FALSE)})
     
+    ## Correlation Maps
+    
+    observe({shinyjs::toggle(id = "hidden_custom_maps3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$custom_map3 == TRUE,
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_axis3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$axis_mode3 == "Fixed",
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_title3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$title_mode3 == "Custom",
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_features3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$custom_features3 == TRUE,
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_points3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$feature3 == "Point",
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_highlights3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$feature3 == "Highlight",
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_download3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$download_options3 == TRUE,
+                    asis = FALSE)})
+    
+    ## Correlation TS
+    
+    observe({shinyjs::toggle(id = "hidden_custom_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$custom_ts3 == TRUE,
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_title_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$title_mode_ts3 == "Custom",
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_key_position_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$show_key_ts3 == TRUE,
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_statistics_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$enable_custom_statistics_ts3 == TRUE,
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_moving_average_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$custom_average_ts3 == TRUE,
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_features_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$custom_features_ts3 == TRUE,
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_points_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$feature_ts3 == "Point",
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_highlights_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$feature_ts3 == "Highlight",
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_line_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$feature_ts3 == "Line",
+                    asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_download_ts3",
+                    anim = TRUE,
+                    animType = "slide",
+                    time = 0.5,
+                    selector = NULL,
+                    condition = input$download_options_ts3 == TRUE,
+                    asis = FALSE)})
+    
+    
+    
     # Correlation
     
     ##Sidebar V1
@@ -5964,6 +6225,89 @@ server <- function(input, output, session) {
                     selector = NULL,
                     condition = input$source_dv == "ModE-",
                     asis = FALSE)})
+    
+    ## Regression Maps
+    observe({shinyjs::toggle(id = "hidden_custom_maps_reg",
+                             anim = TRUE,
+                             animType = "slide",
+                             time = 0.5,
+                             selector = NULL,
+                             condition = input$custom_map_reg == TRUE,
+                             asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_axis_reg",
+                             anim = TRUE,
+                             animType = "slide",
+                             time = 0.5,
+                             selector = NULL,
+                             condition = input$axis_mode_reg == "Fixed",
+                             asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_title4",
+                             anim = TRUE,
+                             animType = "slide",
+                             time = 0.5,
+                             selector = NULL,
+                             condition = input$title_mode4 == "Custom",
+                             asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_features4",
+                             anim = TRUE,
+                             animType = "slide",
+                             time = 0.5,
+                             selector = NULL,
+                             condition = input$custom_features4 == TRUE,
+                             asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_points4",
+                             anim = TRUE,
+                             animType = "slide",
+                             time = 0.5,
+                             selector = NULL,
+                             condition = input$feature4 == "Point",
+                             asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_highlights4",
+                             anim = TRUE,
+                             animType = "slide",
+                             time = 0.5,
+                             selector = NULL,
+                             condition = input$feature4 == "Highlight",
+                             asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_download4",
+                             anim = TRUE,
+                             animType = "slide",
+                             time = 0.5,
+                             selector = NULL,
+                             condition = input$download_options4 == TRUE,
+                             asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_title_reg",
+                             anim = TRUE,
+                             animType = "slide",
+                             time = 0.5,
+                             selector = NULL,
+                             condition = input$title_mode_reg == "Custom",
+                             asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_title1_reg",
+                             anim = TRUE,
+                             animType = "slide",
+                             time = 0.5,
+                             selector = NULL,
+                             condition = input$title1_input_reg == "Custom",
+                             asis = FALSE)})
+    
+    observe({shinyjs::toggle(id = "hidden_custom_title2_reg",
+                             anim = TRUE,
+                             animType = "slide",
+                             time = 0.5,
+                             selector = NULL,
+                             condition = input$title2_input_reg == "Custom",
+                             asis = FALSE)})
+    
+    
     
     # Annual cycles
     
@@ -6851,7 +7195,7 @@ server <- function(input, output, session) {
       
       metadata = generate_metadata(input$axis_mode,
                                    input$axis_input,
-                                   input$hide_axis,
+                                   input$hide_axis, #
                                    input$title_mode,
                                    input$title1_input,
                                    input$title2_input,
@@ -6886,8 +7230,11 @@ server <- function(input, output, session) {
     
     output$download_metadata <- downloadHandler(
       filename = function() {"metadata.xlsx"},
+      
       content  = function(file) {
+        
         wb <- openxlsx::createWorkbook()
+        
         openxlsx::addWorksheet(wb, "custom_map")
         openxlsx::addWorksheet(wb, "custom_points")
         openxlsx::addWorksheet(wb, "custom_highlights")
@@ -11147,7 +11494,25 @@ server <- function(input, output, session) {
         return(m_d_2)
       })
       
-      map_plot_2 <- function(){plot_map(create_geotiff(map_data_2()), lonlat_vals2(), input$variable_selected2, input$mode_selected2, plot_titles_2(), input$axis_input2, input$hide_axis2, map_points_data2(), map_highlights_data2(),map_statistics_2(),input$hide_borders2, input$white_ocean2, input$white_land2, plotOrder2(), input$shpPickers2, input, "shp_colour2_", input$projection2, input$center_lat2, input$center_lon2)}
+      map_plot_2 <- function(){plot_map(create_geotiff(map_data_2()),
+                                        lonlat_vals2(),
+                                        input$variable_selected2,
+                                        input$mode_selected2,
+                                        plot_titles_2(),
+                                        input$axis_input2,
+                                        input$hide_axis2,
+                                        map_points_data2(),
+                                        map_highlights_data2(),
+                                        map_statistics_2(),
+                                        input$hide_borders2,
+                                        input$white_ocean2,
+                                        input$white_land2,
+                                        plotOrder2(),
+                                        input$shpPickers2,
+                                        input, "shp_colour2_",
+                                        input$projection2,
+                                        input$center_lat2,
+                                        input$center_lon2)}
       
       output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
       # code line below sets height as a function of the ratio of lat/lon 
@@ -11190,10 +11555,22 @@ server <- function(input, output, session) {
         } else if (input$ref_map_mode2 == "SD Ratio"){
           v=NULL; m="SD Ratio"; axis_range=c(0,1)
         }
-        plot_map(data_input=create_geotiff(ref_map_data_2()), lonlat_vals2(), variable=v, mode=m, titles=ref_map_titles_2(), axis_range, 
-                 c_borders=input$hide_borders2, white_ocean=input$white_ocean2, white_land=input$white_land2, 
-                 plotOrder=plotOrder2(), shpPickers=input$shpPickers2, input=input, plotType="shp_colour2_", 
-                 projection=input$projection2, center_lat=input$center_lat2, center_lon=input$center_lon2)
+        plot_map(data_input=create_geotiff(ref_map_data_2()),
+                 lonlat_vals2(),
+                 variable=v,
+                 mode=m,
+                 titles=ref_map_titles_2(),
+                 axis_range, 
+                 c_borders=input$hide_borders2,
+                 white_ocean=input$white_ocean2,
+                 white_land=input$white_land2, 
+                 plotOrder=plotOrder2(),
+                 shpPickers=input$shpPickers2,
+                 input=input,
+                 plotType="shp_colour2_", 
+                 projection=input$projection2,
+                 center_lat=input$center_lat2,
+                 center_lon=input$center_lon2)
       }
       
       output$ref_map2 <- renderPlot({
@@ -12275,7 +12652,94 @@ server <- function(input, output, session) {
       },width = function(){plot_dimensions_dv()[1]},height = function(){plot_dimensions_dv()[2]})  
       
     ### Regression plots ----
-    
+      ### Initialise and update custom points lines highlights ----
+      
+      map_points_data2 = reactiveVal(data.frame())
+      map_highlights_data2 = reactiveVal(data.frame())
+      
+      ts_points_data2 = reactiveVal(data.frame())
+      ts_highlights_data2 = reactiveVal(data.frame())
+      ts_lines_data2 = reactiveVal(data.frame())
+      
+      # Map Points
+      observeEvent(input$add_point2, {
+        map_points_data2(rbind(map_points_data2(),
+                               create_new_points_data(input$point_location_x2,input$point_location_y2,
+                                                      input$point_label2,input$point_shape2,
+                                                      input$point_colour2,input$point_size2)))
+      })  
+      
+      observeEvent(input$remove_last_point2, {
+        map_points_data2(map_points_data2()[-nrow(map_points_data2()),])
+      })
+      
+      observeEvent(input$remove_all_points2, {
+        map_points_data2(data.frame())
+      })
+      
+      # Map Highlights
+      observeEvent(input$add_highlight2, {
+        map_highlights_data2(rbind(map_highlights_data2(),
+                                   create_new_highlights_data(input$highlight_x_values2,input$highlight_y_values2,
+                                                              input$highlight_colour2,input$highlight_type2,NA,NA)))
+      })  
+      
+      observeEvent(input$remove_last_highlight2, {
+        map_highlights_data2(map_highlights_data2()[-nrow(map_highlights_data2()),])
+      })
+      
+      observeEvent(input$remove_all_highlights2, {
+        map_highlights_data2(data.frame())
+      })
+      
+      # timeseries Points
+      observeEvent(input$add_point_ts2, {
+        ts_points_data2(rbind(ts_points_data2(),
+                              create_new_points_data(input$point_location_x_ts2,input$point_location_y_ts2,
+                                                     input$point_label_ts2,input$point_shape_ts2,
+                                                     input$point_colour_ts2,input$point_size_ts2)))
+      })  
+      
+      observeEvent(input$remove_last_point_ts2, {
+        ts_points_data2(ts_points_data2()[-nrow(ts_points_data2()),])
+      })
+      
+      observeEvent(input$remove_all_points_ts2, {
+        ts_points_data2(data.frame())
+      })
+      
+      # timeseries Highlights
+      observeEvent(input$add_highlight_ts2, {
+        ts_highlights_data2(rbind(ts_highlights_data2(),
+                                  create_new_highlights_data(input$highlight_x_values_ts2,input$highlight_y_values_ts2,
+                                                             input$highlight_colour_ts2,input$highlight_type_ts2,
+                                                             input$show_highlight_on_legend_ts2,input$highlight_label_ts2)))
+      })  
+      
+      observeEvent(input$remove_last_highlight_ts2, {
+        ts_highlights_data2(ts_highlights_data2()[-nrow(ts_highlights_data2()),])
+      })
+      
+      observeEvent(input$remove_all_highlights_ts2, {
+        ts_highlights_data2(data.frame())
+      })
+      
+      # timeseries Lines
+      observeEvent(input$add_line_ts2, {
+        ts_lines_data2(rbind(ts_lines_data2(),
+                             create_new_lines_data(input$line_orientation_ts2,input$line_position_ts2,
+                                                   input$line_colour_ts2,input$line_type_ts2,
+                                                   input$show_line_on_legend_ts2,input$line_label_ts2)))
+      })  
+      
+      observeEvent(input$remove_last_line_ts2, {
+        ts_lines_data2(ts_lines_data2()[-nrow(ts_lines_data2()),])
+      })
+      
+      observeEvent(input$remove_all_lines_ts2, {
+        ts_lines_data2(data.frame())
+      })
+      
       ## Preparation
       
       # Set independent variables:
@@ -12297,6 +12761,22 @@ server <- function(input, output, session) {
         return(v_dv)
       })
       
+      # Map Points
+      observeEvent(input$add_point, {
+        map_points_data_reg(rbind(map_points_data(),
+                              create_new_points_data(input$point_location_x,input$point_location_y,
+                                                     input$point_label,input$point_shape,
+                                                     input$point_colour,input$point_size)))
+      })  
+      
+      observeEvent(input$remove_last_point, {
+        map_points_data(map_points_data()[-nrow(map_points_data()),])
+      })
+      
+      observeEvent(input$remove_all_points, {
+        map_points_data(data.frame())
+      })
+      
       # Generate regression titles    
       plot_titles_reg = reactive({
         
@@ -12312,7 +12792,12 @@ server <- function(input, output, session) {
                                          lonlat_vals_iv()[1:2],lonlat_vals_dv()[1:2],lonlat_vals_iv()[3:4],lonlat_vals_dv()[3:4],
                                          input$range_years4, reg_resi_year_val(),
                                          variables_iv(), variable_dv(), 
-                                         match(input$coeff_variable,variables_iv()), match(input$pvalue_variable,variables_iv()))
+                                         match(input$coeff_variable,variables_iv()), match(input$pvalue_variable,variables_iv()),
+                                         input$title_mode_reg,
+                                         input$title1_input_reg,
+                                         input$title2_input_reg,
+                                         input$title_size_input_reg
+                                         )
         return(ptr)
       })
       
@@ -12332,7 +12817,7 @@ server <- function(input, output, session) {
       ts_data_dv = reactive({
         
         req(input$nav1 == "tab4") # Only run code if in the current tab
-        
+        o
         if (input$source_dv == "ModE-"){
           tsd_dv = timeseries_data_dv()
         } else {
@@ -12495,9 +12980,35 @@ server <- function(input, output, session) {
         }
       })
       
-      reg_res_map = function(){
-        req(input$pvalue_variable)
-        plot_map(data_input=reg_res_tiff(),lon_lat_range=lonlat_vals_dv(),variable=variable_dv(), mode="Regression_residuals", titles=plot_titles_reg())
+      reg_res_map = function() {
+        
+        plot_map(
+          data_input = reg_res_tiff(),
+          lon_lat_range = lonlat_vals_dv(),
+          variable = variable_dv(),
+          
+          mode = "Regression_residuals",
+          
+          titles = plot_titles_reg(),
+          
+          axis_range = input$axis_input_reg,
+          hide_axis = input$hide_axis_reg,
+          
+          # points_data = map_points_data_reg()
+          # highlights_data = map_highlights_data_reg(),
+          
+          c_borders = input$hide_borders_reg,
+          white_ocean = input$white_ocean_reg,
+          white_land = input$white_land_reg
+          
+          # plotOrder = input$plotOrder_reg,
+          # shpPickers = input$shpPickers_reg,
+          # input = input,
+          # plotType = input$plotType_reg,
+          # projection = input$projection_reg,
+          # center_lat = input$center_lat_reg,
+          # center_lon = input$center_lon_reg
+        )
       }
       
       output$plot_reg_resi = renderPlot({reg_res_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
@@ -12512,7 +13023,6 @@ server <- function(input, output, session) {
       
       output$data_reg_res = renderTable({reg_res_table()},rownames = TRUE)
       
-  
     ### ModE-RA sources ----
       
       # Set up values and functions for plotting
@@ -13327,10 +13837,7 @@ server <- function(input, output, session) {
 # Run the app ----
 app <- shinyApp(ui = ui, server = server)
 # Run the app normally
-  runApp(app)
+runApp(app)
+
 # Run the app with profiling
-  #profvis({runApp(app)})
-
-
-  
-  
+# profvis({runApp(app)})
