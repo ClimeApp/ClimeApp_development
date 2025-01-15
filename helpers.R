@@ -63,6 +63,7 @@ setup_user_environment <- function() {
 }
 setup_user_environment()
 
+# Load only REQUIRED functions/libraries:
 #WD and Packages
 library(shiny)
 library(ncdf4)
@@ -83,7 +84,6 @@ library(shinycssloaders)
 library(profvis)
 library(openxlsx) #Don't Change order!
 library(xlsx)
-#new libraries for leaflet
 library(leaflet)
 library(htmltools)
 library(mapdata)
@@ -96,6 +96,49 @@ library(rnaturalearthdata)
 library(ggpattern)
 library(viridis)
 library(markdown)
+library(ncdf4,include.only = c("nc_close", "nc_create", "nc_open", "ncatt_put", "ncdim_def","ncvar_def", "ncvar_get", "ncvar_put"))
+library(shinyWidgets,include.only = c("numericRangeInput", "pickerInput", "sliderTextInput", "updateNumericRangeInput", 
+                                      "updatePickerInput", "updateSliderTextInput"))
+library(RColorBrewer,include.only = "brewer.pal")
+library(shinyjs,include.only =  c("colourInput", "removeClass", "show", "addClass", "delay", 
+                                  "hidden", "hide", "runjs", "toggle", "useShinyjs"))
+library(bslib,include.only = c("bs_theme", "popover"))
+library(readxl,include.only = c("read_excel", "cell_cols") )
+library(DT,include.only = c("dataTableOutput", "renderDataTable"))
+library(zoo,include.only = "rollmean" )
+library(colourpicker,include.only = "colourInput" )
+library(tmaptools,include.only = "geocode_OSM" )
+library(ggplot2,include.only = c("map_data", "aes", "after_stat", "aes_string", "annotate", 
+                                 "coord_sf", "element_rect", "element_text", "geom_hline", "geom_line", 
+                                 "geom_point", "geom_polygon", "geom_rect", "geom_sf", "geom_text", 
+                                 "geom_vline", "ggplot", "ggtitle", "guide_colorbar", "guide_legend", 
+                                 "guides", "labs", "position_nudge", "scale_color_manual", "scale_colour_manual", 
+                                 "scale_fill_stepsn", "scale_shape_manual", "scale_x_continuous", 
+                                 "scale_y_continuous", "theme", "theme_bw", "theme_classic", "theme_minimal", 
+                                 "unit") )
+library(sf,include.only = c("st_as_sf", "st_set_crs", "st_crs", "st_geometry_type", "st_read", 
+                            "st_transform") )
+library(shinylogs,include.only = c("store_json", "track_usage", "use_tracking") )
+library(shinycssloaders,include.only = "withSpinner" )
+library(openxlsx,include.only =  c("createWorkbook", "read.xlsx", "saveWorkbook", "write.xlsx", 
+                                   "addWorksheet", "getSheetNames", "writeData")) #Don't Change order!
+library(xlsx,include.only = c("createWorkbook", "read.xlsx", "saveWorkbook", "write.xlsx"))
+
+library(leaflet,include.only =  c("colorFactor","leafletOutput","renderLeaflet","leafletProxy","addCircleMarkers",
+                                  "addControl","addLayersControl","addLegend","addProviderTiles","addTiles","clearControls",
+                                  "clearMarkers","layersControlOptions","leaflet","setView","providers"))
+library(htmltools,include.only = c("a", "br", "div", "em", "h1", "h4", "h5", "h6", "hr", "HTML", 
+                                   "img", "includeCSS", "span", "strong", "tagList", "h3"))
+library(dplyr,include.only =c("select", "intersect", "arrange", "distinct", "filter", "add_row", 
+                              "all_of", "case_when","%>%"))
+library(plotly,include.only = c("select", "plotlyOutput", "renderPlotly", "style", "arrange", 
+                                "distinct", "filter", "ggplotly") )  # Load plotly library for interactivity
+library(terra) # ?
+library(tidyterra,include.only = c("select", "aes", "after_stat", "arrange", "distinct", "filter", 
+                                   "geom_spatraster_contour_filled")  )
+library(rnaturalearth) #?
+library(rnaturalearthdata) #?
+library(viridis,include.only = "viridis" )
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
@@ -212,6 +255,21 @@ random_map = sample(1:6,1)
 initial_lon_values = continent_lonlat_values[1:2,random_map]
 initial_lat_values = continent_lonlat_values[3:4,random_map]
 
+## Create dataframe of centuries and set initial year values
+C15 = c(1422,1500)
+C16 = c(1500,1600)
+C17 = c(1600,1700)
+C18 = c(1700,1800)
+C19 = c(1800,1900)
+C20 = c(1900,2000)
+
+century_years = data.frame(C15,C16,C17,C18,C19,C20)
+row.names(century_years) = c("year_min","year_max")
+
+random_century = sample(1:6,1)
+
+initial_year_values = century_years[,random_century]
+  
 ## Load grid square weights for calculating means
 latlon_weights = as.matrix(read.csv("data/latlon_weights.csv"))
 
@@ -5279,3 +5337,4 @@ generate_month_label <- function(range) {
     paste(month_letters[(range[1]:range[2]) + 1], collapse = "")
   }
 }
+

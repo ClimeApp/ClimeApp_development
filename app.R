@@ -173,9 +173,9 @@ ui <- navbarPage(id = "nav1",
             tabPanel("Welcome",
             tags$img(src = 'pics/welcome_map.jpg', id = "welcome_map", class = "responsive-img"),
             h4("For more information on the ModE datasets and ClimeApp please see:", style = "color: #094030;"),
-            h5(helpText(a("ModE-RA - a global monthly paleo-reanalysis of the modern era 1421 to 2008", href = "https://doi.org/10.1038/s41597-023-02733-8"), br(), a("ModE-RAclim - a version of the ModE-RA reanalysis with climatological prior for sensitivity studies", href = "https://www.wdc-climate.de/ui/entry?acronym=ModE-RAc"), br(),  a("ModE-Sim – a medium-sized atmospheric general circulation model (AGCM) ensemble to study climate variability during the modern era (1420 to 2009)", href = "https://gmd.copernicus.org/articles/16/4853/2023/"), br(), a("ClimeApp Technical Paper", href = "https://doi.org/10.5194/egusphere-2024-743"))),
+            h5(helpText(a("ModE-RA - a global monthly paleo-reanalysis of the modern era 1421 to 2008", href = "https://doi.org/10.1038/s41597-023-02733-8"), br(), a("ModE-RAclim - a version of the ModE-RA reanalysis with climatological prior for sensitivity studies", href = "https://www.wdc-climate.de/ui/entry?acronym=ModE-RAc"), br(),  a("ModE-Sim – a medium-sized atmospheric general circulation model (AGCM) ensemble to study climate variability during the modern era (1420 to 2009)", href = "https://gmd.copernicus.org/articles/16/4853/2023/"), br(), a("ClimeApp: data processing tool for monthly, global climate data from the ModE-RA palaeo-reanalysis, 1422 to 2008 CE", href = "https://doi.org/10.5194/cp-20-2645-2024"))),
             h4("To cite, please reference:", style = "color: #094030;"),
-            h5(helpText("R. Warren, N. Bartlome, N. Wellinger, J. Franke, R. Hand, S. Br\u00F6nnimann, H. Huhtamaa: ClimeApp: Opening Doors to the Past Global Climate. New Data Processing Tool for the ModE-RA Climate Reanalysis. Clim. Past [in review].")),
+            h5(helpText("R. Warren, N. Bartlome, N. Wellinger, J. Franke, R. Hand, S. Br\u00F6nnimann, H. Huhtamaa: ClimeApp: data processing tool for monthly, global climate data from the ModE-RA palaeo-reanalysis, 1422 to 2008 CE. CP 20, 2645–2662 (2024).")),
             h5(helpText("V. Valler, J. Franke, Y. Brugnara, E. Samakinwa, R. Hand, E. Lundstad, A.-M. Burgdorf, L. Lipfert, A. R. Friedman, S. Br\u00F6nnimann: ModE-RA: a global monthly paleo-reanalysis of the modern era 1421 to 2008. Scientific Data 11 (2024).")),
             h5(helpText("R. Hand, E. Samakinwa, L. Lipfert, and S. Br\u00F6nnimann: ModE-Sim – a medium-sized atmospheric general circulation model (AGCM) ensemble to study climate variability during the modern era (1420 to 2009). GMD 16 (2023).")),
             h5("Funding:", style = "color: #094030;"),
@@ -435,7 +435,7 @@ ui <- navbarPage(id = "nav1",
                     hidden(
                     numericRangeInput(inputId    = "range_years",
                                        label     = "Select the range of years (1422-2008):",
-                                       value     = c(1422,2008),
+                                       value     = initial_year_values,
                                        separator = " to ",
                                        min       = 1422,
                                        max       = 2008)),
@@ -940,7 +940,7 @@ ui <- navbarPage(id = "nav1",
                                  div(id = "hidden_custom_title_ts",
                                       
                                      textInput(inputId     = "title1_input_ts",
-                                               label       = "Custom map title:", 
+                                               label       = "Custom plot title:", 
                                                value       = NA,
                                                width       = NULL,
                                                placeholder = "Custom title"),
@@ -1982,7 +1982,7 @@ ui <- navbarPage(id = "nav1",
                                      div(id = "hidden_custom_title_ts2",
                                          
                                          textInput(inputId     = "title1_input_ts2",
-                                                   label       = "Custom map title:", 
+                                                   label       = "Custom plot title:", 
                                                    value       = NA,
                                                    width       = NULL,
                                                    placeholder = "Custom title")
@@ -3112,6 +3112,10 @@ ui <- navbarPage(id = "nav1",
                                         image = spinner_image,
                                         image.width = spinner_width,
                                         image.height = spinner_height),
+                            
+                            #Easter Leaves
+                            uiOutput("leaves", inline = TRUE),
+                            
                       #### Customization panels START ----       
                       fluidRow(
                       #### Map customization ----       
@@ -4544,7 +4548,7 @@ ui <- navbarPage(id = "nav1",
                                        div(id = "hidden_custom_title_ts5",
                                            
                                            textInput(inputId     = "title1_input_ts5",
-                                                     label       = "Custom map title:", 
+                                                     label       = "Custom plot title:", 
                                                      value       = NA,
                                                      width       = NULL,
                                                      placeholder = "Custom title")
@@ -5050,6 +5054,14 @@ server <- function(input, output, session) {
   output$keep_calm <- renderUI({
     if (input$title1_input_ts3 == "Keep Calm") {
       img(src = 'pics/KCAUCA.png', id = "img_britannia", height = "514", width = "488", style = "display: block; margin: 0 auto;")
+    } else {
+      NULL
+    }
+  })
+  
+  output$leaves <- renderUI({
+    if (input$title1_input3 == "Leaves from the Vine") {
+      img(src = 'pics/LeavesFromTheVine.jpg', id = "img_leaves", height = "450", width = "600", style = "display: block; margin: 0 auto;")
     } else {
       NULL
     }
