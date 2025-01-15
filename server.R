@@ -6257,30 +6257,48 @@ server <- function(input, output, session) {
   
   timeseries_plot <- function(){
     
+    # #Plot normal timeseries if year range is > 1 year
+    # if (input$range_years[1] != input$range_years[2]){
+    #   # Generate NA or reference mean
+    #   if(input$show_ref_ts == TRUE){
+    #     ref_ts = signif(mean(data_output3_primary()),3)
+    #   } else {
+    #     ref_ts = NA
+    #   }
+    #   p <- plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
+    #   p <- add_percentiles(p, timeseries_data())
+    # }
+    # 
+    # # Plot monthly TS if year range = 1 year
+    # else {
+    #   p <- plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","base")
+    # }
+    # 
+    # p <- add_timeseries_custom_features(p, ts_highlights_data(), ts_lines_data(), ts_points_data())
+    # p <- add_timeseries(p, timeseries_data(), "general", input$variable_selected)
+    # 
+    # if (input$show_key_ts == TRUE){
+    #   p <- add_TS_key(p, input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
+    #                   input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
+    # }
+    
+    #TODO move this to plot_timeseries function
     #Plot normal timeseries if year range is > 1 year
     if (input$range_years[1] != input$range_years[2]){
       # Generate NA or reference mean
-      if(input$show_ref_ts == TRUE){
-        ref_ts = signif(mean(data_output3_primary()),3)
       } else {
         ref_ts = NA
       }
-      p <- plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
-      p <- add_percentiles(p, timeseries_data())
-    }
     
-    # Plot monthly TS if year range = 1 year
-    else {
-      p <- plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","base")
-    }
+    # New 
+    p <- plot_timeseries(type="Anomaly", data=timeseries_data(), variable=input$variable_selected,
+                         ref=data_output3_primary(), year_range=input$range_years, month_range=month_range_primary(),
+                         titles=plot_titles(), titles_mode=input$title_mode_ts, 
+                         show_key=input$show_key_ts, key_position=input$key_position_ts, 
+                         moving_ave=input$custom_average_ts, moving_ave_year=input$year_moving_ts, 
+                         custom_percentile=input$custom_percentile_ts, percentiles=input$percentile_ts, 
+                         highlights=ts_highlights_data(), lines=ts_lines_data(), points=ts_points_data())
     
-    p <- add_timeseries_custom_features(p, ts_highlights_data(), ts_lines_data(), ts_points_data())
-    p <- add_timeseries(p, timeseries_data(), "general", input$variable_selected)
-    
-    if (input$show_key_ts == TRUE){
-      p <- add_TS_key(p, input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
-                      input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
-    }
     return(p)
   }
   
@@ -7959,12 +7977,6 @@ server <- function(input, output, session) {
     create_geotiff(reg_coef_table()) 
   })
   
-  # reg_coef_map = function(){
-  #   req(input$coeff_variable)
-  #   plot_regression_coefficients(regression_coeff_data(),variables_iv(),match(input$coeff_variable,variables_iv()),
-  #                                variable_dv(),plot_titles_reg(),subset_lons_primary(),subset_lats_primary(),TRUE)
-  # }
-  
   reg_coef_map = function(){
     req(input$coeff_variable)
     plot_map(data_input=reg_coef_tiff(), lon_lat_range=lonlat_vals_dv(), variable=input$coeff_variable, mode="Regression_coefficients", titles=plot_titles_reg())
@@ -8000,12 +8012,6 @@ server <- function(input, output, session) {
     req(input$nav1 == "tab4") # Only run code if in the current tab
     create_geotiff(reg_pval_table()) 
   })
-  
-  # reg_pval_map = function(){
-  #   req(input$pvalue_variable)
-  #   plot_regression_pvalues(regression_pvalue_data(),variables_iv(),match(input$pvalue_variable,variables_iv()),
-  #                           variable_dv(),plot_titles_reg(),subset_lons_primary(),subset_lats_primary(),TRUE)
-  # }
   
   reg_pval_map = function(){
     req(input$pvalue_variable)
@@ -8051,12 +8057,7 @@ server <- function(input, output, session) {
       reg_resi_year_val(input$reg_resi_year)
     }
   })
-  
-  # reg_res_map = function(){
-  #   plot_regression_residuals(regression_residuals_data(),reg_resi_year_val(),input$range_years4,
-  #                             variables_iv(),variable_dv(),plot_titles_reg(),
-  #                             subset_lons_primary(),subset_lats_primary(),TRUE)
-  # }
+
   reg_res_map = function() {
     
     plot_map(

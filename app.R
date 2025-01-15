@@ -4,6 +4,8 @@ library(profvis)
 
   
 source("helpers.R")
+source("popovers.R")
+source("setup.R")
 
 # Define UI ----
 
