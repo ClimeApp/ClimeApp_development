@@ -4913,10 +4913,8 @@ ui <- navbarPage(id = "nav1",
   )
 
 # END ----
-<<<<<<< HEAD
 )
-=======
-)
+
 
 
      
@@ -13844,4 +13842,3 @@ runApp(app)
 
 # Run the app with profiling
 # profvis({runApp(app)})
->>>>>>> 9d4bb1657fc5667fc719d0567b7b13093ad70fa8
