@@ -5954,7 +5954,8 @@ server <- function(input, output, session) {
     } else if (input$nav1 == "tab2"){   # Composites
       create_yearly_subset_composite(data_output1_primary(), data_id_primary(), year_set_comp(), month_range_primary())
     } else if (input$nav1 == "tab3"){   # Correlation
-      create_yearly_subset(data_output1_primary(), data_id_primary(), input$range_years3, month_range_primary())     
+      adjusted_year_range_primary = input$range_years3 + input$lagyears_v1_cor
+      create_yearly_subset(data_output1_primary(), data_id_primary(), adjusted_year_range_primary, month_range_primary())     
     } else if (input$nav1 == "tab4"){   # Regression
       create_yearly_subset(data_output1_primary(), data_id_primary(), input$range_years4, month_range_primary()) 
     }
@@ -5962,7 +5963,8 @@ server <- function(input, output, session) {
   
   data_output2_secondary <- reactive({
     if (input$nav1 == "tab3"){   # Correlation
-      create_yearly_subset(data_output1_secondary(), data_id_secondary(), input$range_years3, month_range_secondary())
+      adjusted_year_range_secondary = input$range_years3 + input$lagyears_v2_cor
+      create_yearly_subset(data_output1_secondary(), data_id_secondary(), adjusted_year_range_secondary, month_range_secondary())
     }
   })
   
@@ -6963,7 +6965,7 @@ server <- function(input, output, session) {
     
     result <- tryCatch(
       {
-        return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath))
+        return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath,input$lagyears_v1_cor,input$lagyears_v2_cor))
         return(yrc)
       },
       error = function(e) {
@@ -7021,7 +7023,7 @@ server <- function(input, output, session) {
       
       result <- tryCatch(
         {
-          return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath))
+          return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath,input$lagyears_v1_cor,input$lagyears_v2_cor))
           return(yrc)
         },
         error = function(e) {
@@ -7042,6 +7044,8 @@ server <- function(input, output, session) {
     
     usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3)
     
+    usr_ss1$Year = usr_ss1$Year - input$lagyears_v1_cor # adjust for lag years
+    
     return(usr_ss1)
   })
   
@@ -7051,6 +7055,8 @@ server <- function(input, output, session) {
     req(user_data_v2(),input$user_variable_v2)
     
     usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3)
+    
+    usr_ss2$Year = usr_ss2$Year - input$lagyears_v2_cor # adjust for lag years
     
     return(usr_ss2)
   })
@@ -7079,6 +7085,7 @@ server <- function(input, output, session) {
   timeseries_data_v1 <- reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
     ts_data1_v1 <- create_timeseries_datatable(data_output4_primary(), input$range_years3, "range", subset_lons_primary(), subset_lats_primary())
+    ts_data1_v1$Year = ts_data1_v1$Year - input$lagyears_v1_cor # adjust for lag years
     return(ts_data1_v1)
   })
   
@@ -7114,6 +7121,7 @@ server <- function(input, output, session) {
   timeseries_data_v2 <- reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
     ts_data1_v2 <- create_timeseries_datatable(data_output4_secondary(), input$range_years3, "range", subset_lons_secondary(), subset_lats_secondary())
+    ts_data1_v2$Year = ts_data1_v2$Year - input$lagyears_v2_cor # adjust for lag years
     return(ts_data1_v2)
   })
   
@@ -7563,7 +7571,7 @@ server <- function(input, output, session) {
     
     result <- tryCatch(
       {
-        return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath))
+        return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath,0,0))
       },
       error = function(e) {
         showModal(
