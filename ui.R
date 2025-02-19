@@ -3981,6 +3981,7 @@ ui <- navbarPage(id = "nav1",
                                   image = spinner_image,
                                   image.width = spinner_width,
                                   image.height = spinner_height),
+                      
                       br(),
                       div(id = "reg1",
                           fluidRow(
@@ -4000,7 +4001,11 @@ ui <- navbarPage(id = "nav1",
                             column(width = 3,
                                    h4("Statistical summary", style = "color: #094030;"),
                                    downloadButton(outputId = "download_reg_sum_txt", label = "Download ")),
-                          )), br(), 
+                          )
+                          ),
+                      
+                      br(),
+                      
                       splitLayout(
                         column(width = 4,
                                withSpinner(ui_element = dataTableOutput("data_reg_ts"),
@@ -4031,22 +4036,160 @@ ui <- navbarPage(id = "nav1",
                                   image.width = spinner_width,
                                   image.height = spinner_height),
                       br(),
-                      div(id = "reg2",
-                          fluidRow(
-                            h4("Downloads", style = "color: #094030;"),
-                            column(2, radioButtons(inputId = "reg_coe_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                            column(3, downloadButton(outputId = "download_reg_coe_plot", label = "Download map")), 
-                            
-                            column(2, radioButtons(inputId = "reg_coe_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                            column(3, downloadButton(outputId = "download_reg_coe_plot_data", label = "Download data")),
-                          )), br(),
-                      ######## Add Map and Feature Customization
+                      br(),
                       
+                      #### Customization panels START ----       
+                      fluidRow(
+                        #### Map customization ----       
+                        column(width = 4,
+                               h4("Customize your map", style = "color: #094030;",map_customization_popover("pop_regression_cusmap")),  
+                               
+                               checkboxInput(inputId = "custom_map_reg_coeff",
+                                             label   = "Map customization",
+                                             value   = FALSE),
+                               
+                               shinyjs::hidden(
+                                 div(id = "hidden_custom_map_reg_coeff",
+                                     
+                                     selectInput(inputId = "projection4",
+                                                 label = "Projection:",
+                                                 choices = c("UTM (default)", "Robinson", "Orthographic", "LAEA"),
+                                                 selected = "UTM (default)"),
+                                     
+                                     shinyjs::hidden(
+                                       div(id = "hidden_map_center_reg",
+                                           
+                                           numericInput(inputId = "center_lat4",
+                                                        label = "Center latitude:",
+                                                        value = 0,
+                                                        min = -90,
+                                                        max = 90),
+                                           numericInput(inputId = "center_lon4",
+                                                        label = "Center longitude:",
+                                                        value = 0,
+                                                        min = -180,
+                                                        max = 180))),
+                                     
+                                     radioButtons(inputId  = "axis_mode_reg_res",
+                                                  label    = "Axis customization:",
+                                                  choices  = c("Automatic","Fixed"),
+                                                  selected = "Automatic" , inline = TRUE),
+                                     
+                                     shinyjs::hidden(
+                                       div(id = "hidden_custom_axis_reg_coeff",
+                                           
+                                           numericRangeInput(inputId    = "axis_input_reg_coef",
+                                                             label      = "Set your axis values:",
+                                                             value      = c(NULL, NULL),
+                                                             separator  = " to ",
+                                                             min        = -Inf,
+                                                             max        = Inf))),
+                                     
+                                     checkboxInput(inputId = "hide_axis_reg_coef",
+                                                   label   = "Hide colorbar",
+                                                   value   = FALSE),
+                                     
+                                     br(),
+                                     
+                                     radioButtons(inputId  = "title_mode_reg_coeff",
+                                                  label    = "Title customization:",
+                                                  choices  = c("Default", "Custom"),
+                                                  selected = "Default" , inline = TRUE),
+                                     
+                                     shinyjs::hidden(
+                                       div(id = "hidden_custom_title_reg_coeff",
+                                           
+                                           textInput(inputId     = "title1_input_reg_coeff",
+                                                     label       = "Custom map title:", 
+                                                     value       = NA,
+                                                     width       = NULL,
+                                                     placeholder = "Custom title"),
+                                           
+                                           textInput(inputId     = "title2_input_reg_coeff",
+                                                     label       = "Custom map subtitle (e.g. Ref-Period)",
+                                                     value       = NA,
+                                                     width       = NULL,
+                                                     placeholder = "Custom title"),
+                                           
+                                           numericInput(inputId = "title_size_input_reg_coeff",
+                                                        label   = "Font size:",
+                                                        value   = 18,
+                                                        min     = 1,
+                                                        max     = 40))),
+                                     
+                                     br(),
+                                     
+                                     h4(helpText("Shape file and border options", map_customization_layers_popover("pop_anomalies_layers"))),
+                                     
+                                     checkboxInput(inputId = "hide_borders_reg_coef",
+                                                   label   = "Show country borders",
+                                                   value   = TRUE),
+                                     
+                                     checkboxInput(inputId = "white_ocean_reg_coef",
+                                                   label   = "White ocean",
+                                                   value   = FALSE),
+                                     
+                                     checkboxInput(inputId = "white_land_reg_coef",
+                                                   label   = "White land",
+                                                   value   = FALSE),
+                                     
+                                     #Shape File Option
+                                     
+                                     fileInput("shpFile", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
+                                     actionButton("reorderButton", "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
+                                     pickerInput("shpPickers4", "Select Shapefiles to Display", choices = NULL, multiple = TRUE),
+                                     uiOutput("colorpickers4"),  # Dynamically generate color pickers for each shapefile
+                                     
+                                 )),
+                        )),
+                      
+                      br(),
+
+                      
+                      ## Download and Upload Regression Coefficients Map
+                      h4("Downloads", style = "color: #094030;", downloads_popover("pop_composites_map_downloads")),
+                          checkboxInput(
+                            inputId = "download_options_coeff",
+                            label = "Enable download options",
+                            value = FALSE
+                      ),
+                      
+                      
+                      shinyjs::hidden(div(id = "hidden_download_coeff",
+                                          
+                                          # Download map and map data
+                                          h4(helpText("Map and map data")),
+                                          fluidRow(
+                                            # Download map
+                                            column(2, radioButtons(inputId = "reg_coe_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                            column(3, downloadButton(outputId = "download_reg_coe_plot", label = "Download map")),
+                                            # Download map data
+                                            column(2,radioButtons(inputId = "reg_coe_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                            column(3, downloadButton(outputId = "download_reg_coe_plot_data", label = "Download map data")),
+                                          ),
+                                          ###### Noch anpassen!!!
+                                          # Download, upload and update metadata
+                                          h4(helpText("Metadata")),
+                                          fluidRow(
+                                            # Download metadata
+                                            column(3, downloadButton(outputId = "download_metadata3", label = "Download metadata")),
+                                            # Upload metadata
+                                            column(4, fileInput(inputId= "upload_metadata3", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                            # Update metadata
+                                            column(2, actionButton(inputId = "update_metadata3", label = "Update upload inputs")),
+                                          ),
+                      )),
+                      br(),
+                      # Data table
+                      h4("Map Data", style = "color: #094030;"),
+                      br(),
                       withSpinner(ui_element = tableOutput("data_reg_coeff"),
                                   image = spinner_image,
                                   image.width = spinner_width,
-                                  image.height = spinner_height)
+                                  image.height = spinner_height),
+             
              ),
+                    
              
              ### Regression pvalues ----
              tabPanel("Regression p values",
@@ -4062,15 +4205,152 @@ ui <- navbarPage(id = "nav1",
                                   image.width = spinner_width,
                                   image.height = spinner_height),
                       br(),
-                      div(id = "reg3",
-                          fluidRow(
-                            h4("Downloads", style = "color: #094030;"),  
-                            column(2, radioButtons(inputId = "reg_pval_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                            column(3, downloadButton(outputId = "download_reg_pval_plot", label = "Download map")), 
-                            
-                            column(2,radioButtons(inputId = "reg_pval_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                            column(3, downloadButton(outputId = "download_reg_pval_plot_data", label = "Download data")),
-                          )), br(),
+                      br(),
+                      
+                      #### Customization panels START ----       
+                      fluidRow(
+                        #### Map customization ----       
+                        column(width = 4,
+                               h4("Customize your map", style = "color: #094030;",map_customization_popover("pop_regression_cusmap")),  
+                               
+                               checkboxInput(inputId = "custom_map_reg_pval",
+                                             label   = "Map customization",
+                                             value   = FALSE),
+                               
+                               shinyjs::hidden(
+                                 div(id = "hidden_custom_map_reg_pval",
+                                     
+                                     selectInput(inputId = "projection4",
+                                                 label = "Projection:",
+                                                 choices = c("UTM (default)", "Robinson", "Orthographic", "LAEA"),
+                                                 selected = "UTM (default)"),
+                                     
+                                     shinyjs::hidden(
+                                       div(id = "hidden_map_center_reg",
+                                           
+                                           numericInput(inputId = "center_lat4",
+                                                        label = "Center latitude:",
+                                                        value = 0,
+                                                        min = -90,
+                                                        max = 90),
+                                           numericInput(inputId = "center_lon4",
+                                                        label = "Center longitude:",
+                                                        value = 0,
+                                                        min = -180,
+                                                        max = 180))),
+                                     
+                                     radioButtons(inputId  = "axis_mode_reg_res",
+                                                  label    = "Axis customization:",
+                                                  choices  = c("Automatic","Fixed"),
+                                                  selected = "Automatic" , inline = TRUE),
+                                     
+                                     shinyjs::hidden(
+                                       div(id = "hidden_custom_axis_reg_pvals",
+                                           
+                                           numericRangeInput(inputId    = "axis_input_reg",
+                                                             label      = "Set your axis values:",
+                                                             value      = c(NULL, NULL),
+                                                             separator  = " to ",
+                                                             min        = -Inf,
+                                                             max        = Inf))),
+                                     
+                                     checkboxInput(inputId = "hide_axis_reg_pval",
+                                                   label   = "Hide colorbar",
+                                                   value   = FALSE),
+                                     
+                                     br(),
+                                     
+                                     radioButtons(inputId  = "title_mode_reg_coeff",
+                                                  label    = "Title customization:",
+                                                  choices  = c("Default", "Custom"),
+                                                  selected = "Default" , inline = TRUE),
+                                     
+                                     
+                                     shinyjs::hidden(
+                                       div(id = "hidden_custom_title_reg",
+                                           
+                                           textInput(inputId     = "title1_input_reg",
+                                                     label       = "Custom map title:", 
+                                                     value       = NA,
+                                                     width       = NULL,
+                                                     placeholder = "Custom title"),
+                                           
+                                           textInput(inputId     = "title2_input_reg",
+                                                     label       = "Custom map subtitle (e.g. Ref-Period):",
+                                                     value       = NA,
+                                                     width       = NULL,
+                                                     placeholder = "Custom title"),
+                                           
+                                           numericInput(inputId = "title_size_input_reg",
+                                                        label   = "Font size:",
+                                                        value   = 18,
+                                                        min     = 1,
+                                                        max     = 40))),
+                                     
+                                     
+                                     
+                                     br(),
+                                     
+                                     h4(helpText("Shape file and border options", map_customization_layers_popover("pop_anomalies_layers"))),
+                                     
+                                     checkboxInput(inputId = "hide_borders_reg_pval",
+                                                   label   = "Show country borders",
+                                                   value   = TRUE),
+                                     
+                                     checkboxInput(inputId = "white_ocean_reg_pval",
+                                                   label   = "White ocean",
+                                                   value   = FALSE),
+                                     
+                                     checkboxInput(inputId = "white_land_reg_pval",
+                                                   label   = "White land",
+                                                   value   = FALSE),
+                                     
+                                     #Shape File Option
+                                     
+                                     fileInput("shpFile", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
+                                     actionButton("reorderButton", "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
+                                     pickerInput("shpPickers4", "Select Shapefiles to Display", choices = NULL, multiple = TRUE),
+                                     uiOutput("colorpickers4"),  # Dynamically generate color pickers for each shapefile
+                                     
+                                 )),
+                        )),
+                      
+                      br(),
+                      
+                      # Downloads
+                      h4("Downloads", style = "color: #094030;",downloads_popover("pop_composites_map_downloads")),
+                      checkboxInput(inputId = "download_options_pval",
+                                    label   = "Enable download options",
+                                    value   = FALSE),
+                      
+                      shinyjs::hidden(div(id = "hidden_download_pval",
+                                          
+                                          # Download map and map data
+                                          h4(helpText("Map and map data")),
+                                          fluidRow(
+                                            # Download map
+                                            column(2, radioButtons(inputId = "reg_pval_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                            column(3, downloadButton(outputId = "download_reg_pval_plot", label = "Download map")),
+                                            # Download map data
+                                            column(2,radioButtons(inputId = "reg_pval_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                            column(3, downloadButton(outputId = "download_reg_pval_plot_data", label = "Download map data")),
+                                          ),
+                                          
+                                          # Download, upload and update metadata
+                                          h4(helpText("Metadata")),
+                                          fluidRow(
+                                            # Download metadata
+                                            column(3, downloadButton(outputId = "download_metadata_reg_res", label = "Download metadata")),
+                                            # Upload metadata
+                                            column(4, fileInput(inputId= "upload_metadata3", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                            # Update metadata
+                                            column(2, actionButton(inputId = "update_metadata3", label = "Update upload inputs")),
+                                          ),
+                      )),
+                      br(),
+                      # Data table
+                      h4("Map Data", style = "color: #094030;"),
+                      br(),
                       withSpinner(ui_element = tableOutput("data_reg_pval"),
                                   image = spinner_image,
                                   image.width = spinner_width,
@@ -4104,12 +4384,12 @@ ui <- navbarPage(id = "nav1",
                         column(width = 4,
                                h4("Customize your map", style = "color: #094030;",map_customization_popover("pop_regression_cusmap")),  
                                
-                               checkboxInput(inputId = "custom_map_reg",
+                               checkboxInput(inputId = "custom_map_reg_res",
                                              label   = "Map customization",
                                              value   = FALSE),
                                
                                shinyjs::hidden(
-                                 div(id = "hidden_custom_maps_reg",
+                                 div(id = "hidden_custom_maps_reg_res",
                                      
                                      selectInput(inputId = "projection4",
                                                  label = "Projection:",
@@ -4130,7 +4410,7 @@ ui <- navbarPage(id = "nav1",
                                                         min = -180,
                                                         max = 180))),
                                      
-                                     radioButtons(inputId  = "axis_mode_reg",
+                                     radioButtons(inputId  = "axis_mode_reg_res",
                                                   label    = "Axis customization:",
                                                   choices  = c("Automatic","Fixed"),
                                                   selected = "Automatic" , inline = TRUE),
@@ -4138,14 +4418,14 @@ ui <- navbarPage(id = "nav1",
                                      shinyjs::hidden(
                                        div(id = "hidden_custom_axis_reg",
                                            
-                                           numericRangeInput(inputId    = "axis_input_reg",
+                                           numericRangeInput(inputId    = "axis_input_reg_res",
                                                              label      = "Set your axis values:",
                                                              value      = c(NULL, NULL),
                                                              separator  = " to ",
                                                              min        = -Inf,
                                                              max        = Inf))),
                                      
-                                     checkboxInput(inputId = "hide_axis_reg",
+                                     checkboxInput(inputId = "hide_axis_reg_res",
                                                    label   = "Hide colorbar",
                                                    value   = FALSE),
                                      
@@ -4157,7 +4437,7 @@ ui <- navbarPage(id = "nav1",
                                                   selected = "Default" , inline = TRUE),
                                      
                                      shinyjs::hidden(
-                                       div(id = "hidden_custom_title_reg",
+                                       div(id = "hidden_custom_title2",
                                            
                                            textInput(inputId     = "title1_input_reg",
                                                      label       = "Custom map title:", 
@@ -4181,15 +4461,15 @@ ui <- navbarPage(id = "nav1",
                                      
                                      h4(helpText("Shape file and border options", map_customization_layers_popover("pop_anomalies_layers"))),
                                      
-                                     checkboxInput(inputId = "hide_borders_reg",
+                                     checkboxInput(inputId = "hide_borders_reg_res",
                                                    label   = "Show country borders",
                                                    value   = TRUE),
                                      
-                                     checkboxInput(inputId = "white_ocean_reg",
+                                     checkboxInput(inputId = "white_ocean_reg_res",
                                                    label   = "White ocean",
                                                    value   = FALSE),
                                      
-                                     checkboxInput(inputId = "white_land_reg",
+                                     checkboxInput(inputId = "white_land_reg_res",
                                                    label   = "White land",
                                                    value   = FALSE),
                                      
@@ -4203,18 +4483,42 @@ ui <- navbarPage(id = "nav1",
                                  )),
                         )),
                       
-                      
-                      
                       br(),
-                      div(id = "reg4",
-                          fluidRow(
-                            h4("Downloads", style = "color: #094030;"),   
-                            column(2, radioButtons(inputId = "reg_res_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                            column(3, downloadButton(outputId = "download_reg_res_plot", label = "Download map")), 
-                            
-                            column(2,radioButtons(inputId = "reg_res_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                            column(3, downloadButton(outputId = "download_reg_res_plot_data", label = "Download data")),
-                          )), br(),
+                      
+                      #### Downloads Map Regression Residuals ----
+                      h4("Downloads", style = "color: #094030;",downloads_popover("pop_composites_map_downloads")),
+                      checkboxInput(inputId = "download_options_regres",
+                                    label   = "Enable download options",
+                                    value   = FALSE),
+                      
+                      shinyjs::hidden(div(id = "hidden_download_regres",
+                                          
+                                          # Download map and map data
+                                          h4(helpText("Map and map data")),
+                                          fluidRow(
+                                            # Download map
+                                            column(2, radioButtons(inputId = "reg_res_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                            column(3, downloadButton(outputId = "download_reg_res_plot", label = "Download map")),
+                                            # Download map data
+                                            column(2,radioButtons(inputId = "reg_res_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                            column(3, downloadButton(outputId = "download_reg_res_plot_data", label = "Download map data")),
+                                          ),
+                                          
+                                          # Download, upload and update metadata
+                                          h4(helpText("Metadata")),
+                                          fluidRow(
+                                            # Download metadata
+                                            column(3, downloadButton(outputId = "download_metadata_reg_res", label = "Download metadata")),
+                                            # Upload metadata
+                                            column(4, fileInput(inputId= "upload_metadata3", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                            # Update metadata
+                                            column(2, actionButton(inputId = "update_metadata3", label = "Update upload inputs")),
+                                          ),
+                      )),
+                      br(),
+                      # Data table
+                      h4("Map Data", style = "color: #094030;"),
+                      br(),
                       withSpinner(ui_element = tableOutput("data_reg_res"),
                                   image = spinner_image,
                                   image.width = spinner_width,

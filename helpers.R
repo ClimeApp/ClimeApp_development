@@ -520,9 +520,20 @@ convert_subset_to_anomalies = function(data_input,ref_data){
 ##           map/ts_custom_title1/2 = user entered titles
 ##           title_size = numeric value for the title font size, default = 18
 
-generate_titles = function(tab,dataset,variable,mode,map_title_mode,ts_title_mode,month_range,
-                           year_range,baseline_range,baseline_years_before,lon_range,
-                           lat_range,map_custom_title1,map_custom_title2,ts_custom_title,title_size=18){
+generate_titles = function(tab,dataset,
+                           variable,mode,
+                           map_title_mode,
+                           ts_title_mode,
+                           month_range,
+                           year_range,
+                           baseline_range,
+                           baseline_years_before,
+                           lon_range,
+                           lat_range,
+                           map_custom_title1,
+                           map_custom_title2,
+                           ts_custom_title,
+                           title_size=18){
   
   # Generate title months
   title_months = generate_title_months(month_range)
@@ -1835,8 +1846,18 @@ create_geotiff <- function(map_data, output_file = NULL) {
 ## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR PLOT
 ##           data input = Input form Plot Customization
 
-generate_metadata <- function(axis_mode, axis_input, hide_axis, title_mode, title1_input, title2_input, 
-                              custom_statistic, sd_ratio, hide_borders) {
+generate_metadata <- function(axis_mode,
+                              axis_input,
+                              hide_axis,
+                              title_mode,
+                              title1_input,
+                              title2_input,
+                              title_size_input,
+                              custom_statistic,
+                              sd_ratio,
+                              hide_borders,
+                              white_ocean,
+                              white_land) {
   
   # Adjust axis_input based on axis_mode
   if (axis_mode == "Automatic") {
@@ -1853,9 +1874,12 @@ generate_metadata <- function(axis_mode, axis_input, hide_axis, title_mode, titl
     title_mode, 
     title1_input, 
     title2_input,
+    title_size_input,
     custom_statistic, 
     sd_ratio, 
-    hide_borders
+    hide_borders,
+    white_ocean,
+    white_land
   )
   
   return(meta_input)
@@ -2461,8 +2485,19 @@ convert_composite_to_anomalies = function(data_input,ref_data,data_ID,year_set,m
 ## (Composite) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR PLOT
 ##             data input = Input form Plot Customization
 
-generate_metadata_comp <- function(axis_mode2, axis_input2, hide_axis2, title_mode2, title1_input2, title2_input2, 
-                              custom_statistic2, percentage_sign_match2, sd_ratio2, hide_borders2) {
+generate_metadata_comp <- function(axis_mode2,
+                                   axis_input2,
+                                   hide_axis2,
+                                   title_mode2,
+                                   title1_input2,
+                                   title2_input2,
+                                   title_size_input2,
+                                   custom_statistic2,
+                                   percentage_sign_match2,
+                                   sd_ratio2,
+                                   hide_borders2,
+                                   white_ocean2,
+                                   white_land2) {
   
   # Adjust axis_input based on axis_mode
   if (axis_mode2 == "Automatic") {
@@ -2479,10 +2514,13 @@ generate_metadata_comp <- function(axis_mode2, axis_input2, hide_axis2, title_mo
     title_mode2, 
     title1_input2, 
     title2_input2,
+    title_size_input2,
     custom_statistic2,
     percentage_sign_match2,
     sd_ratio2, 
-    hide_borders2
+    hide_borders2,
+    white_ocean2,
+    white_land2
   )
   
   return(meta_input2)
@@ -2849,8 +2887,8 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     map_title = map_custom_title
     map_subtitle = map_custom_subtitle
   } else {
-    map_title = "Regression Residuals Map"
-    map_subtitle = paste("Subtitle")
+    map_title = "Correlation coefficient"
+    map_subtitle = paste(V1_TS_title,"&",V2_TS_title)
   }
   
   # Generate download titles
@@ -3019,8 +3057,15 @@ generate_correlation_map_datatable = function(data_input){
 ## (Correlation) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR PLOT
 ##               data input = Input form Plot Customization
 
-generate_metadata_corr <- function(axis_mode3, axis_input3, hide_axis3, title_mode3, title1_input3,
-                                   hide_borders3, cor_method_map3) {
+generate_metadata_corr <- function(axis_mode3,
+                                   axis_input3,
+                                   hide_axis3,
+                                   title_mode3,
+                                   title1_input3,
+                                   hide_borders3,
+                                   white_ocean3,
+                                   white_land3,
+                                   cor_method_map3) {
 
   # Adjust axis_input3 based on axis_mode3
   if (axis_mode3 == "Automatic") {
@@ -3037,6 +3082,8 @@ generate_metadata_corr <- function(axis_mode3, axis_input3, hide_axis3, title_mo
     title_mode3, #radioButtons
     title1_input3, #textInput
     hide_borders3, #checkboxInput
+    white_ocean3,
+    white_land3,
     cor_method_map3 #radioButtons
   )
 
@@ -3185,7 +3232,8 @@ create_ME_timeseries_data = function(dataset,variables,subset_lon_IDs,subset_lat
 
 generate_regression_titles = function(independent_source,
                                       dependent_source,
-                                      dataset_i,dataset_d,
+                                      dataset_i,
+                                      dataset_d,
                                       modERA_dependent_variable,
                                       mode_i,
                                       mode_d,
@@ -3307,23 +3355,14 @@ generate_regression_titles = function(independent_source,
   
   # Replace with custom titles
   if (map_title_mode == "Custom"){
-    if(map_custom_title1 != ""){
-      map_title = map_custom_title1
+    if(map_custom_title != ""){
+      map_title = map_custom_title
     }
-    if(map_custom_title2 != ""){
-      map_subtitle = map_custom_title2
+    if(map_custom_subtitle != ""){
+      map_subtitle = map_custom_subtitle
     }
   }
   
-  # Generate combined titles:
-  if (map_title_mode == "Custom"){
-    map_title = map_custom_title
-    map_subtitle = map_custom_subtitle
-  } else {
-    map_title = "Correlation coefficient"
-    map_subtitle = paste("Test")
-  }
-
   # Generate download titles
   tf0 = paste("Reg",title_months_i,"ind. var.", ">", title_months_d, modERA_dependent_variable)
   tf1 = gsub("[[:punct:]]", "", tf0)
@@ -3422,6 +3461,42 @@ create_regression_map_datatable = function(data_input,subset_lon_IDs,subset_lat_
   
   return(map_data)
 }
+
+
+## (REGRESSION) GENERATE METADATA
+generate_metadata_reg_res <- function(axis_mode,
+                                      axis_input,
+                                      hide_axis,
+                                      title_mode,
+                                      title1_input,
+                                      title_size_input,
+                                      hide_borders,
+                                      white_ocean,
+                                      white_land) {
+  
+  # Adjust axis_input based on axis_mode
+  if (axis_mode == "Automatic") {
+    axis_input <- NA
+  } else if (length(axis_input) == 2) {
+    axis_input <- paste(axis_input, collapse = ",")
+  }
+  
+  # Create the metadata data frame with explicit column names
+  meta_input <- data.frame(
+    axis_mode, 
+    axis_input, 
+    hide_axis, 
+    title_mode, 
+    title1_input, 
+    title_size_input,
+    hide_borders,
+    white_ocean,
+    white_land
+  )
+  
+  return(meta_input)
+}
+
 
 
 ## (Regression) CREATE REGRESSION TIMESERIES DATATABLE including Original, Trend & Residual

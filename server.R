@@ -1308,20 +1308,59 @@ server <- function(input, output, session) {
                            asis = FALSE)})
   
   ## Regression Maps
-  observe({shinyjs::toggle(id = "hidden_custom_maps_reg",
+  
+  # Hidden Customization Regression Coefficients
+  observe({shinyjs::toggle(id = "hidden_custom_map_reg_coeff",
                            anim = TRUE,
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$custom_map_reg == TRUE,
+                           condition = input$custom_map_reg_coeff == TRUE,
                            asis = FALSE)})
   
-  observe({shinyjs::toggle(id = "hidden_custom_axis_reg",
+  # Hidden Customization Regression P-Values
+  observe({shinyjs::toggle(id = "hidden_custom_map_reg_pval",
                            anim = TRUE,
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$axis_mode_reg == "Fixed",
+                           condition = input$custom_map_reg_pval == TRUE,
+                           asis = FALSE)})
+  
+  # Hidden Customization Regression Residuals
+  observe({shinyjs::toggle(id = "hidden_custom_maps_reg_res",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_map_reg_res == TRUE,
+                           asis = FALSE)})
+  
+  # Hidden Axis Regression Coefficients
+  observe({shinyjs::toggle(id = "hidden_custom_axis_reg_coeff",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$axis_mode_reg_coeff == "Fixed",
+                           asis = FALSE)})
+  
+  # Hidden Axis Regression P-Values
+  observe({shinyjs::toggle(id = "hidden_custom_axis_reg_pvals",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$axis_mode_reg_pvals == "Fixed",
+                           asis = FALSE)})
+  
+  # Hidden Customization Regression Residuals
+  observe({shinyjs::toggle(id = "hidden_custom_axis_reg_res",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$axis_mode_reg_res == "Fixed",
                            asis = FALSE)})
   
   observe({shinyjs::toggle(id = "hidden_custom_title4",
@@ -1356,42 +1395,50 @@ server <- function(input, output, session) {
                            condition = input$feature4 == "Highlight",
                            asis = FALSE)})
   
-  observe({shinyjs::toggle(id = "hidden_download4",
+  # Hidden Download Regression Coefficients
+  observe({shinyjs::toggle(id = "hidden_download_coeff",
                            anim = TRUE,
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$download_options4 == TRUE,
+                           condition = input$download_options_coeff == TRUE,
                            asis = FALSE)})
   
-  observe({shinyjs::toggle(id = "hidden_custom_title_reg",
+  # Hidden Download Regression P-Values
+  observe({shinyjs::toggle(id = "hidden_download_pval",
                            anim = TRUE,
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$title_mode_reg == "Custom",
+                           condition = input$download_options_pval == TRUE,
                            asis = FALSE)})
   
-  observe({shinyjs::toggle(id = "hidden_custom_title1_reg",
+  # Hidden Download Regression Residuals
+  observe({shinyjs::toggle(id = "hidden_download_regres",
                            anim = TRUE,
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$title1_input_reg == "Custom",
+                           condition = input$download_options_regres == TRUE,
                            asis = FALSE)})
   
-  observe({shinyjs::toggle(id = "hidden_custom_title2_reg",
+  
+  # Hidden Custom Titles Regression Coefficients
+  observe({shinyjs::toggle(id = "hidden_custom_title_reg_coeff",
                            anim = TRUE,
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$title2_input_reg == "Custom",
+                           condition = input$title_mode_reg_coeff == "Custom",
                            asis = FALSE)})
+
+  # Hidden Custom Titles Regression P-Values
   
   
+  
+  # Hidden Custom Titles Regression Coefficients
   
   # Annual cycles
-  
   observe({shinyjs::toggle(id = "optional5",
                            anim = TRUE,
                            animType = "slide",
@@ -2276,7 +2323,7 @@ server <- function(input, output, session) {
     
     metadata = generate_metadata(input$axis_mode,
                                  input$axis_input,
-                                 input$hide_axis, #
+                                 input$hide_axis,
                                  input$title_mode,
                                  input$title1_input,
                                  input$title2_input,
@@ -3162,6 +3209,7 @@ server <- function(input, output, session) {
     
     return(metadata2)  
   })
+  
   
   plot_gen_input2 <- reactive({
     
@@ -5257,6 +5305,8 @@ server <- function(input, output, session) {
     }
   })
   
+
+  
   ### Interactivity ----
   
   # Map coordinates setter
@@ -5322,6 +5372,48 @@ server <- function(input, output, session) {
         value = round(c(input$map_brush4_resi[[3]],input$map_brush4_resi[[4]]), digits = 2))
     }
   })
+  
+  
+  ### Generate Metadata for map customization ----
+  # Download Plot data 
+  metadata_input_reg_res <- reactive({
+    metadata_reg_res = generate_metadata_reg_res(input$axis_mode_reg_res,
+                                                 input$axis_input_reg_res,
+                                                 input$hide_axis_reg_res,
+                                                 input$title_mode_reg_res,
+                                                 input$title1_input_reg_res,
+                                                 input$title_size_input,
+                                                 input$hide_borders_reg_res,
+                                                 input$white_ocean_reg_res,
+                                                 input$white_land_reg_res)
+    return(metadata_reg_res)  
+  })
+  
+  
+  output$download_metadata_reg_res <- downloadHandler(
+    filename = function() {"metadata_reg_res.xlsx"},
+    content  = function(file) {
+      wb <- openxlsx::createWorkbook()
+      openxlsx::addWorksheet(wb, "custom_map_reg_res")
+      openxlsx::addWorksheet(wb, "custom_points_reg_res")
+      openxlsx::addWorksheet(wb, "custom_highlights_reg_res")
+      openxlsx::addWorksheet(wb, "plot_gen_v1")
+      openxlsx::addWorksheet(wb, "plot_gen_v2")
+      openxlsx::addWorksheet(wb, "plot_gen_reg_res")
+      
+      openxlsx::writeData(wb, "custom_map_reg_res", metadata_input_reg_res())
+      openxlsx::writeData(wb, "custom_points_reg_res", map_points_data3())
+      openxlsx::writeData(wb, "custom_highlights_reg_res", map_highlights_data3())
+      openxlsx::writeData(wb, "plot_gen_v1", plot_gen_input_v1())
+      openxlsx::writeData(wb, "plot_gen_v2", plot_gen_input_v2())
+      openxlsx::writeData(wb, "plot_gen_reg_res", metadata_yr3())
+      openxlsx::saveWorkbook(wb, file)
+    }
+  )
+  
+  
+  
+  
   
   
   ## ANNUAL CYCLES observe, update & interactive controls----
@@ -6079,9 +6171,21 @@ server <- function(input, output, session) {
   
   plot_titles <- reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
-    my_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Anomaly", input$title_mode,input$title_mode_ts,
-                                month_range_primary(), input$range_years, input$ref_period, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                input$title1_input, input$title2_input,input$title1_input_ts, input$title_size_input)
+    my_title <- generate_titles("general",
+                                input$dataset_selected,
+                                input$variable_selected,
+                                "Anomaly",
+                                input$title_mode,
+                                input$title_mode_ts,
+                                month_range_primary(),
+                                input$range_years,
+                                input$ref_period,
+                                NA,lonlat_vals()[1:2],
+                                lonlat_vals()[3:4],
+                                input$title1_input,
+                                input$title2_input,
+                                input$title1_input_ts,
+                                input$title_size_input)
     return(my_title)
   })
   
@@ -6148,9 +6252,22 @@ server <- function(input, output, session) {
     } else if(input$ref_map_mode == "SD Ratio"){
       v=NULL; m="SD Ratio"; axis_range=c(0,1)
     }
-    plot_map(data_input=create_geotiff(ref_map_data()), lon_lat_range=lonlat_vals(), variable=v, mode=m, titles=ref_map_titles(), axis_range=axis_range, 
-             c_borders=input$hide_borders,plotOrder(), white_ocean=input$white_ocean, white_land=input$white_land, plotOrder=plotOrder(), 
-             shpPickers=input$shpPickers, input=input, plotType="shp_colour_", projection=input$projection, center_lat=input$center_lat, center_lon=input$center_lon)
+    plot_map(data_input=create_geotiff(ref_map_data()),
+             lon_lat_range=lonlat_vals(),
+             variable=v,
+             mode=m,
+             titles=ref_map_titles(),
+             axis_range=axis_range, 
+             c_borders=input$hide_borders,
+             plotOrder(),
+             white_ocean=input$white_ocean,
+             white_land=input$white_land,
+             plotOrder=plotOrder(), 
+             shpPickers=input$shpPickers,
+             input=input, plotType="shp_colour_",
+             projection=input$projection,
+             center_lat=input$center_lat,
+             center_lon=input$center_lon)
   }
   
   output$ref_map <- renderPlot({
@@ -7862,19 +7979,31 @@ server <- function(input, output, session) {
     
     req(month_range_secondary(),month_range_primary())
     
-    ptr = generate_regression_titles(input$source_iv,input$source_dv,
-                                     input$dataset_selected_iv,input$dataset_selected_dv,
+    ptr = generate_regression_titles(input$source_iv,
+                                     input$source_dv,
+                                     input$dataset_selected_iv,
+                                     input$dataset_selected_dv,
                                      input$ME_variable_dv,
-                                     input$mode_selected_iv, input$mode_selected_dv,
-                                     month_range_secondary(),month_range_primary(),
-                                     lonlat_vals_iv()[1:2],lonlat_vals_dv()[1:2],lonlat_vals_iv()[3:4],lonlat_vals_dv()[3:4],
-                                     input$range_years4, reg_resi_year_val(),
-                                     variables_iv(), variable_dv(), 
-                                     match(input$coeff_variable,variables_iv()), match(input$pvalue_variable,variables_iv()),
-                                     input$title_mode_reg,
-                                     input$title1_input_reg,
-                                     input$title2_input_reg,
-                                     input$title_size_input_reg
+                                     input$mode_selected_iv,
+                                     input$mode_selected_dv,
+                                     month_range_secondary(),
+                                     month_range_primary(),
+                                     lonlat_vals_iv()[1:2],
+                                     lonlat_vals_dv()[1:2],
+                                     lonlat_vals_iv()[3:4],
+                                     lonlat_vals_dv()[3:4],
+                                     input$range_years4,
+                                     reg_resi_year_val(),
+                                     variables_iv(),
+                                     variable_dv(), 
+                                     match(input$coeff_variable,
+                                           variables_iv()),
+                                     match(input$pvalue_variable,
+                                           variables_iv()),
+                                     input$title_mode_reg_coeff,
+                                     input$title1_input_reg_coeff,
+                                     input$title2_input_reg_coeff,
+                                     input$title_size_input_reg_coeff
     )
     return(ptr)
   })
@@ -7976,10 +8105,26 @@ server <- function(input, output, session) {
     req(input$nav1 == "tab4") # Only run code if in the current tab
     create_geotiff(reg_coef_table()) 
   })
+
   
-  reg_coef_map = function(){
-    req(input$coeff_variable)
-    plot_map(data_input=reg_coef_tiff(), lon_lat_range=lonlat_vals_dv(), variable=input$coeff_variable, mode="Regression_coefficients", titles=plot_titles_reg())
+  reg_coef_map = function() {
+    
+    plot_map(
+      data_input = reg_coef_tiff(),
+      lon_lat_range = lonlat_vals_dv(),
+      variable = variable_dv(),
+      
+      mode = "Regression_coefficients",
+      
+      titles = plot_titles_reg(),
+      
+      axis_range = input$axis_input_reg_coef,
+      hide_axis = input$hide_axis_reg_coef,
+      
+      c_borders = input$hide_borders_reg_coef,
+      white_ocean = input$white_ocean_reg_coef,
+      white_land = input$white_land_reg_coef
+    )
   }
   
   output$plot_reg_coeff = renderPlot({reg_coef_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
@@ -8012,11 +8157,30 @@ server <- function(input, output, session) {
     req(input$nav1 == "tab4") # Only run code if in the current tab
     create_geotiff(reg_pval_table()) 
   })
-  
-  reg_pval_map = function(){
-    req(input$pvalue_variable)
-    plot_map(data_input=reg_pval_tiff(),lon_lat_range=lonlat_vals_dv(),variable=input$pvalue_variable, mode="Regression_p_values", titles=plot_titles_reg())
+
+  reg_pval_map = function() {
+    
+    plot_map(
+      data_input = reg_pval_tiff(),
+      lon_lat_range = lonlat_vals_dv(),
+      variable = variable_dv(),
+      
+      mode = "Regression_p_values",
+      
+      titles = plot_titles_reg(),
+      
+      axis_range = input$axis_input_reg_pval,
+      hide_axis = input$hide_axis_reg_pval,
+      
+      c_borders = input$hide_borders_reg_pval,
+      white_ocean = input$white_ocean_reg_pval,
+      white_land = input$white_land_reg_pval
+    )
   }
+  
+  
+  
+  
   
   output$plot_reg_pval = renderPlot({reg_pval_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
   
@@ -8069,23 +8233,12 @@ server <- function(input, output, session) {
       
       titles = plot_titles_reg(),
       
-      axis_range = input$axis_input_reg,
-      hide_axis = input$hide_axis_reg,
+      axis_range = input$axis_input_reg_res,
+      hide_axis = input$hide_axis_reg_res,
       
-      # points_data = map_points_data_reg()
-      # highlights_data = map_highlights_data_reg(),
-      
-      c_borders = input$hide_borders_reg,
-      white_ocean = input$white_ocean_reg,
-      white_land = input$white_land_reg
-      
-      # plotOrder = input$plotOrder_reg,
-      # shpPickers = input$shpPickers_reg,
-      # input = input,
-      # plotType = input$plotType_reg,
-      # projection = input$projection_reg,
-      # center_lat = input$center_lat_reg,
-      # center_lon = input$center_lon_reg
+      c_borders = input$hide_borders_reg_res,
+      white_ocean = input$white_ocean_reg_res,
+      white_land = input$white_land_reg_res
     )
   }
   
