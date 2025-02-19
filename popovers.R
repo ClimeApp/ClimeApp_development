@@ -386,6 +386,19 @@ correlation_variable_popover = function(popover_ID){
   )  
 }
 
+## CORRELATION YEAR RANGE
+## popover_IDs = pop_correlation_year
+
+correlation_year_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Choose a",em("range of years"),"to correlate. This will be limited to the range of your own data or 1422 to 2008 for ModE-RA data.",br(),br(),
+    "Use the",em("lag year"),"option to shift a variable forward or backward by that many years.",
+    id = popover_ID,
+    placement = "right",
+  )   
+}
+
 ## CORRELATION TIMESERIES
 ## popover_IDs = pop_correlation_timeseries
 
@@ -456,6 +469,19 @@ regression_variable_popover = function(popover_ID){
       placement = "right",
     )  
   }
+}
+
+## REGRESSION YEAR RANGE
+## popover_IDs = pop_regression_year
+
+regression_year_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Choose a",em("range of years"),"to perform the regression on. This will be limited to the range of your own data or 1422 to 2008 for ModE-RA data.",br(),br(),
+    "Use the",em("lag year"),"option to shift a variable forward or backward by that many years.",
+    id = popover_ID,
+    placement = "right",
+  )   
 }
 
 ## REGRESSION TIMESERIES

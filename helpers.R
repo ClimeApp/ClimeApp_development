@@ -2602,8 +2602,11 @@ read_regcomp_data = function(data_input_filepath){
 ##                            year_range_min,year_range_max)
 ##                          variable_source = "ModE-RA" or "User Data"
 ##                          variable_data_filepath = "" by default
+##                          variable1_lag = number of lagged years for variable 1
+##                          variable2_lag = number of lagged years for variable 2
 
-extract_year_range = function(variable1_source,variable2_source,variable1_data_filepath,variable2_data_filepath){
+extract_year_range = function(variable1_source,variable2_source,variable1_data_filepath,
+                              variable2_data_filepath,variable1_lag,variable2_lag){
   
   # Set initial values of V1_min/max and V2_min/max to ModE-RA defaults
   V1_min = 1422 ; V1_max = 2008
@@ -2633,13 +2636,17 @@ extract_year_range = function(variable1_source,variable2_source,variable1_data_f
     }
   }
   
+  # Adjust V_min/max for lag years
+  V1_min = V1_min - variable1_lag ; V1_max = V1_max - variable1_lag
+  V2_min = V2_min - variable2_lag ; V2_max = V2_max - variable2_lag
+  
   # Find shared year range
   YR_min = max(c(V1_min,V2_min))
   YR_max = min(c(V1_max,V2_max))
   
   # Set default values
   if (variable1_source == "ModE-" & variable2_source == "ModE-"){
-    YR1 = 1900 ; YR2 = 2000
+    YR1 = 1800 ; YR2 = 1900
   } else {
     YR1 = YR_min ; YR2 = YR_max
   }  
