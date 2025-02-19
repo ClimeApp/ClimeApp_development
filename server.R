@@ -1,4 +1,4 @@
-# Define server logic ----
+## Define server logic ----
 server <- function(input, output, session) {
   # ClimeApp Desktop Download ----
   output$climeapp_desktop_download <- downloadHandler(
