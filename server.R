@@ -3636,11 +3636,26 @@ server <- function(input, output, session) {
   
   # Update year range
   observeEvent(year_range_cor(),{
+    # Change range years value if outside year_range_cor
+    # if (input$range_years3[1] < year_range_cor()[1]){
+    #   new_range_lower = year_range_cor()[1]
+    # } else {
+    #   new_range_lower = input$range_years3[1]
+    # }
+    # 
+    # if (input$range_years3[2] > year_range_cor()[2]){
+    #   new_range_upper = year_range_cor()[2]      
+    #  } else {
+    #    new_range_upper = input$range_years3[2]
+    #  }
+    
+    # Update
     updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_years3",
-      label = paste("Select the range of years (",year_range_cor()[3],"-",year_range_cor()[4],")",sep = ""),
-      value = year_range_cor()[1:2]
+      label = paste("Select the range of years (",year_range_cor()[1],"-",year_range_cor()[2],")",sep = ""),
+      #label = paste("Year_range_cor =",year_range_cor()[1],"-",year_range_cor()[2],". New_range = ",new_range_lower,"-",new_range_upper,sep = ""),
+      value = c(year_range_cor())
     )
   })
   
@@ -4884,7 +4899,7 @@ server <- function(input, output, session) {
     updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_years4",
-      label = paste("Select the range of years (",year_range_reg()[3],"-",year_range_reg()[4],")",sep = ""),
+      label = paste("Select the range of years (",year_range_reg()[1],"-",year_range_reg()[2],")",sep = ""),
       value = year_range_reg()[1:2]
     )
   })
@@ -7019,32 +7034,8 @@ server <- function(input, output, session) {
   user_subset_v1 = reactive({
     
     req(user_data_v1(),input$user_variable_v1)
-    year_range_cor = reactive({
-      
-      result <- tryCatch(
-        {
-          return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath,input$lagyears_v1_cor,input$lagyears_v2_cor))
-          return(yrc)
-        },
-        error = function(e) {
-          showModal(
-            # Add modal dialog for warning message
-            modalDialog(
-              title = "Error",
-              "There was an error in processing your uploaded data. 
-                    \nPlease check if the file has the correct format.",
-              easyClose = FALSE,
-              footer = tagList(modalButton("OK"))
-            ))
-          return(NULL)
-        }
-      )
-      return(result)
-    })  
     
-    usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3)
-    
-    usr_ss1$Year = usr_ss1$Year - input$lagyears_v1_cor # adjust for lag years
+    usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3,input$lagyears_v1_cor)
     
     return(usr_ss1)
   })
@@ -7054,9 +7045,7 @@ server <- function(input, output, session) {
     
     req(user_data_v2(),input$user_variable_v2)
     
-    usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3)
-    
-    usr_ss2$Year = usr_ss2$Year - input$lagyears_v2_cor # adjust for lag years
+    usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3,input$lagyears_v2_cor)
     
     return(usr_ss2)
   })
@@ -7098,7 +7087,7 @@ server <- function(input, output, session) {
   plot_titles_v2 <- reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
     my_title_v2 <- generate_titles ("general", input$dataset_selected_v2,input$ME_variable_v2, input$mode_selected_v2,
-                                    "Default","Default", month_range_secondary(),input$range_years3,
+                                    "Default","Default", month_range_secondary(),(input$range_years3+input$lagyears_v2_cor), # adjusts for lag years
                                     input$ref_period_v2, NA,lonlat_vals_v2()[1:2],lonlat_vals_v2()[3:4],
                                     NA, NA, NA)
     return(my_title_v2)
@@ -7380,11 +7369,27 @@ server <- function(input, output, session) {
     ctd_v1 = rewrite_tstable(ts_data_v1(),variable_v1)
     ctd_v2 = rewrite_tstable(ts_data_v2(),variable_v2)
     
+    # Generate year column
+    Year = input$range_years3[1]:input$range_years3[1]
+
     # Combine into dataframe
-    ctd = data.frame(ctd_v1,ctd_v2[-1])
+    ctd = data.frame(Year)
     
-    # Add Var1/2 to names
-    colnames(ctd) = c("Year",paste("Var1_",colnames(ctd_v1)[-1], sep = ""),paste("Var2_",colnames(ctd_v2)[-1], sep = ""))
+    if (input$lagyears_v1_cor != 0){
+      Var1_Lag_Year = Year + input$lagyears_v1_cor
+      ctd = data.frame(ctd,Var1_Lag_Year)
+    }
+    
+    colnames(ctd_v1) = paste0("Var1_",colnames(ctd_v1))
+    ctd = data.frame(ctd,ctd_v1[-1])
+    
+    if (input$lagyears_v2_cor != 0){
+      Var2_Lag_Year = Year + input$lagyears_v2_cor
+      ctd = data.frame(ctd,Var2_Lag_Year)
+    }
+    
+    colnames(ctd_v2) = paste0("Var2_",colnames(ctd_v2))
+    ctd = data.frame(ctd,ctd_v2[-1])
     
     return(ctd)
   })
@@ -7624,7 +7629,7 @@ server <- function(input, output, session) {
     
     req(user_data_iv(),input$user_variable_iv)
     
-    usr_ss1 = create_user_data_subset(user_data_iv(),input$user_variable_iv,input$range_years4)
+    usr_ss1 = create_user_data_subset(user_data_iv(),input$user_variable_iv,input$range_years4,0)
     
     return(usr_ss1)
   }) 
@@ -7634,7 +7639,7 @@ server <- function(input, output, session) {
     
     req(user_data_dv(),input$user_variable_dv)
     
-    usr_ss2 = create_user_data_subset(user_data_dv(),input$user_variable_dv,input$range_years4)
+    usr_ss2 = create_user_data_subset(user_data_dv(),input$user_variable_dv,input$range_years4,0)
     
     return(usr_ss2)
   }) 

@@ -2567,7 +2567,7 @@ ui <- navbarPage(id = "nav1",
 
                        numericRangeInput(inputId    = "range_years3",
                                          label     = "Select the range of years (1422 - 2008):",
-                                         value     = c(1900,2008),
+                                         value     = c(1900,2000),
                                          separator = " to ",
                                          min       = 1422,
                                          max       = 2008)
