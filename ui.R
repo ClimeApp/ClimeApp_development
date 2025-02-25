@@ -2565,30 +2565,24 @@ ui <- navbarPage(id = "nav1",
 
                        numericRangeInput(inputId    = "range_years3",
                                          label     = "Select the range of years (1422 - 2008):",
-                                         value     = c(1900,2008),
+                                         value     = c(1900,2000),
                                          separator = " to ",
                                          min       = 1422,
                                          max       = 2008)
                      ),
                      
                      # Set lag years
-                     column(width = 12, fluidRow(
-                            
-                       numericInput(inputId   = "lagyears_v1_cor",
-                                    label     = "Set lag for Variable 1 (in years)",
-                                    value     = 0,
-                                    min       = -100,
-                                    max       = 100,
-                                    width     = "250px"),
-
-                       numericInput(inputId   = "lagyears_v2_cor",
-                                    label     = "Set lag for Variable 2 (in years)",
-                                    value     = 0,
-                                    min       = -100,
-                                    max       = 100,
-                                    width     = "250px"),
+                     numericInput(inputId   = "lagyears_v1_cor",
+                                  label     = "Set Variable 1 lag (in years)",
+                                  value     = 0,
+                                  min       = -100,
+                                  max       = 100),
                      
-                     )),
+                     numericInput(inputId   = "lagyears_v2_cor",
+                                  label     = "Set Variable 2 lag (in years)",
+                                  value     = 0,
+                                  min       = -100,
+                                  max       = 100),
 
                    ), width = 12),
                    
