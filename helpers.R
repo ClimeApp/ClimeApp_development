@@ -1506,9 +1506,10 @@ plot_timeseries <- function(type, mode=NA, data=NA, variable=NA,
         theme(legend.position = key_position)
       } else {
         theme(legend.position = "none")
-      }} + #if show_key == F: key_position = "none" --> legend is hidden, but correct colors and linetypes are still applied
+      }}  #if show_key == F: key_position = "none" --> legend is hidden, but correct colors and linetypes are still applied
       # should show lines as lines in legend symbols but doesn't work :(
-      guides(color = guide_legend(override.aes = list(linetype = "solid", size = 1.2, shape = NA)))
+      # This was the suggestion by ChatGPT, but doesn't work:
+      #guides(color = guide_legend(override.aes = list(linetype = "solid", size = 1.2, shape = NA)))
     
   
   # Add title and subtitle if provided
