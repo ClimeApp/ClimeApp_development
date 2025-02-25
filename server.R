@@ -6079,9 +6079,13 @@ server <- function(input, output, session) {
   
   plot_titles <- reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
-    my_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Anomaly", input$title_mode,input$title_mode_ts,
-                                month_range_primary(), input$range_years, input$ref_period, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                input$title1_input, input$title2_input,input$title1_input_ts, input$title_size_input)
+      
+    my_title <- generate_titles(tab="general", dataset=input$dataset_selected, variable=input$variable_selected, 
+                                mode="Anomaly", map_title_mode=input$title_mode,ts_title_mode=input$title_mode_ts,
+                                month_range=month_range_primary(), year_range=input$range_years, baseline_range=input$ref_period, baseline_years_before=NA,
+                                lon_range=lonlat_vals()[1:2],lat_range=lonlat_vals()[3:4],
+                                map_custom_title1=input$title1_input, map_custom_title2=input$title2_input,ts_custom_title1=input$title1_input_ts, ts_custom_title2=NA,
+                                map_title_size=input$title_size_input, ts_data=timeseries_data())
     return(my_title)
   })
   
@@ -6126,19 +6130,16 @@ server <- function(input, output, session) {
     
     req(input$nav1 == "tab1") # Only run code if in the current tab
     
-    if (input$ref_map_mode == "Absolute Values"){
-      rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
-                                  month_range_primary(), input$range_years, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                  input$title1_input, input$title2_input,input$title1_input_ts, input$title_size_input)
-    } else if (input$ref_map_mode == "Reference Values"){
-      rm_title <- generate_titles("general",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
-                                  month_range_primary(), input$ref_period, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                  input$title1_input, input$title2_input,input$title1_input_ts, input$title_size_input)
-    } else if (input$ref_map_mode == "SD Ratio"){
-      rm_title <- generate_titles("sdratio",input$dataset_selected, input$variable_selected, "Absolute", input$title_mode,input$title_mode_ts,
-                                  month_range_primary(), input$range_years, NA, NA,lonlat_vals()[1:2],lonlat_vals()[3:4],
-                                  input$title1_input, input$title2_input,input$title1_input_ts, input$title_size_input)
-    }
+    active_tab <- ifelse(input$ref_map_mode == "SD Ratio", "sdratio", "general")
+    years_or_ref <- ifelse(input$ref_map_mode == "Reference Values", input$ref_period, input$range_years)
+    
+    rm_title <- generate_titles(
+      tab=active_tab, dataset=input$dataset_selected, variable=input$variable_selected, mode="Absolute",
+      map_title_mode=input$title_mode, ts_title_mode=input$title_mode_ts, 
+      month_range=month_range_primary(), year_range=years_or_ref,
+      lon_range=lonlat_vals()[1:2], lat_range=lonlat_vals()[3:4],
+      map_custom_title1=input$title1_input, map_custom_title2=input$title2_input, ts_custom_title1=input$title1_input_ts, map_title_size=input$title_size_input
+    )
   })  
   
   ref_map_plot <- function(){
@@ -6149,7 +6150,7 @@ server <- function(input, output, session) {
       v=NULL; m="SD Ratio"; axis_range=c(0,1)
     }
     plot_map(data_input=create_geotiff(ref_map_data()), lon_lat_range=lonlat_vals(), variable=v, mode=m, titles=ref_map_titles(), axis_range=axis_range, 
-             c_borders=input$hide_borders,plotOrder(), white_ocean=input$white_ocean, white_land=input$white_land, plotOrder=plotOrder(), 
+             c_borders=input$hide_borders, white_ocean=input$white_ocean, white_land=input$white_land, plotOrder=plotOrder(), 
              shpPickers=input$shpPickers, input=input, plotType="shp_colour_", projection=input$projection, center_lat=input$center_lat, center_lon=input$center_lon)
   }
   
@@ -6217,8 +6218,10 @@ server <- function(input, output, session) {
     pagingType = "numbers"
   ))
   
+  #REMOVE
+  
   #Plotting the timeseries
-  # timeseries_plot <- function(){
+  # timeseries_plot_anom<- function(){
   #   #Plot normal timeseries if year range is > 1 year
   #   if (input$range_years[1] != input$range_years[2]){
   #     # Generate NA or reference mean
@@ -6255,7 +6258,9 @@ server <- function(input, output, session) {
   #   }
   # }
   
-  timeseries_plot <- function(){
+  timeseries_plot_anom<- function(){
+    
+    #REMOVE
     
     # #Plot normal timeseries if year range is > 1 year
     # if (input$range_years[1] != input$range_years[2]){
@@ -6286,14 +6291,15 @@ server <- function(input, output, session) {
     #Plot normal timeseries if year range is > 1 year
     if (input$range_years[1] != input$range_years[2]){
       # Generate NA or reference mean
+      ref_ts = signif(mean(data_output3_primary()),3)
       } else {
         ref_ts = NA
       }
     
     # New 
     p <- plot_timeseries(type="Anomaly", data=timeseries_data(), variable=input$variable_selected,
-                         ref=data_output3_primary(), year_range=input$range_years, month_range=month_range_primary(),
-                         titles=plot_titles(), titles_mode=input$title_mode_ts, 
+                         ref=ref_ts, year_range=input$range_years, month_range_1=month_range_primary(),
+                         titles=plot_titles(), #titles_mode=input$title_mode_ts, 
                          show_key=input$show_key_ts, key_position=input$key_position_ts, 
                          moving_ave=input$custom_average_ts, moving_ave_year=input$year_moving_ts, 
                          custom_percentile=input$custom_percentile_ts, percentiles=input$percentile_ts, 
@@ -6302,7 +6308,7 @@ server <- function(input, output, session) {
     return(p)
   }
   
-  output$timeseries <- renderPlot({timeseries_plot()}, height = 400)
+  output$timeseries <- renderPlot({timeseries_plot_anom()}, height = 400)
   
   ### ModE-RA sources ----
   
@@ -6412,7 +6418,7 @@ server <- function(input, output, session) {
                                                        } else {
                                                          pdf(file, width = 14, height = 6, bg = "transparent") 
                                                        }
-                                                       print(timeseries_plot())
+                                                       print(timeseries_plot_anom())
                                                        dev.off()
                                                      }) 
   
@@ -6532,13 +6538,16 @@ server <- function(input, output, session) {
   
   #Map customization (statistics and map titles)
   
-  plot_titles_2 <- reactive({
+  plot_titles_composites <- reactive({
     
     req(input$nav1 == "tab2") # Only run code if in the current tab
     
-    my_title <- generate_titles ("composites", input$dataset_selected2, input$variable_selected2, input$mode_selected2, input$title_mode2,input$title_mode_ts2,
-                                 month_range_primary(), input$range_years2, input$ref_period2, input$prior_years2,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                 input$title1_input2, input$title2_input2,input$title1_input_ts2, input$title_size_input2)
+    my_title <- generate_titles(tab="composites", dataset=input$dataset_selected2, variable=input$variable_selected2, 
+                                mode=input$mode_selected2, map_title_mode=input$title_mode2,ts_title_mode=input$title_mode_ts2,
+                                month_range=month_range_primary(), year_range=input$range_years2, baseline_range=input$ref_period2, baseline_years_before=input$prior_years2,
+                                lon_range=lonlat_vals2()[1:2],lat_range=lonlat_vals2()[3:4],
+                                map_custom_title1=input$title1_input2, map_custom_title2=input$title2_input2, ts_custom_title1=input$title1_input_ts2, ts_custom_title2=NA, 
+                                map_title_size=input$title_size_input2, ts_data=timeseries_data_2())
     
     return(my_title)
   })
@@ -6576,7 +6585,7 @@ server <- function(input, output, session) {
                                     lonlat_vals2(),
                                     input$variable_selected2,
                                     input$mode_selected2,
-                                    plot_titles_2(),
+                                    plot_titles_composites(),
                                     input$axis_input2,
                                     input$hide_axis2,
                                     map_points_data2(),
@@ -6611,19 +6620,22 @@ server <- function(input, output, session) {
     
     req(input$nav1 == "tab2") # Only run code if in the current tab
     
-    if (input$ref_map_mode2 == "Absolute Values"){
-      rm_title2 <- generate_titles("composites",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
-                                   month_range_primary(), year_set_comp(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                   input$title1_input2, input$title2_input2,input$title1_input_ts2, input$title_size_input2)
-    } else if (input$ref_map_mode2 == "Reference Values"){
-      rm_title2 <- generate_titles("reference",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
-                                   month_range_primary(), year_set_comp_ref(), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                   input$title1_input2, input$title2_input2,input$title1_input_ts2, input$title_size_input2)
-    } else if (input$ref_map_mode2 == "SD Ratio"){
-      rm_title2 <- generate_titles("sdratio",input$dataset_selected2, input$variable_selected2, "Absolute", input$title_mode2,input$title_mode_ts2,
-                                   month_range_primary(), c(NA,NA), NA, NA,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
-                                   input$title1_input2, input$title2_input2,input$title1_input_ts2, input$title_size_input2)
-    }
+    # Define mode-specific parameters
+    mode_params <- list(
+      "Absolute Values" = list(type = "composites", years = year_set_comp()),
+      "Reference Values" = list(type = "reference", years = year_set_comp_ref()),
+      "SD Ratio" = list(type = "sdratio", years = c(NA, NA))
+    )
+    params <- mode_params[[input$ref_map_mode2]]
+    
+    rm_title2 <- generate_titles(
+      tab=params$type, dataset=input$dataset_selected2, variable=input$variable_selected2, mode="Absolute", 
+      map_title_mode=input$title_mode2, ts_title_mode=input$title_mode_ts2, 
+      month_range=month_range_primary(), year_range=params$years, 
+      lon_range=lonlat_vals2()[1:2], lat_range=lonlat_vals2()[3:4], 
+      map_custom_title1=input$title1_input2, map_custom_title2=input$title2_input2, ts_custom_title1=input$title1_input_ts2, 
+      map_title_size=input$title_size_input2
+    )
   })  
   
   ref_map_plot_2 <- function(){
@@ -6728,9 +6740,9 @@ server <- function(input, output, session) {
   ))
   
   #Plotting the timeseries
-  timeseries_plot_2 <- function(){
+  timeseries_plot_comp <- function(){
     #Plot normal timeseries if year set is > 1 year
-    if (length(year_set_comp()) > 1){  
+    #if (length(year_set_comp()) > 1){  
       # Generate NA or reference mean
       if(input$show_ref_ts2 == TRUE){
         ref_ts2 = signif(mean(data_output3_primary()),3)
@@ -6738,34 +6750,45 @@ server <- function(input, output, session) {
         ref_ts2 = NA
       }
       
-      plot_default_timeseries(timeseries_data_2(),"composites",input$variable_selected2,plot_titles_2(),input$title_mode_ts2,ref_ts2)
-      add_highlighted_areas(ts_highlights_data2())
-      add_percentiles(timeseries_data_2())
-      add_custom_lines(ts_lines_data2())
-      add_timeseries(timeseries_data_2(),"composites",input$variable_selected2)
-      add_boxes(ts_highlights_data2())
-      add_custom_points(ts_points_data2())
-      if (input$show_key_ts2 == TRUE){
-        add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_primary(),
-                   FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
-      }
-    }
-    # Plot monthly TS if year range = 1 year
-    else {
-      plot_monthly_timeseries(timeseries_data_2(),plot_titles_2()$ts_title,"Custom","topright","base")
-      add_highlighted_areas(ts_highlights_data2())
-      add_custom_lines(ts_lines_data2())
-      plot_monthly_timeseries(timeseries_data_2(),plot_titles_2()$ts_title,"Custom","topright","lines")
-      add_boxes(ts_highlights_data2())
-      add_custom_points(ts_points_data2())
-      if (input$show_key_ts2 == TRUE){
-        add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_primary(),
-                   FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
-      }
-    }
+    #   plot_default_timeseries(timeseries_data_2(),"composites",input$variable_selected2,plot_titles_composites(),input$title_mode_ts2,ref_ts2)
+    #   add_highlighted_areas(ts_highlights_data2())
+    #   add_percentiles(timeseries_data_2())
+    #   add_custom_lines(ts_lines_data2())
+    #   add_timeseries(timeseries_data_2(),"composites",input$variable_selected2)
+    #   add_boxes(ts_highlights_data2())
+    #   add_custom_points(ts_points_data2())
+    #   if (input$show_key_ts2 == TRUE){
+    #     add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_primary(),
+    #                FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
+    #   }
+    # }
+    # # Plot monthly TS if year range = 1 year
+    # else {
+    #   plot_monthly_timeseries(timeseries_data_2(),plot_titles_composites()$ts_title,"Custom","topright","base")
+    #   add_highlighted_areas(ts_highlights_data2())
+    #   add_custom_lines(ts_lines_data2())
+    #   plot_monthly_timeseries(timeseries_data_2(),plot_titles_composites()$ts_title,"Custom","topright","lines")
+    #   add_boxes(ts_highlights_data2())
+    #   add_custom_points(ts_points_data2())
+    #   if (input$show_key_ts2 == TRUE){
+    #     add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_primary(),
+    #                FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
+    #   }
+    # }
+      
+      # New 
+      p <- plot_timeseries(type="Composites", data=timeseries_data_2(), variable=input$variable_selected2,
+                           ref=ref_ts2, year_range=year_set_comp(), month_range_1=month_range_primary(),
+                           titles=plot_titles_composites(), #titles_mode=input$title_mode_ts2, 
+                           show_key=input$show_key_ts2, key_position=input$key_position_ts2, 
+                           moving_ave=input$custom_average_ts2, moving_ave_year=input$year_moving_ts2, 
+                           custom_percentile=input$custom_percentile_ts2, percentiles=input$percentile_ts2, 
+                           highlights=ts_highlights_data2(), lines=ts_lines_data2(), points=ts_points_data2())
+      
+      return(p)
   }
   
-  output$timeseries2 <- renderPlot({timeseries_plot_2()}, height = 400)
+  output$timeseries2 <- renderPlot({timeseries_plot_comp()}, height = 400)
   
   #List of chosen composite years (upload or manual) to plot
   output$text_years2 <- renderText("Chosen composite years:")
@@ -6847,7 +6870,7 @@ server <- function(input, output, session) {
   
   ### Downloads ----
   #Downloading General data
-  output$download_map2            <- downloadHandler(filename = function() {paste(plot_titles_2()$file_title, "-map.", input$file_type_map2, sep = "")},
+  output$download_map2            <- downloadHandler(filename = function() {paste(plot_titles_composites()$file_title, "-map.", input$file_type_map2, sep = "")},
                                                      content = function(file) {
                                                        if (input$file_type_map2 == "png") {
                                                          png(file, width = map_dimensions_2()[3], height = map_dimensions_2()[4], res = 200, bg = "transparent")
@@ -6860,7 +6883,7 @@ server <- function(input, output, session) {
                                                        dev.off()}
   )
   
-  output$download_map_sec2        <- downloadHandler(filename = function() {paste(plot_titles_2()$file_title, "-sec_map.", input$file_type_map_sec2, sep = "")},
+  output$download_map_sec2        <- downloadHandler(filename = function() {paste(plot_titles_composites()$file_title, "-sec_map.", input$file_type_map_sec2, sep = "")},
                                                      content = function(file) {
                                                        if (input$file_type_map_sec2 == "png") {
                                                          png(file, width = map_dimensions_2()[3], height = map_dimensions_2()[4], res = 200, bg = "transparent")
@@ -6873,23 +6896,20 @@ server <- function(input, output, session) {
                                                        dev.off()}
   )
   
-  output$download_timeseries2      <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title,"-ts.",input$file_type_timeseries2, sep = "")},
+  output$download_timeseries2      <- downloadHandler(filename = function(){paste(plot_titles_composites()$file_title,"-ts.",input$file_type_timeseries2, sep = "")},
                                                       content  = function(file) {
                                                         if (input$file_type_timeseries2 == "png"){
                                                           png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
-                                                          timeseries_plot_2() 
-                                                          dev.off()
                                                         } else if (input$file_type_timeseries2 == "jpeg"){
                                                           jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
-                                                          timeseries_plot_2() 
-                                                          dev.off()
                                                         } else {
                                                           pdf(file, width = 14, height = 6, bg = "transparent") 
-                                                          timeseries_plot_2()
-                                                          dev.off()
-                                                        }}) 
+                                                        }
+                                                        timeseries_plot_comp()
+                                                        dev.off()
+                                                        }) 
   
-  output$download_map_data2        <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title, "-mapdata.",input$file_type_map_data2, sep = "")},
+  output$download_map_data2        <- downloadHandler(filename = function(){paste(plot_titles_composites()$file_title, "-mapdata.",input$file_type_map_data2, sep = "")},
                                                       content  = function(file) {
                                                         if (input$file_type_map_data2 == "csv"){
                                                           map_data_new_2 <- rewrite_maptable(map_data_2(), subset_lons_primary(), subset_lats_primary())
@@ -6903,7 +6923,7 @@ server <- function(input, output, session) {
                                                           create_geotiff(map_data(), file)
                                                         }})
   
-  output$download_timeseries_data2  <- downloadHandler(filename = function(){paste(plot_titles_2()$file_title, "-tsdata.",input$file_type_timeseries_data2, sep = "")},
+  output$download_timeseries_data2  <- downloadHandler(filename = function(){paste(plot_titles_composites()$file_title, "-tsdata.",input$file_type_timeseries_data2, sep = "")},
                                                        content  = function(file) {
                                                          if (input$file_type_timeseries_data2 == "csv"){
                                                            write.csv(timeseries_data_output_2(), file,
@@ -7059,13 +7079,11 @@ server <- function(input, output, session) {
   
   #Map titles
   plot_titles_v1 <- reactive({
-    
     req(input$nav1 == "tab3") # Only run code if in the current tab
-    
-    my_title_v1 <- generate_titles ("general", input$dataset_selected_v1, input$ME_variable_v1, input$mode_selected_v1,
-                                    "Default","Default", month_range_primary(),input$range_years3,
-                                    input$ref_period_v1, NA,lonlat_vals_v1()[1:2],lonlat_vals_v1()[3:4],
-                                    NA, NA, NA)
+    my_title_v1 <- generate_titles(tab="general", dataset=input$dataset_selected_v1, variable=input$ME_variable_v1, mode=input$mode_selected_v1,
+                                  map_title_mode="Default", ts_title_mode="Default",
+                                  month_range=month_range_primary(), year_range=input$range_years3, baseline_range=input$ref_period_v1,
+                                  lon_range=lonlat_vals_v1()[1:2], lat_range=lonlat_vals_v1()[3:4])
     return(my_title_v1)
   }) 
   
@@ -7082,7 +7100,11 @@ server <- function(input, output, session) {
     return(ts_data1_v1)
   })
   
-  ME_timeseries_plot_v1 = function(){plot_default_timeseries(timeseries_data_v1(),"general",input$ME_variable_v1,plot_titles_v1(),"Default",NA)}
+  timeseries_plot_v1 = function(){
+    p <- plot_timeseries(type="Anomaly", data=timeseries_data_v1(), variable=input$ME_variable_v1,
+                         titles=plot_titles_v1())
+    return(p)
+  }
   
   
   # for Variable 2:
@@ -7117,7 +7139,13 @@ server <- function(input, output, session) {
     return(ts_data1_v2)
   })
   
-  ME_timeseries_plot_v2 = function(){plot_default_timeseries(timeseries_data_v2(),"general",input$ME_variable_v2,plot_titles_v2(),"Default",NA)}
+  #REMOVE
+  #timeseries_plot_v2 = function(){plot_default_timeseries(,"general",input$ME_variable_v2,plot_titles_v2(),"Default",NA)}
+  timeseries_plot_v2 = function(){
+    p <- plot_timeseries(type="Anomaly", data=timeseries_data_v2(), variable=input$ME_variable_v2,
+                         titles=plot_titles_v2())
+    return(p)
+  }
   
   ### Plotting ----
   
@@ -7149,7 +7177,7 @@ server <- function(input, output, session) {
     if (input$source_v1 == "User Data"){
       plot_user_timeseries(user_subset_v1(),"darkorange2")
     } else if (input$type_v1 == "Timeseries"){
-      ME_timeseries_plot_v1()
+      timeseries_plot_v1()
     } else{
       ME_map_plot_v1()
     }
@@ -7160,7 +7188,7 @@ server <- function(input, output, session) {
     if (input$source_v2 == "User Data"){
       plot_user_timeseries(user_subset_v2(),"saddlebrown")
     } else if (input$type_v2 == "Timeseries"){
-      ME_timeseries_plot_v2()
+      timeseries_plot_v2()
     } else{
       ME_map_plot_v2()
     }
@@ -7244,7 +7272,7 @@ server <- function(input, output, session) {
   output$correlation_r_value = renderText({paste("Timeseries correlation coefficient: r =",signif(correlation_stats()$estimate,digits =3), sep = "")})
   output$correlation_p_value = renderText({paste("Timeseries correlation p-value: p =",signif(correlation_stats()$p.value,digits =3), sep = "")})    
   
-  corr_ts1 = function(){
+  timeseries_plot_corr = function(){
     
     if (input$source_v1 == "ModE-"){
       variable_v1 = input$ME_variable_v1
@@ -7258,20 +7286,29 @@ server <- function(input, output, session) {
       variable_v2 = input$user_variable_v2
     }
     
-    plot_combined_timeseries(ts_data_v1(),ts_data_v2(),plot_titles_cor())
-    add_highlighted_areas(ts_highlights_data3())
-    add_custom_lines(ts_lines_data3())
-    add_correlation_timeseries(ts_data_v1(),ts_data_v2(),variable_v1,variable_v2,plot_titles_cor())
-    add_boxes(ts_highlights_data3())
-    add_custom_points(ts_points_data3())
-    if (input$show_key_ts3 == TRUE){
-      add_TS_key(input$key_position_ts3,ts_highlights_data3(),ts_lines_data3(),variable_v1,month_range_primary(),
-                 input$custom_average_ts3,input$year_moving_ts3,FALSE,NA,variable_v2,month_range_secondary(),TRUE)
-    }
+    #REMOVE
+    # plot_combined_timeseries(ts_data_v1(),ts_data_v2(),plot_titles_cor())
+    # add_highlighted_areas(ts_highlights_data3())
+    # add_custom_lines(ts_lines_data3())
+    # add_correlation_timeseries(ts_data_v1(),ts_data_v2(),variable_v1,variable_v2,plot_titles_cor())
+    # add_boxes(ts_highlights_data3())
+    # add_custom_points(ts_points_data3())
+    # if (input$show_key_ts3 == TRUE){
+    #   add_TS_key(input$key_position_ts3,ts_highlights_data3(),ts_lines_data3(),variable_v1,month_range_primary(),
+    #              input$custom_average_ts3,input$year_moving_ts3,FALSE,NA,variable_v2,month_range_secondary(),TRUE)
+    # }
+    
+    plot_timeseries(type="Correlation", data_v1=ts_data_v1(), data_v2=ts_data_v2(), 
+                    variable1=variable_v1, variable2=variable_v2,
+                    ref, year_range=NA, month_range_1=month_range_primary(), month_range_2=month_range_secondary(),
+                    titles=plot_titles_cor(),
+                    show_key=input$show_key_ts3, key_position=input$key_position_ts3, 
+                    moving_ave=input$custom_average_ts3, moving_ave_year=input$year_moving_ts3, 
+                    highlights=ts_highlights_data3(), lines=ts_lines_data3(), points=ts_points_data3())
     
   }
   
-  output$correlation_ts = renderPlot({corr_ts1()}, height = 400)
+  output$correlation_ts = renderPlot({timeseries_plot_corr()}, height = 400)
   
   #### Plot correlation map
   
@@ -7475,17 +7512,14 @@ server <- function(input, output, session) {
                                                       content  = function(file) {
                                                         if (input$file_type_timeseries3 == "png"){
                                                           png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
-                                                          corr_ts1()  
-                                                          dev.off()
                                                         } else if (input$file_type_timeseries3 == "jpeg"){
                                                           jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
-                                                          corr_ts1()
-                                                          dev.off()
                                                         } else {
                                                           pdf(file, width = 14, height = 6, bg = "transparent") 
-                                                          corr_ts1()
-                                                          dev.off()
-                                                        }}) 
+                                                        }
+                                                        timeseries_plot_corr()
+                                                        dev.off()
+                                                        }) 
   
   output$download_map3              <- downloadHandler(filename = function() {paste(plot_titles_cor()$Download_title, "-map.", input$file_type_map3, sep = "")},
                                                        content = function(file) {
@@ -7676,8 +7710,13 @@ server <- function(input, output, session) {
     return(me_tsd_iv)
   })
   
-  
-  ME_timeseries_plot_iv = function(){plot_default_timeseries(ME_ts_data_iv(),"general",input$ME_variable_iv[1],plot_titles_iv(),"Default",NA)}
+  #REMOVE
+  #_iv = function(){plot_default_timeseries(,"general",input$ME_variable_iv[1],,"Default",NA)}
+  timeseries_plot_iv = function(){
+    p <- plot_timeseries(type="Anomaly", data=ME_ts_data_iv(), variable=input$ME_variable_iv[1],
+                         titles=plot_titles_iv(), titles_mode=NA)
+    return(p)
+  }
   
   # Generate Timeseries data for dv
   timeseries_data_dv <- reactive({
@@ -7688,7 +7727,7 @@ server <- function(input, output, session) {
     return(ts_data1_dv)
   })
   
-  #ME_timeseries_plot_dv = function(){plot_default_timeseries(timeseries_data_dv(),"general",input$ME_variable_dv,plot_titles_dv(),"Default")}
+  #timeseries_plot_dv = function(){plot_default_timeseries(timeseries_data_dv(),"general",input$ME_variable_dv,plot_titles_dv(),"Default")}
   
   
   ### Plotting initial IV/DV ----
@@ -7717,7 +7756,7 @@ server <- function(input, output, session) {
     if (input$source_iv == "User Data"){
       plot_user_timeseries(user_subset_iv(),"darkorange2")
     } else {
-      ME_timeseries_plot_iv()
+      timeseries_plot_iv()
     } 
   },height = 400)  
   
@@ -7923,19 +7962,21 @@ server <- function(input, output, session) {
     return(rtsd)
   })
   
-  reg_ts1a = function(){
+  timeseries_plot_reg1 = function(){
     plot_regression_timeseries(regression_ts_data(),"original_trend",plot_titles_reg(),
                                variables_iv(),variable_dv())
+    
+    plot_timeseries(type="Trend", data=ts_data_dv(), variable=variable_dv(), titles=plot_titles_reg(), titles_mode=NA)
   }
   
-  output$plot_reg_ts1 = renderPlot({reg_ts1a()},height=400)
+  output$plot_reg_ts1 = renderPlot({timeseries_plot_reg1()},height=400)
   
-  reg_ts1b = function(){
+  timeseries_plot_reg2 = function(){
     plot_regression_timeseries(regression_ts_data(),"residuals",plot_titles_reg(),
                                variables_iv(),variable_dv())
   }
   
-  output$plot_reg_ts2 = renderPlot({reg_ts1b()},height=400)
+  output$plot_reg_ts2 = renderPlot({timeseries_plot_reg2()},height=400)
   
   output$data_reg_ts= renderDataTable({regression_ts_data()}, rownames = FALSE, options = list(
     autoWidth = TRUE, 
@@ -8175,33 +8216,27 @@ server <- function(input, output, session) {
                                                       content  = function(file) {
                                                         if (input$reg_ts_plot_type == "png"){
                                                           png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
-                                                          reg_ts1a()  
-                                                          dev.off()
                                                         } else if (input$reg_ts_plot_type == "jpeg"){
                                                           jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
-                                                          reg_ts1a()
-                                                          dev.off()
                                                         } else {
                                                           pdf(file, width = 14, height = 6, bg = "transparent") 
-                                                          reg_ts1a()
-                                                          dev.off()
-                                                        }})
+                                                        }                                                          
+                                                        timeseries_plot_reg1()
+                                                        dev.off()
+                                                        })
   
   output$download_reg_ts2_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title,"-ts.",input$reg_ts2_plot_type, sep = "")},
                                                        content  = function(file) {
                                                          if (input$reg_ts2_plot_type == "png"){
                                                            png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
-                                                           reg_ts1b()  
-                                                           dev.off()
                                                          } else if (input$reg_ts2_plot_type == "jpeg"){
                                                            jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
-                                                           reg_ts1b()
-                                                           dev.off()
                                                          } else {
                                                            pdf(file, width = 14, height = 6, bg = "transparent") 
-                                                           reg_ts1b()
-                                                           dev.off()
-                                                         }})
+                                                         }
+                                                         timeseries_plot_reg2()
+                                                         dev.off()
+                                                         })
   
   output$download_reg_ts_plot_data  <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-tsdata.",input$reg_ts_plot_data_type, sep = "")},
                                                        content  = function(file) {
@@ -8230,17 +8265,14 @@ server <- function(input, output, session) {
                                                        content  = function(file) {
                                                          if (input$reg_coe_plot_type == "png"){
                                                            png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "transparent")  
-                                                           reg_coef_map()
-                                                           dev.off()
                                                          } else if (input$reg_coe_plot_type == "jpeg"){
-                                                           jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "white") 
-                                                           reg_coef_map() 
-                                                           dev.off()
+                                                           jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "white")
                                                          } else {
                                                            pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200, bg = "transparent") 
-                                                           reg_coef_map()
-                                                           dev.off()
-                                                         }})
+                                                         }
+                                                         reg_coef_map()
+                                                         dev.off()
+                                                         })
   
   output$download_reg_coe_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-mapdata.",input$reg_coe_plot_data_type, sep = "")},
                                                               content  = function(file) {
@@ -8260,17 +8292,14 @@ server <- function(input, output, session) {
                                                         content  = function(file) {
                                                           if (input$reg_pval_plot_type == "png"){
                                                             png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "transparent")  
-                                                            reg_pval_map()
-                                                            dev.off()
                                                           } else if (input$reg_pval_plot_type == "jpeg"){
                                                             jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "white") 
-                                                            reg_pval_map() 
-                                                            dev.off()
                                                           } else {
                                                             pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200, bg = "transparent") 
-                                                            reg_pval_map()
-                                                            dev.off()
-                                                          }})
+                                                          }
+                                                          reg_pval_map()
+                                                          dev.off()
+                                                          })
   
   output$download_reg_pval_plot_data       <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-mapdata.",input$reg_pval_plot_data_type, sep = "")},
                                                               content  = function(file) {
@@ -8290,17 +8319,14 @@ server <- function(input, output, session) {
                                                        content  = function(file) {
                                                          if (input$reg_res_plot_type == "png"){
                                                            png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "transparent")  
-                                                           reg_res_map()
-                                                           dev.off()
                                                          } else if (input$reg_res_plot_type == "jpeg"){
                                                            jpeg(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "white") 
-                                                           reg_res_map() 
-                                                           dev.off()
                                                          } else {
                                                            pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200, bg = "transparent") 
-                                                           reg_res_map()
-                                                           dev.off()
-                                                         }})
+                                                         }
+                                                         reg_res_map()
+                                                         dev.off()
+                                                         })
   
   output$download_reg_res_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-mapdata.",input$reg_res_plot_data_type, sep = "")},
                                                               content  = function(file) {
@@ -8323,17 +8349,14 @@ server <- function(input, output, session) {
                                                        
                                                        if (input$file_type_fad4 == "png"){
                                                          png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
-                                                         print(fad_plot4())
-                                                         dev.off()
                                                        } else if (input$file_type_fad4 == "jpeg"){
                                                          jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
-                                                         print(fad_plot4()) 
-                                                         dev.off()
                                                        } else {
                                                          pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
-                                                         print(fad_plot4())
-                                                         dev.off()
-                                                       }})
+                                                       }
+                                                       print(fad_plot4())
+                                                       dev.off()
+                                                       })
   
   output$download_fad_data4       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season4),"_",input$fad_year4,"_data.",input$data_file_type_fad4, sep = "")},
                                                      content  = function(file) {
@@ -8437,17 +8460,14 @@ server <- function(input, output, session) {
                                                       content  = function(file) {
                                                         if (input$file_type_timeseries5 == "png"){
                                                           png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
-                                                          plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5)
-                                                          dev.off()
                                                         } else if (input$file_type_timeseries5 == "jpeg"){
                                                           jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
-                                                          plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5)
-                                                          dev.off()
                                                         } else {
                                                           pdf(file, width = 14, height = 6, bg = "transparent") 
-                                                          plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5)
-                                                          dev.off()
-                                                        }}) 
+                                                        }
+                                                        plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5)
+                                                        dev.off()
+                                                        }) 
   
   
   output$download_timeseries_data5  <- downloadHandler(filename = function(){paste("monthly-tsdata.",input$file_type_timeseries_data5, sep = "")},
@@ -8469,17 +8489,14 @@ server <- function(input, output, session) {
                                                        
                                                        if (input$file_type_fad5 == "png"){
                                                          png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
-                                                         print(fad_plot5())
-                                                         dev.off()
                                                        } else if (input$file_type_fad5 == "jpeg"){
                                                          jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
-                                                         print(fad_plot5()) 
-                                                         dev.off()
                                                        } else {
                                                          pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
-                                                         print(fad_plot5())
-                                                         dev.off()
-                                                       }})
+                                                       }
+                                                       print(fad_plot5())
+                                                       dev.off()
+                                                       })
   
   output$download_fad_data5       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season5),"_",input$fad_year5,"_data.",input$data_file_type_fad5, sep = "")},
                                                      content  = function(file) {
@@ -8914,4 +8931,3 @@ server <- function(input, output, session) {
 
 # Run the app with profiling
 # profvis({runApp(app)})
-

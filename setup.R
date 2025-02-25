@@ -39,7 +39,7 @@ setup_user_environment <- function() {
     
     # Noémie
     noemi = list(
-      setwd = "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/",
+      setwd = "C:/Users/noemi/OneDrive/ClimeApp_all-noemie-hp/ClimeApp/",
       lib_path = "C:/Users/noemi/OneDrive/ClimeApp_all/ClimeApp/library"
     ),
     nw22d367 = list(
