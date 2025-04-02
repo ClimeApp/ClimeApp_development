@@ -1,6 +1,5 @@
 # Helper Functions of ClimeApp 
 
-
 #### Internal Functions ####
 # (Functions used ONLY by other functions)
 
@@ -4136,4 +4135,3 @@ generate_month_label <- function(range) {
     paste(month_letters[(range[1]:range[2]) + 1], collapse = "")
   }
 }
-

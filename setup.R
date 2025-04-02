@@ -1,6 +1,7 @@
 #### Setup script for ClimeApp ####
 # Sets up user environment and loads required libraries as well as preprocessed data
 
+#### User Preparation ----
 
 Sys.info()[["user"]]
 
@@ -66,6 +67,8 @@ setup_user_environment <- function() {
 }
 setup_user_environment()
 
+#### Packages ----
+
 # Load only REQUIRED functions/libraries:
 #WD and Packages
 library(shiny)
@@ -108,7 +111,7 @@ library(shinyjs,include.only =  c("colourInput", "removeClass", "show", "addClas
 library(bslib,include.only = c("bs_theme", "popover"))
 library(readxl,include.only = c("read_excel", "cell_cols") )
 library(DT,include.only = c("dataTableOutput", "renderDataTable"))
-library(zoo,include.only = "rollmean" )
+library(zoo,include.only = "rollmean", "na.approx" )
 library(colourpicker,include.only = "colourInput" )
 library(tmaptools,include.only = "geocode_OSM" )
 library(ggplot2,include.only = c("map_data", "aes", "after_stat", "aes_string", "annotate", 
@@ -121,7 +124,6 @@ library(ggplot2,include.only = c("map_data", "aes", "after_stat", "aes_string", 
                                  "unit") )
 library(sf,include.only = c("st_as_sf", "st_set_crs", "st_crs", "st_geometry_type", "st_read", 
                             "st_transform") )
-library(shinylogs,include.only = c("store_json", "track_usage", "use_tracking") )
 library(shinycssloaders,include.only = "withSpinner" )
 library(openxlsx,include.only =  c("createWorkbook", "read.xlsx", "saveWorkbook", "write.xlsx", 
                                    "addWorksheet", "getSheetNames", "writeData")) #Don't Change order!
@@ -142,6 +144,12 @@ library(tidyterra,include.only = c("select", "aes", "after_stat", "arrange", "di
 # library(rnaturalearth) # for water bodies
 # library(rnaturalearthdata) # for water bodies
 library(viridis,include.only = "viridis" )
+
+# SEA Loading
+library(dplR)
+library(burnr)
+
+#### Design ----
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
@@ -164,9 +172,11 @@ variable_names <- c("Sea level pressure", "No. of rainy days", "Pressure", "Prec
 named_variables <- setNames(variable_names, variable_list)
 
 # Spinner configurations
-spinner_image = "pics/ClimeApp_Loading_V2.gif"
+spinner_image = "pics/ClimeApp_Loading_V3.gif"
 spinner_width = 310
 spinner_height = 200
+
+#### Preprocseeing ----
 
 # Load pre-processed data
 annual_temp_nc = nc_open("data/ModE-RA/year/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_temp2_abs_1421-2008_year.nc")
