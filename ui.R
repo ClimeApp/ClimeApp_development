@@ -2559,13 +2559,36 @@ tabPanel("SEA", value = "tab6",
                                         max        = 100),
                ),
                
-               # Set levent years
-               textInput(inputId    = "event_years_6",
-                         label     = "Set event years:",
-                         value     = "1452,1457,1585,1595,1600,1640,1695,1783,1809,1815,1831,1835,1883,1991",
-                         placeholder = "1452,1457,1585,1595,1600,1640,1695,1783,1809,1815,1831,1835,1883,1991"),
+               #Type in your event years OR upload a file
+               radioButtons(inputId  = "enter_upload_6",
+                            label    = "Choose how to enter event years:",
+                            choices  = c("Manual", "Upload"),
+                            selected = "Manual" , inline = TRUE),
                
-               helpText("Example: Years with major volcanic eruptions"),
+               shinyjs::hidden(div(id = "optional6c",
+                                   textInput(inputId    = "event_years_6",
+                                             label     = "Set event years:",
+                                             value     = "1452,1457,1585,1595,1600,1640,1695,1783,1809,1815,1831,1835,1883,1991",
+                                             placeholder = "1452,1457,1585,1595,1600,1640,1695,1783,1809,1815,1831,1835,1883,1991"),
+                                   
+                                   helpText("Example: Years with major volcanic eruptions")
+                                   
+                                   )),
+               
+               shinyjs::hidden(div(id = "optional6d",
+                                   fileInput(inputId = "upload_file_6b",
+                                             label = "Upload a list of years in .csv or .xlsx format:",
+                                             multiple = FALSE,
+                                             accept = c(".csv", ".xlsx", ".xls"),
+                                             width = NULL,
+                                             buttonLabel = "Browse your folders",
+                                             placeholder = "No file selected"),
+                                   
+                                   shinyjs::hidden(div(id = "optional6e",
+                                                       img(src = 'pics/composite_user_example.jpg', id = "sea_user_example_6b", height = "150px", width = "75px"),
+                                   ))
+               )
+               ),
 
              ), width = 12),
              

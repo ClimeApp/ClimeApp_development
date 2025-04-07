@@ -1623,6 +1623,30 @@ server <- function(input, output, session) {
                                condition = input$source_sea_6 == "ModE-",
                                asis = FALSE)})
       
+      observe({shinyjs::toggle(id = "optional6c",
+                               anim = TRUE,
+                               animType = "slide",
+                               time = 0.5,
+                               selector = NULL,
+                               condition = input$enter_upload_6 == "Manual",
+                               asis = FALSE)})
+      
+      observe({shinyjs::toggle(id = "optional6d",
+                               anim = TRUE,
+                               animType = "slide",
+                               time = 0.5,
+                               selector = NULL,
+                               condition = input$enter_upload_6 == "Upload",
+                               asis = FALSE)})
+      
+      observe({shinyjs::toggle(id = "optional6e",
+                               anim = TRUE,
+                               animType = "slide",
+                               time = 0.5,
+                               selector = NULL,
+                               condition = is.null(input$upload_file_6b),
+                               asis = FALSE)})
+      
       observe({shinyjs::toggle(id = "season_6",
                                anim = TRUE,
                                animType = "slide",
@@ -2629,6 +2653,7 @@ server <- function(input, output, session) {
       observeEvent(input$reorderConfirm, {
         reorder_shapefiles(plotOrder, input$reorderSelect, input$reorderAfter, "shpPickers")
       })
+      
     ## COMPOSITES observe, update & interactive controls ----
     
       ### Input updaters ----
@@ -6094,6 +6119,131 @@ server <- function(input, output, session) {
         }
       })
       
+      ### Interactivity ----
+      
+      # TS point/line setter
+      observeEvent(input$ts_click6,{
+        if (input$custom_features_6 == TRUE){
+          if (input$feature_6 == "Point"){
+            updateTextInput(
+              session = getDefaultReactiveDomain(),
+              inputId = "point_location_x_6",
+              label = NULL,
+              value = as.character(round(input$ts_click6$x, digits = 2))
+            )
+            
+            updateTextInput(
+              session = getDefaultReactiveDomain(),
+              inputId = "point_location_y_6",
+              label = NULL,
+              value = as.character(round(input$ts_click6$y, digits = 2))
+            )
+          } 
+          else if (input$feature_6 == "Line"){
+            updateRadioButtons(
+              session = getDefaultReactiveDomain(),
+              inputId = "line_orientation_6",
+              label = NULL,
+              selected = "Vertical")
+            
+            updateTextInput(
+              session = getDefaultReactiveDomain(),
+              inputId = "line_position_6",
+              label = NULL,
+              value = as.character(round(input$ts_click6$x, digits = 2))
+            )
+          }
+        }
+      })
+      
+      observeEvent(input$ts_dblclick6,{
+        if (input$custom_features_6 == TRUE & input$feature_6 == "Line"){
+          updateRadioButtons(
+            session = getDefaultReactiveDomain(),
+            inputId = "line_orientation_6",
+            label = NULL,
+            selected = "Horizontal")
+          
+          updateTextInput(
+            session = getDefaultReactiveDomain(),
+            inputId = "line_position_6",
+            label = NULL,
+            value = as.character(round(input$ts_dblclick6$y, digits = 2))
+          )
+        }
+      })
+      
+      # TS highlight setter
+      observeEvent(input$ts_brush6,{
+        if (input$custom_features_6 == TRUE & input$feature_6 == "Highlight"){
+          
+          updateNumericRangeInput(
+            session = getDefaultReactiveDomain(),
+            inputId = "highlight_x_values_6",
+            label = NULL,
+            value = round(c(input$ts_brush6[[1]],input$ts_brush6[[2]]), digits = 2))
+          
+          updateNumericRangeInput(
+            session = getDefaultReactiveDomain(),
+            inputId = "highlight_y_values_6",
+            label = NULL,
+            value = round(c(input$ts_brush6[[3]],input$ts_brush6[[4]]), digits = 2))
+        }
+      })
+      ### Initialise and update custom points lines highlights ----
+
+      ts_points_data6 = reactiveVal(data.frame())
+      ts_highlights_data6 = reactiveVal(data.frame())
+      ts_lines_data6 = reactiveVal(data.frame())
+      
+      # timeseries Points
+      observeEvent(input$add_point_6, {
+        ts_points_data6(rbind(ts_points_data6(),
+                             create_new_points_data(input$point_location_x_6,input$point_location_y_6,
+                                                    input$point_label_6,input$point_shape_6,
+                                                    input$point_colour_6,input$point_size_6)))
+      })  
+      
+      observeEvent(input$remove_last_point_6, {
+        ts_points_data6(ts_points_data6()[-nrow(ts_points_data6()),])
+      })
+      
+      observeEvent(input$remove_all_points_6, {
+        ts_points_data6(data.frame())
+      })
+      
+      # timeseries Highlights
+      observeEvent(input$add_highlight_6, {
+        ts_highlights_data6(rbind(ts_highlights_data6(),
+                                 create_new_highlights_data(input$highlight_x_values_6,input$highlight_y_values_6,
+                                                            input$highlight_colour_6,input$highlight_type_6,
+                                                            input$show_highlight_on_legend_6,input$highlight_label_6)))
+      })  
+      
+      observeEvent(input$remove_last_highlight_6, {
+        ts_highlights_data6(ts_highlights_data6()[-nrow(ts_highlights_data6()),])
+      })
+      
+      observeEvent(input$remove_all_highlights_6, {
+        ts_highlights_data6(data.frame())
+      })
+      
+      # timeseries Lines
+      observeEvent(input$add_line_6, {
+        ts_lines_data6(rbind(ts_lines_data6(),
+                            create_new_lines_data(input$line_orientation_6,input$line_position_6,
+                                                  input$line_colour_6,input$line_type_6,
+                                                  input$show_line_on_legend_6,input$line_label_6)))
+      })  
+      
+      observeEvent(input$remove_last_line_6, {
+        ts_lines_data6(ts_lines_data6()[-nrow(ts_lines_data6()),])
+      })
+      
+      observeEvent(input$remove_all_lines_6, {
+        ts_lines_data6(data.frame())
+      })
+      
   #Processing and Plotting ----
     ## DATA PROCESSING ----  
     # NOTE that "primary" refers to anomalies, composites, variable 1 and dependent
@@ -9056,6 +9206,11 @@ server <- function(input, output, session) {
         return(ts_us_sub)
       })
       
+      #Creating a year set for composite
+      year_set_sea <- reactive({
+        read_composite_data(input$event_years_6, input$upload_file_6b$datapath, input$enter_upload_6)
+      })
+      
       ### ModE-Data Processing ----
       
       #Using the time series data as input
@@ -9140,9 +9295,20 @@ server <- function(input, output, session) {
       
       # Cut event years based on the data
       event_years_cut <- reactive({
-        v_years = as.integer(unlist(strsplit(input$event_years_6, split = ",")))
-        v_years_cut = subset(v_years,(v_years>(min(years())-input$lag_years_6[1])) &
-                               (v_years<(max(years())-input$lag_years_6[2])))
+        # Choose source of event years based on input$enter_upload_6
+        if (input$enter_upload_6 == "Manual") {
+          v_years <- as.integer(unlist(strsplit(input$event_years_6, split = ",")))
+        } else if (input$enter_upload_6 == "Upload") {
+          v_years <- year_set_sea()
+        } else {
+          return(NULL)  # or handle error/default case
+        }
+        
+        # Filter event years based on lag
+        v_years_cut <- subset(v_years, (v_years > (min(years()) - input$lag_years_6[1])) &
+                                (v_years < (max(years()) - input$lag_years_6[2])))
+        
+        return(v_years_cut)
       })
       
       # Calculate SEA data
@@ -9224,119 +9390,124 @@ server <- function(input, output, session) {
       })
       
       # Create plot function:
-      SEA_plotfunction = function(){
+      SEA_plotfunction <- function() {
+        data <- SEA_datatable()
+        
         # Find y limits
-        SEAmax = max(SEA_datatable()[,!names(SEA_datatable()) %in% c("LAG_YEAR", "P")],na.rm=TRUE)
-        SEAmin = min(SEA_datatable()[,!names(SEA_datatable()) %in% c("LAG_YEAR", "P")],na.rm=TRUE)
-        SEArange = SEAmax-SEAmin
-        ymax = SEAmax+(0.05*SEArange) ; ymin = SEAmin-(0.05*SEArange)  
+        SEAmax <- max(data[, !names(data) %in% c("LAG_YEAR", "P")], na.rm = TRUE)
+        SEAmin <- min(data[, !names(data) %in% c("LAG_YEAR", "P")], na.rm = TRUE)
+        SEArange <- SEAmax - SEAmin
+        ymax <- SEAmax + (0.05 * SEArange)
+        ymin <- SEAmin - (0.05 * SEArange)
         
-        par(mar = c(6.7, 7.3, 4.1, 3.5))
-        
-        # Plot
-        plot(SEA_datatable()$LAG_YEAR,SEA_datatable()$OBSERVATIONS_MEAN, type = "l",lwd = 3.5, xaxs="i",
-             xlab = "Lag Year", ylab = ts_y_label(),ylim = c(ymin,ymax),cex.axis = 2.6,cex.lab = 2.8,mgp=c(4.3,1.7,0))
-        abline(v = 0,col = "grey", lty = 3,lwd = 3.5)
-        
-        datatable_columns = colnames(SEA_datatable())
-        
-        # Add other lines
-        if (input$show_means_6){
-          lines(SEA_datatable()$LAG_YEAR,SEA_datatable()$SAMPLE_MEAN, col = "purple",lwd = 3)
-        }
-        
-        if (input$show_confidence_bands_6 == "95%"){
-          lines(SEA_datatable()$LAG_YEAR,SEA_datatable()$CI_95_LOWER, col = "gold",lwd = 3)
-          lines(SEA_datatable()$LAG_YEAR,SEA_datatable()$CI_95_UPPER, col = "firebrick3",lwd = 3)
-        }
-        
-        if (input$show_confidence_bands_6 == "99%"){
-          lines(SEA_datatable()$LAG_YEAR,SEA_datatable()$CI_99_LOWER, col = "gold",lwd = 3)
-          lines(SEA_datatable()$LAG_YEAR,SEA_datatable()$CI_99_UPPER, col = "firebrick3",lwd = 3)
-        }
-        #Replot main line
-        lines(SEA_datatable()$LAG_YEAR,SEA_datatable()$OBSERVATIONS_MEAN, lwd = 3.5)
-        
-        #Add p values
-        if (input$show_pvalues_6){
-          
-          for (i in 1:length(SEA_datatable()$LAG_YEAR)){
-            pvalue = SEA_datatable()$P[i]
-            # Color code
-            if (0<=pvalue & pvalue<0.01){
-              cc = "#006D2C"
-            } else if (0.01<=pvalue & pvalue<0.05){
-              cc  = "darkseagreen3"
-            } else {
-              cc  = "#EDF8E9"
-            }  
-            points(SEA_datatable()$LAG_YEAR[i],SEA_datatable()$OBSERVATIONS_MEAN[i],col = cc, pch = 16,cex = 3.5)
-            points(SEA_datatable()$LAG_YEAR[i],SEA_datatable()$OBSERVATIONS_MEAN[i],lwd = 2.5, pch = 1,cex = 3.5)
-          }
-        }
-        
-        if (input$show_observations_6){
-          for (i in SEA_data()$event_years){
-            lines(SEA_datatable()$LAG_YEAR,SEA_datatable()[,paste0("Observations_",i)],col = "grey",lwd = 2.5)
-          }
-        }
-        
-        #Add title
-        title(main = ts_title(), adj = 0, line = 0.3, cex.main = 3)
-        
-        #Add ticks
-        if (input$show_ticks_6){
-          axis(side=1, at=input$lag_years_6[1]:input$lag_years_6[2], labels = FALSE)
-        }
-        
-        # Add key
-        if (input$show_key_6){
-          
-          # Generate lines and labels
-          line_labels = "Observation Means"
-          line_cols = "black"
-          line_types = 1
-          line_widths = 3.5
-          
-          if (input$show_observations_6){
-            line_labels = c(line_labels,"Individual Events")
-            line_cols = c(line_cols,"grey")
-            line_types = c(line_types,1)
-            line_widths = c(line_widths,2.5)
-          }
-          
-          if (input$show_means_6){
-            line_labels = c(line_labels,"Random Sample Means")
-            line_cols = c(line_cols,"purple")
-            line_types = c(line_types,1)
-            line_widths = c(line_widths,3)
-          }
-          
-          if (input$show_confidence_bands_6 == "95%"){
-            line_labels = c(line_labels,"Upper 95% Confidence Band","Lower 95% Confidence Band")
-            line_cols = c(line_cols,"gold","firebrick3")
-            line_types = c(line_types,1,1)
-            line_widths = c(line_widths,3,3)
-          }
-          
-          if (input$show_confidence_bands_6 == "99%"){
-            line_labels = c(line_labels,"Upper 99% Confidence Band","Lower 99% Confidence Band")
-            line_cols = c(line_cols,"gold","firebrick3")
-            line_types = c(line_types,1,1)
-            line_widths = c(line_widths,3,3)
-          }
-          
-          # Add legends
-          legend("bottomleft",legend=line_labels, col = line_cols, lty = line_types, lwd = line_widths, cex =2.5)
-          
-          if (input$show_pvalues_6){
-            legend("bottomright", cex = 2.5,
-                   legend=c("p<0.01","p<0.05"),
-                   col = c("#006D2C","darkseagreen3"),
-                   pch = c(16,16)
+        # Base plot
+        p <- ggplot(data, aes(x = LAG_YEAR)) +
+          geom_line(aes(y = OBSERVATIONS_MEAN, color = "Observation Means"), size = 1.2, 
+                    show.legend = input$show_key_6) +
+          scale_color_manual(
+            values = c(
+              "Observation Means" = "black",
+              "Individual Events" = "grey",
+              "Random Sample Means" = "purple",
+              "Upper 95% Confidence Band" = "gold",
+              "Lower 95% Confidence Band" = "firebrick3",
+              "Upper 99% Confidence Band" = "gold",
+              "Lower 99% Confidence Band" = "firebrick3"
+            ),
+            breaks = c(
+              "Observation Means",
+              "Individual Events",
+              "Random Sample Means",
+              "Upper 95% Confidence Band",
+              "Lower 95% Confidence Band",
+              "Upper 99% Confidence Band",
+              "Lower 99% Confidence Band"
             )
+          ) +
+          labs(color = "Legend:") +
+          geom_vline(xintercept = 0, linetype = "dashed", color = "grey", size = 1.2) +
+          labs(x = "Lag Year", y = ts_y_label(), title = ts_title()) +
+          theme_minimal(base_size = 16) +
+          ylim(ymin, ymax) +
+          theme(
+            plot.margin = margin(6.7, 7.3, 4.1, 3.5, "pt"),
+            legend.box = "vertical",
+            legend.title = element_text(size = 14),
+            legend.text = element_text(size = 12),
+            legend.spacing.y = unit(0.4, "cm"),
+            legend.key = element_blank(),
+            legend.key.size = unit(1.2, "lines")
+          )
+        
+        # Add individual event lines
+        if (input$show_observations_6) {
+          for (i in SEA_data()$event_years) {
+            p <- p +
+              geom_line(aes_string(y = paste0("Observations_", i), color = '"Individual Events"'),
+                        size = 0.8, show.legend = input$show_key_6)
           }
         }
+        
+        # Add additional lines
+        if (input$show_means_6) {
+          p <- p + geom_line(aes(y = SAMPLE_MEAN, color = "Random Sample Means"), size = 1,
+                             show.legend = input$show_key_6)
+        }
+        
+        # Add Confidence Bands (if applicable)
+        if (input$show_confidence_bands_6 == "95%") {
+          p <- p + 
+            geom_line(aes(y = CI_95_LOWER, color = "Upper 95% Confidence Band"), size = 1,
+                      show.legend = input$show_key_6) +
+            geom_line(aes(y = CI_95_UPPER, color = "Lower 95% Confidence Band"), size = 1,
+                      show.legend = input$show_key_6)
+        }
+        
+        if (input$show_confidence_bands_6 == "99%") {
+          p <- p + 
+            geom_line(aes(y = CI_99_LOWER, color = "Upper 99% Confidence Band"), size = 1,
+                      show.legend = input$show_key_6) +
+            geom_line(aes(y = CI_99_UPPER, color = "Lower 99% Confidence Band"), size = 1,
+                      show.legend = input$show_key_6)
+        }
+        
+        # Replot main line on top
+        p <- p + geom_line(aes(y = OBSERVATIONS_MEAN), size = 1.2, color = "black")
+        
+        # Add p-values
+        if (input$show_pvalues_6) {
+          p <- p +
+            geom_point(
+              aes(
+                y = OBSERVATIONS_MEAN,
+                fill = factor(cut(P,
+                                  breaks = c(-Inf, 0.01, 0.05, Inf),
+                                  labels = c("p<0.01", "p<0.05", "NS"))
+                )
+              ),
+              shape = 21, size = 6, stroke = 1.2, color = "black", show.legend = input$show_key_6
+            ) +
+            scale_fill_manual(
+              values = c("p<0.01" = "#006D2C", "p<0.05" = "darkseagreen3", "NS" = "#EDF8E9"),
+              labels = c("p<0.01", "p<0.05", "p>0.05"),
+              breaks = c("p<0.01", "p<0.05", "NS"),
+              drop = FALSE
+            ) +
+            labs(fill = "p-value:")
+        }
+        
+        # Add tick marks
+        if (input$show_ticks_6) {
+          p <- p + scale_x_continuous(breaks = seq(input$lag_years_6[1], input$lag_years_6[2], by = 1))
+        }
+        
+        # Separate legends for color and fill
+        p <- p + guides(
+          color = guide_legend(order = 1, override.aes = list(shape = NA, fill = NA)),
+          fill = guide_legend(order = 2)
+        )
+        
+        return(p)
       }
       
       # Generate Plot
@@ -9356,7 +9527,7 @@ server <- function(input, output, session) {
                                                            } else {
                                                              pdf(file, width = 14, height = 6, bg = "transparent") 
                                                            }
-                                                           SEA_plotfunction()
+                                                           print(SEA_plotfunction())
                                                            dev.off()
                                                          })
       
