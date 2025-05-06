@@ -1,9 +1,6 @@
 #### Setup script for ClimeApp ####
 # Sets up user environment and loads required libraries as well as preprocessed data
 
-
-Sys.info()[["user"]]
-
 ## Working Directory
 # Define a function to set up user configurations
 setup_user_environment <- function() {
@@ -48,8 +45,12 @@ setup_user_environment <- function() {
     ),
     
     # Tanja
+    falasca = list(
+      setwd = "C:/Users/falasca/OneDrive/ClimeApp_all/ClimeApp/",
+      lib_path = "C:/Users/falasca/OneDrive/ClimeApp_all/ClimeApp/library"
+    ),
     tanja = list(
-      setwd = "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp",
+      setwd = "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/",
       lib_path = "C:/Users/tanja/OneDrive/ClimeApp_all/ClimeApp/library"
     )
   )
@@ -145,9 +146,6 @@ library(viridis,include.only = "viridis" )
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
-
-# Choosing theme and making colouring changes
-my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")
 
 # Choosing theme and making colouring changes
 my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")

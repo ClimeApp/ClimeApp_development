@@ -1307,9 +1307,9 @@ server <- function(input, output, session) {
                            condition = input$source_dv == "ModE-",
                            asis = FALSE)})
   
-  ## Regression Maps
   
-  # Hidden Customization Regression Coefficients
+  ## Regression Maps
+  # Hidden Customization and Download Regression Coefficients
   observe({shinyjs::toggle(id = "hidden_custom_map_reg_coeff",
                            anim = TRUE,
                            animType = "slide",
@@ -1318,25 +1318,6 @@ server <- function(input, output, session) {
                            condition = input$custom_map_reg_coeff == TRUE,
                            asis = FALSE)})
   
-  # Hidden Customization Regression P-Values
-  observe({shinyjs::toggle(id = "hidden_custom_map_reg_pval",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_map_reg_pval == TRUE,
-                           asis = FALSE)})
-  
-  # Hidden Customization Regression Residuals
-  observe({shinyjs::toggle(id = "hidden_custom_maps_reg_res",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_map_reg_res == TRUE,
-                           asis = FALSE)})
-  
-  # Hidden Axis Regression Coefficients
   observe({shinyjs::toggle(id = "hidden_custom_axis_reg_coeff",
                            anim = TRUE,
                            animType = "slide",
@@ -1345,57 +1326,38 @@ server <- function(input, output, session) {
                            condition = input$axis_mode_reg_coeff == "Fixed",
                            asis = FALSE)})
   
-  # Hidden Axis Regression P-Values
-  observe({shinyjs::toggle(id = "hidden_custom_axis_reg_pvals",
+  observe({shinyjs::toggle(id = "hidden_custom_title_reg_coeff",
                            anim = TRUE,
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$axis_mode_reg_pvals == "Fixed",
+                           condition = input$title_mode_reg_coeff == "Custom",
                            asis = FALSE)})
   
-  # Hidden Customization Regression Residuals
-  observe({shinyjs::toggle(id = "hidden_custom_axis_reg_res",
+  observe({shinyjs::toggle(id = "hidden_custom_features_reg_coeff",
                            anim = TRUE,
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$axis_mode_reg_res == "Fixed",
+                           condition = input$custom_features_reg_coeff == TRUE,
                            asis = FALSE)})
   
-  observe({shinyjs::toggle(id = "hidden_custom_title4",
+  observe({shinyjs::toggle(id = "hidden_custom_points_reg_coeff",
                            anim = TRUE,
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$title_mode4 == "Custom",
+                           condition = input$feature_reg_coeff == "Point",
                            asis = FALSE)})
   
-  observe({shinyjs::toggle(id = "hidden_custom_features4",
+  observe({shinyjs::toggle(id = "hidden_custom_highlights_reg_coeff",
                            anim = TRUE,
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$custom_features4 == TRUE,
+                           condition = input$feature_reg_coeff == "Highlight",
                            asis = FALSE)})
   
-  observe({shinyjs::toggle(id = "hidden_custom_points4",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$feature4 == "Point",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_highlights4",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$feature4 == "Highlight",
-                           asis = FALSE)})
-  
-  # Hidden Download Regression Coefficients
   observe({shinyjs::toggle(id = "hidden_download_coeff",
                            anim = TRUE,
                            animType = "slide",
@@ -1404,7 +1366,56 @@ server <- function(input, output, session) {
                            condition = input$download_options_coeff == TRUE,
                            asis = FALSE)})
   
-  # Hidden Download Regression P-Values
+
+  # Hidden Customization and Download Regression P-Values
+  observe({shinyjs::toggle(id = "hidden_custom_map_reg_pval",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_map_reg_pval == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_axis_reg_pvals",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$axis_mode_reg_pvals == "Fixed",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_title_reg_pval",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$title_mode_reg_pval == "Custom",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_features_reg_pval",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_features_reg_pval == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_points_reg_pval",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$feature_reg_pval == "Point",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_highlights_reg_pval",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$feature_reg_pval == "Highlight",
+                           asis = FALSE)})
+  
   observe({shinyjs::toggle(id = "hidden_download_pval",
                            anim = TRUE,
                            animType = "slide",
@@ -1413,7 +1424,56 @@ server <- function(input, output, session) {
                            condition = input$download_options_pval == TRUE,
                            asis = FALSE)})
   
-  # Hidden Download Regression Residuals
+  
+  # Hidden Customization and Download Regression Residuals
+  observe({shinyjs::toggle(id = "hidden_custom_maps_reg_res",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_map_reg_res == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_axis_reg_res",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$axis_mode_reg_res == "Fixed",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_title_reg_res",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$title_mode_reg_res == "Custom",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_features_reg_res",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_features_reg_res == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_points_reg_res",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$feature_reg_res == "Point",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_highlights_reg_res",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$feature_reg_res == "Highlight",
+                           asis = FALSE)})
+  
   observe({shinyjs::toggle(id = "hidden_download_regres",
                            anim = TRUE,
                            animType = "slide",
@@ -1421,22 +1481,8 @@ server <- function(input, output, session) {
                            selector = NULL,
                            condition = input$download_options_regres == TRUE,
                            asis = FALSE)})
-  
-  
-  # Hidden Custom Titles Regression Coefficients
-  observe({shinyjs::toggle(id = "hidden_custom_title_reg_coeff",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$title_mode_reg_coeff == "Custom",
-                           asis = FALSE)})
 
-  # Hidden Custom Titles Regression P-Values
-  
-  
-  
-  # Hidden Custom Titles Regression Coefficients
+
   
   # Annual cycles
   observe({shinyjs::toggle(id = "optional5",
@@ -2063,22 +2109,22 @@ server <- function(input, output, session) {
   # Map coordinates/highlights setter
   observeEvent(input$map_brush1,{
     
-    # Convert x values
-    x_brush1_1 = (input$map_brush1[[1]]*1.14) - (0.14*lonlat_vals()[1])
-    x_brush1_2 = (input$map_brush1[[2]]*1.14) - (0.14*lonlat_vals()[1])
+    x_brush_1 = input$map_brush1[[1]]
+    x_brush_2 = input$map_brush1[[2]]
     
     if (input$custom_features == FALSE){
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude",
         label = NULL,
-        value = round(c(x_brush1_1,x_brush1_2), digits = 2))
+        value = round(c(x_brush_1,x_brush_2), digits = 2))
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude",
         label = NULL,
-        value = round(c(input$map_brush1[[3]],input$map_brush1[[4]]), digits = 2))
+        value = round(c(input$map_brush1[[3]], input$map_brush1[[4]]), digits = 2)
+      )
     } else {
       updateRadioButtons(
         session = getDefaultReactiveDomain(),
@@ -2090,13 +2136,14 @@ server <- function(input, output, session) {
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values",
         label = NULL,
-        value = round(c(x_brush1_1,x_brush1_2), digits = 2))
+        value = round(c(x_brush_1, x_brush_2), digits = 2))
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values",
         label = NULL,
-        value = round(c(input$map_brush1[[3]],input$map_brush1[[4]]), digits = 2))
+        value = round(c(input$map_brush1[[3]], input$map_brush1[[4]]), digits = 2)
+      )
     }
   })
   
@@ -2127,9 +2174,7 @@ server <- function(input, output, session) {
   
   # Map custom points selector
   observeEvent(input$map_dblclick1,{
-    
-    # Convert x values
-    x_dblclick1 = (input$map_dblclick1$x*1.14) - (0.14*lonlat_vals()[1])
+    dblclick <- input$map_dblclick1
     
     updateCheckboxInput(
       session = getDefaultReactiveDomain(),
@@ -2147,14 +2192,14 @@ server <- function(input, output, session) {
       session = getDefaultReactiveDomain(),
       inputId = "point_location_x",
       label = NULL,
-      value = as.character(round(x_dblclick1, digits = 2))
+      value = as.character(round(dblclick$x, digits = 2))
     )
     
     updateTextInput(
       session = getDefaultReactiveDomain(),
       inputId = "point_location_y",
       label = NULL,
-      value = as.character(round(input$map_dblclick1$y, digits = 2))
+      value = as.character(round(dblclick$y, digits = 2))
     )
   })
   
@@ -2239,25 +2284,31 @@ server <- function(input, output, session) {
   # Map Points
   observeEvent(input$add_point, {
     map_points_data(rbind(map_points_data(),
-                          create_new_points_data(input$point_location_x,input$point_location_y,
-                                                 input$point_label,input$point_shape,
-                                                 input$point_colour,input$point_size)))
-  })  
-  
+                          create_new_points_data(input$point_location_x,
+                                                 input$point_location_y,
+                                                 input$point_label,
+                                                 input$point_shape,
+                                                 input$point_colour,
+                                                 input$point_size)))
+  })
+
   observeEvent(input$remove_last_point, {
     map_points_data(map_points_data()[-nrow(map_points_data()),])
   })
-  
+
   observeEvent(input$remove_all_points, {
     map_points_data(data.frame())
   })
-  
-  
+
   # Map Highlights
   observeEvent(input$add_highlight, {
     map_highlights_data(rbind(map_highlights_data(),
-                              create_new_highlights_data(input$highlight_x_values,input$highlight_y_values,
-                                                         input$highlight_colour,input$highlight_type,NA,NA)))
+                              create_new_highlights_data(input$highlight_x_values,
+                                                         input$highlight_y_values,
+                                                         input$highlight_colour,
+                                                         input$highlight_type,
+                                                         NA,
+                                                         NA)))
   })  
   
   observeEvent(input$remove_last_highlight, {
@@ -2959,22 +3010,22 @@ server <- function(input, output, session) {
   # Map coordinates/highlights setter
   observeEvent(input$map_brush2,{
     
-    # Convert x values
-    x_brush2_1 = (input$map_brush2[[1]]*1.14) - (0.14*lonlat_vals2()[1])
-    x_brush2_2 = (input$map_brush2[[2]]*1.14) - (0.14*lonlat_vals2()[1])
+    x_brush_1 = input$map_brush2[[1]]
+    x_brush_2 = input$map_brush2[[2]]
     
     if (input$custom_features2 == FALSE){
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude2",
         label = NULL,
-        value = round(c(x_brush2_1,x_brush2_2), digits = 2))
+        value = round(c(x_brush_1,x_brush_2), digits = 2))
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude2",
         label = NULL,
-        value = round(c(input$map_brush2[[3]],input$map_brush2[[4]]), digits = 2))
+        value = round(c(input$map_brush2[[3]], input$map_brush2[[4]]), digits = 2)
+      )
     } else {
       updateRadioButtons(
         session = getDefaultReactiveDomain(),
@@ -2986,21 +3037,20 @@ server <- function(input, output, session) {
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values2",
         label = NULL,
-        value = round(c(x_brush2_1,x_brush2_2), digits = 2))
-      
+        value = round(c(x_brush_1, x_brush_2), digits = 2))
+        
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values2",
         label = NULL,
-        value = round(c(input$map_brush2[[3]],input$map_brush2[[4]]), digits = 2))
+        value = round(c(input$map_brush2[[3]], input$map_brush2[[4]]), digits = 2)
+        )
     }
   })
   
   # Map custom points selector
   observeEvent(input$map_dblclick2,{
-    
-    # Convert x values
-    x_dblclick2 = (input$map_dblclick2$x*1.14) - (0.14*lonlat_vals2()[1])
+    dblclick <- input$map_dblclick2
     
     updateCheckboxInput(
       session = getDefaultReactiveDomain(),
@@ -3018,16 +3068,17 @@ server <- function(input, output, session) {
       session = getDefaultReactiveDomain(),
       inputId = "point_location_x2",
       label = NULL,
-      value = as.character(round(x_dblclick2, digits = 2))
+      value = as.character(round(dblclick$x, digits = 2))
     )
     
     updateTextInput(
       session = getDefaultReactiveDomain(),
       inputId = "point_location_y2",
       label = NULL,
-      value = as.character(round(input$map_dblclick2$y, digits = 2))
+      value = as.character(round(dblclick$y, digits = 2))
     )
   })
+  
   
   # TS point/line setter
   observeEvent(input$ts_click2,{
@@ -3112,11 +3163,14 @@ server <- function(input, output, session) {
   # Map Points
   observeEvent(input$add_point2, {
     map_points_data2(rbind(map_points_data2(),
-                           create_new_points_data(input$point_location_x2,input$point_location_y2,
-                                                  input$point_label2,input$point_shape2,
-                                                  input$point_colour2,input$point_size2)))
-  })  
-  
+                           create_new_points_data(input$point_location_x2,
+                                                  input$point_location_y2,
+                                                  input$point_label2,
+                                                  input$point_shape2,
+                                                  input$point_colour2,
+                                                  input$point_size2)))
+  })
+
   observeEvent(input$remove_last_point2, {
     map_points_data2(map_points_data2()[-nrow(map_points_data2()),])
   })
@@ -3125,11 +3179,16 @@ server <- function(input, output, session) {
     map_points_data2(data.frame())
   })
   
+  ### Initialise and update custom points lines highlights ----
   # Map Highlights
   observeEvent(input$add_highlight2, {
     map_highlights_data2(rbind(map_highlights_data2(),
-                               create_new_highlights_data(input$highlight_x_values2,input$highlight_y_values2,
-                                                          input$highlight_colour2,input$highlight_type2,NA,NA)))
+                               create_new_highlights_data(input$highlight_x_values2,
+                                                          input$highlight_y_values2,
+                                                          input$highlight_colour2,
+                                                          input$highlight_type2,
+                                                          NA,
+                                                          NA)))
   })  
   
   observeEvent(input$remove_last_highlight2, {
@@ -4136,9 +4195,8 @@ server <- function(input, output, session) {
   # Map coordinates/highlights setter
   observeEvent(input$map_brush3,{
     
-    # Convert x values
-    x_brush3_1 = (input$map_brush3[[1]]*1.14) - (0.14*lonlat_vals3()[1])
-    x_brush3_2 = (input$map_brush3[[2]]*1.14) - (0.14*lonlat_vals3()[1])
+    x_brush3_1 = input$map_brush3[[1]]
+    x_brush3_2 = input$map_brush3[[2]]
     
     if (input$custom_features3 == FALSE){
       
@@ -4147,13 +4205,15 @@ server <- function(input, output, session) {
           session = getDefaultReactiveDomain(),
           inputId = "range_longitude_v1",
           label = NULL,
-          value = round(c(x_brush3_1,x_brush3_2), digits = 2))
+          value = round(c(x_brush3_1, x_brush3_2), digits = 2)
+        )
         
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "range_latitude_v1",
           label = NULL,
-          value = round(c(input$map_brush3[[3]],input$map_brush3[[4]]), digits = 2))
+          value = round(c(input$map_brush3[[3]], input$map_brush3[[4]]), digits = 2)
+        )
       }
       
       if (input$type_v2 == "Field"){
@@ -4161,41 +4221,45 @@ server <- function(input, output, session) {
           session = getDefaultReactiveDomain(),
           inputId = "range_longitude_v2",
           label = NULL,
-          value = round(c(x_brush3_1,x_brush3_2), digits = 2))
+          value = round(c(x_brush3_1, x_brush3_2), digits = 2)
+        )
         
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "range_latitude_v2",
           label = NULL,
-          value = round(c(input$map_brush3[[3]],input$map_brush3[[4]]), digits = 2))
+          value = round(c(input$map_brush3[[3]], input$map_brush3[[4]]), digits = 2)
+        )
       }
     } else {
+      # Update highlight values if custom_features3 is TRUE
       updateRadioButtons(
         session = getDefaultReactiveDomain(),
         inputId = "feature3",
         label = NULL,
-        selected = "Highlight")
+        selected = "Highlight"
+      )
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values3",
         label = NULL,
-        value = round(c(x_brush3_1,x_brush3_2), digits = 2))
+        value = round(c(x_brush3_1, x_brush3_2), digits = 2)
+      )
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values3",
         label = NULL,
-        value = round(c(input$map_brush3[[3]],input$map_brush3[[4]]), digits = 2))
+        value = round(c(input$map_brush3[[3]], input$map_brush3[[4]]), digits = 2)
+      )
     }
   })
   
   # Map custom points selector
   observeEvent(input$map_dblclick3,{
-    
-    # Convert x values
-    x_dblclick3 = (input$map_dblclick3$x*1.14) - (0.14*lonlat_vals3()[1])
-    
+    dblclick <- input$map_dblclick3
+
     updateCheckboxInput(
       session = getDefaultReactiveDomain(),
       inputId = "custom_features3",
@@ -4212,14 +4276,14 @@ server <- function(input, output, session) {
       session = getDefaultReactiveDomain(),
       inputId = "point_location_x3",
       label = NULL,
-      value = as.character(round(x_dblclick3, digits = 2))
+      value = as.character(round(dblclick$x, digits = 2))
     )
     
     updateTextInput(
       session = getDefaultReactiveDomain(),
       inputId = "point_location_y3",
       label = NULL,
-      value = as.character(round(input$map_dblclick3$y, digits = 2))
+      value = as.character(round(dblclick$y, digits = 2))
     )
   })
   
@@ -5308,68 +5372,268 @@ server <- function(input, output, session) {
 
   
   ### Interactivity ----
+  # Map custom points selector regression coefficient
+  observeEvent(input$map_dblclick_reg_coeff, {
+    dblclick <- input$map_dblclick_reg_coeff
+    
+    updateCheckboxInput(
+      session = getDefaultReactiveDomain(),
+      inputId = "custom_features_reg_coeff",
+      label = NULL,
+      value = TRUE
+    )
+    
+    updateRadioButtons(
+      session = getDefaultReactiveDomain(),
+      inputId = "feature_reg_coeff",
+      label = NULL,
+      selected = "Point"
+    )
+    
+    updateTextInput(
+      session = getDefaultReactiveDomain(),
+      inputId = "point_location_x_reg_coeff",
+      label = NULL,
+      value = as.character(round(dblclick$x, digits = 2))
+    )
+    
+    updateTextInput(
+      session = getDefaultReactiveDomain(),
+      inputId = "point_location_y_reg_coeff",
+      label = NULL,
+      value = as.character(round(dblclick$y, digits = 2))
+    )
+  })
   
-  # Map coordinates setter
-  observeEvent(input$map_brush4_coeff,{
+  # Map coordinates/highlights setter
+  observeEvent(input$map_brush_reg_coeff,{
     
-    # Convert x values
-    x_brush1_1 = (input$map_brush4_coeff[[1]]*1.14) - (0.14*input$range_longitude_dv[1])
-    x_brush1_2 = (input$map_brush4_coeff[[2]]*1.14) - (0.14*input$range_longitude_dv[1])
+    x_brush_1 = input$map_brush_reg_coeff[[1]]
+    x_brush_2 = input$map_brush_reg_coeff[[2]]
+    y_brush_1 = input$map_brush_reg_coeff[[3]]
+    y_brush_2 = input$map_brush_reg_coeff[[4]]
     
-    if (input$source_dv == "ModE-"){
+    if (input$custom_features_reg_coeff == FALSE){
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude_dv",
         label = NULL,
-        value = round(c(x_brush1_1,x_brush1_2), digits = 2))
+        value = round(c(x_brush_1,x_brush_2), digits = 2))
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude_dv",
         label = NULL,
-        value = round(c(input$map_brush4_coeff[[3]],input$map_brush4_coeff[[4]]), digits = 2))
+        value = round(c(y_brush_1, y_brush_2), digits = 2))
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_longitude_iv",
+        label = NULL,
+        value = round(c(x_brush_1,x_brush_2), digits = 2))
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_latitude_iv",
+        label = NULL,
+        value = round(c(y_brush_1, y_brush_2), digits = 2))
+      
+    } else {
+      updateRadioButtons(
+        session = getDefaultReactiveDomain(),
+        inputId = "feature_reg_coeff",
+        label = NULL,
+        selected = "Highlight")
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "highlight_x_values_reg_coeff",
+        label = NULL,
+        value = round(c(x_brush_1, x_brush_2), digits = 2))
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "highlight_y_values_reg_coeff",
+        label = NULL,
+        value = round(c(input$map_brush_reg_coeff[[3]], input$map_brush_reg_coeff[[4]]), digits = 2)
+      )
+    }
+  })
+
+  
+  # Map custom points selector regression pvals
+  observeEvent(input$map_dblclick_reg_pval, {
+    dblclick <- input$map_dblclick_reg_pval
+    
+    updateCheckboxInput(
+      session = getDefaultReactiveDomain(),
+      inputId = "custom_features_reg_pval",
+      label = NULL,
+      value = TRUE
+    )
+    
+    updateRadioButtons(
+      session = getDefaultReactiveDomain(),
+      inputId = "feature_reg_pval",
+      label = NULL,
+      selected = "Point"
+    )
+    
+    updateTextInput(
+      session = getDefaultReactiveDomain(),
+      inputId = "point_location_x_reg_pval",
+      label = NULL,
+      value = as.character(round(dblclick$x, digits = 2))
+    )
+    
+    updateTextInput(
+      session = getDefaultReactiveDomain(),
+      inputId = "point_location_y_reg_pval",
+      label = NULL,
+      value = as.character(round(dblclick$y, digits = 2))
+    )
+  })
+  
+  # Map custom points selector regression residuals
+  observeEvent(input$map_dblclick_reg_res, {
+    dblclick <- input$map_dblclick_reg_res
+    
+    updateCheckboxInput(
+      session = getDefaultReactiveDomain(),
+      inputId = "custom_features_reg_res",
+      label = NULL,
+      value = TRUE
+    )
+    
+    updateRadioButtons(
+      session = getDefaultReactiveDomain(),
+      inputId = "feature_reg_res",
+      label = NULL,
+      selected = "Point"
+    )
+    
+    updateTextInput(
+      session = getDefaultReactiveDomain(),
+      inputId = "point_location_x_reg_res",
+      label = NULL,
+      value = as.character(round(dblclick$x, digits = 2))
+    )
+    
+    updateTextInput(
+      session = getDefaultReactiveDomain(),
+      inputId = "point_location_y_reg_res",
+      label = NULL,
+      value = as.character(round(dblclick$y, digits = 2))
+    )
+  })
+  
+  # Map coordinates/highlights setter
+  observeEvent(input$map_brush_reg_res,{
+    
+    x_brush_1 = input$map_brush_reg_res[[1]]
+    x_brush_2 = input$map_brush_reg_res[[2]]
+    y_brush_1 = input$map_brush_reg_res[[3]]
+    y_brush_2 = input$map_brush_reg_res[[4]]
+    
+    if (input$custom_features_reg_res == FALSE){
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_longitude_dv",
+        label = NULL,
+        value = round(c(x_brush_1,x_brush_2), digits = 2))
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_latitude_dv",
+        label = NULL,
+        value = round(c(y_brush_1, y_brush_2), digits = 2))
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_longitude_iv",
+        label = NULL,
+        value = round(c(x_brush_1,x_brush_2), digits = 2))
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_latitude_iv",
+        label = NULL,
+        value = round(c(y_brush_1, y_brush_2), digits = 2))
+      
+    } else {
+      updateRadioButtons(
+        session = getDefaultReactiveDomain(),
+        inputId = "feature_reg_res",
+        label = NULL,
+        selected = "Highlight")
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "highlight_x_values_reg_res",
+        label = NULL,
+        value = round(c(x_brush_1, x_brush_2), digits = 2))
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "highlight_y_values_reg_res",
+        label = NULL,
+        value = round(c(input$map_brush_reg_res[[3]], input$map_brush_reg_res[[4]]), digits = 2)
+      )
     }
   })
   
-  observeEvent(input$map_brush4_pvalue,{
+  # Map coordinates/highlights setter
+  observeEvent(input$map_brush_reg_pval,{
     
-    # Convert x values
-    x_brush1_1 = (input$map_brush4_pvalue[[1]]*1.14) - (0.14*input$range_longitude_dv[1])
-    x_brush1_2 = (input$map_brush4_pvalue[[2]]*1.14) - (0.14*input$range_longitude_dv[1])
+    x_brush_1 = input$map_brush_reg_pval[[1]]
+    x_brush_2 = input$map_brush_reg_pval[[2]]
+    y_brush_1 = input$map_brush_reg_pval[[3]]
+    y_brush_2 = input$map_brush_reg_pval[[4]]
     
-    if (input$source_dv == "ModE-"){
+    if (input$custom_features_reg_pval == FALSE){
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude_dv",
         label = NULL,
-        value = round(c(x_brush1_1,x_brush1_2), digits = 2))
+        value = round(c(x_brush_1,x_brush_2), digits = 2))
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude_dv",
         label = NULL,
-        value = round(c(input$map_brush4_pvalue[[3]],input$map_brush4_pvalue[[4]]), digits = 2))
-    }
-  })
-  
-  observeEvent(input$map_brush4_resi,{
-    
-    # Convert x values
-    x_brush1_1 = (input$map_brush4_resi[[1]]*1.14) - (0.14*input$range_longitude_dv[1])
-    x_brush1_2 = (input$map_brush4_resi[[2]]*1.14) - (0.14*input$range_longitude_dv[1])
-    
-    if (input$source_dv == "ModE-"){
-      updateNumericRangeInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_longitude_dv",
-        label = NULL,
-        value = round(c(x_brush1_1,x_brush1_2), digits = 2))
+        value = round(c(y_brush_1, y_brush_2), digits = 2))
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
-        inputId = "range_latitude_dv",
+        inputId = "range_longitude_iv",
         label = NULL,
-        value = round(c(input$map_brush4_resi[[3]],input$map_brush4_resi[[4]]), digits = 2))
+        value = round(c(x_brush_1,x_brush_2), digits = 2))
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_latitude_iv",
+        label = NULL,
+        value = round(c(y_brush_1, y_brush_2), digits = 2))
+      
+    } else {
+      updateRadioButtons(
+        session = getDefaultReactiveDomain(),
+        inputId = "feature_reg_pval",
+        label = NULL,
+        selected = "Highlight")
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "highlight_x_values_reg_pval",
+        label = NULL,
+        value = round(c(x_brush_1, x_brush_2), digits = 2))
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "highlight_y_values_reg_pval",
+        label = NULL,
+        value = round(c(input$map_brush_reg_pval[[3]], input$map_brush_reg_pval[[4]]), digits = 2)
+      )
     }
   })
   
@@ -6189,6 +6453,20 @@ server <- function(input, output, session) {
     return(my_title)
   })
   
+    # Add value to custom title
+  observe({
+    req(plot_titles())
+    if (input$title1_input == "") {
+      updateTextInput(session, "title1_input",
+                      value = plot_titles()$map_title)
+    }
+    if (input$title2_input == "") {
+      updateTextInput(session, "title2_input",
+                      value = plot_titles()$map_subtitle)
+    }
+  })
+  
+  
   map_statistics = reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
     my_stats = create_stat_highlights_data(data_output4_primary(),SDratio_subset(),
@@ -6209,7 +6487,25 @@ server <- function(input, output, session) {
     return(m_d)  
   })
   
-  map_plot <- function(){plot_map(create_geotiff(map_data()), lonlat_vals(), input$variable_selected, "Anomaly", plot_titles(), input$axis_input, input$hide_axis, map_points_data(), map_highlights_data(),map_statistics(),input$hide_borders,input$white_ocean,input$white_land,plotOrder(), input$shpPickers, input, "shp_colour_", input$projection, input$center_lat, input$center_lon)}    
+  map_plot <- function(){plot_map(create_geotiff(map_data()),
+                                  lonlat_vals(), 
+                                  input$variable_selected,
+                                  "Anomaly", plot_titles(),
+                                  input$axis_input,
+                                  input$hide_axis,
+                                  map_points_data(),
+                                  map_highlights_data(),
+                                  map_statistics(),
+                                  input$hide_borders,
+                                  input$white_ocean,
+                                  input$white_land,
+                                  plotOrder(),
+                                  input$shpPickers,
+                                  input,
+                                  "shp_colour_",
+                                  input$projection,
+                                  input$center_lat,
+                                  input$center_lon)}    
   
   output$map <- renderPlot({map_plot()},width = function(){map_dimensions()[1]},height = function(){map_dimensions()[2]})
   
@@ -6653,12 +6949,26 @@ server <- function(input, output, session) {
     
     req(input$nav1 == "tab2") # Only run code if in the current tab
     
-    my_title <- generate_titles ("composites", input$dataset_selected2, input$variable_selected2, input$mode_selected2, input$title_mode2,input$title_mode_ts2,
+    my_title <- generate_titles("composites", input$dataset_selected2, input$variable_selected2, input$mode_selected2, input$title_mode2,input$title_mode_ts2,
                                  month_range_primary(), input$range_years2, input$ref_period2, input$prior_years2,lonlat_vals2()[1:2],lonlat_vals2()[3:4],
                                  input$title1_input2, input$title2_input2,input$title1_input_ts2, input$title_size_input2)
     
     return(my_title)
   })
+  
+  # Add value to custom title
+  observe({
+    req(plot_titles_2())
+    if (input$title1_input2 == "") {
+      updateTextInput(session, "title1_input2",
+                      value = plot_titles_2()$map_title)
+    }
+    if (input$title2_input2 == "") {
+      updateTextInput(session, "title2_input2",
+                      value = plot_titles_2()$map_subtitle)
+    }
+  })
+  
   
   
   map_statistics_2 = reactive({
@@ -7283,7 +7593,7 @@ server <- function(input, output, session) {
     }
   },width = function(){plot_dimensions_v2()[1]},height = function(){plot_dimensions_v2()[2]})  
   
-  
+
   #### Plot shared TS plot
   
   # Generate correlation titles
@@ -7312,7 +7622,20 @@ server <- function(input, output, session) {
     return(ptc)
   }) 
   
-  # Select variable timeseries data
+  # Add value to custom title
+  observe({
+    req(plot_titles_cor())
+    if (input$title1_input3 == "") {
+      updateTextInput(session, "title1_input3",
+                      value = plot_titles_cor()$map_title)
+    }
+    if (input$title2_input3 == "") {
+      updateTextInput(session, "title2_input3",
+                      value = plot_titles_cor()$map_subtitle)
+    }
+  })
+  
+ # Select variable timeseries data
   ts_data_v1 = reactive({
     
     req(input$nav1 == "tab3") # Only run code if in the current tab
@@ -7466,6 +7789,7 @@ server <- function(input, output, session) {
   
   output$correlation_map = renderPlot({corr_m1()},width = function(){correlation_map_dimensions()[1]},height = function(){correlation_map_dimensions()[2]})
   
+
   #### Data tables & Downloads 
   
   # Create output ts_data
@@ -7848,30 +8172,7 @@ server <- function(input, output, session) {
   
   ### Regression plots ----
   ### Initialise and update custom points lines highlights ----
-  
-  map_points_data2 = reactiveVal(data.frame())
-  map_highlights_data2 = reactiveVal(data.frame())
-  
-  ts_points_data2 = reactiveVal(data.frame())
-  ts_highlights_data2 = reactiveVal(data.frame())
-  ts_lines_data2 = reactiveVal(data.frame())
-  
-  # Map Points
-  observeEvent(input$add_point2, {
-    map_points_data2(rbind(map_points_data2(),
-                           create_new_points_data(input$point_location_x2,input$point_location_y2,
-                                                  input$point_label2,input$point_shape2,
-                                                  input$point_colour2,input$point_size2)))
-  })  
-  
-  observeEvent(input$remove_last_point2, {
-    map_points_data2(map_points_data2()[-nrow(map_points_data2()),])
-  })
-  
-  observeEvent(input$remove_all_points2, {
-    map_points_data2(data.frame())
-  })
-  
+
   # Map Highlights
   observeEvent(input$add_highlight2, {
     map_highlights_data2(rbind(map_highlights_data2(),
@@ -7955,15 +8256,7 @@ server <- function(input, output, session) {
     }
     return(v_dv)
   })
-  
-  # Map Points
-  observeEvent(input$add_point, {
-    map_points_data_reg(rbind(map_points_data(),
-                              create_new_points_data(input$point_location_x,input$point_location_y,
-                                                     input$point_label,input$point_shape,
-                                                     input$point_colour,input$point_size)))
-  })  
-  
+
   observeEvent(input$remove_last_point, {
     map_points_data(map_points_data()[-nrow(map_points_data()),])
   })
@@ -7973,7 +8266,7 @@ server <- function(input, output, session) {
   })
   
   # Generate regression titles    
-  plot_titles_reg = reactive({
+  plot_titles_reg_coeff = reactive({
     
     req(input$nav1 == "tab4") # Only run code if in the current tab
     
@@ -8006,6 +8299,118 @@ server <- function(input, output, session) {
                                      input$title_size_input_reg_coeff
     )
     return(ptr)
+  })
+  
+  # Add value to custom title
+  observe({
+    req(plot_titles_reg_coeff())
+    if (input$title1_input_reg_coeff == "") {
+      updateTextInput(session, "title1_input_reg_coeff",
+                      value = plot_titles_reg_coeff()$map_title_coeff)
+    }
+    if (input$title2_input_reg_coeff == "") {
+      updateTextInput(session, "title2_input_reg_coeff",
+                      value = plot_titles_reg_coeff()$map_subtitle_coeff)
+    }
+  })
+  
+  
+  # Generate regression titles 
+  plot_titles_reg_pval = reactive({
+    
+    req(input$nav1 == "tab4") # Only run code if in the current tab
+    
+    req(month_range_secondary(),month_range_primary())
+    
+    ptr = generate_regression_titles(input$source_iv,
+                                     input$source_dv,
+                                     input$dataset_selected_iv,
+                                     input$dataset_selected_dv,
+                                     input$ME_variable_dv,
+                                     input$mode_selected_iv,
+                                     input$mode_selected_dv,
+                                     month_range_secondary(),
+                                     month_range_primary(),
+                                     lonlat_vals_iv()[1:2],
+                                     lonlat_vals_dv()[1:2],
+                                     lonlat_vals_iv()[3:4],
+                                     lonlat_vals_dv()[3:4],
+                                     input$range_years4,
+                                     reg_resi_year_val(),
+                                     variables_iv(),
+                                     variable_dv(), 
+                                     match(input$coeff_variable,
+                                           variables_iv()),
+                                     match(input$pvalue_variable,
+                                           variables_iv()),
+                                     input$title_mode_reg_pval,
+                                     input$title1_input_reg_pval,
+                                     input$title2_input_reg_pval,
+                                     input$title_size_input_reg_pval
+    )
+    return(ptr)
+  })
+  
+    # Add value to custom title
+  observe({
+    req(plot_titles_reg_pval())
+    if (input$title1_input_reg_pval == "") {
+      updateTextInput(session, "title1_input_reg_pval",
+                      value = plot_titles_reg_pval()$map_title_pvals)
+    }
+    if (input$title2_input_reg_pval == "") {
+      updateTextInput(session, "title2_input_reg_pval",
+                      value = plot_titles_reg_pval()$map_subtitle_pvals)
+    }
+  })
+  
+  # Generate regression titles    
+  plot_titles_reg_res = reactive({
+    
+    req(input$nav1 == "tab4") # Only run code if in the current tab
+    
+    req(month_range_secondary(),month_range_primary())
+    
+    ptr = generate_regression_titles(input$source_iv,
+                                     input$source_dv,
+                                     input$dataset_selected_iv,
+                                     input$dataset_selected_dv,
+                                     input$ME_variable_dv,
+                                     input$mode_selected_iv,
+                                     input$mode_selected_dv,
+                                     month_range_secondary(),
+                                     month_range_primary(),
+                                     lonlat_vals_iv()[1:2],
+                                     lonlat_vals_dv()[1:2],
+                                     lonlat_vals_iv()[3:4],
+                                     lonlat_vals_dv()[3:4],
+                                     input$range_years4,
+                                     reg_resi_year_val(),
+                                     variables_iv(),
+                                     variable_dv(), 
+                                     match(input$coeff_variable,
+                                           variables_iv()),
+                                     match(input$pvalue_variable,
+                                           variables_iv()),
+                                     input$title_mode_reg_res,
+                                     input$title1_input_reg_res,
+                                     input$title2_input_reg_res,
+                                     input$title_size_input_reg_res
+    )
+    return(ptr)
+  })
+  
+  # Add value to custom title
+  observe({
+    req(plot_titles_reg_res())
+    if (input$title1_input_reg_res == "") {
+      updateTextInput(session, "title1_input_reg_res",
+                      value = plot_titles_reg_res()$map_title_res)
+    }
+    if (input$title2_input_reg_res == "") {
+      updateTextInput(session, "title2_input_reg_res",
+                      value = plot_titles_reg_res()$map_subtitle_res)
+    }
   })
   
   # Select variable timeseries data
@@ -8090,6 +8495,8 @@ server <- function(input, output, session) {
   
   output$regression_summary_data = renderPrint({reg_sd()})  
   
+  
+  
   ## Regression coefficient plot
   
   regression_coeff_data = reactive({
@@ -8107,6 +8514,7 @@ server <- function(input, output, session) {
   })
 
   
+  # Plot Map
   reg_coef_map = function() {
     
     plot_map(
@@ -8116,10 +8524,13 @@ server <- function(input, output, session) {
       
       mode = "Regression_coefficients",
       
-      titles = plot_titles_reg(),
+      titles = plot_titles_reg_coeff(),
       
       axis_range = input$axis_input_reg_coef,
       hide_axis = input$hide_axis_reg_coef,
+      
+      points_data = map_points_data_reg_coeff(),
+      highlights_data = map_highlights_data_reg_coeff(),
       
       c_borders = input$hide_borders_reg_coef,
       white_ocean = input$white_ocean_reg_coef,
@@ -8142,8 +8553,77 @@ server <- function(input, output, session) {
   }
   
   output$data_reg_coeff = renderTable({reg_coef_table()}, rownames = TRUE)
+
   
   
+  # Custom Features - Points
+  map_points_data_reg_coeff = reactiveVal(data.frame())
+  map_highlights_data_reg_coeff = reactiveVal(data.frame())
+  map_highlights_data2 = reactiveVal(data.frame())
+  
+  
+  # ts_points_data2 = reactiveVal(data.frame())
+  # ts_highlights_data2 = reactiveVal(data.frame())
+  # ts_lines_data2 = reactiveVal(data.frame())
+  
+  # Map Points
+  observeEvent(input$add_point_reg_coeff, {
+    map_points_data_reg_coeff(rbind(map_points_data_reg_coeff(),
+                                    create_new_points_data(input$point_location_x_reg_coeff,
+                                                           input$point_location_y_reg_coeff,
+                                                           input$point_label_reg_coeff,
+                                                           input$point_shape_reg_coeff,
+                                                           input$point_colour_reg_coeff,
+                                                           input$point_size_reg_coeff)))
+  })  
+  
+  observeEvent(input$remove_last_point_reg_coeff, {
+    map_points_data_reg_coeff(map_points_data_reg_coeff()[-nrow(map_points_data_reg_coeff()),])
+  })
+  
+  observeEvent(input$remove_all_points_reg_coeff, {
+    map_points_data_reg_coeff(data.frame())
+  })
+  
+  # Input geo-coded locations
+  observeEvent(input$search_reg_coeff, {
+    location_reg_coeff <- input$location_reg_coeff
+    if (!is.null(location_reg_coeff) && nchar(location_reg_coeff) > 0) {
+      location_encoded_reg_coeff <- URLencode(location_reg_coeff)
+      result <- geocode_OSM(location_encoded_reg_coeff)
+      if (!is.null(result$coords)) {
+        longitude_reg_coeff <- result$coords[1]
+        latitude_reg_coeff <- result$coords[2]
+        updateTextInput(session, "point_location_x_reg_coeff", value = as.character(longitude_reg_coeff))
+        updateTextInput(session, "point_location_y_reg_coeff", value = as.character(latitude_reg_coeff))
+        shinyjs::hide(id = "inv_location_reg_coeff")  # Hide the "Invalid location" message
+      } else {
+        shinyjs::show(id = "inv_location_reg_coeff")  # Show the "Invalid location" message
+      }
+    } else {
+      shinyjs::hide(id = "inv_location_reg_coeff")  # Hide the "Invalid location" message when no input
+    }
+  })
+  
+  
+  # Map Highlights
+  observeEvent(input$add_highlight_reg_coeff, {
+    map_highlights_data_reg_coeff(rbind(map_highlights_data_reg_coeff(),
+                                        create_new_highlights_data(input$highlight_x_values_reg_coeff,
+                                                                   input$highlight_y_values_reg_coeff,
+                                                                   input$highlight_colour_reg_coeff,
+                                                                   input$highlight_type_reg_coeff,
+                                                                   NA,
+                                                                   NA)))
+  })  
+  
+  observeEvent(input$remove_last_highlight_reg_coeff, {
+    map_highlights_data_reg_coeff(map_highlights_data_reg_coeff()[-nrow(map_highlights_data_reg_coeff()),])
+  })
+
+  observeEvent(input$remove_all_highlights_reg_coeff, {
+    map_highlights_data_reg_coeff(data.frame())
+  })
   
   ## Regression pvalue plot
   
@@ -8167,20 +8647,19 @@ server <- function(input, output, session) {
       
       mode = "Regression_p_values",
       
-      titles = plot_titles_reg(),
+      titles = plot_titles_reg_pval(),
       
       axis_range = input$axis_input_reg_pval,
       hide_axis = input$hide_axis_reg_pval,
+      
+      points_data = map_points_data_reg_pval(),
+      highlights_data = map_highlights_data_reg_pval(),
       
       c_borders = input$hide_borders_reg_pval,
       white_ocean = input$white_ocean_reg_pval,
       white_land = input$white_land_reg_pval
     )
   }
-  
-  
-  
-  
   
   output$plot_reg_pval = renderPlot({reg_pval_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
   
@@ -8200,7 +8679,75 @@ server <- function(input, output, session) {
   output$data_reg_pval = renderTable({reg_pval_table()},rownames = TRUE)
   
   
+  # Custom Features - Points
+  map_points_data_reg_pval = reactiveVal(data.frame())
+  map_highlights_data_reg_pval = reactiveVal(data.frame())
   
+  # ts_points_data2 = reactiveVal(data.frame())
+  # ts_highlights_data2 = reactiveVal(data.frame())
+  # ts_lines_data2 = reactiveVal(data.frame())
+  
+  # Map Points
+  observeEvent(input$add_point_reg_pval, {
+    map_points_data_reg_pval(rbind(map_points_data_reg_pval(),
+                                    create_new_points_data(input$point_location_x_reg_pval,
+                                                           input$point_location_y_reg_pval,
+                                                           input$point_label_reg_pval,
+                                                           input$point_shape_reg_pval,
+                                                           input$point_colour_reg_pval,
+                                                           input$point_size_reg_pval)))
+  })  
+  
+  observeEvent(input$remove_last_point_reg_pval, {
+    map_points_data_reg_pval(map_points_data_reg_pval()[-nrow(map_points_data_reg_pval()),])
+  })
+  
+  observeEvent(input$remove_all_points_reg_pval, {
+    map_points_data_reg_pval(data.frame())
+  })
+  
+  
+  # Input geo-coded locations
+  observeEvent(input$search_reg_pval, {
+    location_reg_pval <- input$location_reg_pval
+    if (!is.null(location_reg_pval) && nchar(location_reg_pval) > 0) {
+      location_encoded_reg_pval <- URLencode(location_reg_pval)
+      result <- geocode_OSM(location_encoded_reg_pval)
+      if (!is.null(result$coords)) {
+        longitude_reg_pval <- result$coords[1]
+        latitude_reg_pval <- result$coords[2]
+        updateTextInput(session, "point_location_x_reg_pval", value = as.character(longitude_reg_pval))
+        updateTextInput(session, "point_location_y_reg_pval", value = as.character(latitude_reg_pval))
+        shinyjs::hide(id = "inv_location_reg_pval")  # Hide the "Invalid location" message
+      } else {
+        shinyjs::show(id = "inv_location_reg_pval")  # Show the "Invalid location" message
+      }
+    } else {
+      shinyjs::hide(id = "inv_location_reg_pval")  # Hide the "Invalid location" message when no input
+    }
+  })
+  
+  # Map Highlights
+  observeEvent(input$add_highlight_reg_pval, {
+    map_highlights_data_reg_pval(rbind(map_highlights_data_reg_pval(),
+                                        create_new_highlights_data(input$highlight_x_values_reg_pval,
+                                                                   input$highlight_y_values_reg_pval,
+                                                                   input$highlight_colour_reg_pval,
+                                                                   input$highlight_type_reg_pval,
+                                                                   NA,
+                                                                   NA)))
+  })  
+  
+  observeEvent(input$remove_last_highlight_reg_pval, {
+    map_highlights_data_reg_pval(map_highlights_data_reg_pval()[-nrow(map_highlights_data_reg_pval()),])
+  })
+  
+  observeEvent(input$remove_all_highlights_reg_pval, {
+    map_highlights_data_reg_pval(data.frame())
+  })
+  
+  
+
   ## Regression residuals plot
   
   regression_residuals_data = reactive({
@@ -8231,10 +8778,13 @@ server <- function(input, output, session) {
       
       mode = "Regression_residuals",
       
-      titles = plot_titles_reg(),
+      titles = plot_titles_reg_res(),
       
       axis_range = input$axis_input_reg_res,
       hide_axis = input$hide_axis_reg_res,
+      
+      points_data = map_points_data_reg_res(),
+      highlights_data = map_highlights_data_reg_res(),
       
       c_borders = input$hide_borders_reg_res,
       white_ocean = input$white_ocean_reg_res,
@@ -8253,6 +8803,75 @@ server <- function(input, output, session) {
   }
   
   output$data_reg_res = renderTable({reg_res_table()},rownames = TRUE)
+  
+  
+  # Custom Features - Points
+  map_points_data_reg_res = reactiveVal(data.frame())
+  map_highlights_data_reg_res = reactiveVal(data.frame())
+  
+  # ts_points_data2 = reactiveVal(data.frame())
+  # ts_highlights_data2 = reactiveVal(data.frame())
+  # ts_lines_data2 = reactiveVal(data.frame())
+  
+  # Map Points
+  observeEvent(input$add_point_reg_res, {
+    map_points_data_reg_res(rbind(map_points_data_reg_res(),
+                                   create_new_points_data(input$point_location_x_reg_res,
+                                                          input$point_location_y_reg_res,
+                                                          input$point_label_reg_res,
+                                                          input$point_shape_reg_res,
+                                                          input$point_colour_reg_res,
+                                                          input$point_size_reg_res)))
+  })  
+  
+  observeEvent(input$remove_last_point_reg_res, {
+    map_points_data_reg_res(map_points_data_reg_res()[-nrow(map_points_data_reg_res()),])
+  })
+  
+  observeEvent(input$remove_all_points_reg_res, {
+    map_points_data_reg_res(data.frame())
+  })
+  
+  
+  # Input geo-coded locations
+  observeEvent(input$search_reg_res, {
+    location_reg_res <- input$location_reg_res
+    if (!is.null(location_reg_res) && nchar(location_reg_res) > 0) {
+      location_encoded_reg_res <- URLencode(location_reg_res)
+      result <- geocode_OSM(location_encoded_reg_res)
+      if (!is.null(result$coords)) {
+        longitude_reg_res <- result$coords[1]
+        latitude_reg_res <- result$coords[2]
+        updateTextInput(session, "point_location_x_reg_res", value = as.character(longitude_reg_res))
+        updateTextInput(session, "point_location_y_reg_res", value = as.character(latitude_reg_res))
+        shinyjs::hide(id = "inv_location_reg_res")  # Hide the "Invalid location" message
+      } else {
+        shinyjs::show(id = "inv_location_reg_res")  # Show the "Invalid location" message
+      }
+    } else {
+      shinyjs::hide(id = "inv_location_reg_res")  # Hide the "Invalid location" message when no input
+    }
+  })
+  
+  # Map Highlights
+  observeEvent(input$add_highlight_reg_res, {
+    map_highlights_data_reg_res(rbind(map_highlights_data_reg_res(),
+                                        create_new_highlights_data(input$highlight_x_values_reg_res,
+                                                                   input$highlight_y_values_reg_res,
+                                                                   input$highlight_colour_reg_res,
+                                                                   input$highlight_type_reg_res,
+                                                                   NA,
+                                                                   NA)))
+  })  
+  
+  observeEvent(input$remove_last_highlight_reg_res, {
+    map_highlights_data_reg_res(map_highlights_data_reg_res()[-nrow(map_highlights_data_reg_res()),])
+  })
+  
+  observeEvent(input$remove_all_highlights_reg_res, {
+    map_highlights_data_reg_res(data.frame())
+  })
+  
   
   ### ModE-RA sources ----
   

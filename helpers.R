@@ -520,8 +520,10 @@ convert_subset_to_anomalies = function(data_input,ref_data){
 ##           map/ts_custom_title1/2 = user entered titles
 ##           title_size = numeric value for the title font size, default = 18
 
-generate_titles = function(tab,dataset,
-                           variable,mode,
+generate_titles = function(tab,
+                           dataset,
+                           variable,
+                           mode,
                            map_title_mode,
                            ts_title_mode,
                            month_range,
@@ -633,11 +635,18 @@ generate_titles = function(tab,dataset,
   netcdf_title = gsub(paste(variable),"NCDF-Data",file_title)
   
   # Title font size
-  map_title_size = title_size
+  map_title_size = ifelse(map_title_mode == "Custom", title_size, 18)
   ts_title_size = title_size
   
   # Combine into dataframe
-  m_titles = data.frame(map_title,map_subtitle,ts_title,ts_axis,file_title,netcdf_title, map_title_size, ts_title_size)
+  m_titles = data.frame(map_title,
+                        map_subtitle,
+                        ts_title,
+                        ts_axis,
+                        file_title,
+                        netcdf_title,
+                        map_title_size,
+                        ts_title_size)
   
   return(m_titles)
 }
@@ -723,24 +732,28 @@ plot_map <- function(data_input,
     if (mode == "Correlation") {
       v_col <- rev(brewer.pal(11, "PuOr"))
       v_unit <- "r"
+      
     } else if (mode == "Regression_coefficients") {
       v_col <- viridis(11, option = "turbo")
       v_unit <- "Coefficient"
-      titles$map_title <- "Regression Coefficients"
+      titles$map_title <- titles$map_title_coeff
       titles$map_subtitle <- titles$map_subtitle_coeff #overwrite titles$map_subtitle because ggplot uses it
-      titles$map_title_size <- 18
+      titles$map_title_size <- titles$map_title_size_coeff
+      
     } else if (mode == "Regression_p_values") {
       v_col <- rev(brewer.pal(5, "Greens"))
       v_unit <- "p\nValues"
       v_lev <- c(0, 0.01, 0.05, 0.1, 0.2, 1)
-      titles$map_title <- "Regression P Values"
+      titles$map_title <- titles$map_title_pvals
       titles$map_subtitle <- titles$map_subtitle_pvals
-      titles$map_title_size <- 18
+      titles$map_title_size <- titles$map_title_size_pvals
+      
     } else if (mode == "Regression_residuals") {
       v_unit <- paste("Residuals\n", v_unit)  # v_col and v_unit previously defined by variable
-      titles$map_title <- "Regression Residuals"
+      titles$map_title <- titles$map_title_res
       titles$map_subtitle <- titles$map_subtitle_res
-      titles$map_title_size <- 18
+      titles$map_title_size <- titles$map_title_size_res
+      
     } else if (mode == "SD Ratio") {
       v_col <- rev(brewer.pal(9, "Greens"))
       v_unit <- ""
@@ -895,28 +908,34 @@ plot_map <- function(data_input,
     p <- p + 
       geom_point(data = points_data, aes(x = x_value, y = y_value, color = color, shape = shape, size = size), show.legend = FALSE) +
       geom_text(data = points_data, aes(x = x_value, y = y_value, label = label), position = position_nudge(y = -0.5), show.legend = FALSE) +
+      scale_color_identity() +
+      scale_shape_identity() +
       labs(x = NULL, y = NULL)
   }
-  
+
   if (nrow(highlights_data) > 0 && all(c("x1", "x2", "y1", "y2", "color", "type") %in% colnames(highlights_data))) {
-    for (i in 1:nrow(highlights_data)) {
-      highlight_data <- highlights_data[i,]
-      if (highlight_data$type == "Box") {
-        p <- p + 
-          geom_rect(aes(xmin = highlight_data$x1, xmax = highlight_data$x2, ymin = highlight_data$y1, ymax = highlight_data$y2),
-                    color = highlight_data$color, fill = NA, size = 1, show.legend = FALSE) +
-          labs(x = NULL, y = NULL)
-      } else if (highlight_data$type == "Hatched") {
-        p <- p + 
-          geom_rect(aes(xmin = highlight_data$x1, xmax = highlight_data$x2, ymin = highlight_data$y1, ymax = highlight_data$y2),
-                    color = NA, fill = highlight_data$color, alpha = 0.5, show.legend = FALSE)
-      }
+
+    # Boxes
+    if (any(highlights_data$type == "Box")) {
+      p <- p +
+        geom_rect(data = subset(highlights_data, type == "Box"),
+                  aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, color = color),
+                  fill = NA, size = 1, show.legend = FALSE) +
+        scale_color_identity()
+    }
+
+    # Hatched boxes
+    if (any(highlights_data$type == "Hatched")) {
+      p <- p +
+        geom_rect(data = subset(highlights_data, type == "Hatched"),
+                  aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, fill = color),
+                  fill = subset(highlights_data, type == "Hatched")$color,
+                  color = NA, alpha = 0.5, show.legend = FALSE)
     }
   }
 
   return(p)
 }
-
 
 
 ## (General) CREATE MAP DATATABLE
@@ -2069,9 +2088,12 @@ create_stat_highlights_data = function(data_input,sd_data,stat_highlight,sdratio
 ##              show_highlight_on_key = TRUE or FALSE (FALSE by default)
 ##              highlight_label = a label for the highlight on the key ("") by default)
 
-create_new_highlights_data = function(highlight_x_values,highlight_y_values,
-                                      highlight_color, highlight_type,
-                                      show_highlight_on_key,highlight_label){
+create_new_highlights_data = function(highlight_x_values,
+                                      highlight_y_values,
+                                      highlight_color, 
+                                      highlight_type,
+                                      show_highlight_on_key,
+                                      highlight_label){
   x1 = highlight_x_values[1]
   x2 = highlight_x_values[2]
   y1 = highlight_y_values[1]
@@ -2129,22 +2151,69 @@ create_new_lines_data = function(line_orientation,line_locations,line_color,
 ##                point_color = a single character string giving point color
 ##                point_size = a single point size (sizes 0 -10)
 
-create_new_points_data = function(point_x_values,point_y_values,point_label,
-                                  point_shape,point_color,point_size){
+create_new_points_data = function(point_x_values,
+                                  point_y_values,
+                                  point_label,
+                                  point_shape,
+                                  point_color,
+                                  point_size){
+
   # Create x/y values from strings
   x_value = as.numeric(unlist(strsplit(point_x_values,",")))
   y_value = as.numeric(unlist(strsplit(point_y_values,",")))
+
   # Repeat other values to match x/y length
   label = rep(point_label,length(x_value))
   shape = rep(point_shape,length(x_value))
   color = rep(point_color,length(x_value))
   size = rep(point_size,length(x_value))
+
   # Combine into a dataframe
-  new_p_data = data.frame(x_value,y_value,label,shape,color,size)
-  
+  new_p_data = data.frame(x_value,
+                          y_value,
+                          label,
+                          shape,
+                          color,
+                          size)
+
   return(new_p_data)
-  
 }
+
+
+# create_new_points_data = function(point_x_values,
+#                                   point_y_values,
+#                                   point_label,
+#                                   point_shape,
+#                                   point_color,
+#                                   point_size){
+#   
+#   # Create x/y values from strings
+#   x_value = as.numeric(unlist(strsplit(point_x_values, ",")))
+#   y_value = as.numeric(unlist(strsplit(point_y_values, ",")))
+#   
+#   # Repeat other values to match x/y length
+#   label = rep(point_label, length(x_value))
+#   color = rep(point_color, length(x_value))
+#   size = rep(point_size, length(x_value))
+#   
+#   # Umwandlung der Shape-Werte in numerische Werte
+#   point_shape_numeric  = sapply(point_shape , switch,
+#                                 "\u25CF" = 16,
+#                                 "\u25B2" = 17,
+#                                 "\u25A0" = 15)
+#   
+#   shape = rep(point_shape_numeric, length(x_value))
+# 
+#   # Combine into a dataframe
+#   new_p_data = data.frame(x_value,
+#                           y_value,
+#                           label,
+#                           shape,
+#                           color,
+#                           size)
+#   
+#   return(new_p_data)
+# }
 
 
 ## (Plot Features) ADD CORRELATION TIMESERIES - replots both correlation timeseries 
@@ -2890,14 +2959,9 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     ts_title = paste(V1_TS_title,"&",V2_TS_title)
   }
   
-  if (map_title_mode == "Custom"){
-    map_title = map_custom_title
-    map_subtitle = map_custom_subtitle
-  } else {
-    map_title = "Correlation coefficient"
-    map_subtitle = paste(V1_TS_title,"&",V2_TS_title)
-  }
-  
+  map_title <- ifelse(map_title_mode == "Custom" & map_custom_title != "", map_custom_title, "Correlation coefficient")
+  map_subtitle <- ifelse(map_title_mode == "Custom" & map_custom_subtitle != "", map_custom_subtitle, paste(V1_TS_title,"&",V2_TS_title))
+
   # Generate download titles
   tf0 = paste("Corr",V1_file_title,"&",V2_file_title)
   tf1 = gsub("[[:punct:]]", "", tf0)
@@ -2905,7 +2969,7 @@ generate_correlation_titles = function(variable1_source,variable2_source,
   file_title = iconv(tf2, from = 'UTF-8', to = 'ASCII//TRANSLIT')
   
   # Title font size
-  map_title_size = title_size
+  map_title_size = ifelse(map_title_mode == "Custom", title_size, 18)
   ts_title_size = title_size
   
   cor_titles = data.frame(map_title, map_subtitle, ts_title, file_title, map_title_size, ts_title_size, 
@@ -3260,7 +3324,7 @@ generate_regression_titles = function(independent_source,
                                       map_custom_title,
                                       map_custom_subtitle,
                                       title_size=18){
-
+  
   # Create Independent variable titles
   if (independent_source == "User Data"){
     title_months_i = ""
@@ -3342,45 +3406,52 @@ generate_regression_titles = function(independent_source,
   title_year_range = paste(year_range[1],"-",year_range[2],sep = "")
   
   # Generate regression map titles for coefficients
-  map_subtitle_coeff = paste("Independent variable: ", title_months_i, independent_variables[iv_number_coeff],
-                             " ", title_mode_i, title_lonlat_i, "\nDependent variable: ",
-                             title_months_d, dependent_variable,
-                             title_mode_d, "\nTime range:", title_year_range, sep = "")
-
-  # Generate regression map titles for p-values
-  map_subtitle_pvals = paste("Independent variable: ", title_months_i, independent_variables[iv_number_pvals],
-                             " ", title_mode_i, "\nDependent variable: ",
-                             title_months_d, dependent_variable,
-                             title_mode_d, "\nTime range:", title_year_range, sep = "")
-
-  # Generate regression map titles for residuals
-  title_variables_i = paste(independent_variables, collapse = " ; ")
-  map_subtitle_res = paste("Independent variables: ", title_months_i, title_variables_i,
-                           " ", title_mode_i, title_lonlat_i, "\nDependent variable: ",
-                           title_months_d, dependent_variable,
-                           title_mode_d, "\nYear:", year_selected, sep = "")
+  map_title_coeff <- ifelse(map_title_mode == "Custom" & map_custom_title != "", map_custom_title, "Regression Coefficients")
+  map_title_pvals <- ifelse(map_title_mode == "Custom" & map_custom_title != "", map_custom_title, "Regression P Values")
+  map_title_res <- ifelse(map_title_mode == "Custom" & map_custom_title != "", map_custom_title, "Regression Residuals")
   
-  # Replace with custom titles
-  if (map_title_mode == "Custom"){
-    if(map_custom_title != ""){
-      map_title = map_custom_title
-    }
-    if(map_custom_subtitle != ""){
-      map_subtitle = map_custom_subtitle
-    }
-  }
+  map_subtitle_coeff <- ifelse(map_title_mode == "Custom" & map_custom_subtitle != "", map_custom_subtitle,paste(
+    "Independent variable:", title_months_i, independent_variables[iv_number_coeff],
+    title_mode_i, title_lonlat_i, "\nDependent variable:",
+    title_months_d, dependent_variable, title_mode_d,
+    "\nTime range:", title_year_range
+  ))
   
+  map_subtitle_pvals <- ifelse(map_title_mode == "Custom" & map_custom_subtitle != "", map_custom_subtitle, paste(
+    "Independent variable:", title_months_i, independent_variables[iv_number_pvals],
+    title_mode_i, "\nDependent variable:",
+    title_months_d, dependent_variable, title_mode_d,
+    "\nTime range:", title_year_range
+  ))
+  
+  map_subtitle_res <- ifelse(map_title_mode == "Custom" & map_custom_subtitle != "", map_custom_subtitle, paste(
+    "Independent variables:", title_months_i, paste(independent_variables, collapse = " ; "),
+    title_mode_i, title_lonlat_i, "\nDependent variable:",
+    title_months_d, dependent_variable, title_mode_d,
+    "\nYear:", year_selected
+  ))
+  
+  # Adapt title size
+  map_title_size_coeff <- ifelse(map_title_mode == "Custom", title_size, 18)
+  map_title_size_pvals <- ifelse(map_title_mode == "Custom", title_size, 18)
+  map_title_size_res <- ifelse(map_title_mode == "Custom", title_size, 18)
+
   # Generate download titles
   tf0 = paste("Reg",title_months_i,"ind. var.", ">", title_months_d, modERA_dependent_variable)
   tf1 = gsub("[[:punct:]]", "", tf0)
   tf2 = gsub(" ","-",tf1)
   file_title = iconv(tf2, from = 'UTF-8', to = 'ASCII//TRANSLIT')
   
+  # Title font size
+  map_title_size = title_size
+
   # Combine all titles into a dataframe
   titles_df = data.frame(title_months_i, title_mode_i, title_lonlat_i,
                          title_months_d, title_mode_d, title_lonlat_d,
                          color_d, unit_d, title_year_range, file_title,
-                         map_subtitle_coeff, map_subtitle_pvals, map_subtitle_res)
+                         map_title_coeff, map_title_pvals, map_title_res,
+                         map_subtitle_coeff, map_subtitle_pvals, map_subtitle_res,
+                         map_title_size_coeff, map_title_size_pvals, map_title_size_res)
   
   return(titles_df)
 }
@@ -3839,8 +3910,11 @@ add_timeseries_custom_features <- function(p, highlights_data = NULL, lines_data
   
   # Add custom points
   if (!is.null(points_data) && nrow(points_data) > 0) {
-    p <- p + geom_point(data = points_data, aes(x = x_value, y = y_value, 
-                                                color = I(points_data$color), shape = I(points_data$shape), size = I(points_data$size))) +
+    p <- p + geom_point(data = points_data, aes(x = x_value,
+                                                y = y_value, 
+                                                color = I(points_data$color),
+                                                shape = I(points_data$shape),
+                                                size = I(points_data$size))) +
       geom_text(data = points_data, aes(x = x_value, y = y_value, label = label),
                 vjust = -1, size = 3)
   }
@@ -4081,4 +4155,8 @@ generate_month_label <- function(range) {
     paste(month_letters[(range[1]:range[2]) + 1], collapse = "")
   }
 }
+
+
+
+
 

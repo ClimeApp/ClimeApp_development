@@ -771,7 +771,7 @@ ui <- navbarPage(id = "nav1",
                                    
                                    colourInput(inputId = "point_colour", 
                                                label   = "Point colour:",
-                                               showColour = "background",
+                                               returnName = TRUE,
                                                palette = "limited"),                          
                                    
                                    
@@ -1693,15 +1693,11 @@ ui <- navbarPage(id = "nav1",
                                   
                                   textInput(inputId     = "title1_input2",
                                             label       = "Custom map title:", 
-                                            value       = NA,
-                                            width       = NULL,
-                                            placeholder = "Custom title"),
+                                            width       = NULL),
                                   
                                   textInput(inputId     = "title2_input2",
                                             label       = "Custom map subtitle (e.g. Ref-Period):",
-                                            value       = NA,
-                                            width       = NULL,
-                                            placeholder = "Custom title"),
+                                            width       = NULL),
                                   
                                   numericInput(inputId = "title_size_input2",
                                                label   = "Font size:",
@@ -1795,7 +1791,7 @@ ui <- navbarPage(id = "nav1",
                                        
                                        colourInput(inputId = "point_colour2", 
                                                    label   = "Point colour:",
-                                                   showColour = "background",
+                                                   returnName = TRUE,
                                                    palette = "limited"),                       
                                        
                                        
@@ -3208,15 +3204,11 @@ ui <- navbarPage(id = "nav1",
                                          
                                          textInput(inputId     = "title1_input3",
                                                    label       = "Custom map title:", 
-                                                   value       = NA,
-                                                   width       = NULL,
-                                                   placeholder = "Custom title"),
+                                                   width       = NULL),
                                          
                                          textInput(inputId     = "title2_input3",
                                                    label       = "Custom map subtitle (e.g. Ref-Period)",
-                                                   value       = NA,
-                                                   width       = NULL,
-                                                   placeholder = "Custom title"),
+                                                   width       = NULL),
                                          
                                          numericInput(inputId = "title_size_input3",
                                                       label   = "Font size:",
@@ -3309,7 +3301,7 @@ ui <- navbarPage(id = "nav1",
                                          
                                          colourInput(inputId = "point_colour3", 
                                                      label   = "Point colour:",
-                                                     showColour = "background",
+                                                     returnName = TRUE,
                                                      palette = "limited"),                       
                                          
                                          
@@ -4056,7 +4048,7 @@ ui <- navbarPage(id = "nav1",
                                   label    = "Choose a variable:",
                                   choices  = NULL,
                                   selected = NULL),
-                      withSpinner(ui_element = plotOutput("plot_reg_coeff", height = "auto", brush = brushOpts(id = "map_brush4_coeff",resetOnNew = TRUE)),
+                      withSpinner(ui_element = plotOutput("plot_reg_coeff", height = "auto",  dblclick = "map_dblclick_reg_coeff", brush = brushOpts(id = "map_brush_reg_coeff",resetOnNew = TRUE)),
                                   image = spinner_image,
                                   image.width = spinner_width,
                                   image.height = spinner_height),
@@ -4125,16 +4117,12 @@ ui <- navbarPage(id = "nav1",
                                        div(id = "hidden_custom_title_reg_coeff",
                                            
                                            textInput(inputId     = "title1_input_reg_coeff",
-                                                     label       = "Custom map title:", 
-                                                     value       = NA,
-                                                     width       = NULL,
-                                                     placeholder = "Custom title"),
+                                                     label       = "Custom map title:",
+                                                     width       = NULL),
                                            
                                            textInput(inputId     = "title2_input_reg_coeff",
                                                      label       = "Custom map subtitle (e.g. Ref-Period)",
-                                                     value       = NA,
-                                                     width       = NULL,
-                                                     placeholder = "Custom title"),
+                                                     width       = NULL),
                                            
                                            numericInput(inputId = "title_size_input_reg_coeff",
                                                         label   = "Font size:",
@@ -4166,11 +4154,133 @@ ui <- navbarPage(id = "nav1",
                                      uiOutput("colorpickers4"),  # Dynamically generate color pickers for each shapefile
                                      
                                  )),
-                        )),
+                        ),
+                        
+                        #### Add Custom features (points and highlights) ----                        
+                        column(width = 4,
+                               h4("Custom features", style = "color: #094030;",map_features_popover("pop_anomalies_mapfeat")),
+                               
+                               checkboxInput(inputId = "custom_features_reg_coeff",
+                                             label   = "Enable custom features",
+                                             value   = FALSE),
+                               
+                               shinyjs::hidden(
+                                 div(id = "hidden_custom_features_reg_coeff",
+                                     radioButtons(inputId      = "feature_reg_coeff",
+                                                  label        = "Select a feature type:",
+                                                  inline       = TRUE,
+                                                  choices      = c("Point", "Highlight")),
+
+                                     #Custom Points
+                                     div(id = "hidden_custom_points_reg_coeff",
+                                         h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
+
+                                         h6(helpText("Enter location/coordinates or double click on map")),
+
+                                         textInput(inputId = "location_reg_coeff",
+                                                   label   = "Enter a location:",
+                                                   value   = NULL,
+                                                   placeholder = "e.g. Bern"),
+
+                                         actionButton(inputId = "search_reg_coeff",
+                                                      label   = "Search"),
+
+                                         shinyjs::hidden(div(id = "inv_location_reg_coeff",
+                                                             h6(helpText("Invalid location"))
+                                         )),
+
+                                         textInput(inputId = "point_label_reg_coeff",
+                                                   label   = "Point label:",
+                                                   value   = ""),
+
+                                         column(width = 12, offset = 0,
+                                                column(width = 6,
+                                                       textInput(inputId = "point_location_x_reg_coeff",
+                                                                 label   = "Point longitude:",
+                                                                 value   = "")
+                                                ),
+                                                column(width = 6,
+                                                       textInput(inputId = "point_location_y_reg_coeff",
+                                                                 label   = "Point latitude:",
+                                                                 value   = "")
+                                                )),
+
+
+                                         radioButtons(inputId      = "point_shape_reg_coeff",
+                                                      label        = "Point shape:",
+                                                      inline       = TRUE,
+                                                      choices      = c("\u25CF", "\u25B2", "\u25A0")),
+
+                                         colourInput(inputId = "point_colour_reg_coeff",
+                                                     label   = "Point colour:",
+                                                     returnName = TRUE,
+                                                     palette = "limited"),
+
+
+                                         numericInput(inputId = "point_size_reg_coeff",
+                                                      label   = "Point size:",
+                                                      value   = 1,
+                                                      min     = 1,
+                                                      max     = 10),
+
+                                         column(width = 12,
+
+                                                actionButton(inputId = "add_point_reg_coeff",
+                                                             label = "Add point"),
+                                                br(), br(), br(),
+                                                actionButton(inputId = "remove_last_point_reg_coeff",
+                                                             label = "Remove last point"),
+                                                actionButton(inputId = "remove_all_points_reg_coeff",
+                                                             label = "Remove all points")),
+                                     ),
+
+                                     #Custom Highlights
+                                     div(id = "hidden_custom_highlights_reg_coeff",
+                                         h4(helpText("Add custom highlights",map_highlights_popover("pop_anomalies_maphl"))),
+
+                                         h6(helpText("Enter coordinate or draw a box on map")),
+
+                                         numericRangeInput(inputId = "highlight_x_values_reg_coeff",
+                                                           label  = "Longitude:",
+                                                           value  = "",
+                                                           min    = -180,
+                                                           max    = 180),
+
+                                         numericRangeInput(inputId = "highlight_y_values_reg_coeff",
+                                                           label  = "Latitude:",
+                                                           value  = "",
+                                                           min    = -90,
+                                                           max    = 90),
+
+                                         colourInput(inputId = "highlight_colour_reg_coeff",
+                                                     label   = "Highlight colour:",
+                                                     showColour = "background",
+                                                     palette = "limited"),
+
+                                         radioButtons(inputId      = "highlight_type_reg_coeff",
+                                                      label        = "Type for highlight:",
+                                                      inline       = TRUE,
+                                                      choiceNames  = c("Box \u25FB", "Hatched \u25A8"),
+                                                      choiceValues = c("Box","Hatched")),
+
+
+                                         column(width = 12,
+                                                actionButton(inputId = "add_highlight_reg_coeff",
+                                                             label = "Add highlight"),
+                                                br(), br(), br(),
+                                                actionButton(inputId = "remove_last_highlight_reg_coeff",
+                                                             label = "Remove last highlight"),
+                                                actionButton(inputId = "remove_all_highlights_reg_coeff",
+                                                             label = "Remove all highlights")),
+                                     )
+                                     )
+                      )),
+                        
+                        #### Customization panels END ----
+                        ),
                       
                       br(),
 
-                      
                       ## Download and Upload Regression Coefficients Map
                       h4("Downloads", style = "color: #094030;", downloads_popover("pop_composites_map_downloads")),
                           checkboxInput(
@@ -4225,7 +4335,7 @@ ui <- navbarPage(id = "nav1",
                                   label    = "Choose a variable:",
                                   choices  = NULL,
                                   selected = NULL),
-                      withSpinner(ui_element = plotOutput("plot_reg_pval", height = "auto",brush = brushOpts(id = "map_brush4_pvalue",resetOnNew = TRUE)),
+                      withSpinner(ui_element = plotOutput("plot_reg_pval", height = "auto",  dblclick = "map_dblclick_reg_pval", brush = brushOpts(id = "map_brush_reg_pval",resetOnNew = TRUE)),
                                   image = spinner_image,
                                   image.width = spinner_width,
                                   image.height = spinner_height),
@@ -4285,28 +4395,24 @@ ui <- navbarPage(id = "nav1",
                                      
                                      br(),
                                      
-                                     radioButtons(inputId  = "title_mode_reg_coeff",
+                                     radioButtons(inputId  = "title_mode_reg_pval",
                                                   label    = "Title customization:",
                                                   choices  = c("Default", "Custom"),
                                                   selected = "Default" , inline = TRUE),
                                      
                                      
                                      shinyjs::hidden(
-                                       div(id = "hidden_custom_title_reg",
+                                       div(id = "hidden_custom_title_reg_pval",
                                            
-                                           textInput(inputId     = "title1_input_reg",
+                                           textInput(inputId     = "title1_input_reg_pval",
                                                      label       = "Custom map title:", 
-                                                     value       = NA,
-                                                     width       = NULL,
-                                                     placeholder = "Custom title"),
+                                                     width       = NULL),
                                            
-                                           textInput(inputId     = "title2_input_reg",
+                                           textInput(inputId     = "title2_input_reg_pval",
                                                      label       = "Custom map subtitle (e.g. Ref-Period):",
-                                                     value       = NA,
-                                                     width       = NULL,
-                                                     placeholder = "Custom title"),
+                                                     width       = NULL),
                                            
-                                           numericInput(inputId = "title_size_input_reg",
+                                           numericInput(inputId = "title_size_input_reg_pval",
                                                         label   = "Font size:",
                                                         value   = 18,
                                                         min     = 1,
@@ -4338,7 +4444,130 @@ ui <- navbarPage(id = "nav1",
                                      uiOutput("colorpickers4"),  # Dynamically generate color pickers for each shapefile
                                      
                                  )),
-                        )),
+                        ),
+                        
+                        #### Add Custom features (points and highlights) ----                        
+                        column(width = 4,
+                               h4("Custom features", style = "color: #094030;",map_features_popover("pop_anomalies_mapfeat")),
+                               
+                               checkboxInput(inputId = "custom_features_reg_pval",
+                                             label   = "Enable custom features",
+                                             value   = FALSE),
+                               
+                               shinyjs::hidden(
+                                 div(id = "hidden_custom_features_reg_pval",
+                                     radioButtons(inputId      = "feature_reg_pval",
+                                                  label        = "Select a feature type:",
+                                                  inline       = TRUE,
+                                                  choices      = c("Point", "Highlight")),
+                                     
+                                     #Custom Points
+                                     div(id = "hidden_custom_points_reg_pval",
+                                         h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
+                                         
+                                         h6(helpText("Enter location/coordinates or double click on map")),
+                                         
+                                         textInput(inputId = "location_reg_pval",
+                                                   label   = "Enter a location:",
+                                                   value   = NULL,
+                                                   placeholder = "e.g. Bern"),
+                                         
+                                         actionButton(inputId = "search_reg_pval",
+                                                      label   = "Search"),
+                                         
+                                         shinyjs::hidden(div(id = "inv_location_reg_pval",
+                                                             h6(helpText("Invalid location"))
+                                         )),
+                                         
+                                         textInput(inputId = "point_label_reg_pval",
+                                                   label   = "Point label:",
+                                                   value   = ""),
+                                         
+                                         column(width = 12, offset = 0,
+                                                column(width = 6,
+                                                       textInput(inputId = "point_location_x_reg_pval",
+                                                                 label   = "Point longitude:",
+                                                                 value   = "")
+                                                ),
+                                                column(width = 6,
+                                                       textInput(inputId = "point_location_y_reg_pval",
+                                                                 label   = "Point latitude:",
+                                                                 value   = "")
+                                                )),
+                                         
+                                         
+                                         radioButtons(inputId      = "point_shape_reg_pval",
+                                                      label        = "Point shape:",
+                                                      inline       = TRUE,
+                                                      choices      = c("\u25CF", "\u25B2", "\u25A0")),
+                                         
+                                         colourInput(inputId = "point_colour_reg_pval",
+                                                     label   = "Point colour:",
+                                                     returnName = TRUE,
+                                                     palette = "limited"),
+                                         
+                                         
+                                         numericInput(inputId = "point_size_reg_pval",
+                                                      label   = "Point size:",
+                                                      value   = 1,
+                                                      min     = 1,
+                                                      max     = 10),
+                                         
+                                         column(width = 12,
+                                                
+                                                actionButton(inputId = "add_point_reg_pval",
+                                                             label = "Add point"),
+                                                br(), br(), br(),
+                                                actionButton(inputId = "remove_last_point_reg_pval",
+                                                             label = "Remove last point"),
+                                                actionButton(inputId = "remove_all_points_reg_pval",
+                                                             label = "Remove all points")),
+                                     ),
+                                     
+                                     #Custom Highlights
+                                     div(id = "hidden_custom_highlights_reg_pval",
+                                         h4(helpText("Add custom highlights",map_highlights_popover("pop_anomalies_maphl"))),
+                                         
+                                         h6(helpText("Enter coordinate or draw a box on map")),
+                                         
+                                         numericRangeInput(inputId = "highlight_x_values_reg_pval",
+                                                           label  = "Longitude:",
+                                                           value  = "",
+                                                           min    = -180,
+                                                           max    = 180),
+                                         
+                                         numericRangeInput(inputId = "highlight_y_values_reg_pval",
+                                                           label  = "Latitude:",
+                                                           value  = "",
+                                                           min    = -90,
+                                                           max    = 90),
+                                         
+                                         colourInput(inputId = "highlight_colour_reg_pval",
+                                                     label   = "Highlight colour:",
+                                                     showColour = "background",
+                                                     palette = "limited"),
+                                         
+                                         radioButtons(inputId      = "highlight_type_reg_pval",
+                                                      label        = "Type for highlight:",
+                                                      inline       = TRUE,
+                                                      choiceNames  = c("Box \u25FB", "Hatched \u25A8"),
+                                                      choiceValues = c("Box","Hatched")),
+                                         
+                                         
+                                         column(width = 12,
+                                                actionButton(inputId = "add_highlight_reg_pval",
+                                                             label = "Add highlight"),
+                                                br(), br(), br(),
+                                                actionButton(inputId = "remove_last_highlight_reg_pval",
+                                                             label = "Remove last highlight"),
+                                                actionButton(inputId = "remove_all_highlights_reg_pval",
+                                                             label = "Remove all highlights")),
+                                     )
+                                 )
+                               )),
+                        
+                        #### Customization panels END ----
+                      ),
                       
                       br(),
                       
@@ -4396,7 +4625,7 @@ ui <- navbarPage(id = "nav1",
                                  min = 1422,
                                  max = 2008)),
                       ),
-                      withSpinner(ui_element = plotOutput("plot_reg_resi", height = "auto",brush = brushOpts(id = "map_brush4_resi",resetOnNew = TRUE)),
+                      withSpinner(ui_element = plotOutput("plot_reg_resi", height = "auto",  dblclick = "map_dblclick_reg_res", brush = brushOpts(id = "map_brush_reg_res",resetOnNew = TRUE)),
                                   image = spinner_image,
                                   image.width = spinner_width,
                                   image.height = spinner_height),
@@ -4456,27 +4685,27 @@ ui <- navbarPage(id = "nav1",
                                      
                                      br(),
                                      
-                                     radioButtons(inputId  = "title_mode_reg",
+                                     radioButtons(inputId  = "title_mode_reg_res",
                                                   label    = "Title customization:",
                                                   choices  = c("Default", "Custom"),
                                                   selected = "Default" , inline = TRUE),
                                      
                                      shinyjs::hidden(
-                                       div(id = "hidden_custom_title2",
+                                       div(id = "hidden_custom_title_reg_res",
                                            
-                                           textInput(inputId     = "title1_input_reg",
+                                           textInput(inputId     = "title1_input_reg_res",
                                                      label       = "Custom map title:", 
                                                      value       = NA,
                                                      width       = NULL,
                                                      placeholder = "Custom title"),
                                            
-                                           textInput(inputId     = "title2_input_reg",
+                                           textInput(inputId     = "title2_input_reg_res",
                                                      label       = "Custom map subtitle (e.g. Ref-Period)",
                                                      value       = NA,
                                                      width       = NULL,
                                                      placeholder = "Custom title"),
                                            
-                                           numericInput(inputId = "title_size_input_reg",
+                                           numericInput(inputId = "title_size_input_reg_res",
                                                         label   = "Font size:",
                                                         value   = 18,
                                                         min     = 1,
@@ -4506,7 +4735,131 @@ ui <- navbarPage(id = "nav1",
                                      uiOutput("colorpickers4"),  # Dynamically generate color pickers for each shapefile
                                      
                                  )),
-                        )),
+                        ),
+                        
+                        
+                        #### Add Custom features (points and highlights) ----                        
+                        column(width = 4,
+                               h4("Custom features", style = "color: #094030;",map_features_popover("pop_anomalies_mapfeat")),
+                               
+                               checkboxInput(inputId = "custom_features_reg_res",
+                                             label   = "Enable custom features",
+                                             value   = FALSE),
+                               
+                               shinyjs::hidden(
+                                 div(id = "hidden_custom_features_reg_res",
+                                     radioButtons(inputId      = "feature_reg_res",
+                                                  label        = "Select a feature type:",
+                                                  inline       = TRUE,
+                                                  choices      = c("Point", "Highlight")),
+                                     
+                                     #Custom Points
+                                     div(id = "hidden_custom_points_reg_res",
+                                         h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
+                                         
+                                         h6(helpText("Enter location/coordinates or double click on map")),
+                                         
+                                         textInput(inputId = "location_reg_res",
+                                                   label   = "Enter a location:",
+                                                   value   = NULL,
+                                                   placeholder = "e.g. Bern"),
+                                         
+                                         actionButton(inputId = "search_reg_res",
+                                                      label   = "Search"),
+                                         
+                                         shinyjs::hidden(div(id = "inv_location_reg_res",
+                                                             h6(helpText("Invalid location"))
+                                         )),
+                                         
+                                         textInput(inputId = "point_label_reg_res",
+                                                   label   = "Point label:",
+                                                   value   = ""),
+                                         
+                                         column(width = 12, offset = 0,
+                                                column(width = 6,
+                                                       textInput(inputId = "point_location_x_reg_res",
+                                                                 label   = "Point longitude:",
+                                                                 value   = "")
+                                                ),
+                                                column(width = 6,
+                                                       textInput(inputId = "point_location_y_reg_res",
+                                                                 label   = "Point latitude:",
+                                                                 value   = "")
+                                                )),
+                                         
+                                         
+                                         radioButtons(inputId      = "point_shape_reg_res",
+                                                      label        = "Point shape:",
+                                                      inline       = TRUE,
+                                                      choices      = c("\u25CF", "\u25B2", "\u25A0")),
+                                         
+                                         colourInput(inputId = "point_colour_reg_res",
+                                                     label   = "Point colour:",
+                                                     returnName = TRUE,
+                                                     palette = "limited"),
+                                         
+                                         
+                                         numericInput(inputId = "point_size_reg_res",
+                                                      label   = "Point size:",
+                                                      value   = 1,
+                                                      min     = 1,
+                                                      max     = 10),
+                                         
+                                         column(width = 12,
+                                                
+                                                actionButton(inputId = "add_point_reg_res",
+                                                             label = "Add point"),
+                                                br(), br(), br(),
+                                                actionButton(inputId = "remove_last_point_reg_res",
+                                                             label = "Remove last point"),
+                                                actionButton(inputId = "remove_all_points_reg_res",
+                                                             label = "Remove all points")),
+                                     ),
+                                     
+                                     #Custom Highlights
+                                     div(id = "hidden_custom_highlights_reg_res",
+                                         h4(helpText("Add custom highlights",map_highlights_popover("pop_anomalies_maphl"))),
+                                         
+                                         h6(helpText("Enter coordinate or draw a box on map")),
+                                         
+                                         numericRangeInput(inputId = "highlight_x_values_reg_res",
+                                                           label  = "Longitude:",
+                                                           value  = "",
+                                                           min    = -180,
+                                                           max    = 180),
+                                         
+                                         numericRangeInput(inputId = "highlight_y_values_reg_res",
+                                                           label  = "Latitude:",
+                                                           value  = "",
+                                                           min    = -90,
+                                                           max    = 90),
+                                         
+                                         colourInput(inputId = "highlight_colour_reg_res",
+                                                     label   = "Highlight colour:",
+                                                     showColour = "background",
+                                                     palette = "limited"),
+                                         
+                                         radioButtons(inputId      = "highlight_type_reg_res",
+                                                      label        = "Type for highlight:",
+                                                      inline       = TRUE,
+                                                      choiceNames  = c("Box \u25FB", "Hatched \u25A8"),
+                                                      choiceValues = c("Box","Hatched")),
+                                         
+                                         
+                                         column(width = 12,
+                                                actionButton(inputId = "add_highlight_reg_res",
+                                                             label = "Add highlight"),
+                                                br(), br(), br(),
+                                                actionButton(inputId = "remove_last_highlight_reg_res",
+                                                             label = "Remove last highlight"),
+                                                actionButton(inputId = "remove_all_highlights_reg_res",
+                                                             label = "Remove all highlights")),
+                                     )
+                                 )
+                               )),
+                        
+                        #### Customization panels END ----
+                      ),
                       
                       br(),
                       
@@ -4955,6 +5308,7 @@ ui <- navbarPage(id = "nav1",
                                            colourInput(inputId = "point_colour_ts5", 
                                                        label   = "Point colour:",
                                                        showColour = "background",
+                                                       returnName = TRUE,
                                                        palette = "limited"),                        
                                            
                                            
