@@ -23,7 +23,7 @@ setup_user_environment <- function() {
       lib_path = "C:/Users/nikla/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp/library"
     ),
     
-    Niklaus_Emanuel = list(
+    "Niklaus Emanuel" = list(
       setwd = "C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp",
       lib_path = "C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp/library"
     ),
@@ -153,12 +153,6 @@ library(burnr)
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
-
-# Choosing theme and making colouring changes
-my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")
-
-# Choosing theme and making colouring changes
-my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")
 
 # Colour palette and variable names for ModE-RA source leaflet
 type_list <- c("bivalve_proxy", "coral_proxy", "documentary_proxy", "glacier_ice_proxy", "ice_proxy", "instrumental_data", "lake_sediment_proxy", "other_proxy", "speleothem_proxy", "tree_proxy")

@@ -4135,3 +4135,66 @@ generate_month_label <- function(range) {
     paste(month_letters[(range[1]:range[2]) + 1], collapse = "")
   }
 }
+
+#### SEA Functions ----
+
+## (SEA) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
+##       data input = Generation plot inputs from side bar
+
+generate_metadata_sea_plot  <- function(dataset,variable,statistic,season_sel,range_months,
+                                        ref_period,select_sg_ref,sg_ref,lon_range,lat_range,lonlat_vals) {
+  
+  #Generate dataframe from plot inputs
+  plot_input6 <- data.frame(
+    dataset, #selectInput
+    variable, #selectInput
+    statistic, #selectInput
+    season_sel, #radioButtons
+    range_months, #sliderTextInput
+    ref_period, #numericRangeInput
+    select_sg_ref, #checkboxInput
+    sg_ref, #numericInput
+    lon_range, #numericRangeInput
+    lat_range, #numericRangeInput
+    lonlat_vals #VALUES
+  )
+  
+  return(plot_input6)
+}
+
+## (SEA) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
+##       data input = Generation plot inputs from side bar
+
+generate_metadata_sea_side_plot  <- function(lag_years,event_years) {
+  
+  #Generate dataframe from plot inputs
+  plot_input6b <- data.frame(
+    lag_years, #numericRangeInput
+    event_years #textInput
+  )
+  
+  return(plot_input6b)
+}
+
+## (SEA) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR TS
+##       data input = Input form Plot Customization
+
+generate_metadata_sea_ts <- function(title_mode_6, title1_input_6, y_label_6, show_observations_6,
+                                      show_pvalues_6, show_ticks_6, show_key_6, sample_size_6, show_means_6, show_confidence_bands_6) {
+  
+  # Create the metadata data frame with explicit column names
+  meta_input_sea_ts <- data.frame(
+    title_mode_6, #radioButtons
+    title1_input_6, #textInput
+    y_label_6, #textInput
+    show_observations_6, #checkboxInput
+    show_pvalues_6, #checkboxInput
+    show_ticks_6, #checkboxInput
+    show_key_6, #checkboxInput
+    sample_size_6, #numericInput
+    show_means_6, #checkboxInput
+    show_confidence_bands_6 #radioButtons
+  )
+  
+  return(meta_input_sea_ts)
+}

@@ -2,7 +2,7 @@
 # Source for helpers ----
 library(profvis)
 
-  
+
 source("helpers.R")
 source("popovers.R")
 source("setup.R")
@@ -17,70 +17,126 @@ source("setup.R")
 
 
 # Define UI ----
-ui <- navbarPage(id = "nav1",
-                 ## Configs for navbarPage: theme, images (Header and Footer) ----
-                 title = div(style = "display: inline;",
-                             uiOutput("logo_output", inline = TRUE),
-                             uiOutput("logo_output2", inline = TRUE),
-                             "(v1.4)",
-                             #Preparation to use Tracking ShinyJS and CSS
-                             shinyjs::useShinyjs(),
-                 ),
-                 footer = div(class = "navbar-footer",
-                              style = "display: inline;",
-                              # Oeschger Centre
-                              a(href = "https://www.oeschger.unibe.ch/", target = "_blank",
-                                style = "text-decoration: none; border: none;",
-                                img(src = 'pics/oeschger_logo_rgb.jpg', id = "ClimeApp3", height = "100px", width = "100px", style = "margin-top: 20px; margin-bottom: 20px;")),
-                              # ERC
-                              a(href = "https://erc.europa.eu/homepage", target = "_blank",
-                                style = "text-decoration: none; border: none;",
-                                img(src = 'pics/LOGO_ERC-FLAG_EU_.jpg', id = "ClimeApp4", height = "100px", width = "141px", style = "margin-top: 20px; margin-bottom: 20px;")),
-                              # Schweizerische Eidgenossenschaft
-                              a(href = "https://www.admin.ch/gov/de/start.html", target = "_blank",
-                                style = "text-decoration: none; border: none;",
-                                img(src = 'pics/WBF_SBFI_EU_Frameworkprogramme_E_RGB_pos_quer.jpg', id = "ClimeApp5", height = "100px", width = "349px", style = "margin-top: 20px; margin-bottom: 20px;")),
-                              # Schweizerischer Nationalfonds
-                              a(href = "https://www.snf.ch/de", target = "_blank",
-                                style = "text-decoration: none; border: none;",
-                                img(src = 'pics/SNF_Logo_Logo.png', id = "ClimeApp6", height = "75px", width = "560px", style = "margin-top: 20px; margin-bottom: 20px;")),
-                              # Navbar properties
-                              tags$style(type="text/css", "body {padding-top: 90px;}"),
-                              # Window dimensions
-                              tags$head(tags$script('
-                          var dimension = [0, 0];
-                          $(document).on("shiny:connected", function(e) {
-                              dimension[0] = window.innerWidth;
-                              dimension[1] = window.innerHeight;
-                              Shiny.onInputChange("dimension", dimension);
-                          });
-                          $(window).resize(function(e) {
-                              dimension[0] = window.innerWidth;
-                              dimension[1] = window.innerHeight;
-                              Shiny.onInputChange("dimension", dimension);
-                          });
-                      '),
-                                        tags$script(
-                                          HTML('
-                        $(document).ready(function() {
-                          // Add event listener to detect when the collapsible menu is toggled
-                          $(".navbar-toggle").click(function() {
-                            $(".navbar").toggleClass("collapsed-menu");
-                          });
-                        });
-                      ')),
-                              ),
-                              # No Red Error messages
-                              tags$style(type="text/css",
-                                         ".shiny-output-error { visibility: hidden; }",
-                                         ".shiny-output-error:before { visibility: hidden; }"
-                              )
-                 ),
-                 theme = my_theme,
-                 position = c("fixed-top"),
-                 windowTitle = "ClimeApp (v1.4)",
-                 collapsible = TRUE,
-                 tags$head(tags$link(rel = "icon", type = "image/png", href = "pics/Logo_Favicon.png")),
+ui <- navbarPage(
+  id = "nav1",
+  
+  useShinyjs(),  # Enable shinyjs
+  
+  # --- Navbar title with logos and version ---
+  title = div(
+    style = "display: inline-flex; align-items: center; gap: 10px;",
+    uiOutput("logo_output", inline = TRUE),
+    uiOutput("logo_output2", inline = TRUE),
+    span("(v1.4)")
+  ),
+  
+  # Global CSS injection for hiding Shiny errors
+  tags$head(
+    tags$style(HTML("
+      .shiny-output-error { visibility: hidden !important; }
+      .shiny-output-error:before { visibility: hidden !important; }
+    "))
+  ),
+  
+  # JavaScript: screen dimension tracking
+  tags$head(
+    tags$script(HTML('
+      var dimension = [0, 0];
+      $(document).on("shiny:connected", function(e) {
+          dimension[0] = window.innerWidth;
+          dimension[1] = window.innerHeight;
+          Shiny.onInputChange("dimension", dimension);
+      });
+      $(window).resize(function(e) {
+          dimension[0] = window.innerWidth;
+          dimension[1] = window.innerHeight;
+          Shiny.onInputChange("dimension", dimension);
+      });
+    '))
+  ),
+  
+  # --- Head content: Favicon, JS for resizing, JS for collapsing, CSS fixes ---
+  header = tagList(
+    tags$head(
+      # Set window icon
+      tags$link(rel = "icon", type = "image/png", href = "pics/Logo_Favicon.png"),
+
+      # JavaScript: navbar toggle tracking
+      tags$script(HTML('
+        $(document).ready(function() {
+          $(".navbar-toggle").click(function() {
+            $(".navbar").toggleClass("collapsed-menu");
+          });
+        });
+      ')),
+      
+      # Offset for fixed-top navbar
+      tags$style(HTML("body { padding-top: 90px; }"))
+    )
+  ),
+  
+  footer = div(
+    class = "navbar-footer",
+    style = "display: inline;",
+    # Oeschger Centre
+    a(
+      href = "https://www.oeschger.unibe.ch/",
+      target = "_blank",
+      style = "text-decoration: none; border: none;",
+      img(
+        src = 'pics/oeschger_logo_rgb.jpg',
+        id = "ClimeApp3",
+        height = "100px",
+        width = "100px",
+        style = "margin-top: 20px; margin-bottom: 20px;"
+      )
+    ),
+    # ERC
+    a(
+      href = "https://erc.europa.eu/homepage",
+      target = "_blank",
+      style = "text-decoration: none; border: none;",
+      img(
+        src = 'pics/LOGO_ERC-FLAG_EU_.jpg',
+        id = "ClimeApp4",
+        height = "100px",
+        width = "141px",
+        style = "margin-top: 20px; margin-bottom: 20px;"
+      )
+    ),
+    # Schweizerische Eidgenossenschaft
+    a(
+      href = "https://www.admin.ch/gov/de/start.html",
+      target = "_blank",
+      style = "text-decoration: none; border: none;",
+      img(
+        src = 'pics/WBF_SBFI_EU_Frameworkprogramme_E_RGB_pos_quer.jpg',
+        id = "ClimeApp5",
+        height = "100px",
+        width = "349px",
+        style = "margin-top: 20px; margin-bottom: 20px;"
+      )
+    ),
+    # Schweizerischer Nationalfonds
+    a(
+      href = "https://www.snf.ch/de",
+      target = "_blank",
+      style = "text-decoration: none; border: none;",
+      img(
+        src = 'pics/SNF_Logo_Logo.png',
+        id = "ClimeApp6",
+        height = "75px",
+        width = "560px",
+        style = "margin-top: 20px; margin-bottom: 20px;"
+      )
+    ),
+  ), 
+  
+  # --- Navbar styling and properties ---
+  theme = bs_theme(version = 5, bootswatch = "united", primary = "#094030", navbar_bg = "#094030"),
+  position = "fixed-top",
+  windowTitle = "ClimeApp (v1.4)",
+  collapsible = TRUE,
 
 # Welcome START ----                             
   tabPanel("Welcome", value = "tab0",
@@ -593,8 +649,6 @@ ui <- navbarPage(id = "nav1",
 
                 ## Main Panel START ----
                 mainPanel(tabsetPanel(id = "tabset1",
-                    br(),                  
-                
                     ### Map plot START ----   
                     tabPanel("Map", 
                              withSpinner(ui_element = 
@@ -2664,171 +2718,9 @@ tabPanel("SEA", value = "tab6",
                              )),    
                     ),
                     
-                    #### Add Custom features (points, highlights, lines) ----                        
-                    column(width = 4,
-                           h4("Custom features", style = "color: #094030;", timeseries_features_popover("pop_sea_timefeat")),
-                           
-                           checkboxInput(inputId = "custom_features_6",
-                                         label   = "Enable custom features",
-                                         value   = FALSE),
-                           
-                           shinyjs::hidden(
-                             div(id = "hidden_custom_features_6",
-                                 radioButtons(inputId      = "feature_6",
-                                              label        = "Select a feature type:",
-                                              inline       = TRUE,
-                                              choices      = c("Point", "Highlight", "Line")),
-                                 
-                                 #Custom Points
-                                 shinyjs::hidden(
-                                   div(id = "hidden_custom_points_6",
-                                       
-                                       h4(helpText("Add custom points", timeseries_points_popover("pop_sea_timepoint"))),
-                                       h6(helpText("Enter position manually or click on plot")),
-                                       
-                                       textInput(inputId = "point_label_6", 
-                                                 label   = "Point label:",
-                                                 value   = ""),
-                                       
-                                       column(width = 12, offset = 0,
-                                              column(width = 6,
-                                                     textInput(inputId = "point_location_x_6", 
-                                                               label   = "Point x position:",
-                                                               value   = "")
-                                              ),
-                                              column(width = 6,
-                                                     textInput(inputId = "point_location_y_6", 
-                                                               label   = "Point y position:",
-                                                               value   = "")
-                                              )),
-                                       
-                                       
-                                       radioButtons(inputId      = "point_shape_6",
-                                                    label        = "Point shape:",
-                                                    inline       = TRUE,
-                                                    choices      = c("\u25CF", "\u25B2", "\u25A0")),
-                                       
-                                       colourInput(inputId = "point_colour_6", 
-                                                   label   = "Point colour:",
-                                                   showColour = "background",
-                                                   palette = "limited"),                        
-                                       
-                                       
-                                       numericInput(inputId = "point_size_6",
-                                                    label   = "Point size",
-                                                    value   = 1,
-                                                    min     = 1,
-                                                    max     = 10),
-                                       
-                                       column(width = 12,
-                                              
-                                              actionButton(inputId = "add_point_6",
-                                                           label = "Add point"),
-                                              br(), br(), br(),
-                                              actionButton(inputId = "remove_last_point_6",
-                                                           label = "Remove last point"),
-                                              actionButton(inputId = "remove_all_points_6",
-                                                           label = "Remove all points")),
-                                   )),
-                                 
-                                 #Custom highlights
-                                 shinyjs::hidden(
-                                   div(id = "hidden_custom_highlights_6",
-                                       
-                                       h4(helpText("Add custom highlights", timeseries_highlights_popover("pop_sea_timehl"))),
-                                       h6(helpText("Enter values manually or draw a box on plot")),
-                                       
-                                       numericRangeInput(inputId = "highlight_x_values_6",
-                                                         label  = "X values:",
-                                                         value  = "",
-                                                         min    = -180,
-                                                         max    = 180),
-                                       
-                                       numericRangeInput(inputId = "highlight_y_values_6",
-                                                         label  = "Y values:",
-                                                         value  = "",
-                                                         min    = -90,
-                                                         max    = 90),
-                                       
-                                       colourInput(inputId = "highlight_colour_6", 
-                                                   label   = "Highlight colour:",
-                                                   showColour = "background",
-                                                   palette = "limited"),
-                                       
-                                       radioButtons(inputId      = "highlight_type_6",
-                                                    label        = "Type for highlight:",
-                                                    inline       = TRUE,
-                                                    choiceNames  = c("Fill \u25FC", "Box \u25FB", "Hatched \u25A8"),
-                                                    choiceValues = c("Fill","Box","Hatched")),
-                                       
-                                       checkboxInput(inputId = "show_highlight_on_legend_6",
-                                                     label   = "Show on key",
-                                                     value   = FALSE),
-                                       
-                                       hidden(
-                                         textInput(inputId = "highlight_label_6", 
-                                                   label   = "Label:",
-                                                   value   = "")),
-                                       
-                                       
-                                       column(width = 12,
-                                              actionButton(inputId = "add_highlight_6",
-                                                           label = "Add highlight"),
-                                              br(), br(), br(),
-                                              actionButton(inputId = "remove_last_highlight_6",
-                                                           label = "Remove last highlight"),
-                                              actionButton(inputId = "remove_all_highlights_6",
-                                                           label = "Remove all highlights")),
-                                       
-                                   )),
-                                 
-                                 #Custom lines
-                                 shinyjs::hidden(
-                                   div(id = "hidden_custom_line_6",
-                                       
-                                       h4(helpText("Add custom lines", timeseries_lines_popover("pop_sea_timelines"))),
-                                       h6(helpText("Enter position manually or click on plot, double click to change orientation")),
-                                       
-                                       radioButtons(inputId      = "line_orientation_6",
-                                                    label        = "Orientation:",
-                                                    inline       = TRUE,
-                                                    choices      = c("Vertical", "Horizontal")),
-                                       
-                                       textInput(inputId = "line_position_6", 
-                                                 label   = "Position:",
-                                                 value   = "",
-                                                 placeholder = "1830, 1832"),
-                                       
-                                       colourInput(inputId = "line_colour_6", 
-                                                   label   = "Line colour:",
-                                                   showColour = "background",
-                                                   palette = "limited"),
-                                       
-                                       radioButtons(inputId      = "line_type_6",
-                                                    label        = "Type:",
-                                                    inline       = TRUE,
-                                                    choices = c("solid", "dashed")),
-                                       
-                                       checkboxInput(inputId = "show_line_on_legend_6",
-                                                     label   = "Show on key",
-                                                     value   = FALSE),
-                                       
-                                       hidden(
-                                         textInput(inputId = "line_label_6", 
-                                                   label   = "Label:",
-                                                   value   = "")),
-                                       
-                                       column(width = 12,
-                                              actionButton(inputId = "add_line_6",
-                                                           label = "Add line"),
-                                              br(), br(), br(),
-                                              actionButton(inputId = "remove_last_line_6",
-                                                           label = "Remove last line"),
-                                              actionButton(inputId = "remove_all_lines_6",
-                                                           label = "Remove all lines")
-                                       )
-                                   ))
-                             ))),
+                    #### No Custom Features ----                        
+                    column(width = 4
+                           ),
                     
                     #### Custom statistics ----
                     column(width = 4,
@@ -2903,6 +2795,7 @@ tabPanel("SEA", value = "tab6",
 # Correlation START ----
   tabPanel("Correlation", value = "tab3",
           shinyjs::useShinyjs(),
+          
           sidebarLayout(
                ## Sidebar Panels START ----          
                sidebarPanel(verticalLayout(
@@ -3676,6 +3569,82 @@ tabPanel("SEA", value = "tab6",
                         ),
                       )),
                       
+                      #### Scatter Plot START ----
+                      h4("Scatter plot", style = "color: #094030;", reference_map_popover("pop_correlation_refmap")), 
+                      
+                      radioButtons(inputId  = "ref_map_mode3",
+                                   label    = NULL,
+                                   choices  = c("None", "Scatter plot"),
+                                   selected = "None" , inline = TRUE),
+                      
+                      shinyjs::hidden(div(id ="hidden_sec_map_download3",
+                      
+                      withSpinner(ui_element = plotOutput("ref_map3"), 
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
+                      
+                      #### Scatter plot customization ----
+                      h4("Customize your scatter plot", style = "color: #094030;", timeseries_scatter_popover("pop_correlation_scatter")), 
+                      fluidRow(column(width = 4,
+                             
+                             checkboxInput(inputId = "custom_ref_ts3",
+                                           label   = "Scatter plot customization",
+                                           value   = FALSE),
+                             
+                             shinyjs::hidden( 
+                               div(id = "hidden_custom_ref_ts3",
+                                   
+                                   checkboxInput(inputId = "add_trend_ref_ts3",
+                                                 label   = "Add trendline:",
+                                                 value   = FALSE),
+                                   
+                                   radioButtons(inputId  = "add_outliers_ref_ts3"   ,
+                                                label    = "Highlight statistical outliers:",
+                                                choices  = c("None", "z-score", "Trend deviation"),
+                                                selected = "None",
+                                                inline = TRUE),
+                                   
+                                   shinyjs::hidden( 
+                                     div(id = "hidden_custom_score_ref_ts3",
+                                         
+                                         numericInput( inputId     = "sd_input_ref_ts3",
+                                                       label       = "Adjust SD for z-score:", 
+                                                       value       = 1,
+                                                       min         = 1,
+                                                       max         = 10,
+                                                       step        = 0.1,
+                                                       width       = "50%")
+                                     )),
+                                   
+                                   shinyjs::hidden( 
+                                     div(id = "hidden_custom_trend_sd_ref_ts3",
+                                         
+                                         numericInput( inputId     = "trend_sd_input_ref_ts3",
+                                                       label       = "Adjust SD for trend deviation:", 
+                                                       value       = 1,
+                                                       min         = 1,
+                                                       max         = 10,
+                                                       step        = 0.1,
+                                                       width       = "50%")
+                                     )),
+                                   
+                                   checkboxInput(inputId = "show_key_ref_ts3",
+                                                 label   = "Show key",
+                                                 value   = FALSE),
+
+                               )),    
+                      )),
+                      
+                      #### Download scatter plot ----
+                                  h4("Download scatter plot", style = "color: #094030;"),
+                                  fluidRow(
+                                    column(2, radioButtons(inputId = "file_type_map_sec3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                    column(3, downloadButton(outputId = "download_map_sec3", label = "Download scatter plot"))
+                                  ),
+                      #### Scatter Plot END ----
+                      )),
+                      
                       #Easter Calm
                       uiOutput("keep_calm", inline = TRUE),
                     
@@ -3963,7 +3932,7 @@ tabPanel("SEA", value = "tab6",
                       ),
                     
                       #### Downloads Map ----
-                      h4("Downloads", style = "color: #094030;",downloads_popover("pop_correlation_map_downloads")),
+                      h4("Downloads", style = "color: #094030;", downloads_popover("pop_correlation_map_downloads")),
                       checkboxInput(inputId = "download_options3",
                                     label   = "Enable download options",
                                     value   = FALSE),

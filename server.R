@@ -1021,6 +1021,39 @@ server <- function(input, output, session) {
                                condition = input$source_v2 == "ModE-",
                                asis = FALSE)})
       
+      observe({shinyjs::toggle(id = "hidden_sec_map_download3",
+                               anim = TRUE,
+                               animType = "slide",
+                               time = 0.5,
+                               selector = NULL,
+                               condition = input$ref_map_mode3 != "None",
+                               asis = FALSE)})
+      
+      observe({shinyjs::toggle(id = "hidden_custom_ref_ts3",
+                               anim = TRUE,
+                               animType = "slide",
+                               time = 0.5,
+                               selector = NULL,
+                               condition = input$custom_ref_ts3 == TRUE,
+                               asis = FALSE)})
+      
+      observe({shinyjs::toggle(id = "hidden_custom_score_ref_ts3",
+                               anim = TRUE,
+                               animType = "slide",
+                               time = 0.5,
+                               selector = NULL,
+                               condition = input$add_outliers_ref_ts3 == "z-score",
+                               asis = FALSE)})
+      
+      observe({shinyjs::toggle(id = "hidden_custom_trend_sd_ref_ts3",
+                               anim = TRUE,
+                               animType = "slide",
+                               time = 0.5,
+                               selector = NULL,
+                               condition = input$add_outliers_ref_ts3 == "Trend deviation",
+                               asis = FALSE)})
+
+      
       # Customization
       ## Correlation Maps
       
@@ -1679,7 +1712,7 @@ server <- function(input, output, session) {
                                condition = input$coordinates_type_6 == "Continents",
                                asis = FALSE)})
       
-      #Customization
+      #Customization and Downloads
       
       observe({shinyjs::toggle(id = "hidden_custom_6",
                                anim = TRUE,
@@ -1705,38 +1738,6 @@ server <- function(input, output, session) {
                                condition = input$enable_custom_statistics_6 == TRUE,
                                asis = FALSE)})
 
-      observe({shinyjs::toggle(id = "hidden_custom_features_6",
-                               anim = TRUE,
-                               animType = "slide",
-                               time = 0.5,
-                               selector = NULL,
-                               condition = input$custom_features_6 == TRUE,
-                               asis = FALSE)})
-      
-      observe({shinyjs::toggle(id = "hidden_custom_points_6",
-                               anim = TRUE,
-                               animType = "slide",
-                               time = 0.5,
-                               selector = NULL,
-                               condition = input$feature_6 == "Point",
-                               asis = FALSE)})
-      
-      observe({shinyjs::toggle(id = "hidden_custom_highlights_6",
-                               anim = TRUE,
-                               animType = "slide",
-                               time = 0.5,
-                               selector = NULL,
-                               condition = input$feature_6 == "Highlight",
-                               asis = FALSE)})
-      
-      observe({shinyjs::toggle(id = "hidden_custom_line_6",
-                               anim = TRUE,
-                               animType = "slide",
-                               time = 0.5,
-                               selector = NULL,
-                               condition = input$feature_6 == "Line",
-                               asis = FALSE)})
-      
       observe({shinyjs::toggle(id = "hidden_download_6",
                                anim = TRUE,
                                animType = "slide",
@@ -1744,24 +1745,7 @@ server <- function(input, output, session) {
                                selector = NULL,
                                condition = input$download_options_6 == TRUE,
                                asis = FALSE)})
-      
-      observe({shinyjs::toggle(id = "highlight_label_6",
-                               anim = TRUE,
-                               animType = "slide",
-                               time = 0.5,
-                               selector = NULL,
-                               condition = input$show_highlight_on_legend_6 == TRUE,
-                               asis = FALSE)})
-      
-      observe({shinyjs::toggle(id = "line_label_6",
-                               anim = TRUE,
-                               animType = "slide",
-                               time = 0.5,
-                               selector = NULL,
-                               condition = input$show_line_on_legend_6 == TRUE,
-                               asis = FALSE)})
-      
-    
+
     ## ANOMALIES observe, update & interactive controls ----
     
       ### Input updaters ----
@@ -6119,129 +6103,136 @@ server <- function(input, output, session) {
         }
       })
       
-      ### Interactivity ----
+      ### Generate Metadata for SEA ----
       
-      # TS point/line setter
-      observeEvent(input$ts_click6,{
-        if (input$custom_features_6 == TRUE){
-          if (input$feature_6 == "Point"){
-            updateTextInput(
-              session = getDefaultReactiveDomain(),
-              inputId = "point_location_x_6",
-              label = NULL,
-              value = as.character(round(input$ts_click6$x, digits = 2))
-            )
-            
-            updateTextInput(
-              session = getDefaultReactiveDomain(),
-              inputId = "point_location_y_6",
-              label = NULL,
-              value = as.character(round(input$ts_click6$y, digits = 2))
-            )
-          } 
-          else if (input$feature_6 == "Line"){
-            updateRadioButtons(
-              session = getDefaultReactiveDomain(),
-              inputId = "line_orientation_6",
-              label = NULL,
-              selected = "Vertical")
-            
-            updateTextInput(
-              session = getDefaultReactiveDomain(),
-              inputId = "line_position_6",
-              label = NULL,
-              value = as.character(round(input$ts_click6$x, digits = 2))
-            )
-          }
-        }
+      #Download Plot data 
+      plot_gen_input_sea <- reactive({
+        
+        plot_gen_sea = generate_metadata_sea_plot(input$dataset_selected_6,
+                                                  input$ME_variable_6,
+                                                  input$ME_statistic_6,
+                                                  input$season_selected_6,
+                                                  input$range_months_6,
+                                                  input$ref_period_6,
+                                                  input$ref_single_year_6,
+                                                  input$ref_period_sg_6,
+                                                  input$range_longitude_6,
+                                                  input$range_latitude_6,
+                                                  lonlat_vals6())
+        
+        return(plot_gen_sea)
       })
       
-      observeEvent(input$ts_dblclick6,{
-        if (input$custom_features_6 == TRUE & input$feature_6 == "Line"){
-          updateRadioButtons(
-            session = getDefaultReactiveDomain(),
-            inputId = "line_orientation_6",
-            label = NULL,
-            selected = "Horizontal")
-          
-          updateTextInput(
-            session = getDefaultReactiveDomain(),
-            inputId = "line_position_6",
-            label = NULL,
-            value = as.character(round(input$ts_dblclick6$y, digits = 2))
-          )
-        }
-      })
-      
-      # TS highlight setter
-      observeEvent(input$ts_brush6,{
-        if (input$custom_features_6 == TRUE & input$feature_6 == "Highlight"){
-          
-          updateNumericRangeInput(
-            session = getDefaultReactiveDomain(),
-            inputId = "highlight_x_values_6",
-            label = NULL,
-            value = round(c(input$ts_brush6[[1]],input$ts_brush6[[2]]), digits = 2))
-          
-          updateNumericRangeInput(
-            session = getDefaultReactiveDomain(),
-            inputId = "highlight_y_values_6",
-            label = NULL,
-            value = round(c(input$ts_brush6[[3]],input$ts_brush6[[4]]), digits = 2))
-        }
-      })
-      ### Initialise and update custom points lines highlights ----
+      #Download Options data
+      plot_gen_side_input_sea <- reactive({
 
-      ts_points_data6 = reactiveVal(data.frame())
-      ts_highlights_data6 = reactiveVal(data.frame())
-      ts_lines_data6 = reactiveVal(data.frame())
-      
-      # timeseries Points
-      observeEvent(input$add_point_6, {
-        ts_points_data6(rbind(ts_points_data6(),
-                             create_new_points_data(input$point_location_x_6,input$point_location_y_6,
-                                                    input$point_label_6,input$point_shape_6,
-                                                    input$point_colour_6,input$point_size_6)))
-      })  
-      
-      observeEvent(input$remove_last_point_6, {
-        ts_points_data6(ts_points_data6()[-nrow(ts_points_data6()),])
+        plot_gen_side_sea = generate_metadata_sea_side_plot(input$lag_years_6,
+                                                            input$event_years_6)
+
+        return(plot_gen_side_sea)
       })
       
-      observeEvent(input$remove_all_points_6, {
-        ts_points_data6(data.frame())
+      #Download Custom SEA data
+      custom_map_input_sea <- reactive({
+        
+        custom_map_sea = generate_metadata_sea_ts(input$title_mode_6,
+                                                  input$title1_input_6,
+                                                  input$y_label_6,
+                                                  input$show_observations_6,
+                                                  input$show_pvalues_6,
+                                                  input$show_ticks_6,
+                                                  input$show_key_6,
+                                                  input$sample_size_6,
+                                                  input$show_means_6,
+                                                  input$show_confidence_bands_6)
+        
+        return(custom_map_sea)
       })
       
-      # timeseries Highlights
-      observeEvent(input$add_highlight_6, {
-        ts_highlights_data6(rbind(ts_highlights_data6(),
-                                 create_new_highlights_data(input$highlight_x_values_6,input$highlight_y_values_6,
-                                                            input$highlight_colour_6,input$highlight_type_6,
-                                                            input$show_highlight_on_legend_6,input$highlight_label_6)))
-      })  
+      #Download Metadata as Excel
+      output$download_metadata_6 <- downloadHandler(
+        filename = function() {"metadata_sea.xlsx"},
+        content  = function(file) {
+          wb <- openxlsx::createWorkbook()
+          openxlsx::addWorksheet(wb, "plot_gen_sea")
+          openxlsx::addWorksheet(wb, "plot_gen_side_sea")
+          openxlsx::addWorksheet(wb, "custom_map_sea")
+          openxlsx::writeData(wb, "plot_gen_sea", plot_gen_input_sea())
+          openxlsx::writeData(wb, "plot_gen_side_sea", plot_gen_side_input_sea())
+          openxlsx::writeData(wb, "custom_map_sea", custom_map_input_sea())
+          openxlsx::saveWorkbook(wb, file)
+        }
+      )
       
-      observeEvent(input$remove_last_highlight_6, {
-        ts_highlights_data6(ts_highlights_data6()[-nrow(ts_highlights_data6()),])
-      })
+      #Upload SEA metadata
+      process_uploaded_file_sea <- function() {
+        
+        # Update plot generation
+        plot_data_sea <- openxlsx::read.xlsx(input$upload_metadata_6$datapath, sheet = "plot_gen_sea")
+        
+        # Update inputs based on plot_data_sea sheet plot_gen_sea
+        updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_6", selected = plot_data_sea[1, "dataset"])
+        updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_6", selected = plot_data_sea[1, "variable"])
+        updateSelectInput(session = getDefaultReactiveDomain(), "ME_statistic_6", selected = plot_data_sea[1, "statistic"])
+        updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_6", selected = plot_data_sea[1, "season_sel"])
+        updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_6", selected = plot_data_sea[1:2, "range_months"])
+        updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_6", value = plot_data_sea[1:2, "ref_period"])
+        updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_6", value = plot_data_sea[1, "select_sg_ref"])
+        updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg_6", value = plot_data_sea[1, "sg_ref"])
+        updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_6", value = plot_data_sea[1:2, "lon_range"])
+        updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_6", value = plot_data_sea[1:2, "lat_range"])
+        # Update Lon Lat Vals
+        lonlat_vals6(plot_data_sea[1:4, "lonlat_vals"])
+        
+
+        # Update plot generation
+        plot_data_side_sea <- openxlsx::read.xlsx(input$upload_metadata_6$datapath, sheet = "plot_gen_side_sea")
+        
+        # Update inputs based on plot_data_sea sheet plot_gen_sea
+        updateNumericRangeInput(session = getDefaultReactiveDomain(), "lag_years_6", value = plot_data_side_sea[1:2, "lag_years"])
+        updateTextInput(session = getDefaultReactiveDomain(), "event_years_6", value = plot_data_side_sea[1, "event_years"])
+        
+        # Update inputs based on metadata_sea sheet custom_map_sea
+        metadata_sea <- openxlsx::read.xlsx(input$upload_metadata_6$datapath, sheet = "custom_map_sea")
+        
+        updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_6", selected = metadata_sea[1, "title_mode_6"])
+        updateTextInput(session = getDefaultReactiveDomain(), "title1_input_6", value = metadata_sea[1, "title1_input_6"])
+        updateTextInput(session = getDefaultReactiveDomain(), "y_label_6", value = metadata_sea[1, "y_label_6"])
+        updateCheckboxInput(session = getDefaultReactiveDomain(), "show_observations_6", value = metadata_sea[1, "show_observations_6"])
+        updateCheckboxInput(session = getDefaultReactiveDomain(), "show_pvalues_6", value = metadata_sea[1, "show_pvalues_6"])
+        updateCheckboxInput(session = getDefaultReactiveDomain(), "show_ticks_6", value = metadata_sea[1, "show_ticks_6"])
+        updateCheckboxInput(session = getDefaultReactiveDomain(), "show_key_6", value = metadata_sea[1, "show_key_6"])
+        updateNumericInput(session = getDefaultReactiveDomain(), "sample_size_6", value = metadata_sea[1, "sample_size_6"])
+        updateCheckboxInput(session = getDefaultReactiveDomain(), "show_means_6", value = metadata_sea[1, "show_means_6"])
+        updateRadioButtons(session = getDefaultReactiveDomain(), "show_confidence_bands_6", selected = metadata_sea[1, "show_confidence_bands_6"])
+      }
       
-      observeEvent(input$remove_all_highlights_6, {
-        ts_highlights_data6(data.frame())
-      })
-      
-      # timeseries Lines
-      observeEvent(input$add_line_6, {
-        ts_lines_data6(rbind(ts_lines_data6(),
-                            create_new_lines_data(input$line_orientation_6,input$line_position_6,
-                                                  input$line_colour_6,input$line_type_6,
-                                                  input$show_line_on_legend_6,input$line_label_6)))
-      })  
-      
-      observeEvent(input$remove_last_line_6, {
-        ts_lines_data6(ts_lines_data6()[-nrow(ts_lines_data6()),])
-      })
-      
-      observeEvent(input$remove_all_lines_6, {
-        ts_lines_data6(data.frame())
+      # Event handler for upload button
+      observeEvent(input$update_metadata_6, {
+        req(input$upload_metadata_6)
+        file_path <- input$upload_metadata_6$datapath
+        
+        # Read the first sheet name from the uploaded Excel file
+        first_sheet_name_sea <- tryCatch({
+          available_sheets <- getSheetNames(file_path)
+          available_sheets[[1]]
+        }, error = function(e) {
+          NULL
+        })
+        
+        # Check if the correct first sheet name is present
+        if (!is.null(first_sheet_name_sea) && first_sheet_name_sea == "plot_gen_sea") {
+          # Correct first sheet name is present, proceed with processing the file
+          process_uploaded_file_sea()
+        } else {
+          # Incorrect or missing first sheet name, show an error message
+          showModal(modalDialog(
+            title = "Error",
+            easyClose = TRUE,
+            size = "s",
+            "Please upload the correct Metadata!"
+          ))
+        }
       })
       
   #Processing and Plotting ----
@@ -7796,6 +7787,155 @@ server <- function(input, output, session) {
       
       output$correlation_ts = renderPlot({timeseries_plot_corr()}, height = 400)
       
+      #### Correlation Scatter Plot
+      # Function
+      scatter_plot_corr = function(){
+        req(ts_data_v1(), ts_data_v2(), plot_titles_cor())
+        
+        # Prepare the data
+        y1 <- ts_data_v1()[, 2]
+        y2 <- ts_data_v2()[, 2]
+        df <- data.frame(v1 = y1, v2 = y2)
+        df <- na.omit(df)
+        
+        # Extract titles
+        titles <- plot_titles_cor()
+        title_text <- "Correlation scatter plot"
+        x_label <- titles$V1_axis_label
+        y_label <- titles$V2_axis_label
+        
+        # Base plot
+        p <- ggplot(df, aes(x = v1, y = v2)) +
+          geom_point(color = "#094030", alpha = 0.7, size = 4) +
+          theme_minimal(base_size = 13) +
+          labs(
+            title = title_text,
+            x = x_label,
+            y = y_label
+          ) +
+          theme(
+            plot.title = element_text(size = 20, face = "bold", hjust = 0),  # Left-aligned
+            axis.text = element_text(size = 12),
+            axis.title = element_text(size = 13),
+            panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8),  # Replace size with linewidth
+            axis.ticks = element_line(color = "black", linewidth = 0.5)  # Replace size with linewidth
+          ) +
+          scale_x_continuous(minor_breaks = waiver()) +
+          scale_y_continuous(minor_breaks = waiver())
+        
+        # Z-score outliers
+        if (input$add_outliers_ref_ts3 == "z-score") {
+          # Extract year column (assumed to be the first column)
+          years <- ts_data_v1()[, 1]
+          
+          # Compute z-scores
+          z_v1 <- (df$v1 - mean(df$v1, na.rm = TRUE)) / sd(df$v1, na.rm = TRUE)
+          z_v2 <- (df$v2 - mean(df$v2, na.rm = TRUE)) / sd(df$v2, na.rm = TRUE)
+          
+          # Determine outlier status
+          df$outlier <- factor(ifelse(abs(z_v1) > input$sd_input_ref_ts3 | abs(z_v2) > input$sd_input_ref_ts3, 
+                                      "Outlier", "Normal"))
+          
+          # Add year column
+          df$year <- years
+          
+          # Rebuild plot with colored points and year labels for outliers
+          p <- ggplot(df, aes(x = v1, y = v2, color = outlier)) +
+            geom_point(alpha = 0.7, size = 4) +
+            geom_text(
+              data = subset(df, outlier == "Outlier"),
+              aes(label = year),
+              vjust = -0.8, size = 3.5, color = "black"
+            ) +
+            scale_color_manual(values = c("Outlier" = "#FFC000", "Normal" = "#094030")) +
+            theme_minimal(base_size = 13) +
+            labs(title = title_text, x = x_label, y = y_label) +
+            theme(
+              plot.title = element_text(size = 20, face = "bold", hjust = 0),
+              axis.text = element_text(size = 12),
+              axis.title = element_text(size = 13),
+              panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8),
+              axis.ticks = element_line(color = "black", linewidth = 0.5)
+            ) +
+            scale_x_continuous(minor_breaks = waiver()) +
+            scale_y_continuous(minor_breaks = waiver())
+        }
+        
+        # Trend outliers
+        if (input$add_outliers_ref_ts3 == "Trend deviation") {
+          # Extract year column (assumed to be the first column)
+          years <- ts_data_v1()[, 1]
+
+          # Fit linear model (trend)
+          model <- lm(v2 ~ v1, data = df)
+
+          # Get residuals
+          residuals <- resid(model)
+
+          # Standardize residuals (z-scores from trend)
+          z_resid <- residuals / sd(residuals, na.rm = TRUE)
+
+          # Determine outlier status based on residual z-score
+          df$outlier <- factor(ifelse(abs(z_resid) > input$trend_sd_input_ref_ts3,
+                                      "Outlier", "Normal"))
+
+          # Add year column
+          df$year <- years
+
+          # Plot with color based on outlier status
+          p <- ggplot(df, aes(x = v1, y = v2, color = outlier)) +
+            geom_point(alpha = 0.7, size = 4) +
+            geom_text(
+              data = subset(df, outlier == "Outlier"),
+              aes(label = year),
+              vjust = -0.8, size = 3.5, color = "black"
+            ) +
+            scale_color_manual(values = c("Outlier" = "#FFC000", "Normal" = "#094030")) +
+            theme_minimal(base_size = 13) +
+            labs(title = title_text, x = x_label, y = y_label) +
+            theme(
+              plot.title = element_text(size = 20, face = "bold", hjust = 0),
+              axis.text = element_text(size = 12),
+              axis.title = element_text(size = 13),
+              panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8),
+              axis.ticks = element_line(color = "black", linewidth = 0.5)
+            ) +
+            scale_x_continuous(minor_breaks = waiver()) +
+            scale_y_continuous(minor_breaks = waiver())
+        }
+        
+        # Trendline
+        if (input$add_trend_ref_ts3) {
+          p <- p + 
+            geom_smooth(aes(linetype = "Trendline"),
+                        method = "lm", se = FALSE, color = "black", size = 1) +
+            scale_linetype_manual(name = "Legend", values = c("Trendline" = "dashed"))
+        }
+        
+        # Legend visibility
+        if (input$show_key_ref_ts3) {
+          p <- p +
+            guides(
+              color = guide_legend(title = "Statistics"),
+              linetype = guide_legend(title = "Legend")
+            )
+        } else {
+          p <- p +
+            guides(
+              color = "none",
+              linetype = "none"
+            )
+        }
+        
+        # Return the plot
+        return(p)
+      }
+      
+      # Plotting
+      output$ref_map3 <- renderPlot({
+        scatter_plot_corr()
+      })
+      
       #### Plot correlation map
       
       # Pick out relevant v1/v2 data:
@@ -8005,7 +8145,20 @@ server <- function(input, output, session) {
                                                             }
                                                             timeseries_plot_corr()
                                                             dev.off()
-                                                            }) 
+                                                            })
+      
+      output$download_map_sec3      <- downloadHandler(filename = function(){paste("Corr_Scatter_plot.",input$file_type_map_sec3, sep = "")},
+                                                          content  = function(file) {
+                                                            if (input$file_type_map_sec3 == "png"){
+                                                              png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
+                                                            } else if (input$file_type_map_sec3 == "jpeg"){
+                                                              jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
+                                                            } else {
+                                                              pdf(file, width = 14, height = 6, bg = "transparent") 
+                                                            }
+                                                            print(scatter_plot_corr())
+                                                            dev.off()
+                                                          }) 
       
       output$download_map3              <- downloadHandler(filename = function() {paste(plot_titles_cor()$Download_title, "-map.", input$file_type_map3, sep = "")},
                                                            content = function(file) {
@@ -9194,14 +9347,19 @@ server <- function(input, output, session) {
       })
       
       # Subset user data to chosen variable
-      user_subset_6 = reactive({
-        req(input$nav1 == "tab6") # Only run if in the correct tab
-        req(input$user_variable_6) # Ensure input is available
+      user_subset_6 <- reactive({
+        req(input$nav1 == "tab6")       # Only run if in the correct tab
+        req(input$user_variable_6)      # Ensure input is available
         
-        ts_data1 <- user_data_6() # Get full timeseries data
+        ts_data1 <- user_data_6()       # Get full timeseries data
+        req(ncol(ts_data1) >= 2)        # Ensure at least two columns exist
         
-        # Create a dataframe with Year and the selected statistic
-        ts_us_sub <- ts_data1[, c("Year", input$user_variable_6), drop = FALSE]
+        # Get first column name (e.g., "Jahr") and selected variable
+        time_col <- colnames(ts_data1)[1]
+        var_col <- input$user_variable_6
+        
+        # Subset to those two columns
+        ts_us_sub <- ts_data1[, c(time_col, var_col), drop = FALSE]
         
         return(ts_us_sub)
       })
@@ -9249,17 +9407,19 @@ server <- function(input, output, session) {
       ts_y_label = reactive({
         if (input$source_sea_6 == "User Data") {
           if (is.null(input$y_label_6) || input$y_label_6 == ""){
-            y_label = return(paste(colnames(user_subset_6())[2]))
+            y_label = paste(colnames(user_subset_6())[2])
           } else {
             y_label = input$y_label_6
           }
+          return(y_label)
           
         } else {
           if (is.null(input$y_label_6) || input$y_label_6 == ""){
-            y_label = return(paste(colnames(timeseries_data_sea())[2],input$ME_variable_6))
+            y_label = paste(colnames(timeseries_data_sea())[2],input$ME_variable_6)
           } else {
             y_label = input$y_label_6
           }
+          return(y_label)
         }
       })
       
@@ -9355,13 +9515,7 @@ server <- function(input, output, session) {
           CI_95_UPPER = SEA_data()$random$upper_95
           SEAdatatable = data.frame(SEAdatatable,CI_95_LOWER,CI_95_UPPER)
         }
-        
-        if (input$show_confidence_bands_6 == "99%"){
-          CI_99_LOWER = SEA_data()$random$lower_99
-          CI_99_UPPER = SEA_data()$random$upper_99
-          SEAdatatable = data.frame(SEAdatatable,CI_99_LOWER,CI_99_UPPER)
-        }
-        
+
         if (input$show_confidence_bands_6 == "99%"){
           CI_99_LOWER = SEA_data()$random$lower_99
           CI_99_UPPER = SEA_data()$random$upper_99
@@ -9457,21 +9611,21 @@ server <- function(input, output, session) {
         # Add Confidence Bands (if applicable)
         if (input$show_confidence_bands_6 == "95%") {
           p <- p + 
-            geom_line(aes(y = CI_95_LOWER, color = "Upper 95% Confidence Band"), size = 1,
+            geom_line(aes(y = CI_95_LOWER, color = "Lower 95% Confidence Band"), size = 1,
                       show.legend = input$show_key_6) +
-            geom_line(aes(y = CI_95_UPPER, color = "Lower 95% Confidence Band"), size = 1,
+            geom_line(aes(y = CI_95_UPPER, color = "Upper 95% Confidence Band"), size = 1,
                       show.legend = input$show_key_6)
         }
         
         if (input$show_confidence_bands_6 == "99%") {
           p <- p + 
-            geom_line(aes(y = CI_99_LOWER, color = "Upper 99% Confidence Band"), size = 1,
+            geom_line(aes(y = CI_99_LOWER, color = "Lower 99% Confidence Band"), size = 1,
                       show.legend = input$show_key_6) +
-            geom_line(aes(y = CI_99_UPPER, color = "Lower 99% Confidence Band"), size = 1,
+            geom_line(aes(y = CI_99_UPPER, color = "Upper 99% Confidence Band"), size = 1,
                       show.legend = input$show_key_6)
         }
         
-        # Replot main line on top
+        # Replot main line on top for visual reasons
         p <- p + geom_line(aes(y = OBSERVATIONS_MEAN), size = 1.2, color = "black")
         
         # Add p-values
