@@ -1014,9 +1014,9 @@ ui <- navbarPage(
                                    div(id = "hidden_key_position_ts",
                                        radioButtons(inputId  = "key_position_ts",
                                                     label    = "Key position:",
-                                                    choiceNames  = c("top", "right", "bottom", "left", "inside"),
-                                                    choiceValues = c("top", "right", "bottom", "left", "inside"),
-                                                    selected = "topright" ,
+                                                    choiceNames  = c("right","bottom"),
+                                                    choiceValues = c("right","bottom"),
+                                                    selected = "right" ,
                                                     inline = TRUE))),
                                  
                                  checkboxInput(inputId = "show_ref_ts",
@@ -1115,9 +1115,9 @@ ui <- navbarPage(
                                     
                                     numericInput(inputId = "point_size_ts",
                                                  label   = "Point size",
-                                                 value   = 1,
-                                                 min     = 1,
-                                                 max     = 10),
+                                                 value   = 4,
+                                                 min     = 4,
+                                                 max     = 20),
                                     
                                     column(width = 12,
                                            
@@ -1156,8 +1156,8 @@ ui <- navbarPage(
                                     radioButtons(inputId      = "highlight_type_ts",
                                                  label        = "Type for highlight:",
                                                  inline       = TRUE,
-                                                 choiceNames  = c("Fill \u25FC", "Box \u25FB", "Hatched \u25A8"),
-                                                 choiceValues = c("Fill","Box","Hatched")),
+                                                 choiceNames  = c("Fill \u25FC", "Box \u25FB"),
+                                                 choiceValues = c("Fill","Box")),
                                     
                                     checkboxInput(inputId = "show_highlight_on_legend_ts",
                                                   label   = "Show on key",
@@ -1263,7 +1263,7 @@ ui <- navbarPage(
                               
                               shinyjs::hidden(
                               div(id = "hidden_percentile_ts",
-                                  checkboxGroupInput(inputId   = "percentile_ts",
+                                  radioButtons(inputId   = "percentile_ts",
                                                     label    = NULL,
                                                     choices  = c("0.9", "0.95", "0.99"),
                                                     selected = "0.99",
@@ -2049,9 +2049,9 @@ ui <- navbarPage(
                                      div(id = "hidden_key_position_ts2",
                                          radioButtons(inputId  = "key_position_ts2",
                                                       label    = "Key position:",
-                                                      choiceNames  = c("top", "right", "bottom", "left", "inside"),
-                                                      choiceValues = c("top", "right", "bottom", "left", "inside"),
-                                                      selected = "topright" ,
+                                                      choiceNames  = c("right","bottom"),
+                                                      choiceValues = c("right","bottom"),
+                                                      selected = "right" ,
                                                       inline = TRUE))),
                                    
                                    checkboxInput(inputId = "show_ref_ts2",
@@ -2112,9 +2112,9 @@ ui <- navbarPage(
                                          
                                          numericInput(inputId = "point_size_ts2",
                                                       label   = "Point size",
-                                                      value   = 1,
-                                                      min     = 1,
-                                                      max     = 10),
+                                                      value   = 4,
+                                                      min     = 4,
+                                                      max     = 20),
                                          
                                          column(width = 12,
                                                 
@@ -2154,8 +2154,8 @@ ui <- navbarPage(
                                          radioButtons(inputId      = "highlight_type_ts2",
                                                       label        = "Type for highlight:",
                                                       inline       = TRUE,
-                                                      choiceNames  = c("Fill \u25FC", "Box \u25FB", "Hatched \u25A8"),
-                                                      choiceValues = c("Fill","Box","Hatched")),
+                                                      choiceNames  = c("Fill \u25FC", "Box \u25FB"),
+                                                      choiceValues = c("Fill","Box")),
                                          
                                          checkboxInput(inputId = "show_highlight_on_legend_ts2",
                                                        label   = "Show on key",
@@ -2244,7 +2244,7 @@ ui <- navbarPage(
                                    
                                    shinyjs::hidden(
                                      div(id = "hidden_percentile_ts2",
-                                         checkboxGroupInput(inputId   = "percentile_ts2",
+                                         radioButtons(inputId   = "percentile_ts2",
                                                       label    = NULL,
                                                       choices  = c("0.9", "0.95", "0.99"),
                                                       selected = "0.99",
@@ -3335,9 +3335,9 @@ tabPanel("SEA", value = "tab6",
                                      div(id = "hidden_key_position_ts3",
                                          radioButtons(inputId  = "key_position_ts3",
                                                       label    = "Key position:",
-                                                      choiceNames  = c("top", "right", "bottom", "left", "inside"),
-                                                      choiceValues = c("top", "right", "bottom", "left", "inside"),
-                                                      selected = "topright" ,
+                                                      choiceNames  = c("right","bottom"),
+                                                      choiceValues = c("right","bottom"),
+                                                      selected = "right" ,
                                                       inline = TRUE))),
                                )),    
                       ),
@@ -3394,9 +3394,9 @@ tabPanel("SEA", value = "tab6",
                                          
                                          numericInput(inputId = "point_size_ts3",
                                                       label   = "Point size",
-                                                      value   = 1,
-                                                      min     = 1,
-                                                      max     = 10),
+                                                      value   = 4,
+                                                      min     = 4,
+                                                      max     = 20),
                                          
                                          column(width = 12,
                                                 
@@ -3436,8 +3436,8 @@ tabPanel("SEA", value = "tab6",
                                          radioButtons(inputId      = "highlight_type_ts3",
                                                       label        = "Type for highlight:",
                                                       inline       = TRUE,
-                                                      choiceNames  = c("Fill \u25FC", "Box \u25FB", "Hatched \u25A8"),
-                                                      choiceValues = c("Fill","Box","Hatched")),
+                                                      choiceNames  = c("Fill \u25FC", "Box \u25FB"),
+                                                      choiceValues = c("Fill","Box")),
                                          
                                          checkboxInput(inputId = "show_highlight_on_legend_ts3",
                                                        label   = "Show on key",
@@ -5110,27 +5110,12 @@ tabPanel("SEA", value = "tab6",
                                                      placeholder = "Custom title")
                                        )),
                                      
-                                     radioButtons(inputId  = "main_key_position_ts5",
+                                     radioButtons(inputId  = "key_position_ts5",
                                                   label    = "Key position:",
-                                                  choiceNames  = c("top left", "top right","bottom left","bottom right"),
-                                                  choiceValues = c("topleft", "topright","bottomleft","bottomright"),
-                                                  selected = "topright" ,
+                                                  choiceNames  = c("right","bottom"),
+                                                  choiceValues = c("right","bottom"),
+                                                  selected = "right" ,
                                                   inline = TRUE),
-                                     
-                                     checkboxInput(inputId = "show_key_ts5",
-                                                   label   = "Show feature key",
-                                                   value   = FALSE),
-                                     
-                                     shinyjs::hidden(
-                                       div(id = "hidden_key_position_ts5",
-                                           radioButtons(inputId  = "key_position_ts5",
-                                                        label    = "Feature key position:",
-                                                        choiceNames  = c("top left", "bottom left","bottom right"),
-                                                        choiceValues = c("topleft","bottomleft","bottomright"),
-                                                        selected = "topleft" ,
-                                                        inline = TRUE))),
-                                     
-                                     
                                  )),    
                         ),
                         
@@ -5185,9 +5170,9 @@ tabPanel("SEA", value = "tab6",
                                            
                                            numericInput(inputId = "point_size_ts5",
                                                         label   = "Point size",
-                                                        value   = 1,
-                                                        min     = 1,
-                                                        max     = 10),
+                                                        value   = 4,
+                                                        min     = 4,
+                                                        max     = 20),
                                            
                                            column(width = 12,
                                                   
@@ -5226,8 +5211,8 @@ tabPanel("SEA", value = "tab6",
                                            radioButtons(inputId      = "highlight_type_ts5",
                                                         label        = "Type for highlight:",
                                                         inline       = TRUE,
-                                                        choiceNames  = c("Fill \u25FC", "Box \u25FB", "Hatched \u25A8"),
-                                                        choiceValues = c("Fill","Box","Hatched")),
+                                                        choiceNames  = c("Fill \u25FC", "Box \u25FB"),
+                                                        choiceValues = c("Fill","Box")),
                                            
                                            checkboxInput(inputId = "show_highlight_on_legend_ts5",
                                                          label   = "Show on key",

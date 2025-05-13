@@ -1540,14 +1540,6 @@ server <- function(input, output, session) {
                                condition = input$title_mode_ts5 == "Custom",
                                asis = FALSE)})
       
-      observe({shinyjs::toggle(id = "hidden_key_position_ts5",
-                               anim = TRUE,
-                               animType = "slide",
-                               time = 0.5,
-                               selector = NULL,
-                               condition = input$show_key_ts5 == TRUE,
-                               asis = FALSE)})
-      
       observe({shinyjs::toggle(id = "hidden_custom_features_ts5",
                                anim = TRUE,
                                animType = "slide",
@@ -3715,13 +3707,43 @@ server <- function(input, output, session) {
         }
       })
       
-      # Update year range
+      # Update correlation year range and check lag is still within limits
+      observe({
+        updateNumericInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "lagyears_v1_cor",
+          max = year_range_cor()[4]-input$range_years3[2],
+          min = year_range_cor()[3]-input$range_years3[1]
+        )
+        updateNumericInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "lagyears_v2_cor",
+          max = year_range_cor()[6]-input$range_years3[2],
+          min = year_range_cor()[5]-input$range_years3[1]
+        )
+      })
+
       observeEvent(year_range_cor(),{
+        if (input$range_years3[1]<year_range_cor()[1]){
+          updateNumericRangeInput(
+            session = getDefaultReactiveDomain(),
+            inputId = "range_years3",
+            value = c(year_range_cor()[1],input$range_years3[2])
+          )
+        }
+  
+        if (input$range_years3[2]>year_range_cor()[2]){
+          updateNumericRangeInput(
+            session = getDefaultReactiveDomain(),
+            inputId = "range_years3",
+            value = c(input$range_years3[1],year_range_cor()[2])
+          )
+        }
+        
         updateNumericRangeInput(
           session = getDefaultReactiveDomain(),
           inputId = "range_years3",
-          label = paste("Select the range of years (",year_range_cor()[3],"-",year_range_cor()[4],")",sep = ""),
-          value = year_range_cor()[1:2]
+          label = paste("Select the range of years (",year_range_cor()[1],"-",year_range_cor()[2],")",sep = "")
         )
       })
       
@@ -6425,7 +6447,8 @@ server <- function(input, output, session) {
         } else if (input$nav1 == "tab2"){   # Composites
           create_yearly_subset_composite(data_output1_primary(), data_id_primary(), year_set_comp(), month_range_primary())
         } else if (input$nav1 == "tab3"){   # Correlation
-          create_yearly_subset(data_output1_primary(), data_id_primary(), input$range_years3, month_range_primary())     
+          adjusted_years = input$range_years3+input$lagyears_v1_cor
+          create_yearly_subset(data_output1_primary(), data_id_primary(), adjusted_years, month_range_primary())     
         } else if (input$nav1 == "tab4"){   # Regression
           create_yearly_subset(data_output1_primary(), data_id_primary(), input$range_years4, month_range_primary())
         } else if (input$nav1 == "tab6"){   # SEA
@@ -6435,7 +6458,8 @@ server <- function(input, output, session) {
       
       data_output2_secondary <- reactive({
         if (input$nav1 == "tab3"){   # Correlation
-          create_yearly_subset(data_output1_secondary(), data_id_secondary(), input$range_years3, month_range_secondary())
+          adjusted_years = input$range_years3+input$lagyears_v2_cor
+          create_yearly_subset(data_output1_secondary(), data_id_secondary(), adjusted_years, month_range_secondary())
         }
       })
       
@@ -6562,7 +6586,7 @@ server <- function(input, output, session) {
                                     month_range=month_range_primary(), year_range=input$range_years, baseline_range=input$ref_period, baseline_years_before=NA,
                                     lon_range=lonlat_vals()[1:2],lat_range=lonlat_vals()[3:4],
                                     map_custom_title1=input$title1_input, map_custom_title2=input$title2_input,ts_custom_title1=input$title1_input_ts, ts_custom_title2=NA,
-                                    map_title_size=input$title_size_input, ts_data=timeseries_data())
+                                    map_title_size=input$title_size_input, ts_title_size=input$title_size_input_ts, ts_data=timeseries_data())
         return(my_title)
       })
       
@@ -6764,7 +6788,6 @@ server <- function(input, output, session) {
         #                   input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
         # }
         
-        #TODO move this to plot_timeseries function
         #Plot normal timeseries if year range is > 1 year
         if (input$range_years[1] != input$range_years[2]){
           # Generate NA or reference mean
@@ -6776,8 +6799,8 @@ server <- function(input, output, session) {
         # New 
         p <- plot_timeseries(type="Anomaly", data=timeseries_data(), variable=input$variable_selected,
                              ref=ref_ts, year_range=input$range_years, month_range_1=month_range_primary(),
-                             titles=plot_titles(), #titles_mode=input$title_mode_ts, 
-                             show_key=input$show_key_ts, key_position=input$key_position_ts, 
+                             titles=plot_titles(), 
+                             show_key=input$show_key_ts, key_position=input$key_position_ts, show_ref = input$show_ref_ts,
                              moving_ave=input$custom_average_ts, moving_ave_year=input$year_moving_ts, 
                              custom_percentile=input$custom_percentile_ts, percentiles=input$percentile_ts, 
                              highlights=ts_highlights_data(), lines=ts_lines_data(), points=ts_points_data())
@@ -7257,8 +7280,7 @@ server <- function(input, output, session) {
           p <- plot_timeseries(type="Composites", data=timeseries_data_2(), variable=input$variable_selected2,
                                ref=ref_ts2, year_range=year_set_comp(), month_range_1=month_range_primary(),
                                titles=plot_titles_composites(), #titles_mode=input$title_mode_ts2, 
-                               show_key=input$show_key_ts2, key_position=input$key_position_ts2, 
-                               moving_ave=input$custom_average_ts2, moving_ave_year=input$year_moving_ts2, 
+                               show_key=input$show_key_ts2, key_position=input$key_position_ts2, show_ref = input$show_ref_ts2, 
                                custom_percentile=input$custom_percentile_ts2, percentiles=input$percentile_ts2, 
                                highlights=ts_highlights_data2(), lines=ts_lines_data2(), points=ts_points_data2())
           
@@ -7460,8 +7482,7 @@ server <- function(input, output, session) {
         
         result <- tryCatch(
           {
-            return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath))
-            return(yrc)
+            return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath,input$lagyears_v1_cor,input$lagyears_v2_cor))
           },
           error = function(e) {
             showModal(
@@ -7519,7 +7540,6 @@ server <- function(input, output, session) {
           result <- tryCatch(
             {
               return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath))
-              return(yrc)
             },
             error = function(e) {
               showModal(
@@ -7537,7 +7557,7 @@ server <- function(input, output, session) {
           return(result)
         })  
         
-        usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3)
+        usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3, lag=input$lagyears_v1_cor)
         
         return(usr_ss1)
       })
@@ -7547,7 +7567,7 @@ server <- function(input, output, session) {
         
         req(user_data_v2(),input$user_variable_v2)
         
-        usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3)
+        usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3, lag=input$lagyears_v1_cor)
         
         return(usr_ss2)
       })
@@ -7579,10 +7599,13 @@ server <- function(input, output, session) {
       
       timeseries_plot_v1 = function(){
         p <- plot_timeseries(type="Anomaly", data=timeseries_data_v1(), variable=input$ME_variable_v1,
-                             titles=plot_titles_v1())
+                                     ref=NULL, year_range=input$range_years3, month_range_1=month_range_primary(),
+                                     titles=plot_titles_v1(), show_key=FALSE, show_ref = FALSE,
+                                     moving_ave=FALSE,custom_percentile=FALSE,
+                                     highlights=data.frame(), lines=data.frame(), points=data.frame())
+
         return(p)
       }
-      
       
       # for Variable 2:
       
@@ -7590,9 +7613,9 @@ server <- function(input, output, session) {
       plot_titles_v2 <- reactive({
         req(input$nav1 == "tab3") # Only run code if in the current tab
         my_title_v2 <- generate_titles ("general", input$dataset_selected_v2,input$ME_variable_v2, input$mode_selected_v2,
-                                        "Default","Default", month_range_secondary(),input$range_years3,
-                                        input$ref_period_v2, NA,lonlat_vals_v2()[1:2],lonlat_vals_v2()[3:4],
-                                        NA, NA, NA)
+                                        map_title_mode="Default", ts_title_mode="Default", month_range=month_range_secondary(),
+                                        year_range=input$range_years3, baseline_range=input$ref_period_v2,
+                                        lon_range=lonlat_vals_v2()[1:2], lat_range=lonlat_vals_v2()[3:4])
         return(my_title_v2)
       }) 
       
@@ -7620,7 +7643,10 @@ server <- function(input, output, session) {
       #timeseries_plot_v2 = function(){plot_default_timeseries(,"general",input$ME_variable_v2,plot_titles_v2(),"Default",NA)}
       timeseries_plot_v2 = function(){
         p <- plot_timeseries(type="Anomaly", data=timeseries_data_v2(), variable=input$ME_variable_v2,
-                             titles=plot_titles_v2())
+                             ref=NULL, year_range=input$range_years3, month_range_2=month_range_secondary(),
+                             titles=plot_titles_v2(), show_key=FALSE, show_ref = FALSE,
+                             moving_ave=FALSE,custom_percentile=FALSE,
+                             highlights=data.frame(), lines=data.frame(), points=data.frame())
         return(p)
       }
       
@@ -7763,21 +7789,9 @@ server <- function(input, output, session) {
           variable_v2 = input$user_variable_v2
         }
         
-        #REMOVE
-        # plot_combined_timeseries(ts_data_v1(),ts_data_v2(),plot_titles_cor())
-        # add_highlighted_areas(ts_highlights_data3())
-        # add_custom_lines(ts_lines_data3())
-        # add_correlation_timeseries(ts_data_v1(),ts_data_v2(),variable_v1,variable_v2,plot_titles_cor())
-        # add_boxes(ts_highlights_data3())
-        # add_custom_points(ts_points_data3())
-        # if (input$show_key_ts3 == TRUE){
-        #   add_TS_key(input$key_position_ts3,ts_highlights_data3(),ts_lines_data3(),variable_v1,month_range_primary(),
-        #              input$custom_average_ts3,input$year_moving_ts3,FALSE,NA,variable_v2,month_range_secondary(),TRUE)
-        # }
-        
         plot_timeseries(type="Correlation", data_v1=ts_data_v1(), data_v2=ts_data_v2(), 
-                        variable1=variable_v1, variable2=variable_v2,
-                        ref, year_range=NA, month_range_1=month_range_primary(), month_range_2=month_range_secondary(),
+                        variable1=variable_v1, variable2=variable_v2,year_range=input$range_years3,
+                        month_range_1=month_range_primary(), month_range_2=month_range_secondary(),
                         titles=plot_titles_cor(),
                         show_key=input$show_key_ts3, key_position=input$key_position_ts3, 
                         moving_ave=input$custom_average_ts3, moving_ave_year=input$year_moving_ts3, 
@@ -8232,29 +8246,30 @@ server <- function(input, output, session) {
       
     ## REGRESSION year range, user data, plotting & downloads ----
     
-    year_range_reg = reactive({
-      
-      result <- tryCatch(
-        {
-          return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath))
-        },
-        error = function(e) {
-          showModal(
-            # Add modal dialog for warning message
-            modalDialog(
-              title = "Error",
-              "There was an error in processing your uploaded data. 
-                \nPlease check if the file has the correct format.",
-              easyClose = FALSE,
-              footer = tagList(modalButton("OK"))
-            ))
-          return(NULL)
-        }
-      )
-      return(result)
-    }) 
-    
       ### User data processing ----
+      
+      # Extract Shared year range
+      year_range_reg = reactive({
+        
+        result <- tryCatch(
+          {
+            return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath))
+          },
+          error = function(e) {
+            showModal(
+              # Add modal dialog for warning message
+              modalDialog(
+                title = "Error",
+                "There was an error in processing your uploaded data. 
+                \nPlease check if the file has the correct format.",
+                easyClose = FALSE,
+                footer = tagList(modalButton("OK"))
+              ))
+            return(NULL)
+          }
+        )
+        return(result)
+      })
       
       # Load in user data for independent variable
       user_data_iv = reactive({
@@ -8284,10 +8299,33 @@ server <- function(input, output, session) {
         }
       })
       
+      
       # Subset iv data to year_range and chosen variable
       user_subset_iv = reactive({
         
         req(user_data_iv(),input$user_variable_iv)
+
+        year_range_reg = reactive({
+          
+          result <- tryCatch(
+            {
+              return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath))
+            },
+            error = function(e) {
+              showModal(
+                # Add modal dialog for warning message
+                modalDialog(
+                  title = "Error",
+                  "There was an error in processing your uploaded data. 
+                        \nPlease check if the file has the correct format.",
+                  easyClose = FALSE,
+                  footer = tagList(modalButton("OK"))
+                ))
+              return(NULL)
+            }
+          )
+          return(result)
+        })  
         
         usr_ss1 = create_user_data_subset(user_data_iv(),input$user_variable_iv,input$range_years4)
         
@@ -8334,7 +8372,8 @@ server <- function(input, output, session) {
         req(data_output4_primary(), subset_lons_primary(), subset_lats_primary())
         create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
       
-      ME_map_plot_dv <- function(){plot_map(data_input=create_geotiff(map_data_dv()), variable=input$ME_variable_dv, mode=input$mode_selected_dv, titles=plot_titles_dv())}
+      ME_map_plot_dv <- function(){plot_map(data_input=create_geotiff(map_data_dv()), lon_lat_range=lonlat_vals_dv(),
+                                            variable=input$ME_variable_dv, mode=input$mode_selected_dv, titles=plot_titles_dv())}
       
       # Generate timeseries data & plotting function for iv
       ME_ts_data_iv <- reactive({
@@ -8353,7 +8392,10 @@ server <- function(input, output, session) {
       #_iv = function(){plot_default_timeseries(,"general",input$ME_variable_iv[1],,"Default",NA)}
       timeseries_plot_iv = function(){
         p <- plot_timeseries(type="Anomaly", data=ME_ts_data_iv(), variable=input$ME_variable_iv[1],
-                             titles=plot_titles_iv(), titles_mode=NA)
+                             ref = NULL,year_range=input$range_years4, month_range_1=month_range_primary(),
+                             titles=plot_titles_iv(), show_key=FALSE, show_ref = FALSE,
+                             moving_ave=FALSE,custom_percentile=FALSE,
+                             highlights=data.frame(), lines=data.frame(), points=data.frame())
         return(p)
       }
       
@@ -8573,7 +8615,7 @@ server <- function(input, output, session) {
       ts_data_dv = reactive({
         
         req(input$nav1 == "tab4") # Only run code if in the current tab
-        o
+        
         if (input$source_dv == "ModE-"){
           tsd_dv = timeseries_data_dv()
         } else {
@@ -8602,17 +8644,21 @@ server <- function(input, output, session) {
       })
       
       timeseries_plot_reg1 = function(){
-        plot_regression_timeseries(regression_ts_data(),"original_trend",plot_titles_reg(),
-                                   variables_iv(),variable_dv())
-        
-        plot_timeseries(type="Trend", data=ts_data_dv(), variable=variable_dv(), titles=plot_titles_reg(), titles_mode=NA)
+        plot_timeseries(type="Regression_Trend", data=regression_ts_data(),ref=NULL,
+                        year_range=input$range_years4, titles=plot_titles_reg(),
+                        show_key=TRUE, key_position="right", show_ref = FALSE,
+                        moving_ave=FALSE,custom_percentile=FALSE,
+                        highlights=data.frame(), lines=data.frame(), points=data.frame())
       }
       
       output$plot_reg_ts1 = renderPlot({timeseries_plot_reg1()},height=400)
       
       timeseries_plot_reg2 = function(){
-        plot_regression_timeseries(regression_ts_data(),"residuals",plot_titles_reg(),
-                                   variables_iv(),variable_dv())
+        plot_timeseries(type="Regression_Residual", data=regression_ts_data(),ref=NULL,
+                        year_range=input$range_years4, titles=plot_titles_reg(),
+                        show_key=TRUE, key_position="right", show_ref = FALSE,
+                        moving_ave=FALSE,custom_percentile=FALSE,
+                        highlights=data.frame(), lines=data.frame(), points=data.frame())
       }
       
       output$plot_reg_ts2 = renderPlot({timeseries_plot_reg2()},height=400)
@@ -9014,17 +9060,25 @@ server <- function(input, output, session) {
       ### Plot timeseries & data ----
       
       # Plot Timeseries
-      monthly_ts_plot = reactive({
-        plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5,"base")
-        add_highlighted_areas(ts_highlights_data5())
-        add_custom_lines(ts_lines_data5())
-        plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5,"lines")
-        add_boxes(ts_highlights_data5())
-        add_custom_points(ts_points_data5())
-        if (input$show_key_ts5 == TRUE){
-          add_TS_key(input$key_position_ts5,ts_highlights_data5(),ts_lines_data5(),input$variable_selected5,c(1,2),
-                     FALSE,NA,FALSE,NA,NA,NA,FALSE)
+      monthly_ts_titles = reactive({
+        if (input$title_mode_ts5 == "Custom" & input$title1_input_ts5 != ""){
+          ts_title = input$title1_input_ts5
+        } else {
+          ts_title = "Monthly Timeseries"
         }
+        ts_subtitle = NA
+        ts_title_size = 18
+        
+        titles_df = data.frame(ts_title,ts_subtitle,ts_title_size)
+        
+        return(titles_df)
+      }) 
+      
+      
+      monthly_ts_plot = reactive({
+        plot_monthly_timeseries(data = monthly_ts_data(), titles = monthly_ts_titles(),
+                                key_position = input$key_position_ts5, highlights=ts_highlights_data5(),
+                                lines=ts_lines_data5(), points=ts_points_data5())
       })
       
       output$timeseries5 <- renderPlot({monthly_ts_plot()}, height = 400)
