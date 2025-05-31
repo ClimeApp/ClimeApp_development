@@ -1,21 +1,8 @@
 #### Popovers ####
 # This file contains all the popover functions used in ClimeApp. Each function creates a popover with a specific text and style.
 
-## ANOMALIES SUMMARY
-## popover_IDs = pop_anomalies
 
-anomalies_summary_popover = function(popover_ID){
-  popover(
-    h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
-    "Anomalies show how a selected time period differs from a reference time period:",em("Anomalies = Absolute Values – Reference Values"),br(),br(),
-    "The",em("Map"),"shows the average anomaly across all years in the range of years.",br(),br(),
-    "The",em("Timeseries"),"shows the average anomaly across your selected geographic area for each year in the range of years.",br(),br(),  
-    "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
-    title = "What are anomalies?",
-    id = popover_ID,
-    placement = "right",
-  ) 
-}
+#### SIDE BARS ----
 
 ## DATASET & VARIABLE
 ## popover_IDs = pop_anomalies_datvar, pop_composites_datvar
@@ -62,6 +49,10 @@ year_season_ref_popover = function(popover_ID){
     )     
   }
 }
+
+
+
+#### CUSTOMIZATION ----
 
 ## MAP CUSTOMIZATION 
 ## popover_IDs = pop_anomalies_cusmap, pop_composites_cusmap, pop_correlation_cusmap, pop_regression_cusmap
@@ -167,53 +158,12 @@ map_choose_statistic_popover = function(popover_ID){
   
 }
 
-## DOWNLOADS
-## popover_IDs = pop_anomalies_map_downloads,pop_anomalies_ts_downloads, pop_composites_map_downloads, pop_composites_ts_downloads,
-##               pop_correlation_map_downloads, pop_correlation_ts_downloads
 
-downloads_popover = function(popover_ID){
-  popover(
-    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-    "Download your plot as a PNG, JPEG or PDF file.",br(),br(),
-    "Use",em("Download metadata"),"to download all currently selected options (data and customization) as metadata. This can be used for reference or to quickly regenerate your current plot in a future session.", br(),br(),
-    em("Upload metadata"),"from a previous session and click",em("Update upload inputs"),"to restore all ClimeApp options to those from the metadata. Note that metadata must be restored to the same tab (i.e.",em("Anomalies"),").", br(),br(),
-    "Metadata is downloaded in .xlsx format.", 
-    id = popover_ID,
-    placement = "right",
-  ) 
-}
 
-## REFERENCE MAP
-## popover_IDs = pop_anomalies_refmap, pop_composites_refmap
-
-reference_map_popover = function(popover_ID){
-  # Anomalies popover
-  if (popover_ID == "pop_anomalies_refmap"){
-    popover(
-      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-      "Plot and download a reference map for your data.",br(),br(), 
-      em("Absolute Values"),"shows the average for your selected month and year range, prior to subtracting the reference values. Note that the reanalysis method makes absolute values potentially unreliable – this is solved by using anomalies.",br(),br(),
-      em("Reference Values"),"are the absolute means for your reference period.",br(),br(), 
-      em("SD Ratio"),"shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",
-      id = popover_ID,
-      placement = "right",
-    )
-  } else {
-    # Composites popover
-    popover(
-      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-      "Plot and download a reference map for your data.",br(),br(), 
-      em("Absolute Values"),"shows the average for your selected month range and list of years, prior to subtracting the reference values. Note that the reanalysis method makes absolute values potentially unreliable – this is solved by using anomalies.",br(),br(),
-      em("Reference Values"),"are the absolute means for your reference period.",br(),br(), 
-      em("SD Ratio"),"shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",
-      id = popover_ID,
-      placement = "right",
-    )
-  }
-}
+#### TIMESERIES ----
 
 ## TIMESERIES CUSTOMIZATION
-## popover_IDs = pop_anomalies_custime, pop_composites_custime, pop_correlation_custime,pop_annualcycles_custime
+## popover_IDs = pop_anomalies_custime, pop_composites_custime, pop_correlation_custime, pop_annualcycles_custime, pop_sea_custime
 
 timeseries_customization_popover = function(popover_ID){
   if (popover_ID == "pop_correlation_custime"|popover_ID == "pop_annualcycles_custime"){
@@ -236,7 +186,7 @@ timeseries_customization_popover = function(popover_ID){
 }
 
 ## CUSTOM TIMESERIES FEATURES
-## popover_IDs = pop_anomalies_timefeat, pop_composites_timefeat, pop_correlation_timefeat, pop_annualcycles_timefeat
+## popover_IDs = pop_anomalies_timefeat, pop_composites_timefeat, pop_correlation_timefeat, pop_annualcycles_timefeat, pop_sea_timefeat
 
 timeseries_features_popover = function(popover_ID){
   popover(
@@ -248,7 +198,7 @@ timeseries_features_popover = function(popover_ID){
 }
 
 ## TIMESERIES POINTS
-## popover_IDs = pop_anomalies_timepoint, pop_composites_timepoint, pop_correlation_timepoint, pop_annualcycles_timepoint
+## popover_IDs = pop_anomalies_timepoint, pop_composites_timepoint, pop_correlation_timepoint, pop_annualcycles_timepoint, pop_sea_timepoint
 
 timeseries_points_popover = function(popover_ID){
   popover(
@@ -261,7 +211,7 @@ timeseries_points_popover = function(popover_ID){
 }
 
 ## TIMESERIES HIGHLIGHTS
-## popover_IDs = pop_anomalies_timehl, pop_composites_timehl, pop_correlation_timehl, pop_annualcycles_timehl
+## popover_IDs = pop_anomalies_timehl, pop_composites_timehl, pop_correlation_timehl, pop_annualcycles_timehl, pop_sea_timehl
 
 timeseries_highlights_popover = function(popover_ID){
   popover(
@@ -274,7 +224,7 @@ timeseries_highlights_popover = function(popover_ID){
 }
 
 ## TIMESERIES LINES
-## popover_IDs = pop_anomalies_timelines, pop_composites_timelines, pop_correlation_timelines, pop_annualcycles_timelines
+## popover_IDs = pop_anomalies_timelines, pop_composites_timelines, pop_correlation_timelines, pop_annualcycles_timelines, pop_sea_timelines
 
 timeseries_lines_popover = function(popover_ID){
   popover(
@@ -312,32 +262,29 @@ timeseries_statistics_popover = function(popover_ID){
   }
 }
 
-## NETCDF
-## popover_IDs = pop_anomalies_netcdf
 
-netcdf_popover = function(popover_ID){
+
+#### ANOMALIES ----
+
+## ANOMALIES SUMMARY
+## popover_IDs = pop_anomalies
+
+anomalies_summary_popover = function(popover_ID){
   popover(
-    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-    "Download the full dataset of yearly anomalies for your selected year, month and geographic range. You can include multiple variables in the same NetCDF file by selecting them on the dropdown menu.",
-    id = popover_ID,
-    placement = "right",
-  )  
-}
-
-## MODE-RA SOURCES
-## popover_IDs = pop_anomalies_mesource, pop_composites_mesource, pop_correlation_mesource, pop_regression_mesource, pop_anncyc_mesource
-
-MEsource_popover = function(popover_ID){
-  popover(
-    h4(HTML("Plot ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 0px;"),
-    "This plot shows location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
-    "Note that each",em("source"),"may include one or more individual observations or measurements.", br(),br(),
-    "The term", em("VARIABLE"),"refers to the value that was directly measured by each source. For example, a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.",br(),br(), 
-    "Use the",em("Explore ModE-RA Sources"),"tab or", em("Download Map Data"),"tool for more information on indiviudal sources",
+    h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
+    "Anomalies show how a selected time period differs from a reference time period:",em("Anomalies = Absolute Values – Reference Values"),br(),br(),
+    "The",em("Map"),"shows the average anomaly across all years in the range of years.",br(),br(),
+    "The",em("Timeseries"),"shows the average anomaly across your selected geographic area for each year in the range of years.",br(),br(),  
+    "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
+    title = "What are anomalies?",
     id = popover_ID,
     placement = "right",
   ) 
 }
+
+
+
+#### COMPOSITES ----
 
 ## COMPOSITES SUMMARY
 ## popover_IDs = pop_composites
@@ -354,6 +301,9 @@ composites_summary_popover = function(popover_ID){
     placement = "right",
   ) 
 }
+
+
+#### CORRELATION ----
 
 ## CORRELATION SUMMARY
 ## popover_IDs = pop_correlation
@@ -427,6 +377,10 @@ correlation_map_popover = function(popover_ID){
     placement = "right",
   ) 
 }
+
+
+
+#### RGRESSION ----
 
 ## REGRESSION SUMMARY
 ## popover_IDs = pop_regression
@@ -541,6 +495,10 @@ regression_residuals_popover = function(popover_ID){
   )
 }
 
+
+
+#### ANNUAL CYLCES ----
+
 ## ANNUAL CYCLES SUMMARY
 ## popover_IDs = pop_annualcycles
 
@@ -582,6 +540,82 @@ annualcycles_region_popover = function(popover_ID){
   )  
 }
 
+
+
+#### REST ----
+
+## DOWNLOADS
+## popover_IDs = pop_anomalies_map_downloads,pop_anomalies_ts_downloads, pop_composites_map_downloads, pop_composites_ts_downloads,
+##               pop_correlation_map_downloads, pop_correlation_ts_downloads, pop_sea_ts_downloads
+
+downloads_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Download your plot as a PNG, JPEG or PDF file.",br(),br(),
+    "Use",em("Download metadata"),"to download all currently selected options (data and customization) as metadata. This can be used for reference or to quickly regenerate your current plot in a future session.", br(),br(),
+    em("Upload metadata"),"from a previous session and click",em("Update upload inputs"),"to restore all ClimeApp options to those from the metadata. Note that metadata must be restored to the same tab (i.e.",em("Anomalies"),").", br(),br(),
+    "Metadata is downloaded in .xlsx format.", 
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## REFERENCE MAP
+## popover_IDs = pop_anomalies_refmap, pop_composites_refmap
+
+reference_map_popover = function(popover_ID){
+  # Anomalies popover
+  if (popover_ID == "pop_anomalies_refmap"){
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Plot and download a reference map for your data.",br(),br(), 
+      em("Absolute Values"),"shows the average for your selected month and year range, prior to subtracting the reference values. Note that the reanalysis method makes absolute values potentially unreliable – this is solved by using anomalies.",br(),br(),
+      em("Reference Values"),"are the absolute means for your reference period.",br(),br(), 
+      em("SD Ratio"),"shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",
+      id = popover_ID,
+      placement = "right",
+    )
+  } else {
+    # Composites popover
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Plot and download a reference map for your data.",br(),br(), 
+      em("Absolute Values"),"shows the average for your selected month range and list of years, prior to subtracting the reference values. Note that the reanalysis method makes absolute values potentially unreliable – this is solved by using anomalies.",br(),br(),
+      em("Reference Values"),"are the absolute means for your reference period.",br(),br(), 
+      em("SD Ratio"),"shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",
+      id = popover_ID,
+      placement = "right",
+    )
+  }
+}
+
+## NETCDF
+## popover_IDs = pop_anomalies_netcdf
+
+netcdf_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Download the full dataset of yearly anomalies for your selected year, month and geographic range. You can include multiple variables in the same NetCDF file by selecting them on the dropdown menu.",
+    id = popover_ID,
+    placement = "right",
+  )  
+}
+
+## MODE-RA SOURCES
+## popover_IDs = pop_anomalies_mesource, pop_composites_mesource, pop_correlation_mesource, pop_regression_mesource, pop_anncyc_mesource
+
+MEsource_popover = function(popover_ID){
+  popover(
+    h4(HTML("Plot ModE-RA sources <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 0px;"),
+    "This plot shows location, type and variable measured for every source used to create ModE-RA and ModE-RAclim.",br(),br(), 
+    "Note that each",em("source"),"may include one or more individual observations or measurements.", br(),br(),
+    "The term", em("VARIABLE"),"refers to the value that was directly measured by each source. For example, a historical proxy might refer to a recorded tree flowering date, while a natural proxy, might refer to a measured tree ring width.",br(),br(), 
+    "Use the",em("Explore ModE-RA Sources"),"tab or", em("Download Map Data"),"tool for more information on indiviudal sources",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
 ## TOTAL SOURCES AND OBSERVATIONS POPOVER
 ## popover_IDs = pop_sourcesandobservation
 sourcesandobservations_popover = function(popover_ID){
@@ -593,4 +627,57 @@ sourcesandobservations_popover = function(popover_ID){
     id = popover_ID,
     placement = "right",
   )
+}
+
+
+
+#### SEA ----
+
+## SEA SUMMARY
+## popover_IDs = pop_sea
+
+sea_summary_popover = function(popover_ID){
+  popover(
+    h3(HTML("Superposed epoch analysis <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
+    "This could be your popover!",
+    id = popover_ID,
+    title = "What is superposed epoch analysis?",
+    placement = "right",
+  ) 
+}
+
+## SEA DATA OPTIONS
+## popover_IDs = pop_sea_data
+
+sea_data_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "This could be your popover!",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## SEA OPTIONS
+## popover_IDs = pop_sea_options
+
+sea_options_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "This could be your popover!",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## SEA STATISTICS EXPLANATION
+## popover_IDs = pop_sea_statistics
+
+sea_statistics_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "This could be your popover!",
+    id = popover_ID,
+    placement = "right",
+  ) 
 }
