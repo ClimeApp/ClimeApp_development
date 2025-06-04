@@ -158,10 +158,7 @@ map_choose_statistic_popover = function(popover_ID){
   
 }
 
-
-
 #### TIMESERIES ----
-
 ## TIMESERIES CUSTOMIZATION
 ## popover_IDs = pop_anomalies_custime, pop_composites_custime, pop_correlation_custime, pop_annualcycles_custime, pop_sea_custime
 
@@ -262,6 +259,36 @@ timeseries_statistics_popover = function(popover_ID){
   }
 }
 
+#### ANOMALIES ----
+
+## ANOMALIES SUMMARY
+## popover_IDs = pop_anomalies
+
+anomalies_summary_popover = function(popover_ID){
+  popover(
+    h3(HTML("Anomalies <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
+    "Anomalies show how a selected time period differs from a reference time period:",em("Anomalies = Absolute Values – Reference Values"),br(),br(),
+    "The",em("Map"),"shows the average anomaly across all years in the range of years.",br(),br(),
+    "The",em("Timeseries"),"shows the average anomaly across your selected geographic area for each year in the range of years.",br(),br(),  
+    "See",em("ClimeApp functions"),"tab on the Welcome page for more information.",
+    title = "What are anomalies?",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+## TIMESERIES CUSTOM SCATTER PLOT
+## popover_IDs = pop_correlation_scatter
+
+timeseries_scatter_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Add a trendline to your scatter plot or highlight potential outliers to identify unusual values.",br(),br(),
+    "A trendline shows the general direction or pattern in the relationship between two variables, helping to visualize whether they tend to increase or decrease together.",br(),br(), 
+    "A z-score (standard score) indicates how far a data point is from the mean, expressed in units of standard deviation. It helps identify unusually high or low values in the data.",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
 
 
 #### ANOMALIES ----
@@ -561,7 +588,7 @@ downloads_popover = function(popover_ID){
 }
 
 ## REFERENCE MAP
-## popover_IDs = pop_anomalies_refmap, pop_composites_refmap
+## popover_IDs = pop_anomalies_refmap, pop_composites_refmap, pop_correlation_refmap
 
 reference_map_popover = function(popover_ID){
   # Anomalies popover
@@ -575,7 +602,7 @@ reference_map_popover = function(popover_ID){
       id = popover_ID,
       placement = "right",
     )
-  } else {
+  } else if (popover_ID == "pop_composites_refmap") {
     # Composites popover
     popover(
       HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
@@ -583,6 +610,15 @@ reference_map_popover = function(popover_ID){
       em("Absolute Values"),"shows the average for your selected month range and list of years, prior to subtracting the reference values. Note that the reanalysis method makes absolute values potentially unreliable – this is solved by using anomalies.",br(),br(),
       em("Reference Values"),"are the absolute means for your reference period.",br(),br(), 
       em("SD Ratio"),"shows the extent to which the climate models used to construct ModE-RA were constrained by observations. An SD ratio of 1 shows no constraint (i.e. the ModE-RA output is entirely generated from the models) and lower values show increasing constraint, meaning there are either more observations or that they are more ‘trusted’ by the reconstruction.",
+      id = popover_ID,
+      placement = "right",
+    )
+  } else {
+    # Correlation popover
+    popover(
+      HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+      "Plot and download a scatter plot of your correlation.",br(),br(), 
+      em("Scatter Plot"),"shows the relationship between the two selected variables. Each point represents a data pair from the two selected variables. You can add a trendline to visualize the overall relationship and highlight potential outliers to identify unusual values.",br(),br(),
       id = popover_ID,
       placement = "right",
     )
@@ -639,7 +675,7 @@ sourcesandobservations_popover = function(popover_ID){
 sea_summary_popover = function(popover_ID){
   popover(
     h3(HTML("Superposed epoch analysis <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "margin-left: 11px;"),
-    "This could be your popover!",
+    "SEA is a statistical method used to detect and analyze patterns in time series data by aligning multiple events (epochs) to a common reference point (the zero time). It helps identify average signals or anomalies associated with specific types of events, such as volcanic eruptions, El Niño events, or other climatic or environmental triggers, by reducing noise and enhancing the signal across repeated instances.",
     id = popover_ID,
     title = "What is superposed epoch analysis?",
     placement = "right",
@@ -652,7 +688,7 @@ sea_summary_popover = function(popover_ID){
 sea_data_popover = function(popover_ID){
   popover(
     HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-    "This could be your popover!",
+    "You can either upload your own dataset for analysis or explore the built-in ModE-datasets",
     id = popover_ID,
     placement = "right",
   ) 
@@ -664,7 +700,19 @@ sea_data_popover = function(popover_ID){
 sea_options_popover = function(popover_ID){
   popover(
     HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-    "This could be your popover!",
+    "Customize your Superposed Epoch Analysis by specifying event years manually or uploading a file. You can also define the number of lag years before and after each event to shape the analysis window.",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
+## SEA Customization
+## popover_IDs = pop_sea_custime
+
+timeseries_customization_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "Personalize your plot by setting a custom title, labeling the axes, and adjusting display options such as showing p-values, enabling yearly tick marks, or adding a legend (key) for clarity.",
     id = popover_ID,
     placement = "right",
   ) 
@@ -676,7 +724,7 @@ sea_options_popover = function(popover_ID){
 sea_statistics_popover = function(popover_ID){
   popover(
     HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
-    "This could be your popover!",
+    "Define the sample size used in the analysis and choose whether to display the sample mean and confidence bands. These options help assess the reliability and significance of the observed patterns.",
     id = popover_ID,
     placement = "right",
   ) 

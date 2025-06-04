@@ -1,6 +1,7 @@
 #### Setup script for ClimeApp ####
 # Sets up user environment and loads required libraries as well as preprocessed data
 
+#### User Preparation ----
 
 #### User Preparation ----
 
@@ -24,7 +25,7 @@ setup_user_environment <- function() {
       lib_path = "C:/Users/nikla/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp/library"
     ),
     
-    Niklaus_Emanuel = list(
+    "Niklaus Emanuel" = list(
       setwd = "C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp",
       lib_path = "C:/Users/Niklaus Emanuel/OneDrive/1_Universit\u00E4t/4_PhD/10_R with R/Shiny R/ClimeApp_all/ClimeApp/library"
     ),
