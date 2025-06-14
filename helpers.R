@@ -524,12 +524,26 @@ convert_subset_to_anomalies = function(data_input,ref_data){
 ##           map/ts_title_size = numeric value for the title font size, default = 18
 ##           ts_data = timeseries data (numeric vector) for statistics (Mean, Range, SD) values displayed in TS subtitles
 
-generate_titles = function(tab,dataset,variable,mode,
-                           map_title_mode="Default",ts_title_mode="Default",
-                           month_range,year_range,baseline_range=NA,baseline_years_before=NA,
-                           lon_range,lat_range,
-                           map_custom_title1=NA,map_custom_title2=NA,ts_custom_title1=NA,ts_custom_title2=NA,
-                           map_title_size=18, ts_title_size=18, ts_data=NA){
+generate_titles = function(tab,
+                           dataset,
+                           variable,
+                           mode,
+                           map_title_mode = "Default",
+                           ts_title_mode = "Default",
+                           month_range,
+                           year_range,
+                           baseline_range = NA,
+                           baseline_years_before = NA,
+                           lon_range,
+                           lat_range,
+                           map_custom_title1 = NA,
+                           map_custom_title2 = NA,
+                           ts_custom_title1 = NA,
+                           ts_custom_title2 = NA,
+                           map_title_size = 18,
+                           ts_title_size = 18,
+                           ts_data = NA) {
+  
   
   # Generate title months
   title_months = generate_title_months(month_range)
@@ -636,8 +650,18 @@ generate_titles = function(tab,dataset,variable,mode,
   netcdf_title = gsub(paste(variable),"NCDF-Data",file_title)
   
   # Combine into dataframe
-  m_titles = data.frame(map_title,map_subtitle,ts_title,ts_subtitle,ts_axis,
-                        file_title,netcdf_title, map_title_size, ts_title_size,v_unit)
+  m_titles = data.frame(
+    map_title,
+    map_subtitle,
+    ts_title,
+    ts_subtitle,
+    ts_axis,
+    file_title,
+    netcdf_title,
+    map_title_size,
+    ts_title_size,
+    v_unit
+  )
   
   return(m_titles)
 }
@@ -3408,26 +3432,31 @@ generate_correlation_titles = function(variable1_source,variable2_source,
     ts_title = paste(V1_TS_title,"&",V2_TS_title)
   }
   
-  if (map_title_mode == "Custom"){
-    map_title = map_custom_title
-    map_subtitle = map_custom_subtitle
-  } else {
-    map_title = "Regression Residuals Map"
-    map_subtitle = paste("Subtitle")
-  }
+  map_title <- ifelse(map_title_mode == "Custom" & map_custom_title != "", map_custom_title, "Correlation coefficient")
+  map_subtitle <- ifelse(map_title_mode == "Custom" & map_custom_subtitle != "", map_custom_subtitle, paste(V1_TS_title,"&",V2_TS_title))
   
   # Generate download titles
   tf0 = paste("Corr",V1_file_title,"&",V2_file_title)
   tf1 = gsub("[[:punct:]]", "", tf0)
   tf2 = gsub(" ","-",tf1)
   file_title = iconv(tf2, from = 'UTF-8', to = 'ASCII//TRANSLIT')
-  
+
   # Title font size
-  map_title_size = title_size
+  map_title_size = ifelse(map_title_mode == "Custom", title_size, 18)
   ts_title_size = title_size
   
-  cor_titles = data.frame(map_title, map_subtitle, ts_title, file_title, map_title_size, ts_title_size, 
-                          V1_axis_label, V2_axis_label, V1_color, V2_color)
+  cor_titles = data.frame(
+    map_title,
+    map_subtitle,
+    ts_title,
+    file_title,
+    map_title_size,
+    ts_title_size,
+    V1_axis_label,
+    V2_axis_label,
+    V1_color,
+    V2_color
+  )
   
   return(cor_titles)
 }
@@ -3850,7 +3879,7 @@ generate_regression_titles = function(independent_source,
   # Create year range title
   title_year_range = paste(year_range[1],"-",year_range[2],sep = "")
   
-  # Generate regression map titles for coefficients
+  # Generate regression map titles
   map_title_coeff <- ifelse(map_title_mode == "Custom" & map_custom_title != "", map_custom_title, "Regression Coefficients")
   map_title_pvals <- ifelse(map_title_mode == "Custom" & map_custom_title != "", map_custom_title, "Regression P Values")
   map_title_res <- ifelse(map_title_mode == "Custom" & map_custom_title != "", map_custom_title, "Regression Residuals")

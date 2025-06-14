@@ -725,15 +725,11 @@ ui <- navbarPage(
                                                                  
                                                                  textInput(inputId     = "title1_input",
                                                                            label       = "Custom map title:", 
-                                                                           value       = NA,
-                                                                           width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                           width       = NULL),
                                                                  
                                                                  textInput(inputId     = "title2_input",
                                                                            label       = "Custom map subtitle (e.g. Ref-Period)",
-                                                                           value       = NA,
-                                                                           width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                           width       = NULL),
                                                                  
                                                                  numericInput(inputId = "title_size_input",
                                                                               label   = "Font size:",
@@ -5215,31 +5211,30 @@ ui <- navbarPage(
                                                            
                                                            br(),
                                                            
-                                                           radioButtons(inputId  = "title_mode_reg",
+                                                           radioButtons(inputId  = "title_mode_reg_res",
                                                                         label    = "Title customization:",
                                                                         choices  = c("Default", "Custom"),
                                                                         selected = "Default" , inline = TRUE),
                                                            
+                                                           
                                                            shinyjs::hidden(
-                                                             div(id = "hidden_custom_title_reg",
+                                                             div(id = "hidden_custom_title_reg_res",
                                                                  
-                                                                 textInput(inputId     = "title1_input_reg",
+                                                                 textInput(inputId     = "title1_input_reg_res",
                                                                            label       = "Custom map title:", 
-                                                                           value       = NA,
-                                                                           width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                           width       = NULL),
                                                                  
-                                                                 textInput(inputId     = "title2_input_reg",
-                                                                           label       = "Custom map subtitle (e.g. Ref-Period)",
-                                                                           value       = NA,
-                                                                           width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                 textInput(inputId     = "title2_input_reg_res",
+                                                                           label       = "Custom map subtitle (e.g. Ref-Period):",
+                                                                           width       = NULL),
                                                                  
-                                                                 numericInput(inputId = "title_size_input_reg",
+                                                                 numericInput(inputId = "title_size_input_reg_res",
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
                                                                               max     = 40))),
+                                                           
+                                                           
                                                            
                                                            br(),
                                                            

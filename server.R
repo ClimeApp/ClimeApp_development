@@ -7393,13 +7393,41 @@ server <- function(input, output, session) {
   plot_titles <- reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
     
-    my_title <- generate_titles(tab="general", dataset=input$dataset_selected, variable=input$variable_selected, 
-                                mode="Anomaly", map_title_mode=input$title_mode,ts_title_mode=input$title_mode_ts,
-                                month_range=month_range_primary(), year_range=input$range_years, baseline_range=input$ref_period, baseline_years_before=NA,
-                                lon_range=lonlat_vals()[1:2],lat_range=lonlat_vals()[3:4],
-                                map_custom_title1=input$title1_input, map_custom_title2=input$title2_input,ts_custom_title1=input$title1_input_ts, ts_custom_title2=NA,
-                                map_title_size=input$title_size_input, ts_title_size=input$title_size_input_ts, ts_data=timeseries_data())
+    my_title <- generate_titles(
+      tab = "general",
+      dataset = input$dataset_selected,
+      variable = input$variable_selected,
+      mode = "Anomaly",
+      map_title_mode = input$title_mode,
+      ts_title_mode = input$title_mode_ts,
+      month_range = month_range_primary(),
+      year_range = input$range_years,
+      baseline_range = input$ref_period,
+      baseline_years_before = NA,
+      lon_range = lonlat_vals()[1:2],
+      lat_range = lonlat_vals()[3:4],
+      map_custom_title1 = input$title1_input,
+      map_custom_title2 = input$title2_input,
+      ts_custom_title1 = input$title1_input_ts,
+      ts_custom_title2 = NA,
+      map_title_size = input$title_size_input,
+      ts_title_size = input$title_size_input_ts,
+      ts_data = timeseries_data()
+    )
     return(my_title)
+  })
+  
+  # Add value to custom title
+  observe({
+    req(plot_titles())
+    if (input$title1_input == "") {
+      updateTextInput(session, "title1_input",
+                      value = plot_titles()$map_title)
+    }
+    if (input$title2_input == "") {
+      updateTextInput(session, "title2_input",
+                      value = plot_titles()$map_subtitle)
+    }
   })
   
   map_statistics = reactive({
@@ -7531,74 +7559,7 @@ server <- function(input, output, session) {
     pagingType = "numbers"
   ))
   
-  #REMOVE
-  
-  #Plotting the timeseries
-  # timeseries_plot_anom<- function(){
-  #   #Plot normal timeseries if year range is > 1 year
-  #   if (input$range_years[1] != input$range_years[2]){
-  #     # Generate NA or reference mean
-  #     if(input$show_ref_ts == TRUE){
-  #       ref_ts = signif(mean(data_output3_primary()),3)
-  #     } else {
-  #       ref_ts = NA
-  #     }
-  #     
-  #     plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
-  #     # add_highlighted_areas(ts_highlights_data())
-  #     # add_percentiles(timeseries_data())
-  #     # add_custom_lines(ts_lines_data())
-  #     # add_timeseries(timeseries_data(),"general",input$variable_selected)
-  #     # add_boxes(ts_highlights_data())
-  #     # add_custom_points(ts_points_data())
-  #     # if (input$show_key_ts == TRUE){
-  #     #   add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
-  #     #              input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
-  #     # }
-  #   } 
-  #   # Plot monthly TS if year range = 1 year
-  #   else {
-  #     plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","base")
-  #     # add_highlighted_areas(ts_highlights_data())
-  #     # add_custom_lines(ts_lines_data())
-  #     # plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","lines")
-  #     # add_boxes(ts_highlights_data())
-  #     # add_custom_points(ts_points_data())
-  #     # if (input$show_key_ts == TRUE){
-  #     #   add_TS_key(input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
-  #     #              input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
-  #     # }
-  #   }
-  # }
-  
   timeseries_plot_anom<- function(){
-    
-    #REMOVE
-    
-    # #Plot normal timeseries if year range is > 1 year
-    # if (input$range_years[1] != input$range_years[2]){
-    #   # Generate NA or reference mean
-    #   if(input$show_ref_ts == TRUE){
-    #     ref_ts = signif(mean(data_output3_primary()),3)
-    #   } else {
-    #     ref_ts = NA
-    #   }
-    #   p <- plot_default_timeseries(timeseries_data(),"general",input$variable_selected,plot_titles(),input$title_mode_ts,ref_ts)
-    #   p <- add_percentiles(p, timeseries_data())
-    # }
-    # 
-    # # Plot monthly TS if year range = 1 year
-    # else {
-    #   p <- plot_monthly_timeseries(timeseries_data(),plot_titles()$ts_title,"Custom","topright","base")
-    # }
-    # 
-    # p <- add_timeseries_custom_features(p, ts_highlights_data(), ts_lines_data(), ts_points_data())
-    # p <- add_timeseries(p, timeseries_data(), "general", input$variable_selected)
-    # 
-    # if (input$show_key_ts == TRUE){
-    #   p <- add_TS_key(p, input$key_position_ts,ts_highlights_data(),ts_lines_data(),input$variable_selected,month_range_primary(),
-    #                   input$custom_average_ts,input$year_moving_ts,input$custom_percentile_ts,input$percentile_ts,NA,NA,TRUE)
-    # }
     
     #Plot normal timeseries if year range is > 1 year
     if (input$range_years[1] != input$range_years[2]){
@@ -7851,17 +7812,43 @@ server <- function(input, output, session) {
   #Map customization (statistics and map titles)
   
   plot_titles_composites <- reactive({
-    
     req(input$nav1 == "tab2") # Only run code if in the current tab
     
-    my_title <- generate_titles(tab="composites", dataset=input$dataset_selected2, variable=input$variable_selected2, 
-                                mode=input$mode_selected2, map_title_mode=input$title_mode2,ts_title_mode=input$title_mode_ts2,
-                                month_range=month_range_primary(), year_range=input$range_years2, baseline_range=input$ref_period2, baseline_years_before=input$prior_years2,
-                                lon_range=lonlat_vals2()[1:2],lat_range=lonlat_vals2()[3:4],
-                                map_custom_title1=input$title1_input2, map_custom_title2=input$title2_input2, ts_custom_title1=input$title1_input_ts2, ts_custom_title2=NA, 
-                                map_title_size=input$title_size_input2, ts_data=timeseries_data_2())
+    my_title <- generate_titles(
+      tab = "composites",
+      dataset = input$dataset_selected2,
+      variable = input$variable_selected2,
+      mode = input$mode_selected2,
+      map_title_mode = input$title_mode2,
+      ts_title_mode = input$title_mode_ts2,
+      month_range = month_range_primary(),
+      year_range = input$range_years2,
+      baseline_range = input$ref_period2,
+      baseline_years_before = input$prior_years2,
+      lon_range = lonlat_vals2()[1:2],
+      lat_range = lonlat_vals2()[3:4],
+      map_custom_title1 = input$title1_input2,
+      map_custom_title2 = input$title2_input2,
+      ts_custom_title1 = input$title1_input_ts2,
+      ts_custom_title2 = NA,
+      map_title_size = input$title_size_input2,
+      ts_data = timeseries_data_2()
+    )
     
     return(my_title)
+  })
+  
+  # Add value to custom title
+  observe({
+    req(plot_titles_composites())
+    if (input$title1_input2 == "") {
+      updateTextInput(session, "title1_input2",
+                      value = plot_titles_composites()$map_title)
+    }
+    if (input$title2_input2 == "") {
+      updateTextInput(session, "title2_input2",
+                      value = plot_titles_composites()$map_subtitle)
+    }
   })
   
   
@@ -8514,29 +8501,61 @@ server <- function(input, output, session) {
   
   # Generate correlation titles
   plot_titles_cor = reactive({
-    
     req(input$nav1 == "tab3") # Only run code if in the current tab
     
-    if (input$source_v1 == "ModE-"){
+    if (input$source_v1 == "ModE-") {
       variable_v1 = input$ME_variable_v1
     } else {
       variable_v1 = input$user_variable_v1
     }
     
-    if (input$source_v2 == "ModE-"){
+    if (input$source_v2 == "ModE-") {
       variable_v2 = input$ME_variable_v2
     } else {
       variable_v2 = input$user_variable_v2
     }
     
-    ptc = generate_correlation_titles(input$source_v1,input$source_v2,input$dataset_selected_v1,
-                                      input$dataset_selected_v2,variable_v1,variable_v2,
-                                      input$type_v1,input$type_v2,input$mode_selected_v1,input$mode_selected_v2,
-                                      month_range_primary(),month_range_secondary(),lonlat_vals_v1()[1:2],lonlat_vals_v2()[1:2],
-                                      lonlat_vals_v1()[3:4],lonlat_vals_v2()[3:4],input$range_years3,input$cor_method_ts,
-                                      input$title_mode3,input$title_mode_ts3,input$title1_input3, input$title2_input3, input$title1_input_ts3, input$title_size_input3)
+    ptc = generate_correlation_titles(
+      input$source_v1,
+      input$source_v2,
+      input$dataset_selected_v1,
+      input$dataset_selected_v2,
+      variable_v1,
+      variable_v2,
+      input$type_v1,
+      input$type_v2,
+      input$mode_selected_v1,
+      input$mode_selected_v2,
+      month_range_primary(),
+      month_range_secondary(),
+      lonlat_vals_v1()[1:2],
+      lonlat_vals_v2()[1:2],
+      lonlat_vals_v1()[3:4],
+      lonlat_vals_v2()[3:4],
+      input$range_years3,
+      input$cor_method_ts,
+      input$title_mode3,
+      input$title_mode_ts3,
+      input$title1_input3,
+      input$title2_input3,
+      input$title1_input_ts3,
+      input$title_size_input3
+    )
     return(ptc)
   }) 
+  
+  # Add value to custom title
+  observe({
+    req(plot_titles_cor())
+    if (input$title1_input3 == "") {
+      updateTextInput(session, "title1_input3",
+                      value = plot_titles_cor()$map_title)
+    }
+    if (input$title2_input3 == "") {
+      updateTextInput(session, "title2_input3",
+                      value = plot_titles_cor()$map_subtitle)
+    }
+  })
   
   
   # Select variable timeseries data
@@ -9388,29 +9407,149 @@ server <- function(input, output, session) {
     map_points_data(data.frame())
   })
   
-  # Generate regression titles  
-  
-  plot_titles_reg = reactive({
-    
+  # Generate regression titles coefficients 
+  plot_titles_reg_coeff = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
     
-    req(month_range_secondary(),month_range_primary())
+    req(month_range_secondary(), month_range_primary())
     
-    ptr = generate_regression_titles(input$source_iv,input$source_dv,
-                                     input$dataset_selected_iv,input$dataset_selected_dv,
-                                     input$ME_variable_dv,
-                                     input$mode_selected_iv, input$mode_selected_dv,
-                                     month_range_secondary(),month_range_primary(),
-                                     lonlat_vals_iv()[1:2],lonlat_vals_dv()[1:2],lonlat_vals_iv()[3:4],lonlat_vals_dv()[3:4],
-                                     input$range_years4, reg_resi_year_val(),
-                                     variables_iv(), variable_dv(), 
-                                     match(input$coeff_variable,variables_iv()), match(input$pvalue_variable,variables_iv()),
-                                     input$title_mode_reg,
-                                     input$title1_input_reg,
-                                     input$title2_input_reg,
-                                     input$title_size_input_reg
+    ptr = generate_regression_titles(
+      input$source_iv,
+      input$source_dv,
+      input$dataset_selected_iv,
+      input$dataset_selected_dv,
+      input$ME_variable_dv,
+      input$mode_selected_iv,
+      input$mode_selected_dv,
+      month_range_secondary(),
+      month_range_primary(),
+      lonlat_vals_iv()[1:2],
+      lonlat_vals_dv()[1:2],
+      lonlat_vals_iv()[3:4],
+      lonlat_vals_dv()[3:4],
+      input$range_years4,
+      reg_resi_year_val(),
+      variables_iv(),
+      variable_dv(),
+      match(input$coeff_variable, variables_iv()),
+      match(input$pvalue_variable, variables_iv()),
+      input$title_mode_reg_coeff,
+      input$title1_input_reg_coeff,
+      input$title2_input_reg_coeff,
+      input$title_size_input_reg_coeff
     )
     return(ptr)
+  })
+  
+  # Add value to custom title
+  observe({
+    req(plot_titles_reg_coeff())
+    if (input$title1_input_reg_coeff == "") {
+      updateTextInput(session,
+                      "title1_input_reg_coeff",
+                      value = plot_titles_reg_coeff()$map_title_coeff)
+    }
+    if (input$title2_input_reg_coeff == "") {
+      updateTextInput(session,
+                      "title2_input_reg_coeff",
+                      value = plot_titles_reg_coeff()$map_subtitle_coeff)
+    }
+  })
+  
+  # Generate regression titles pvals
+  plot_titles_reg_pval = reactive({
+    req(input$nav1 == "tab4") # Only run code if in the current tab
+    
+    req(month_range_secondary(), month_range_primary())
+    
+    ptr = generate_regression_titles(
+      input$source_iv,
+      input$source_dv,
+      input$dataset_selected_iv,
+      input$dataset_selected_dv,
+      input$ME_variable_dv,
+      input$mode_selected_iv,
+      input$mode_selected_dv,
+      month_range_secondary(),
+      month_range_primary(),
+      lonlat_vals_iv()[1:2],
+      lonlat_vals_dv()[1:2],
+      lonlat_vals_iv()[3:4],
+      lonlat_vals_dv()[3:4],
+      input$range_years4,
+      reg_resi_year_val(),
+      variables_iv(),
+      variable_dv(),
+      match(input$coeff_variable, variables_iv()),
+      match(input$pvalue_variable, variables_iv()),
+      input$title_mode_reg_pval,
+      input$title1_input_reg_pval,
+      input$title2_input_reg_pval,
+      input$title_size_input_reg_pval
+    )
+    return(ptr)
+  })
+  
+  # Add value to custom title
+  observe({
+    req(plot_titles_reg_pval())
+    if (input$title1_input_reg_pval == "") {
+      updateTextInput(session,
+                      "title1_input_reg_pval",
+                      value = plot_titles_reg_pval()$map_title_pvals)
+    }
+    if (input$title2_input_reg_pval == "") {
+      updateTextInput(session,
+                      "title2_input_reg_pval",
+                      value = plot_titles_reg_pval()$map_subtitle_pvals)
+    }
+  })
+  
+  # Generate regression titles residuals
+  plot_titles_reg_res = reactive({
+    req(input$nav1 == "tab4") # Only run code if in the current tab
+    
+    req(month_range_secondary(), month_range_primary())
+    
+    ptr = generate_regression_titles(
+      input$source_iv,
+      input$source_dv,
+      input$dataset_selected_iv,
+      input$dataset_selected_dv,
+      input$ME_variable_dv,
+      input$mode_selected_iv,
+      input$mode_selected_dv,
+      month_range_secondary(),
+      month_range_primary(),
+      lonlat_vals_iv()[1:2],
+      lonlat_vals_dv()[1:2],
+      lonlat_vals_iv()[3:4],
+      lonlat_vals_dv()[3:4],
+      input$range_years4,
+      reg_resi_year_val(),
+      variables_iv(),
+      variable_dv(),
+      match(input$coeff_variable, variables_iv()),
+      match(input$pvalue_variable, variables_iv()),
+      input$title_mode_reg_res,
+      input$title1_input_reg_res,
+      input$title2_input_reg_res,
+      input$title_size_input_reg_res
+    )
+    return(ptr)
+  })
+  
+  # Add value to custom title
+  observe({
+    req(plot_titles_reg_res())
+    if (input$title1_input_reg_res == "") {
+      updateTextInput(session, "title1_input_reg_res", value = plot_titles_reg_res()$map_title_res)
+    }
+    if (input$title2_input_reg_res == "") {
+      updateTextInput(session,
+                      "title2_input_reg_res",
+                      value = plot_titles_reg_res()$map_subtitle_res)
+    }
   })
   
   plot_titles_reg_ts = reactive({
@@ -9550,7 +9689,7 @@ server <- function(input, output, session) {
       
       mode = "Regression_coefficients",
       
-      titles = plot_titles_reg(),
+      titles = plot_titles_reg_coeff(),
       
       axis_range = input$axis_input_reg_coeff,
       hide_axis = input$hide_axis_reg_coeff,
@@ -9672,7 +9811,7 @@ server <- function(input, output, session) {
       
       mode = "Regression_p_values",
       
-      titles = plot_titles_reg(),
+      titles = plot_titles_reg_pval(),
       
       axis_range = input$axis_input_reg_pval,
       hide_axis = input$hide_axis_reg_pval,
@@ -9805,7 +9944,7 @@ server <- function(input, output, session) {
       
       mode = "Regression_residuals",
       
-      titles = plot_titles_reg(),
+      titles = plot_titles_reg_res(),
       
       axis_range = input$axis_input_reg_res,
       hide_axis = input$hide_axis_reg_res,
