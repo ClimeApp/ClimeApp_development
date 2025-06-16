@@ -25,7 +25,6 @@ ui <- navbarPage(id = "nav1",
                              "(v1.4)",
                              #Preparation to use Tracking ShinyJS and CSS
                              shinyjs::useShinyjs(),
-                             use_tracking()
                  ),
                  footer = div(class = "navbar-footer",
                               style = "display: inline;",
@@ -961,8 +960,6 @@ ui <- navbarPage(id = "nav1",
                                    div(id = "hidden_key_position_ts",
                                        radioButtons(inputId  = "key_position_ts",
                                                     label    = "Key position:",
-                                                    # choiceNames  = c("top left", "top right","bottom left","bottom right"),
-                                                    # choiceValues = c("topleft", "topright","bottomleft","bottomright"),
                                                     choiceNames  = c("top", "right", "bottom", "left", "inside"),
                                                     choiceValues = c("top", "right", "bottom", "left", "inside"),
                                                     selected = "topright" ,
@@ -1994,8 +1991,8 @@ ui <- navbarPage(id = "nav1",
                                      div(id = "hidden_key_position_ts2",
                                          radioButtons(inputId  = "key_position_ts2",
                                                       label    = "Key position:",
-                                                      choiceNames  = c("top left", "top right","bottom left","bottom right"),
-                                                      choiceValues = c("topleft", "topright","bottomleft","bottomright"),
+                                                      choiceNames  = c("top", "right", "bottom", "left", "inside"),
+                                                      choiceValues = c("top", "right", "bottom", "left", "inside"),
                                                       selected = "topright" ,
                                                       inline = TRUE))),
                                    
@@ -2330,6 +2327,575 @@ ui <- navbarPage(id = "nav1",
 # Composites END ----           
         )),
 
+# SEA START ----
+tabPanel("SEA", value = "tab6",
+         shinyjs::useShinyjs(),
+         sidebarLayout(
+           ## Sidebar Panels START ----          
+           sidebarPanel(verticalLayout(
+             
+             ### First Sidebar panel (Data) ----
+             sidebarPanel(fluidRow(
+               #Method Title and Pop Over
+               sea_summary_popover("pop_sea"),
+               br(),
+               
+               h4("Select data", style = "color: #094030;", sea_data_popover("pop_sea_data")),
+               
+               #Choose a data source: ME or User 
+               radioButtons(inputId  = "source_sea_6",
+                            label    = "Choose a data source:",
+                            choices  = c("ModE-", "User Data"),
+                            selected = "ModE-" ,
+                            inline = TRUE),
+               
+               # Upload user data
+               shinyjs::hidden(
+                 div(id = "upload_sea_data_6",   
+                     fileInput(inputId = "user_file_6",
+                               label = "Upload timeseries data in .csv or .xlsx format:",
+                               multiple = FALSE,
+                               accept = c(".csv", ".xlsx", ".xls"),
+                               width = NULL,
+                               buttonLabel = "Browse your folders",
+                               placeholder = "No file selected"),
+                     
+                     div(id = "upload_example_6",
+                         img(src = 'pics/regcor_user_example.jpg', id = "sea_user_example_6", height = "150px", width = "150px"))
+                 )),
+               
+               #Choose a variable (USER)
+               shinyjs::hidden(
+                 div(id = "hidden_user_data_6",
+                     selectInput(inputId  = "user_variable_6",
+                                 label    = "Choose a variable:",
+                                 choices  = NULL,
+                                 selected = NULL),
+                 )),
+               
+               #Choose one of three datasets (Select)
+               shinyjs::hidden(
+                 div(id = "hidden_me_dataset_6",
+                     fluidRow(
+                       selectInput(inputId  = "dataset_selected_6",
+                                   label    = "Choose a dataset:",
+                                   choices  = c("ModE-RA", "ModE-Sim","ModE-RAclim"),
+                                   selected = "ModE-RA"),
+                       
+                       #Choose a variable (Mod-ERA) 
+                       selectInput(inputId  = "ME_variable_6",
+                                   label    = "Choose a variable to plot:",
+                                   choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
+                                   selected = "Temperature"),
+                     
+                     #Choose a variable (Mod-ERA) 
+                     selectInput(inputId  = "ME_statistic_6",
+                                 label    = "Choose a statistic to plot:",
+                                 choices  = c("Mean", "Min", "Max"),
+                                 selected = "Mean")),
+                 )),
+               
+               shinyjs::hidden(
+                 div(id = "hidden_modera_6",
+
+                     #Choose Season, Year or Months
+                     radioButtons(inputId  = "season_selected_6",
+                                  label    = "Select the range of months:",
+                                  choices  = c("Annual", "DJF", "MAM", "JJA", "SON", "Custom"),
+                                  selected = "Annual" ,
+                                  inline = TRUE),
+                     
+                     #Choose your range of months (Slider)
+                     shinyjs::hidden(
+                       div(id = "season_6",
+                           sliderTextInput(inputId = "range_months_6",
+                                           label = "Select custom months:",
+                                           choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
+                                           #Initially selected = 1 year (annual mean)
+                                           selected = c("January", "December")),
+                       )), 
+                     
+                     #Choose reference period      
+                           hidden(
+                             numericRangeInput(inputId = "ref_period_6",
+                                               label      = "Reference period:",
+                                               value      = c(1961,1990),
+                                               separator  = " to ",
+                                               min        = 1422,
+                                               max        = 2008)),
+                           
+                           #Choose single ref year
+                           column(12,
+                                  checkboxInput(inputId = "ref_single_year_6",
+                                                label   = "Select single year",
+                                                value   = FALSE)),
+                           
+                           
+                           hidden(
+                             numericInput(inputId   = "ref_period_sg_6",
+                                          label     = "Select the single year:",
+                                          value     = NA,
+                                          min       = 1422,
+                                          max       = 2008)),
+                           
+                     #Choose Coordinates input 
+                     radioButtons(inputId  = "coordinates_type_6",
+                                  label    = "Choose input of coordinates:",
+                                  choices  = c("Manual", "Continents"),
+                                  selected = "Manual" ,
+                                  inline = TRUE),
+                     
+                     shinyjs::hidden(
+                       div(id = "hidden_continents_6",
+                           column(width = 12, fluidRow(
+                             
+                             br(), br(),
+                             
+                             #Global Button
+                             actionButton(inputId = "button_global_6",
+                                          label = "Global",
+                                          width = "100px"),
+                             
+                             br(), br(),
+                             
+                             #Europe Button
+                             actionButton(inputId = "button_europe_6",
+                                          label = "Europe",
+                                          width = "100px"),
+                             
+                             br(), br(),
+                             
+                             #Asia Button
+                             actionButton(inputId = "button_asia_6",
+                                          label = "Asia",
+                                          width = "100px"),
+                             
+                             br(), br(),
+                             
+                             #Oceania Button
+                             actionButton(inputId = "button_oceania_6",
+                                          label = "Oceania",
+                                          width = "110px"),
+                             
+                           )),
+                           
+                           column(width = 12, br()),
+                           
+                           column(width = 12, fluidRow(
+                             
+                             br(), br(),
+                             
+                             #Africa Button
+                             actionButton(inputId = "button_africa_6",
+                                          label = "Africa",
+                                          width = "100px"),
+                             
+                             br(), br(),
+                             
+                             #North America Button
+                             actionButton(inputId = "button_n_america_6",
+                                          label = "North America",
+                                          width = "150px"),
+                             
+                             br(), br(),
+                             
+                             #South America Button
+                             actionButton(inputId = "button_s_america_6",
+                                          label = "South America",
+                                          width = "150px")
+                           )),
+                           
+                           column(width = 12, br()),
+                           
+                       )),
+                     
+                     #Choose Longitude and Latitude Range          
+                     numericRangeInput(inputId = "range_longitude_6",
+                                       label = "Longitude range (-180 to 180):",
+                                       value = c(4,12),
+                                       separator = " to ",
+                                       min = -180,
+                                       max = 180),
+                     
+                     #Choose Longitude and Latitude Range          
+                     numericRangeInput(inputId = "range_latitude_6",
+                                       label = "Latitude range (-90 to 90):",
+                                       value = c(43,50),
+                                       separator = " to ",
+                                       min = -90,
+                                       max = 90),
+                     
+                     #Enter Coordinates
+                     actionButton(inputId = "button_coord_6",
+                                  label = "Update coordinates",
+                                  width = "200px"),
+                     
+                 )),
+               
+               
+             ), width = 12),
+             
+             br(),
+             
+             ### Second Sidebar panel (Inputs) ----
+             
+             sidebarPanel(fluidRow(
+               
+               #Short description of the option selection        
+               h4("SEA options", style = "color: #094030;", sea_options_popover("pop_sea_options")),
+               
+               #Choose your lag years
+               column(width = 8,
+                      
+                      numericRangeInput(inputId = "lag_years_6",
+                                        label      = "Set lag years:",
+                                        value      = c(-10,10),
+                                        separator  = " to ",
+                                        min        = -100,
+                                        max        = 100),
+               ),
+               
+               #Type in your event years OR upload a file
+               radioButtons(inputId  = "enter_upload_6",
+                            label    = "Choose how to enter event years:",
+                            choices  = c("Manual", "Upload"),
+                            selected = "Manual" , inline = TRUE),
+               
+               shinyjs::hidden(div(id = "optional6c",
+                                   textInput(inputId    = "event_years_6",
+                                             label     = "Set event years:",
+                                             value     = "1452,1457,1585,1595,1600,1640,1695,1783,1809,1815,1831,1835,1883,1991",
+                                             placeholder = "1452,1457,1585,1595,1600,1640,1695,1783,1809,1815,1831,1835,1883,1991"),
+                                   
+                                   helpText("Example: Years with major volcanic eruptions")
+                                   
+                                   )),
+               
+               shinyjs::hidden(div(id = "optional6d",
+                                   fileInput(inputId = "upload_file_6b",
+                                             label = "Upload a list of years in .csv or .xlsx format:",
+                                             multiple = FALSE,
+                                             accept = c(".csv", ".xlsx", ".xls"),
+                                             width = NULL,
+                                             buttonLabel = "Browse your folders",
+                                             placeholder = "No file selected"),
+                                   
+                                   shinyjs::hidden(div(id = "optional6e",
+                                                       img(src = 'pics/composite_user_example.jpg', id = "sea_user_example_6b", height = "150px", width = "75px"),
+                                   ))
+               )
+               ),
+
+             ), width = 12),
+             
+             br(),
+
+           ## Sidebar Panels END ----
+           )),
+           
+           ## Main Panel START ----
+           mainPanel(tabsetPanel(id = "tabset6",
+              ### SEA START ----
+              tabPanel("SEA", br(),
+
+                      h4("Superposed epoch analysis", style = "color: #094030;"),
+                      
+                      br(),
+                      
+                      withSpinner(ui_element = plotOutput("SEA_plot_6",click = "ts_click6", dblclick = "ts_dblclick6", brush = brushOpts(id = "ts_brush6", resetOnNew = TRUE)),
+                                  image = spinner_image,
+                                  image.width = spinner_width,
+                                  image.height = spinner_height),
+                      
+                #### Customization panels START ----       
+                fluidRow(
+                  
+                    #### Timeseries customization ----
+                    column(width = 4,
+                           h4("Customize your SEA", style = "color: #094030;", timeseries_customization_popover("pop_sea_custime")),  
+                           
+                           checkboxInput(inputId = "custom_6",
+                                         label   = "SEA customization",
+                                         value   = FALSE),
+                           
+                           shinyjs::hidden( 
+                             div(id = "hidden_custom_6",
+                                 
+                                 radioButtons(inputId  = "title_mode_6",
+                                              label    = "Title customization:",
+                                              choices  = c("Default", "Custom"),
+                                              selected = "Default" ,
+                                              inline = TRUE),
+                                 
+                                 shinyjs::hidden( 
+                                   div(id = "hidden_custom_title_6",
+                                       
+                                       textInput(inputId     = "title1_input_6",
+                                                 label       = "Custom plot title:", 
+                                                 value       = NA,
+                                                 width       = NULL,
+                                                 placeholder = "Custom title")
+                                   )),
+                                 
+                                 textInput(inputId    = "y_label_6",
+                                           label     = "Y-axis label:",
+                                           value     = "",
+                                           placeholder = "Default"),
+                                 
+                                 checkboxInput(inputId = "show_observations_6",
+                                               label   = "Show all observations",
+                                               value   = FALSE),
+                                 
+                                 checkboxInput(inputId = "show_pvalues_6",
+                                               label   = "Show p values",
+                                               value   = FALSE),
+                                 
+                                 checkboxInput(inputId = "show_ticks_6",
+                                               label   = "Show yearly ticks",
+                                               value   = FALSE),
+                                 
+                                 checkboxInput(inputId = "show_key_6",
+                                               label   = "Show key",
+                                               value   = FALSE),
+                             )),    
+                    ),
+                    
+                    #### Add Custom features (points, highlights, lines) ----                        
+                    column(width = 4,
+                           h4("Custom features", style = "color: #094030;", timeseries_features_popover("pop_sea_timefeat")),
+                           
+                           checkboxInput(inputId = "custom_features_6",
+                                         label   = "Enable custom features",
+                                         value   = FALSE),
+                           
+                           shinyjs::hidden(
+                             div(id = "hidden_custom_features_6",
+                                 radioButtons(inputId      = "feature_6",
+                                              label        = "Select a feature type:",
+                                              inline       = TRUE,
+                                              choices      = c("Point", "Highlight", "Line")),
+                                 
+                                 #Custom Points
+                                 shinyjs::hidden(
+                                   div(id = "hidden_custom_points_6",
+                                       
+                                       h4(helpText("Add custom points", timeseries_points_popover("pop_sea_timepoint"))),
+                                       h6(helpText("Enter position manually or click on plot")),
+                                       
+                                       textInput(inputId = "point_label_6", 
+                                                 label   = "Point label:",
+                                                 value   = ""),
+                                       
+                                       column(width = 12, offset = 0,
+                                              column(width = 6,
+                                                     textInput(inputId = "point_location_x_6", 
+                                                               label   = "Point x position:",
+                                                               value   = "")
+                                              ),
+                                              column(width = 6,
+                                                     textInput(inputId = "point_location_y_6", 
+                                                               label   = "Point y position:",
+                                                               value   = "")
+                                              )),
+                                       
+                                       
+                                       radioButtons(inputId      = "point_shape_6",
+                                                    label        = "Point shape:",
+                                                    inline       = TRUE,
+                                                    choices      = c("\u25CF", "\u25B2", "\u25A0")),
+                                       
+                                       colourInput(inputId = "point_colour_6", 
+                                                   label   = "Point colour:",
+                                                   showColour = "background",
+                                                   palette = "limited"),                        
+                                       
+                                       
+                                       numericInput(inputId = "point_size_6",
+                                                    label   = "Point size",
+                                                    value   = 1,
+                                                    min     = 1,
+                                                    max     = 10),
+                                       
+                                       column(width = 12,
+                                              
+                                              actionButton(inputId = "add_point_6",
+                                                           label = "Add point"),
+                                              br(), br(), br(),
+                                              actionButton(inputId = "remove_last_point_6",
+                                                           label = "Remove last point"),
+                                              actionButton(inputId = "remove_all_points_6",
+                                                           label = "Remove all points")),
+                                   )),
+                                 
+                                 #Custom highlights
+                                 shinyjs::hidden(
+                                   div(id = "hidden_custom_highlights_6",
+                                       
+                                       h4(helpText("Add custom highlights", timeseries_highlights_popover("pop_sea_timehl"))),
+                                       h6(helpText("Enter values manually or draw a box on plot")),
+                                       
+                                       numericRangeInput(inputId = "highlight_x_values_6",
+                                                         label  = "X values:",
+                                                         value  = "",
+                                                         min    = -180,
+                                                         max    = 180),
+                                       
+                                       numericRangeInput(inputId = "highlight_y_values_6",
+                                                         label  = "Y values:",
+                                                         value  = "",
+                                                         min    = -90,
+                                                         max    = 90),
+                                       
+                                       colourInput(inputId = "highlight_colour_6", 
+                                                   label   = "Highlight colour:",
+                                                   showColour = "background",
+                                                   palette = "limited"),
+                                       
+                                       radioButtons(inputId      = "highlight_type_6",
+                                                    label        = "Type for highlight:",
+                                                    inline       = TRUE,
+                                                    choiceNames  = c("Fill \u25FC", "Box \u25FB", "Hatched \u25A8"),
+                                                    choiceValues = c("Fill","Box","Hatched")),
+                                       
+                                       checkboxInput(inputId = "show_highlight_on_legend_6",
+                                                     label   = "Show on key",
+                                                     value   = FALSE),
+                                       
+                                       hidden(
+                                         textInput(inputId = "highlight_label_6", 
+                                                   label   = "Label:",
+                                                   value   = "")),
+                                       
+                                       
+                                       column(width = 12,
+                                              actionButton(inputId = "add_highlight_6",
+                                                           label = "Add highlight"),
+                                              br(), br(), br(),
+                                              actionButton(inputId = "remove_last_highlight_6",
+                                                           label = "Remove last highlight"),
+                                              actionButton(inputId = "remove_all_highlights_6",
+                                                           label = "Remove all highlights")),
+                                       
+                                   )),
+                                 
+                                 #Custom lines
+                                 shinyjs::hidden(
+                                   div(id = "hidden_custom_line_6",
+                                       
+                                       h4(helpText("Add custom lines", timeseries_lines_popover("pop_sea_timelines"))),
+                                       h6(helpText("Enter position manually or click on plot, double click to change orientation")),
+                                       
+                                       radioButtons(inputId      = "line_orientation_6",
+                                                    label        = "Orientation:",
+                                                    inline       = TRUE,
+                                                    choices      = c("Vertical", "Horizontal")),
+                                       
+                                       textInput(inputId = "line_position_6", 
+                                                 label   = "Position:",
+                                                 value   = "",
+                                                 placeholder = "1830, 1832"),
+                                       
+                                       colourInput(inputId = "line_colour_6", 
+                                                   label   = "Line colour:",
+                                                   showColour = "background",
+                                                   palette = "limited"),
+                                       
+                                       radioButtons(inputId      = "line_type_6",
+                                                    label        = "Type:",
+                                                    inline       = TRUE,
+                                                    choices = c("solid", "dashed")),
+                                       
+                                       checkboxInput(inputId = "show_line_on_legend_6",
+                                                     label   = "Show on key",
+                                                     value   = FALSE),
+                                       
+                                       hidden(
+                                         textInput(inputId = "line_label_6", 
+                                                   label   = "Label:",
+                                                   value   = "")),
+                                       
+                                       column(width = 12,
+                                              actionButton(inputId = "add_line_6",
+                                                           label = "Add line"),
+                                              br(), br(), br(),
+                                              actionButton(inputId = "remove_last_line_6",
+                                                           label = "Remove last line"),
+                                              actionButton(inputId = "remove_all_lines_6",
+                                                           label = "Remove all lines")
+                                       )
+                                   ))
+                             ))),
+                    
+                    #### Custom statistics ----
+                    column(width = 4,
+                           
+                           h4("Custom statistics", style = "color: #094030;", sea_statistics_popover("pop_sea_statistics")),
+                           
+                           checkboxInput(inputId = "enable_custom_statistics_6",
+                                         label   = "Enable custom statistics",
+                                         value   = FALSE),
+                           
+                           shinyjs::hidden(
+                             div(id = "hidden_custom_statistics_6",
+
+                                 numericInput(inputId   = "sample_size_6",
+                                              label     = "Size of random sample",
+                                              value     = 1000,
+                                              min       = 100,
+                                              max       = 100000000000),
+                                 
+                                 checkboxInput(inputId = "show_means_6",
+                                               label   = "Show sample means",
+                                               value   = FALSE),
+                                 
+                                 radioButtons(inputId  = "show_confidence_bands_6",
+                                              label    = "Confidence interval",
+                                              choices  = c("None","95%", "99%"),
+                                              selected = "None" , inline = TRUE)
+
+                             )),
+                    ),
+                    
+                #### Customization panels END ----
+                ),
+                
+                #### Downloads SEA ----
+                h4("Downloads", style = "color: #094030;", downloads_popover("pop_sea_ts_downloads")),
+                checkboxInput(inputId = "download_options_6",
+                              label   = "Enable download options",
+                              value   = FALSE),
+                
+                shinyjs::hidden(div(id = "hidden_download_6",
+                                    
+                                    # Downloads 
+                                    h4(helpText("SEA plot")),
+                                    fluidRow(
+                                      column(2, radioButtons(inputId = "file_type_timeseries6", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                      column(3, downloadButton(outputId = "download_timeseries6", label = "Download SEA"))
+                                    ),
+                                    
+                                    fluidRow(
+                                      column(2, radioButtons(inputId = "file_type_timeseries_data6", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                      column(3, downloadButton(outputId = "download_timeseries_data6", label = "Download SEA data"))
+                                    ),
+                                    
+                                    # Upload Meta data 
+                                    h4(helpText("Metadata")),
+                                    fluidRow(
+                                      column(3, downloadButton(outputId = "download_metadata_6", label = "Download metadata")),
+                                      column(4, fileInput(inputId= "upload_metadata_6", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                      column(2, actionButton(inputId = "update_metadata_6", label = "Update upload inputs")),
+                                    ),
+                )),
+             ### SEA END ----
+              ),
+
+           ## Main Panel END ----
+            ), width = 8)
+       
+# SEA END ----  
+         )),
+
 # Correlation START ----
   tabPanel("Correlation", value = "tab3",
           shinyjs::useShinyjs(),
@@ -2563,30 +3129,24 @@ ui <- navbarPage(id = "nav1",
 
                        numericRangeInput(inputId    = "range_years3",
                                          label     = "Select the range of years (1422 - 2008):",
-                                         value     = c(1900,2008),
+                                         value     = c(1900,2000),
                                          separator = " to ",
                                          min       = 1422,
                                          max       = 2008)
                      ),
                      
                      # Set lag years
-                     column(width = 12, fluidRow(
-                            
-                       numericInput(inputId   = "lagyears_v1_cor",
-                                    label     = "Set lag for Variable 1 (in years)",
-                                    value     = 0,
-                                    min       = -100,
-                                    max       = 100,
-                                    width     = "250px"),
-
-                       numericInput(inputId   = "lagyears_v2_cor",
-                                    label     = "Set lag for Variable 2 (in years)",
-                                    value     = 0,
-                                    min       = -100,
-                                    max       = 100,
-                                    width     = "250px"),
+                     numericInput(inputId   = "lagyears_v1_cor",
+                                  label     = "Set Variable 1 lag (in years)",
+                                  value     = 0,
+                                  min       = -100,
+                                  max       = 100),
                      
-                     )),
+                     numericInput(inputId   = "lagyears_v2_cor",
+                                  label     = "Set Variable 2 lag (in years)",
+                                  value     = 0,
+                                  min       = -100,
+                                  max       = 100),
 
                    ), width = 12),
                    
@@ -2878,8 +3438,8 @@ ui <- navbarPage(id = "nav1",
                                      div(id = "hidden_key_position_ts3",
                                          radioButtons(inputId  = "key_position_ts3",
                                                       label    = "Key position:",
-                                                      choiceNames  = c("top left", "top right","bottom left","bottom right"),
-                                                      choiceValues = c("topleft", "topright","bottomleft","bottomright"),
+                                                      choiceNames  = c("top", "right", "bottom", "left", "inside"),
+                                                      choiceValues = c("top", "right", "bottom", "left", "inside"),
                                                       selected = "topright" ,
                                                       inline = TRUE))),
                                )),    
@@ -3464,7 +4024,7 @@ ui <- navbarPage(id = "nav1",
                                                           image.height = spinner_height)),
              
                   ### Feedback archive documentation (FAD) ----
-                  tabPanel("ModE-RA sources", br(),
+                  tabPanel("ModE-RA sources", value = "corr_fad_tab", br(),
                            
                            # Title & help pop up
                            MEsource_popover("pop_anomalies_mesource"),
@@ -4904,7 +5464,7 @@ ui <- navbarPage(id = "nav1",
              ),
 
              ### Feedback archive documentation (FAD) ----
-             tabPanel("ModE-RA sources", br(),
+             tabPanel("ModE-RA sources", value = "reg_fad_tab", br(),
                       
                       # Title & help pop up
                       MEsource_popover("pop_anomalies_mesource"),
@@ -4985,7 +5545,7 @@ ui <- navbarPage(id = "nav1",
                br(),
                
                #Short description of the General Panel        
-               h4("Set annual cycle data", style = "color: #094030;",annualcycles_data_popover("pop_annualcycles_data")),
+               h4("Set annual cycle data", style = "color: #094030;" ,annualcycles_data_popover("pop_annualcycles_data")),
                
                #Choose one of three datasets (Select)                
                selectInput(inputId  = "dataset_selected5",
@@ -5048,7 +5608,7 @@ ui <- navbarPage(id = "nav1",
              ### Second sidebar panel (Location selection) ----
              sidebarPanel(fluidRow(
                #Short description of the Coord. Sidebar        
-               h4("Set geographical area",annualcycles_region_popover("pop_annualcycles_region")),
+               h4("Set geographical area", style = "color: #094030;", annualcycles_region_popover("pop_annualcycles_region")),
                h5(helpText("Select a continent, enter coordinates manually or search for a point location", style = "color: #094030;")),
                
                shinyjs::hidden(div(id = "hidden_region_input",               
@@ -5568,8 +6128,7 @@ ui <- navbarPage(id = "nav1",
     column(10, div(id = "leaflet",
         tags$style(type = "text/css", "#MES_leaflet {height: calc(80vh - 100px) !important;}"), # Adjust the height of the map
         tags$style(type = "text/css", "div.leaflet-control {text-align: left;}"), # Makes sure that legend text is left-aligned
-        withSpinner(ui_element = leafletOutput("MES_leaflet"
-        ), 
+        withSpinner(ui_element = leafletOutput("MES_leaflet"), 
         image = spinner_image,
         image.width = spinner_width,
         image.height = spinner_height)),

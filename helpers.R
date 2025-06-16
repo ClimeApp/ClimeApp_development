@@ -1,5 +1,4 @@
-#### Helper Functions of ClimeApp ####
-
+# Helper Functions of ClimeApp 
 
 #### Internal Functions ####
 # (Functions used ONLY by other functions)
@@ -8,7 +7,11 @@
 ## data input = month_range
 
 generate_title_months = function(MR){
-  if (MR[1]==1 & MR[2]==12){
+  print(MR)
+  print(MR[1]==1)
+  print(MR[2]==12)
+  print(MR[1]==1 && MR[2]==12)
+  if (MR[1]==1 && MR[2]==12){
     title_months = "Annual"
   } else {
     month_letters  = c("D","J","F","M","A","M","J","J","A","S","O","N","D")
@@ -508,7 +511,7 @@ convert_subset_to_anomalies = function(data_input,ref_data){
 
 ## (General) GENERATE MAP,TS & FILE TITLES - creates a dataframe of map_title,
 ##                                           map_subtitle, ts_title, ts_axis,file_title,
-##                                           netcdf_title
+##                                           netcdf_title for Anomalies and Composites
 ##           tab = "general" or "composites", "reference", or "sdratio"
 ##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim"
 ##           mode = "Absolute" or "Anomaly" for general tab
@@ -517,26 +520,31 @@ convert_subset_to_anomalies = function(data_input,ref_data){
 ##           map/ts_title_mode = "Default" or "Custom"
 ##           year_range,baseline_range,baseline_years_before 
 ##                = set to NA if not relevant for selected tab
-##           map/ts_custom_title1/2 = user entered titles
-##           title_size = numeric value for the title font size, default = 18
+##           map/ts_custom_title1/2 = user entered titles and subtitles
+##           map/ts_title_size = numeric value for the title font size, default = 18
+##           ts_data = timeseries data (numeric vector) for statistics (Mean, Range, SD) values displayed in TS subtitles
+
 
 generate_titles = function(tab,
                            dataset,
                            variable,
                            mode,
-                           map_title_mode,
-                           ts_title_mode,
+                           map_title_mode="Default",
+                           ts_title_mode="Default",
                            month_range,
                            year_range,
-                           baseline_range,
-                           baseline_years_before,
+                           baseline_range=NA,
+                           baseline_years_before=NA,
                            lon_range,
                            lat_range,
-                           map_custom_title1,
-                           map_custom_title2,
-                           ts_custom_title,
-                           title_size=18){
-  
+                           map_custom_title1=NA,
+                           map_custom_title2=NA,
+                           ts_custom_title1=NA,
+                           ts_custom_title2=NA,
+                           map_title_size=18,
+                           ts_title_size=18,
+                           ts_data=NA){
+
   # Generate title months
   title_months = generate_title_months(month_range)
   
@@ -586,7 +594,7 @@ generate_titles = function(tab,
     }
   }
   
-  # Create Timeseries title 
+  # Create Timeseries title, subtitle and axis titles
   if (tab=="composites"){
     ts_title = paste(substr(map_title, 1, nchar(map_title) - 18),
                      " [",lon_range[1],":",lon_range[2],"\u00B0E, ",lat_range[1],":",lat_range[2],"\u00B0N]", sep = "")
@@ -594,23 +602,27 @@ generate_titles = function(tab,
     ts_title = paste(substr(map_title, 1, nchar(map_title) - 10),
                  " [",lon_range[1],":",lon_range[2],"\u00B0E, ",lat_range[1],":",lat_range[2],"\u00B0N]", sep = "")
   }
-
-  # Create timeseries axis label
-  if (variable == "Temperature"){
-    v_unit = "[\u00B0C]"
-  } else if (variable == "Precipitation"){
-    v_unit = "[mm/month]"
-  } else if (variable == "SLP"){
-    v_unit = "[hPa]"
-  } else if (variable == "Z500"){
-    v_unit = "[m]"
-  }  
+  
+  v_unit <- get_variable_properties(variable)$unit
   
   if (mode == "Absolute"){
-    ts_axis = paste(title_months," Mean ",variable," ",v_unit,sep = "")
+    ts_axis = paste(title_months," Mean ",variable," [",v_unit, "]",sep = "")
   } else {
-    ts_axis = paste(title_months," ",variable," Anomaly ",v_unit,sep = "")
+    ts_axis = paste(title_months," ",variable," Anomaly [",v_unit, "]",sep = "")
   }
+
+  if (is.data.frame(ts_data)){ # using is.null doesn't work because is.null(NA) = FALSE, using is.na doesn't work because is.na(data.frame) = c(FALSE, FALSE, FALSE, ...)
+    stats = generate_stats_ts(as.vector(ts_data$Mean)) #transform into vector, because generate_stats_ts expects a vector
+    
+    ts_subtitle <- paste(
+      "Mean = ", signif(stats$mean, 3), v_unit,
+      "   Range = ", signif(stats$min, 3), v_unit, ":", signif(stats$max, 3), v_unit,
+      "   SD = ", signif(stats$sd, 3), v_unit, sep = ""
+    )
+    if (map_subtitle != ""){
+      ts_subtitle = paste0(ts_subtitle, "\n", map_subtitle)
+    }
+  } else {ts_subtitle = NA}
   
   # Replace with custom titles
   if (map_title_mode == "Custom"){
@@ -623,7 +635,12 @@ generate_titles = function(tab,
   }
   
   if (ts_title_mode == "Custom"){
-    ts_title = ts_custom_title
+    if(map_custom_title1 != ""){
+      ts_title = ts_custom_title
+    }
+    if(map_custom_title2 != ""){
+      ts_subtitle = ts_custom_title2
+    }
   }
   
   # Create title for filenames
@@ -647,8 +664,25 @@ generate_titles = function(tab,
                         netcdf_title,
                         map_title_size,
                         ts_title_size)
-  
+  # Combine into dataframe
+  m_titles = data.frame(map_title,map_subtitle,ts_title,ts_subtitle,ts_axis,file_title,netcdf_title, map_title_size, ts_title_size)
+
   return(m_titles)
+}
+
+## (General) GENERATE STATISTICS TIMESERIES DATA - creates a dataframe of statistics from timeseries data
+##           data = timeseries data (numeric vector)
+##           returns a numeric vector of mean, sd, min, max
+
+generate_stats_ts = function(data){
+
+  mean = mean(data, na.rm = TRUE)
+  sd = sd(data, na.rm = TRUE)
+  min = min(data, na.rm = TRUE)
+  max = max(data, na.rm = TRUE)
+
+  ts_stats = data.frame(mean, sd, min, max)
+  return(ts_stats)
 }
 
 ## (General) SET DEFAULT/CUSTOM AXIS VALUES
@@ -707,6 +741,7 @@ plot_map <- function(data_input,
                      projection = "UTM (default)",
                      center_lat = 0,
                      center_lon = 0) {
+  print(paste("Hide axis:", hide_axis))
 
   # Define color picker prefix for shapefiles
   color_picker_prefix <- ifelse(plotType == "shp_colour_", "shp_colour_", "shp_colour2_")
@@ -764,6 +799,7 @@ plot_map <- function(data_input,
     axis_range <- c(-max_abs_z, max_abs_z)
   }
 
+  print("Code runs until here")
   p <- ggplot() +
     geom_spatraster_contour_filled(data = data_input, aes(fill = after_stat(level_mid)), bins = 20)+
       scale_fill_stepsn(
@@ -973,6 +1009,7 @@ create_map_datatable = function(data_input,subset_lon_IDs,subset_lat_IDs){
 ##           data_input = same as data_input for create_map_datatable
 ##           year_input = either year_range or year_set (for composites)
 ##           year_input_type = "range" (for general) or "set" (for composites)
+##           returns a dataframe of Year, Mean, Min, Max
 
 create_timeseries_datatable = function(data_input,year_input,year_input_type,
                                        subset_lon_IDs,subset_lat_IDs){
@@ -1302,112 +1339,137 @@ plot_default_timeseries <- function(data_input, tab, variable, titles, title_mod
   return(p)
 }
 
-plot_timeseries = function(type, data=NA, variable=NA,
-                          ref, year_range=NA, month_range=NA,
-                          titles=NA, titles_mode=NA, 
-                          show_key=NA, key_position=NA, 
-                          moving_ave=NA, moving_ave_year=NA, 
-                          custom_percentile=NA, percentiles=NA, 
-                          highlights=NA, lines=NA, points=NA,
-                          data_v1=NA, data_v2=NA, variable1=NA, variable2=NA,
-                          titles_corr=NA, titles_reg=NA, titles_custom=NA # do we need titles_custom
-                          
-){
-  
-  # Create empty plot object
-  p <- ggplot()
-  
-  # Set up data for plotting
-  
-    # check plot type
-  if (type == "Anomaly" || type == "Composites" || type == "Monthly"){
-    label_v0 <- paste(year_range[1], "-", year_range[2], variable, type) # Create dynamic legend label (used e.g. in scale_color_manual)
-    p <- add_data_to_TS(p, data, variable, type, label_v0)
-  } else if (type == "Correlation"){
-    # Add the first variable
-    label_v1 <- paste(year_range, variable1, type)
-    p <- add_data_to_TS(p, data_v1, variable1, type, label_v1)
-    # Add the second variable
-    label_v2 <- paste(year_range, variable2, type)
-    p <- add_data_to_TS(p, data_v2, variable2, type, label_v2)
-  } else if (type == "Regression"){
-    stop("Invalid plot type")
-  } else {
-    stop("Invalid plot type")
-  }
-  
-  
-  # Add custom features
-  
-  # Add statistics
-  # y_mean = mean(y, na.rm = TRUE)
-  # y_sd = sd(y, na.rm = TRUE)
-  # y_range = range(y, na.rm = TRUE)
-  
-  # Add titles
+# plot_timeseries = function(type, data=NA, variable=NA,
+#                           ref, year_range=NA, month_range=NA,
+#                           titles=NA, titles_mode=NA, 
+#                           show_key=NA, key_position=NA, 
+#                           moving_ave=NA, moving_ave_year=NA, 
+#                           custom_percentile=NA, percentiles=NA, 
+#                           highlights=NA, lines=NA, points=NA,
+#                           data_v1=NA, data_v2=NA, variable1=NA, variable2=NA,
+#                           titles_corr=NA, titles_reg=NA, titles_custom=NA) { # do we need titles_custom
+#                           
+#   # Create empty plot object
+#   p <- ggplot()
+#   print(month_range)
+#   
+#   # Set up data for plotting
+#   if (type == "Anomaly" || type == "Composites" || type == "Monthly"){
+#     label_v0 <- paste(year_range[1], "-", year_range[2], variable, type) # Create dynamic legend label (used e.g. in scale_color_manual)
+#     p <- add_data_to_TS(p, data, variable, type, label_v0)
+#   } else if (type == "Correlation"){
+#     # Add the first variable
+#     label_v1 <- paste(year_range, variable1, type)
+#     p <- add_data_to_TS(p, data_v1, variable1, type, label_v1)
+#     # Add the second variable
+#     label_v2 <- paste(year_range, variable2, type)
+#     p <- add_data_to_TS(p, data_v2, variable2, type, label_v2)
+#   } else if (type == "Regression"){
+#     stop("Invalid plot type")
+#   } else {
+#     stop("Invalid plot type")
+#   }
+#   
+#   
+#   # Add custom features
+#   
+#   # Add statistics
+#   # y_mean = mean(y, na.rm = TRUE)
+#   # y_sd = sd(y, na.rm = TRUE)
+#   # y_range = range(y, na.rm = TRUE)
+#   
+#   # Add titles
+# 
+#   v_unit <- switch(variable,
+#                    "Temperature" = "\u00B0C",
+#                    "Precipitation" = "mm/month",
+#                    "SLP" = "hPa",
+#                    "Z500" = "m",
+#   )
+#   
+#   # Add legend
+#   # Generate units & color scheme depending on variable
+#   # For regression, the dependent variable is defining the color
+#   v_col <- switch(variable,
+#                   "Temperature" = "red3",
+#                   "Precipitation" = "turquoise4",
+#                   "SLP" = "purple4",
+#                   "Z500" = "green4",
+#                   "other" = "darkorange2", #user data
+#                   "black"
+#   )
+#   # If v1 and v2 of a correlation are the same: change the color of v2
+#   if (variable1 == variable2 && !is.na(variable1) && !is.na(variable2)) {
+#     v_col <- switch(variable,
+#                     "Temperature" = "red2",
+#                     "Precipitation" = "turquoise2",
+#                     "SLP" = "purple2",
+#                     "Z500" = "green2",
+#                     "other" = "saddlebrown" #user data
+#     )
+#   }
+#   # 
+#   # # Add a simple legend title and position
+#   # p <- p +
+#   #   scale_color_manual(
+#   #     values = c(setNames(v_col, legend_label_variable), "Reference" = "black"),
+#   #     name = "Legend"
+#   #   ) +
+#   #   scale_linetype_manual(
+#   #     values = c(setNames("solid", legend_label_variable), "Reference" = "dashed"),
+#   #     name = "Legend"
+#   #   )
+# 
+#   
+#   # Check axis limits
+#   
+#   # Return plot
+#   return(p)
+#   
+# }
 
-  v_unit <- switch(variable,
-                   "Temperature" = "\u00B0C",
-                   "Precipitation" = "mm/month",
-                   "SLP" = "hPa",
-                   "Z500" = "m",
-  )
-  
-  # Add legend
-  # Generate units & color scheme depending on variable
-  # For regression, the dependent variable is defining the color
-  v_col <- switch(variable,
-                  "Temperature" = "red3",
-                  "Precipitation" = "turquoise4",
-                  "SLP" = "purple4",
-                  "Z500" = "green4",
-                  "other" = "darkorange2", #user data
-                  "black"
-  )
-  # If v1 and v2 of a correlation are the same: change the color of v2
-  if (variable1 == variable2 && !is.na(variable1) && !is.na(variable2)) {
-    v_col <- switch(variable,
-                    "Temperature" = "red2",
-                    "Precipitation" = "turquoise2",
-                    "SLP" = "purple2",
-                    "Z500" = "green2",
-                    "other" = "saddlebrown" #user data
-    )
-  }
-  # 
-  # # Add a simple legend title and position
-  # p <- p +
-  #   scale_color_manual(
-  #     values = c(setNames(v_col, legend_label_variable), "Reference" = "black"),
-  #     name = "Legend"
-  #   ) +
-  #   scale_linetype_manual(
-  #     values = c(setNames("solid", legend_label_variable), "Reference" = "dashed"),
-  #     name = "Legend"
-  #   )
+#' PLOT TIMESERIES 
+#'
+#' This function sets up time series plots based on the specified type.
+#'
+#' @param type Character. "Anomaly", "Composites", "Monthly", "Correlation" or "Regression".
+#' @param data data.frame. The main time series data table.
+#' @param variable Character. Variable name: "Temperature", "Precipitation", "SLP", "Z500", or "other" (user data).
+#' @param data_v1 data.frame. Time series data table for variable1 (only for "Correlation").
+#' @param data_v2 data.frame. Time series data table for variable2 (only for "Correlation").
+#' @param variable1 Character. Variable name for first correlation dataset (only for "Correlation").
+#' @param variable2 Character. Variable name for second correlation dataset (only for "Correlation").
+#' @param ref Numeric. Mean value of the reference data (default: NA).
+#' @param year_range Numeric vector. Start and end year.
+#' @param month_range_1 Numeric vector. Start and end month (only for "Monthly").
+#' @param month_range_2 Numeric vector. Start and end month (only for "Monthly").
+#' @param titles Character vector. Contains titles, subtitles, axis titles, and custom titles/subtitles.
+#' @param show_key Logical. TRUE or FALSE, whether to show a key.
+#' @param key_position Character. Position of the key: "top", "bottom", "left", "right", "none".
+#' @param moving_ave Logical. TRUE or FALSE, whether to show a moving average.
+#' @param moving_ave_year Numeric. Number of years for moving average calculation (e.g., 11-year moving average).
+#' @param custom_percentile Logical. TRUE or FALSE, whether to show custom percentiles.
+#' @param percentiles Numeric vector. Percentile values (e.g., c(0.9, 0.95, 0.99)).
+#' @param highlights data.frame. Data frame containing highlight information.
+#' @param lines data.frame. Data frame containing line information.
+#' @param points data.frame. Data frame containing point information.
+#'
+#' @return A ggplot object.
 
-  
-  # Check axis limits
-  
-  # Return plot
-  return(p)
-  
-}
-
-plot_timeseries <- function(type, data=NA, variable=NA,
-                            ref, year_range=NA, month_range=NA,
-                            titles=NA, titles_mode=NA, 
-                            show_key=NA, key_position=NA, 
-                            moving_ave=NA, moving_ave_year=NA, 
-                            custom_percentile=NA, percentiles=NA, 
-                            highlights=NA, lines=NA, points=NA,
+plot_timeseries <- function(type, mode=NA, data=NA, variable=NA,
                             data_v1=NA, data_v2=NA, variable1=NA, variable2=NA,
-                            titles_corr=NA, titles_reg=NA, titles_custom=NA) {
-  
+                            ref, year_range=NA, month_range_1=NA, month_range_2=NA,
+                            titles=NA, #titles_mode=NA, titles_corr=NA, titles_reg=NA, titles_custom=NA,
+                            show_key=FALSE, key_position=NA, 
+                            moving_ave=FALSE, moving_ave_year=NA, 
+                            custom_percentile=FALSE, percentiles=NA, 
+                            highlights=NA, lines=NA, points=NA) {
+
   # Create empty plot object
   p <- ggplot()
   
   # Initialize vectors to track labels, colors, linetypes, and units
+  # This ensures correct setup of the legend
   labels <- c()
   colors <- c()
   linetypes <- c()
@@ -1415,50 +1477,93 @@ plot_timeseries <- function(type, data=NA, variable=NA,
   
   # Add data layers based on plot type
   if (type == "Anomaly" || type == "Composites" || type == "Monthly") {
-    label_v0 <- paste(year_range[1], "-", year_range[2], variable, type)
+    label_v0 <- paste(generate_title_months(month_range_1), variable, type)
     props <- get_variable_properties(variable)
-    labels <- c(labels, paste(label_v0, props$unit))
+    labels <- c(labels, label_v0)
     colors <- c(colors, props$color)
     linetypes <- c(linetypes, "solid")
-    units <- c(units, props$unit)
     p <- add_data_to_TS(p, data, variable, type, label_v0)
   } else if (type == "Correlation") {
     # First variable
-    label_v1 <- paste(year_range[1], "-", year_range[2], variable1, type)
+    label_v1 <- paste(year_range[1], "-", year_range[2], variable1, " (V1)")
     props1 <- get_variable_properties(variable1)
-    labels <- c(labels, paste(label_v1, props1$unit))
+    labels <- c(labels, paste(label_v1))
     colors <- c(colors, props1$color)
     linetypes <- c(linetypes, "solid")
     units <- c(units, props1$unit)
     p <- add_data_to_TS(p, data_v1, variable1, type, label_v1)
     
-    # Second variable
-    label_v2 <- paste(year_range[1], "-", year_range[2], variable2, type)
-    props2 <- get_variable_properties(variable2)
-    labels <- c(labels, paste(label_v2, props2$unit))
-    colors <- c(colors, if (variable1 == variable2) "red2" else props2$color)
-    linetypes <- c(linetypes, "dashed")
+    #Second variable
+    label_v2 <- paste(year_range[1], "-", year_range[2], variable2, " (V2)")
+    same_variable <- variable1 == variable2 #if v1=v2, use different colors
+    print(same_variable)
+    props2 <- get_variable_properties(variable2, same_variable)
+    labels <- c(labels, paste(label_v2))
+    colors <- c(colors, props2$color)
+    linetypes <- c(linetypes, "solid")
     units <- c(units, props2$unit)
     p <- add_data_to_TS(p, data_v2, variable2, type, label_v2)
-  } else {
+  }
+  #TODO implement Regression
+  else {
     stop("Invalid plot type")
   }
+
+  # Add custom features
+  custom_features_result <- add_timeseries_custom_features(p, highlights, lines, points, labels, colors, linetypes)
+  # Extract updated values from the result
+  p <- custom_features_result$p
+  labels <- custom_features_result$labels
+  colors <- custom_features_result$colors
+  linetypes <- custom_features_result$linetypes
   
-  # Map labels to colors and linetypes
+  # Map labels to colors and linetypes. This is necessary to display all the different plot features correctly on the legend.
   color_mapping <- setNames(colors, labels)
   linetype_mapping <- setNames(linetypes, labels)
   
-  # Add manual legends
-  p <- p +
-    scale_color_manual(
-      values = color_mapping,
-      name = "Legend"
-    ) +
-    scale_linetype_manual(
-      values = linetype_mapping,
-      name = "Legend"
-    ) +
-    theme(legend.position = key_position %||% "right")
+  # DEBUG
+  print("Color Mapping:")
+  print(color_mapping)
+  
+  print("Linetype Mapping:")
+  print(linetype_mapping)
+  
+  # Add (or hide) manual legend and ensure correct color mappings
+    p <- p +
+      scale_color_manual(
+        values = color_mapping,
+        name = "Legend"
+      ) +
+      scale_linetype_manual(
+        values = linetype_mapping,
+        name = "Legend"
+      ) +
+      {if (show_key == T) {
+        theme(legend.position = key_position)
+      } else {
+        theme(legend.position = "none")
+      }}  #if show_key == F: key_position = "none" --> legend is hidden, but correct colors and linetypes are still applied
+      # should show lines as lines in legend symbols but doesn't work :(
+      # This was the suggestion by ChatGPT, but doesn't work:
+      #guides(color = guide_legend(override.aes = list(linetype = "solid", size = 1.2, shape = NA)))
+    
+  
+  # Add title and subtitle if provided
+  if (!is.null(titles)) {
+    p <- p + labs(x = "Year", y = titles$ts_axis)
+    if (titles$ts_title != " ") {
+      p <- p + ggtitle(titles$ts_title)
+    }
+    if (!is.null(titles$ts_subtitle)) {
+      p <- p + labs(subtitle = titles$ts_subtitle) # overwrites subtitle created above
+    }
+    p <- p + theme(
+      #TODO add custom title size
+      plot.title = element_text(size = 18, face = "bold"),
+      plot.subtitle = element_text(size = 18 / 1.3, face = "plain"),
+      axis.text = element_text(size = 18 / 1.6)
+    )
+  } 
   
   # Return the final plot
   return(p)
@@ -1472,25 +1577,55 @@ plot_timeseries <- function(type, data=NA, variable=NA,
 ##          legend_label = string identifying the colors and linetype later added via scale_color_manual and scale_linetype_manual
 
 add_data_to_TS <- function(p, data, variable, plottype, legend_label) {
-  
+  print("legend label:")
   print(legend_label)
-  
-  # Ensure the data has a column for legend_label
-  data$legend_label <- rep(legend_label, nrow(data))
-  
-  # Map x and y correctly
+
+  # Ensure legend_label is a factor
+  data$legend_label <- factor(rep(legend_label, nrow(data)), levels = legend_label)
+
   x <- data$Year
-  y <- data[, 2]  # Assuming the second column is the variable to be plotted
-  
-  # Add data to plot
+  y <- data[, 2]
+
   p <- p +
-    {if (plottype == "Composites") 
+    {if (plottype == "Composites")
       geom_point(data = data, aes(x = Year, y = y, color = legend_label), size = 2, show.legend = TRUE)
-      else 
+      else
         geom_line(data = data, aes(x = Year, y = y, color = legend_label, linetype = legend_label), linewidth = 1, show.legend = TRUE)} +
     theme_bw(base_size = 15)
-  
+
   return(p)
+}
+
+get_variable_properties <- function(variable, secondary = FALSE) {
+  # Determine unit
+  unit <- switch(variable,
+                 "Temperature" = "\u00B0C",
+                 "Precipitation" = "mm/month",
+                 "SLP" = "hPa",
+                 "Z500" = "m",
+                 "other" = "units")  # Default for custom variables
+  
+  # Determine color
+  if (secondary == FALSE){
+    color <- switch(variable,
+                    "Temperature" = "red3",
+                    "Precipitation" = "turquoise4",
+                    "SLP" = "purple4",
+                    "Z500" = "green4",
+                    "other" = "darkorange2",  # Default for custom variables
+                    "black")  # Fallback
+  } else { #use different colors for Correlation if the variables are the same
+    color <- switch(variable,
+                    "Temperature" = "red2",
+                    "Precipitation" = "turquoise2",
+                    "SLP" = "purple2",
+                    "Z500" = "green2",
+                    "other" = "saddlebrown",  # Default for custom variables
+                    "black")  # Fallback
+  }
+  
+  # Return both unit and color
+  return(list(unit = unit, color = color))
 }
 
 ## (General) REWRITE TS TABLE - rewites ts_datatable to round values and add units
@@ -2712,30 +2847,26 @@ extract_year_range = function(variable1_source,variable2_source,variable1_data_f
   # Find shared year range
   YR_min = max(c(V1_min,V2_min))
   YR_max = min(c(V1_max,V2_max))
-  
-  # Set default values
-  if (variable1_source == "ModE-" & variable2_source == "ModE-"){
-    YR1 = 1800 ; YR2 = 1900
-  } else {
-    YR1 = YR_min ; YR2 = YR_max
-  }  
-  
-  return(c(YR1,YR2,YR_min,YR_max)) 
+
+  return(c(YR_min,YR_max)) 
 }  
 
 
 ## (Regression/Correlation) CREATE USER DATA SUBSET - cuts user data to year_range
-##                          and chosen variable and replaces missing values with NA
+##                          and chosen variable , adjusts years based on lag and
+##                          replaces missing values with NA
 ##                      data_input = as created by read_regcomp_data
 ##                      variable = as selected from user data headings (a single string
 ##                                 for correlation, or multiple strings for regression)
 ##                      year_range = as selected by the user (from the range of years 
 ##                                   generated by extract_year_range) 
+##                      lag = number of years user data has been lagged by
 
-create_user_data_subset = function(data_input,variable,year_range){
-  UD_ss_year_range = subset(data_input,data_input[,1]>=year_range[1] & data_input[,1]<=year_range[2])
+create_user_data_subset = function(data_input,variable,year_range,lag){
+  lagged_year_range = year_range + lag
+  UD_ss_year_range = subset(data_input,data_input[,1]>=lagged_year_range[1] & data_input[,1]<=lagged_year_range[2])
   UD_ss_variable = UD_ss_year_range[,variable]
-  UD_ss_year = UD_ss_year_range[,1]
+  UD_ss_year = UD_ss_year_range[,1] - lag
   
   UD_ss = data.frame(UD_ss_year,UD_ss_variable)
   colnames(UD_ss) = c("Year",variable)
@@ -3861,52 +3992,128 @@ plot_monthly_timeseries <- function(data_input, custom_title, title_mode, key_po
 }
 
 
+# ## (General) ADD CUSTOM FEATURES TO TIMESERIES PLOT (Points, Lines, Highlights)
+# ##              p = ggplot object containting the timeseries plot
+# ##              highlights_data = dataframe with columns x1, x2, y1, y2, color, type
+# ##              lines_data = dataframe with columns location, color, type, orientation
+# ##              points_data = dataframe with columns x_value, y_value, color, shape, size, label
+# 
+# add_timeseries_custom_features <- function(p, highlights_data = NULL, lines_data = NULL, points_data = NULL) {
+#   
+#   # Add boxes (from the highlights_data)
+#   if (!is.null(highlights_data) && nrow(highlights_data) > 0) {
+#     if(any(highlights_data$type == "Fill")) {
+#       fill_data <- subset(highlights_data, type == "Fill")
+#       p <- p + geom_rect(aes(xmin = fill_data$x1, xmax = fill_data$x2,
+#                              ymin = fill_data$y1, ymax = fill_data$y2),
+#                          fill = fill_data$color, color = NA, size = 1)
+#     }
+#     if (any(highlights_data$type == "Box")) {
+#       box_data <- subset(highlights_data, type == "Box")
+#       p <- p + geom_rect(aes(xmin = box_data$x1, xmax = box_data$x2,
+#                              ymin = box_data$y1, ymax = box_data$y2),
+#                          color = box_data$color, fill = NA, size = 1)
+#     }
+#     if(any(highlights_data$type == "Hatched")) {
+#       hatched_data <- subset(highlights_data, type == "Hatched")
+#       p <- p + geom_rect(aes(xmin = hatched_data$x1, xmax = hatched_data$x2,
+#                              ymin = hatched_data$y1, ymax = hatched_data$y2),
+#                          fill = hatched_data$color, color = NA, fill_alpha = 0.5)
+#     }
+#   }
+#   
+#   # Add custom lines (vertical and horizontal)
+#   if (!is.null(lines_data) && nrow(lines_data) > 0) {
+#     # Vertical lines
+#     if (any(lines_data$orientation == "Vertical")) {
+#       vlines <- subset(lines_data, orientation == "Vertical")
+#       p <- p + geom_vline(data = vlines, aes(xintercept = location), color = vlines$color, 
+#                           linetype = vlines$type, size = 1)
+#     }
+#     
+#     # Horizontal lines
+#     if (any(lines_data$orientation == "Horizontal")) {
+#       hlines <- subset(lines_data, orientation == "Horizontal")
+#       p <- p + geom_hline(data = hlines, aes(yintercept = location), color = hlines$color, 
+#                           linetype = hlines$type, size = 1)
+#     }
+#   }
+#   
+#   # Add custom points
+#   if (!is.null(points_data) && nrow(points_data) > 0) {
+#     p <- p + geom_point(data = points_data, aes(x = x_value, y = y_value, 
+#                                                 color = I(points_data$color), shape = I(points_data$shape), size = I(points_data$size))) +
+#       geom_text(data = points_data, aes(x = x_value, y = y_value, label = label),
+#                 vjust = -1, size = 3)
+#   }
+#   
+#   return(p)
+# }
+
+
 ## (General) ADD CUSTOM FEATURES TO TIMESERIES PLOT (Points, Lines, Highlights)
-##              p = ggplot object containting the timeseries plot
+##              p = ggplot object containing the timeseries plot
 ##              highlights_data = dataframe with columns x1, x2, y1, y2, color, type
 ##              lines_data = dataframe with columns location, color, type, orientation
 ##              points_data = dataframe with columns x_value, y_value, color, shape, size, label
+##              labels, colors, linetypes = lists that track legend entries
 
-add_timeseries_custom_features <- function(p, highlights_data = NULL, lines_data = NULL, points_data = NULL) {
-  
-  # Add boxes (from the highlights_data)
-  if (!is.null(highlights_data) && nrow(highlights_data) > 0) {
-    if(any(highlights_data$type == "Fill")) {
-      fill_data <- subset(highlights_data, type == "Fill")
-      p <- p + geom_rect(aes(xmin = fill_data$x1, xmax = fill_data$x2,
-                             ymin = fill_data$y1, ymax = fill_data$y2),
-                         fill = fill_data$color, color = NA, size = 1)
-    }
-    if (any(highlights_data$type == "Box")) {
-      box_data <- subset(highlights_data, type == "Box")
-      p <- p + geom_rect(aes(xmin = box_data$x1, xmax = box_data$x2,
-                             ymin = box_data$y1, ymax = box_data$y2),
-                         color = box_data$color, fill = NA, size = 1)
-    }
-    if(any(highlights_data$type == "Hatched")) {
-      hatched_data <- subset(highlights_data, type == "Hatched")
-      p <- p + geom_rect(aes(xmin = hatched_data$x1, xmax = hatched_data$x2,
-                             ymin = hatched_data$y1, ymax = hatched_data$y2),
-                         fill = hatched_data$color, color = NA, fill_alpha = 0.5)
-    }
-  }
-  
-  # Add custom lines (vertical and horizontal)
-  if (!is.null(lines_data) && nrow(lines_data) > 0) {
-    # Vertical lines
-    if (any(lines_data$orientation == "Vertical")) {
-      vlines <- subset(lines_data, orientation == "Vertical")
-      p <- p + geom_vline(data = vlines, aes(xintercept = location), color = vlines$color, 
-                          linetype = vlines$type, size = 1)
+add_timeseries_custom_features <- function(p, highlights_data = NULL, lines_data = NULL, points_data = NULL, labels, colors, linetypes) {
+    
+    # Add boxes (from the highlights_data)
+    if (!is.null(highlights_data) && nrow(highlights_data) > 0) {
+      if(any(highlights_data$type == "Fill")) {
+        fill_data <- subset(highlights_data, type == "Fill")
+        p <- p + geom_rect(aes(xmin = fill_data$x1, xmax = fill_data$x2,
+                               ymin = fill_data$y1, ymax = fill_data$y2),
+                           fill = fill_data$color, color = NA, size = 1)
+      }
+      if (any(highlights_data$type == "Box")) {
+        box_data <- subset(highlights_data, type == "Box")
+        p <- p + geom_rect(aes(xmin = box_data$x1, xmax = box_data$x2,
+                               ymin = box_data$y1, ymax = box_data$y2),
+                           color = box_data$color, fill = NA, size = 1)
+      }
+      if(any(highlights_data$type == "Hatched")) {
+        hatched_data <- subset(highlights_data, type == "Hatched")
+        p <- p + geom_rect(aes(xmin = hatched_data$x1, xmax = hatched_data$x2,
+                               ymin = hatched_data$y1, ymax = hatched_data$y2),
+                           fill = hatched_data$color, color = NA, fill_alpha = 0.5)
+      }
     }
     
-    # Horizontal lines
-    if (any(lines_data$orientation == "Horizontal")) {
-      hlines <- subset(lines_data, orientation == "Horizontal")
-      p <- p + geom_hline(data = hlines, aes(yintercept = location), color = hlines$color, 
-                          linetype = hlines$type, size = 1)
+    # Add custom lines (vertical and horizontal)
+    if (!is.null(lines_data) && nrow(lines_data) > 0) {
+      lines_data <- subset(lines_data, key_show == TRUE)  # Only show lines if key_show == TRUE
+      
+      # Generate default labels where necessary
+      for (i in 1:nrow(lines_data)) {
+        if (is.na(lines_data$label[i]) || lines_data$label[i] == "") {
+          count <- sum(lines_data$orientation == lines_data$orientation[i], na.rm = TRUE)
+          lines_data$label[i] <- paste(lines_data$orientation[i], "line", count)
+        }
+      }
+      
+      # Add Vertical Lines
+      if (any(lines_data$orientation == "Vertical")) {
+        vlines <- subset(lines_data, orientation == "Vertical")
+        p <- p + geom_vline(data = vlines, aes(xintercept = location, color = label, linetype = label), 
+                            size = 1, show.legend = TRUE)
+      }
+      
+      # Add Horizontal Lines
+      if (any(lines_data$orientation == "Horizontal")) {
+        hlines <- subset(lines_data, orientation == "Horizontal")
+        p <- p + geom_hline(data = hlines, aes(yintercept = location, color = label, linetype = label), 
+                            size = 1, show.legend = TRUE)
+      }
+      
+      # Update color and linetype mappings for the legend
+      labels <- c(labels, lines_data$label)
+      colors <- c(colors, lines_data$color)
+      linetypes <- c(linetypes, lines_data$type)
     }
-  }
+  
   
   # Add custom points
   if (!is.null(points_data) && nrow(points_data) > 0) {
@@ -3933,66 +4140,18 @@ add_percentiles <- function(p, data_input) {
     # Set up variables for plotting
     cnames <- colnames(data_input)
     
-    # Add percentiles (if available)
-    if ("Percentile_0.005" %in% cnames) {
-      p <- p + geom_hline(yintercept = data_input$Percentile_0.005[1], color = "0.99 Percentile", size = 0.8, show.legend = TRUE)
+    # Add custom points
+    if (!is.null(points_data) && nrow(points_data) > 0) {
+      p <- p + geom_point(data = points_data, aes(x = x_value, y = y_value, 
+                                                  color = I(points_data$color), shape = I(points_data$shape), size = I(points_data$size))) +
+        geom_text(data = points_data, aes(x = x_value, y = y_value, label = label),
+                  vjust = -1, size = 3)
     }
-    if ("Percentile_0.025" %in% cnames) {
-      p <- p + geom_hline(yintercept = data_input$Percentile_0.025[1], color = "0.95 Percentile", size = 0.8, show.legend = TRUE)
-    }
-    if ("Percentile_0.05" %in% cnames) {
-      p <- p + geom_hline(yintercept = data_input$Percentile_0.05[1], color = "0.9 Percentile", size = 0.8, show.legend = TRUE)
-    }
-    if ("Percentile_0.95" %in% cnames) {
-      p <- p + geom_hline(yintercept = data_input$Percentile_0.95[1], color = "0.9 Percentile", size = 0.8, show.legend = TRUE)
-    }
-    if ("Percentile_0.975" %in% cnames) {
-      p <- p + geom_hline(yintercept = data_input$Percentile_0.975[1], color = "0.95 Percentile", size = 0.8, show.legend = TRUE)
-    }
-    if ("Percentile_0.995" %in% cnames) {
-      p <- p + geom_hline(yintercept = data_input$Percentile_0.995[1], color = "0.99 Percentile", size = 0.8, show.legend = TRUE)
-    }
+    
+    return(list(p = p, labels = labels, colors = colors, linetypes = linetypes))
+  }}
   
-  return(p)
-}
 
-
-## (Plot Features) ADD TIMESERIES - replots timeseries over other features and
-##                                     adds moving average (if selected)
-##                 data_input = output from add_stats_to_TS_datatable
-##                 tab = "general" or "composite"
-
-add_timeseries <- function(p, data_input, tab, variable) {
-  # Ensure there are rows in data
-  if (nrow(data_input) == 0) return(p)
-  
-  # Set up variables for plotting
-  x <- data_input$Year
-  y <- data_input[, 2]
-  cnames <- colnames(data_input)
-  
-  # Generate color scheme based on variable
-  v_col <- switch(variable,
-                  "Temperature" = "red3",
-                  "Precipitation" = "turquoise4",
-                  "SLP" = "purple4",
-                  "Z500" = "green4",
-                  "black") # default color
-  
-  # Add reference lines or points
-  if (tab == "general") {
-    p <- p + geom_line(aes(x = x, y = y), color = v_col, size = 0.8)
-  } else { # Composites
-    p <- p + geom_point(aes(x = x, y = y), color = v_col, size = 1)
-  }
-  
-  # Add moving average if available
-  if ("Moving_Average" %in% cnames) {
-    p <- p + geom_line(aes(x = x, y = data_input$Moving_Average), color = "black", size = 0.8)
-  }
-  
-  return(p)
-}
 
 
 # (Plot Features) ADD TS KEY - adds a key to the timeseries with the selected
@@ -4090,10 +4249,10 @@ add_TS_key <- function(p, key_position, highlights_data, lines_data, variable, m
   # p <- p + scale_color_manual(values = setNames(legend_data$color, legend_data$label)) +
   #   guides(color = guide_legend(override.aes = list(linetype = legend_data$lty, size = legend_data$lwd)))
   
-  p <- p +
-    scale_color_manual(values = c("0.99 Percentile" = "firebrick4", "0.95 Percentile" = "orangered3", "0.9 Percentile" =  "darkgoldenrod3"),
-                       name = "Legend")
-}
+#   p <- p +
+#     scale_color_manual(values = c("0.99 Percentile" = "firebrick4", "0.95 Percentile" = "orangered3", "0.9 Percentile" =  "darkgoldenrod3"),
+#                        name = "Legend")
+# }
 
 # p <- p +
 #   scale_color_manual(
@@ -4143,7 +4302,7 @@ add_TS_key <- function(p, key_position, highlights_data, lines_data, variable, m
 # #   # p <- p +
 # #   #   guides(color = guide_legend(title = "Legend", title.position = "top", title.hjust = 0.5, title.vjust = 0.5, ncol = 1, title.theme = element_text(size = 12)))
 #   return(p)
-# }
+# }nj
 
 
 # Helper function fot to generate month label
@@ -4155,8 +4314,3 @@ generate_month_label <- function(range) {
     paste(month_letters[(range[1]:range[2]) + 1], collapse = "")
   }
 }
-
-
-
-
-
