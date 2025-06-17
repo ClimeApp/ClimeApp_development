@@ -8,6 +8,7 @@ source("popovers.R")
 source("setup.R")
 
 # Define UI ----
+
 ui <- navbarPage(
   id = "nav1",
   
@@ -754,6 +755,7 @@ ui <- navbarPage(
                                                              choices = NULL,
                                                              multiple = TRUE
                                                            ), uiOutput("colorpickers"), # Dynamically generate color pickers for each shapefile
+
                                                            
                                                        )),
                                               ),

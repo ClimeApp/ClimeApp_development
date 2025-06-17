@@ -850,8 +850,9 @@ plot_map <- function(data_input,
   for (file in plotOrder) {
     file_name <- tools::file_path_sans_ext(basename(file))
     if (file_name %in% shpPickers) {
-      shape <- shapefiles[[file_name]]
-      
+
+      shape <- st_read(file)
+
       # Set or transform CRS to WGS84
       if (is.na(st_crs(shape))) {
         message(paste("CRS missing for", file_name, "- setting CRS to WGS84 (EPSG:4326)"))
@@ -2703,6 +2704,7 @@ create_new_points_data = function(point_x_values,
   size = rep(point_size, length(x_value))
   # Combine into a dataframe
   new_p_data = data.frame(x_value, y_value, label, shape, color, size)
+
   
   return(new_p_data)
   

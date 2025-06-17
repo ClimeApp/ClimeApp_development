@@ -2261,22 +2261,22 @@ server <- function(input, output, session) {
   # Map coordinates/highlights setter
   observeEvent(input$map_brush1,{
     
-    x_brush_1 = input$map_brush1[[1]]
-    x_brush_2 = input$map_brush1[[2]]
+    # Convert x values
+    x_brush1_1 = (input$map_brush1[[1]]*1.14) - (0.14*lonlat_vals()[1])
+    x_brush1_2 = (input$map_brush1[[2]]*1.14) - (0.14*lonlat_vals()[1])
     
     if (input$custom_features == FALSE){
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude",
         label = NULL,
-        value = round(c(x_brush_1,x_brush_2), digits = 2))
+        value = round(c(x_brush1_1,x_brush1_2), digits = 2))
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude",
         label = NULL,
-        value = round(c(input$map_brush1[[3]], input$map_brush1[[4]]), digits = 2)
-      )
+        value = round(c(input$map_brush1[[3]],input$map_brush1[[4]]), digits = 2))
     } else {
       updateRadioButtons(
         session = getDefaultReactiveDomain(),
@@ -2288,14 +2288,13 @@ server <- function(input, output, session) {
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values",
         label = NULL,
-        value = round(c(x_brush_1, x_brush_2), digits = 2))
+        value = round(c(x_brush1_1,x_brush1_2), digits = 2))
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values",
         label = NULL,
-        value = round(c(input$map_brush1[[3]], input$map_brush1[[4]]), digits = 2)
-      )
+        value = round(c(input$map_brush1[[3]],input$map_brush1[[4]]), digits = 2))
     }
   })
   
@@ -2326,7 +2325,9 @@ server <- function(input, output, session) {
   
   # Map custom points selector
   observeEvent(input$map_dblclick1,{
-    dblclick <- input$map_dblclick1
+    
+    # Convert x values
+    x_dblclick1 = (input$map_dblclick1$x*1.14) - (0.14*lonlat_vals()[1])
     
     updateCheckboxInput(
       session = getDefaultReactiveDomain(),
@@ -2344,14 +2345,14 @@ server <- function(input, output, session) {
       session = getDefaultReactiveDomain(),
       inputId = "point_location_x",
       label = NULL,
-      value = as.character(round(dblclick$x, digits = 2))
+      value = as.character(round(x_dblclick1, digits = 2))
     )
     
     updateTextInput(
       session = getDefaultReactiveDomain(),
       inputId = "point_location_y",
       label = NULL,
-      value = as.character(round(dblclick$y, digits = 2))
+      value = as.character(round(input$map_dblclick1$y, digits = 2))
     )
   })
   
@@ -3164,22 +3165,22 @@ server <- function(input, output, session) {
   # Map coordinates/highlights setter
   observeEvent(input$map_brush2,{
     
-    x_brush_1 = input$map_brush2[[1]]
-    x_brush_2 = input$map_brush2[[2]]
+    # Convert x values
+    x_brush2_1 = (input$map_brush2[[1]]*1.14) - (0.14*lonlat_vals2()[1])
+    x_brush2_2 = (input$map_brush2[[2]]*1.14) - (0.14*lonlat_vals2()[1])
     
     if (input$custom_features2 == FALSE){
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude2",
         label = NULL,
-        value = round(c(x_brush_1,x_brush_2), digits = 2))
+        value = round(c(x_brush2_1,x_brush2_2), digits = 2))
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude2",
         label = NULL,
-        value = round(c(input$map_brush2[[3]], input$map_brush2[[4]]), digits = 2)
-      )
+        value = round(c(input$map_brush2[[3]],input$map_brush2[[4]]), digits = 2))
     } else {
       updateRadioButtons(
         session = getDefaultReactiveDomain(),
@@ -3199,12 +3200,15 @@ server <- function(input, output, session) {
         label = NULL,
         value = round(c(input$map_brush2[[3]], input$map_brush2[[4]]), digits = 2)
       )
+
     }
   })
   
   # Map custom points selector
   observeEvent(input$map_dblclick2,{
-    dblclick <- input$map_dblclick2
+    
+    # Convert x values
+    x_dblclick2 = (input$map_dblclick2$x*1.14) - (0.14*lonlat_vals2()[1])
     
     updateCheckboxInput(
       session = getDefaultReactiveDomain(),
@@ -3222,14 +3226,14 @@ server <- function(input, output, session) {
       session = getDefaultReactiveDomain(),
       inputId = "point_location_x2",
       label = NULL,
-      value = as.character(round(dblclick$x, digits = 2))
+      value = as.character(round(x_dblclick2, digits = 2))
     )
     
     updateTextInput(
       session = getDefaultReactiveDomain(),
       inputId = "point_location_y2",
       label = NULL,
-      value = as.character(round(dblclick$y, digits = 2))
+      value = as.character(round(input$map_dblclick2$y, digits = 2))
     )
   })
   
@@ -3326,6 +3330,7 @@ server <- function(input, output, session) {
         input$point_size2
       )
     ))
+
   })  
   
   observeEvent(input$remove_last_point2, {
@@ -4406,6 +4411,7 @@ server <- function(input, output, session) {
         label = NULL,
         value = round(c(y_brush_1, y_brush_2), digits = 2))
       
+
     } else {
       updateRadioButtons(
         session = getDefaultReactiveDomain(),
@@ -4418,19 +4424,20 @@ server <- function(input, output, session) {
         inputId = "highlight_x_values3",
         label = NULL,
         value = round(c(x_brush_1, x_brush_2), digits = 2))
+
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values3",
         label = NULL,
-        value = round(c(input$map_brush3[[3]], input$map_brush3[[4]]), digits = 2)
-      )
+        value = round(c(input$map_brush3[[3]],input$map_brush3[[4]]), digits = 2))
     }
   })
   
   # Map custom points selector
   observeEvent(input$map_dblclick3,{
     dblclick <- input$map_dblclick3
+
     
     updateCheckboxInput(
       session = getDefaultReactiveDomain(),
@@ -4448,14 +4455,14 @@ server <- function(input, output, session) {
       session = getDefaultReactiveDomain(),
       inputId = "point_location_x3",
       label = NULL,
-      value = as.character(round(dblclick$x, digits = 2))
+      value = as.character(round(x_dblclick3, digits = 2))
     )
     
     updateTextInput(
       session = getDefaultReactiveDomain(),
       inputId = "point_location_y3",
       label = NULL,
-      value = as.character(round(dblclick$y, digits = 2))
+      value = as.character(round(input$map_dblclick3$y, digits = 2))
     )
   })
   
@@ -7482,6 +7489,7 @@ server <- function(input, output, session) {
       input$center_lon
     )
   }
+
   
   output$map <- renderPlot({
     map_plot()
@@ -9427,7 +9435,15 @@ server <- function(input, output, session) {
     }
     return(v_dv)
   })
-
+  
+  # Map Points
+  observeEvent(input$add_point, {
+    map_points_data_reg(rbind(map_points_data(),
+                              create_new_points_data(input$point_location_x,input$point_location_y,
+                                                     input$point_label,input$point_shape,
+                                                     input$point_colour,input$point_size)))
+  })  
+  
   observeEvent(input$remove_last_point, {
     map_points_data(map_points_data()[-nrow(map_points_data()),])
   })
