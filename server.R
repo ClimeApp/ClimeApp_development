@@ -1378,6 +1378,89 @@ server <- function(input, output, session) {
                            asis = FALSE)})
   
   ##Regression (Main Panel)
+  
+  ## Regression TS
+  
+  observe({shinyjs::toggle(id = "hidden_custom_ts4",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_ts4 == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_title_ts4",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$title_mode_ts4 == "Custom",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_key_position_ts4",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$show_key_ts4 == TRUE,
+                           asis = FALSE)})
+
+  observe({shinyjs::toggle(id = "hidden_custom_features_ts4",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_features_ts4 == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_points_ts4",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$feature_ts4 == "Point",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_highlights_ts4",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$feature_ts4 == "Highlight",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_line_ts4",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$feature_ts4 == "Line",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_download_ts4",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$download_options_ts4 == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "highlight_label_ts4",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$show_highlight_on_legend_ts4 == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "line_label_ts4",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$show_line_on_legend_ts4 == TRUE,
+                           asis = FALSE)})
+  
   ## Regression Maps
   # Hidden Customization and Download Regression Coefficients
   observe({shinyjs::toggle(id = "hidden_custom_map_reg_coeff",
@@ -9586,24 +9669,34 @@ server <- function(input, output, session) {
   })
   
   plot_titles_reg_ts = reactive({
-    
     req(input$nav1 == "tab4") # Only run code if in the current tab
     
-    req(month_range_secondary(),month_range_primary())
+    req(month_range_secondary(), month_range_primary())
     
-    ptr = generate_regression_titles_ts(input$source_iv,input$source_dv,
-                                        input$dataset_selected_iv,input$dataset_selected_dv,
-                                        input$ME_variable_dv,
-                                        input$mode_selected_iv, input$mode_selected_dv,
-                                        month_range_secondary(),month_range_primary(),
-                                        lonlat_vals_iv()[1:2],lonlat_vals_dv()[1:2],lonlat_vals_iv()[3:4],lonlat_vals_dv()[3:4],
-                                        input$range_years4, reg_resi_year_val(),
-                                        variables_iv(), variable_dv(), 
-                                        match(input$coeff_variable,variables_iv()), match(input$pvalue_variable,variables_iv()),
-                                        input$title_mode_reg,
-                                        input$title1_input_reg,
-                                        input$title2_input_reg,
-                                        input$title_size_input_reg
+    ptr = generate_regression_titles_ts(
+            input$source_iv,
+            input$source_dv,
+            input$dataset_selected_iv,
+            input$dataset_selected_dv,
+            input$ME_variable_dv,
+            input$mode_selected_iv,
+            input$mode_selected_dv,
+            month_range_secondary(),
+            month_range_primary(),
+            lonlat_vals_iv()[1:2],
+            lonlat_vals_dv()[1:2],
+            lonlat_vals_iv()[3:4],
+            lonlat_vals_dv()[3:4],
+            input$range_years4,
+            reg_resi_year_val(),
+            variables_iv(),
+            variable_dv(),
+            match(input$coeff_variable, variables_iv()),
+            match(input$pvalue_variable, variables_iv()),
+            input$title_mode_ts4,
+            input$title1_input_ts4,
+            "Default",
+            18
     )
     return(ptr)
   })
@@ -10456,7 +10549,7 @@ server <- function(input, output, session) {
                                                         } else {
                                                           pdf(file, width = 14, height = 6, bg = "transparent") 
                                                         }
-                                                        plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5)
+                                                        print(monthly_ts_plot())
                                                         dev.off()
                                                       }) 
   

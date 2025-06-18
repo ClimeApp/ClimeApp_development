@@ -3641,7 +3641,7 @@ ui <- navbarPage(
                                             #Easter Calm
                                             uiOutput("keep_calm", inline = TRUE),
                                             
-                                            ### Shared TS plot: End ----          
+                                   ### Shared TS plot: End ----          
                                    ),
                                    
                                    ### Map plot: START ----
@@ -4528,6 +4528,226 @@ ui <- navbarPage(
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
+                                            
+                                            #### Customization panels START ----       
+                                            fluidRow(
+                                              
+                                              #### Timeseries customization ----
+                                              column(width = 4,
+                                                     h4("Customize your timeseries", style = "color: #094030;",timeseries_customization_popover("pop_correlation_custime")),  
+                                                     
+                                                     checkboxInput(inputId = "custom_ts4",
+                                                                   label   = "Timeseries customization",
+                                                                   value   = FALSE),
+                                                     
+                                                     shinyjs::hidden( 
+                                                       div(id = "hidden_custom_ts4",
+                                                           radioButtons(inputId  = "title_mode_ts4",
+                                                                        label    = "Title customization:",
+                                                                        choices  = c("Default", "Custom"),
+                                                                        selected = "Default" ,
+                                                                        inline = TRUE),
+                                                           
+                                                           shinyjs::hidden( 
+                                                             div(id = "hidden_custom_title_ts4",
+                                                                 
+                                                                 textInput(inputId     = "title1_input_ts4",
+                                                                           label       = "Custom plot title:", 
+                                                                           value       = NA,
+                                                                           width       = NULL,
+                                                                           placeholder = "Custom title")
+                                                             )),
+                                                           
+                                                           checkboxInput(inputId = "show_key_ts4",
+                                                                         label   = "Show key",
+                                                                         value   = FALSE),
+                                                           
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_key_position_ts4",
+                                                                 radioButtons(inputId  = "key_position_ts4",
+                                                                              label    = "Key position:",
+                                                                              choiceNames  = c("right","bottom"),
+                                                                              choiceValues = c("right","bottom"),
+                                                                              selected = "right" ,
+                                                                              inline = TRUE))),
+                                                       )),    
+                                              ),
+                                              
+                                              #### Add Custom features (points, highlights, lines) ----                        
+                                              column(width = 4,
+                                                     h4("Custom features", style = "color: #094030;",timeseries_features_popover("pop_correlation_timefeat")),
+                                                     
+                                                     checkboxInput(inputId = "custom_features_ts4",
+                                                                   label   = "Enable custom features",
+                                                                   value   = FALSE),
+                                                     
+                                                     shinyjs::hidden(
+                                                       div(id = "hidden_custom_features_ts4",
+                                                           radioButtons(inputId      = "feature_ts4",
+                                                                        label        = "Select a feature type:",
+                                                                        inline       = TRUE,
+                                                                        choices      = c("Point", "Highlight", "Line")),
+                                                           
+                                                           #Custom Points
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_custom_points_ts4",
+                                                                 
+                                                                 h4(helpText("Add custom points",timeseries_points_popover("pop_correlation_timepoint"))),
+                                                                 h6(helpText("Enter position manually or click on plot")),
+                                                                 
+                                                                 textInput(inputId = "point_label_ts4", 
+                                                                           label   = "Point label:",
+                                                                           value   = ""),
+                                                                 
+                                                                 column(width = 12, offset = 0,
+                                                                        column(width = 6,
+                                                                               textInput(inputId = "point_location_x_ts4", 
+                                                                                         label   = "Point x position:",
+                                                                                         value   = "")
+                                                                        ),
+                                                                        column(width = 6,
+                                                                               textInput(inputId = "point_location_y_ts4", 
+                                                                                         label   = "Point y position:",
+                                                                                         value   = "")
+                                                                        )),
+                                                                 
+                                                                 
+                                                                 radioButtons(inputId      = "point_shape_ts4",
+                                                                              label        = "Point shape:",
+                                                                              inline       = TRUE,
+                                                                              choices      = c("\u25CF", "\u25B2", "\u25A0")),
+                                                                 
+                                                                 colourInput(inputId = "point_colour_ts4", 
+                                                                             label   = "Point colour:",
+                                                                             showColour = "background",
+                                                                             palette = "limited"),                        
+                                                                 
+                                                                 
+                                                                 numericInput(inputId = "point_size_ts4",
+                                                                              label   = "Point size",
+                                                                              value   = 4,
+                                                                              min     = 4,
+                                                                              max     = 20),
+                                                                 
+                                                                 column(width = 12,
+                                                                        
+                                                                        actionButton(inputId = "add_point_ts4",
+                                                                                     label = "Add point"),
+                                                                        br(), br(), br(),
+                                                                        actionButton(inputId = "remove_last_point_ts4",
+                                                                                     label = "Remove last point"),
+                                                                        actionButton(inputId = "remove_all_points_ts4",
+                                                                                     label = "Remove all points")),
+                                                             )),
+                                                           
+                                                           #Custom highlights
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_custom_highlights_ts4",
+                                                                 
+                                                                 h4(helpText("Add custom highlights",timeseries_highlights_popover("pop_correlation_timehl"))),
+                                                                 h6(helpText("Enter values manually or draw a box on plot")),
+                                                                 
+                                                                 numericRangeInput(inputId = "highlight_x_values_ts4",
+                                                                                   label  = "X values:",
+                                                                                   value  = "",
+                                                                                   min    = -180,
+                                                                                   max    = 180),
+                                                                 
+                                                                 numericRangeInput(inputId = "highlight_y_values_ts4",
+                                                                                   label  = "Y values:",
+                                                                                   value  = "",
+                                                                                   min    = -90,
+                                                                                   max    = 90),
+                                                                 
+                                                                 colourInput(inputId = "highlight_colour_ts4", 
+                                                                             label   = "Highlight colour:",
+                                                                             showColour = "background",
+                                                                             palette = "limited"),
+                                                                 
+                                                                 radioButtons(inputId      = "highlight_type_ts4",
+                                                                              label        = "Type for highlight:",
+                                                                              inline       = TRUE,
+                                                                              choiceNames  = c("Fill \u25FC", "Box \u25FB"),
+                                                                              choiceValues = c("Fill","Box")),
+                                                                 
+                                                                 checkboxInput(inputId = "show_highlight_on_legend_ts4",
+                                                                               label   = "Show on key",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 hidden(
+                                                                   textInput(inputId = "highlight_label_ts4", 
+                                                                             label   = "Label:",
+                                                                             value   = "")),
+                                                                 
+                                                                 
+                                                                 column(width = 12,
+                                                                        actionButton(inputId = "add_highlight_ts4",
+                                                                                     label = "Add highlight"),
+                                                                        br(), br(), br(),
+                                                                        actionButton(inputId = "remove_last_highlight_ts4",
+                                                                                     label = "Remove last highlight"),
+                                                                        actionButton(inputId = "remove_all_highlights_ts4",
+                                                                                     label = "Remove all highlights")),
+                                                                 
+                                                             )),
+                                                           
+                                                           #Custom lines
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_custom_line_ts4",
+                                                                 
+                                                                 h4(helpText("Add custom lines",timeseries_lines_popover("pop_correlation_timelines"))),
+                                                                 h6(helpText("Enter position manually or click on plot, double click to change orientation")),
+                                                                 
+                                                                 radioButtons(inputId      = "line_orientation_ts4",
+                                                                              label        = "Orientation:",
+                                                                              inline       = TRUE,
+                                                                              choices      = c("Vertical", "Horizontal")),
+                                                                 
+                                                                 textInput(inputId = "line_position_ts4", 
+                                                                           label   = "Position:",
+                                                                           value   = "",
+                                                                           placeholder = "1830, 1832"),
+                                                                 
+                                                                 colourInput(inputId = "line_colour_ts4", 
+                                                                             label   = "Line colour:",
+                                                                             showColour = "background",
+                                                                             palette = "limited"),
+                                                                 
+                                                                 radioButtons(inputId      = "line_type_ts4",
+                                                                              label        = "Type:",
+                                                                              inline       = TRUE,
+                                                                              choices = c("solid", "dashed")),
+                                                                 
+                                                                 checkboxInput(inputId = "show_line_on_legend_ts4",
+                                                                               label   = "Show on key",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 hidden(
+                                                                   textInput(inputId = "line_label_ts4", 
+                                                                             label   = "Label:",
+                                                                             value   = "")),
+                                                                 
+                                                                 column(width = 12,
+                                                                        actionButton(inputId = "add_line_ts4",
+                                                                                     label = "Add line"),
+                                                                        br(), br(), br(),
+                                                                        actionButton(inputId = "remove_last_line_ts4",
+                                                                                     label = "Remove last line"),
+                                                                        actionButton(inputId = "remove_all_lines_ts4",
+                                                                                     label = "Remove all lines")
+                                                                 )
+                                                             ))
+                                                       ))),
+                                              
+                                              #### Custom statistics ----
+                                              column(width = 4,
+                                              # No statistics implemented
+                                              ),
+                                              
+                                            #### Customization panels END ----
+                                            ),
+                                            
+                                            #### Download Regression TS ----
                                             br(),
                                             div(id = "reg1",
                                                 fluidRow(
@@ -4593,7 +4813,7 @@ ui <- navbarPage(
                                                      shinyjs::hidden(
                                                        div(id = "hidden_custom_map_reg_coeff",
                                                            
-                                                           selectInput(inputId = "projection4",
+                                                           selectInput(inputId = "projection4a",
                                                                        label = "Projection:",
                                                                        choices = c("UTM (default)", "Robinson", "Orthographic", "LAEA"),
                                                                        selected = "UTM (default)"),
@@ -4601,12 +4821,12 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_map_center_reg",
                                                                  
-                                                                 numericInput(inputId = "center_lat4",
+                                                                 numericInput(inputId = "center_lat4a",
                                                                               label = "Center latitude:",
                                                                               value = 0,
                                                                               min = -90,
                                                                               max = 90),
-                                                                 numericInput(inputId = "center_lon4",
+                                                                 numericInput(inputId = "center_lon4a",
                                                                               label = "Center longitude:",
                                                                               value = 0,
                                                                               min = -180,
@@ -4801,12 +5021,12 @@ ui <- navbarPage(
                                                        )
                                                      )),
                                               
-                                              #### Customization panels END ----
+                                            #### Customization panels END ----
                                             ),
                                             
                                             br(),
                                             
-                                            ## Download and Upload Regression Coefficients Map
+                                            #### Download and Upload Regression Coefficients Map ----
                                             h4("Downloads", style = "color: #094030;", downloads_popover("pop_composites_map_downloads")),
                                             checkboxInput(
                                               inputId = "download_options_coeff",
@@ -4846,8 +5066,8 @@ ui <- navbarPage(
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
-                                            
-                                   ),
+                                              
+                                     ),
                                    
                                    ### Regression pvalues ----
                                    tabPanel("Regression p values",
@@ -4878,7 +5098,7 @@ ui <- navbarPage(
                                                      shinyjs::hidden(
                                                        div(id = "hidden_custom_map_reg_pval",
                                                            
-                                                           selectInput(inputId = "projection4",
+                                                           selectInput(inputId = "projection4b",
                                                                        label = "Projection:",
                                                                        choices = c("UTM (default)", "Robinson", "Orthographic", "LAEA"),
                                                                        selected = "UTM (default)"),
@@ -4886,12 +5106,12 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_map_center_reg",
                                                                  
-                                                                 numericInput(inputId = "center_lat4",
+                                                                 numericInput(inputId = "center_lat4b",
                                                                               label = "Center latitude:",
                                                                               value = 0,
                                                                               min = -90,
                                                                               max = 90),
-                                                                 numericInput(inputId = "center_lon4",
+                                                                 numericInput(inputId = "center_lon4b",
                                                                               label = "Center longitude:",
                                                                               value = 0,
                                                                               min = -180,
@@ -5089,12 +5309,12 @@ ui <- navbarPage(
                                                        )
                                                      )),
                                               
-                                              #### Customization panels END ----
+                                            #### Customization panels END ----
                                             ),
                                             
                                             br(),
                                             
-                                            # Downloads
+                                            #### Downloads Regression p values ----
                                             h4("Downloads", style = "color: #094030;",downloads_popover("pop_composites_map_downloads")),
                                             checkboxInput(inputId = "download_options_pval",
                                                           label   = "Enable download options",
@@ -5168,7 +5388,7 @@ ui <- navbarPage(
                                                      shinyjs::hidden(
                                                        div(id = "hidden_custom_maps_reg_res",
                                                            
-                                                           selectInput(inputId = "projection4",
+                                                           selectInput(inputId = "projection4c",
                                                                        label = "Projection:",
                                                                        choices = c("UTM (default)", "Robinson", "Orthographic", "LAEA"),
                                                                        selected = "UTM (default)"),
@@ -5176,12 +5396,12 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_map_center_reg",
                                                                  
-                                                                 numericInput(inputId = "center_lat4",
+                                                                 numericInput(inputId = "center_lat4c",
                                                                               label = "Center latitude:",
                                                                               value = 0,
                                                                               min = -90,
                                                                               max = 90),
-                                                                 numericInput(inputId = "center_lon4",
+                                                                 numericInput(inputId = "center_lon4c",
                                                                               label = "Center longitude:",
                                                                               value = 0,
                                                                               min = -180,
@@ -5230,8 +5450,6 @@ ui <- navbarPage(
                                                                               value   = 18,
                                                                               min     = 1,
                                                                               max     = 40))),
-                                                           
-                                                           
                                                            
                                                            br(),
                                                            
@@ -5379,7 +5597,7 @@ ui <- navbarPage(
                                                        )
                                                      )),
                                               
-                                              #### Customization panels END ----
+                                            #### Customization panels END ----
                                             ),
                                             
                                             br(),
@@ -5484,10 +5702,10 @@ ui <- navbarPage(
                                             )
                                    )       
                                    
-                                   ## Main Panel END ----
+             ## Main Panel END ----
              ), width = 8)
              
-             # Regression END ----
+  # Regression END ----
            )),
   
   # Annual cycles START ----                             

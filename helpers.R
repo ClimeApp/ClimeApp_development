@@ -3953,7 +3953,8 @@ generate_regression_titles = function(independent_source,
 
 generate_regression_titles_ts = function(independent_source,
                                          dependent_source,
-                                         dataset_i,dataset_d,
+                                         dataset_i,
+                                         dataset_d,
                                          modERA_dependent_variable,
                                          mode_i,
                                          mode_d,
@@ -3972,7 +3973,8 @@ generate_regression_titles_ts = function(independent_source,
                                          map_title_mode,
                                          map_custom_title,
                                          map_custom_subtitle,
-                                         title_size=18){
+                                         title_size = 18
+){
   
   # Create Independent variable titles
   if (independent_source == "User Data"){
@@ -4088,7 +4090,7 @@ generate_regression_titles_ts = function(independent_source,
     map_title = map_custom_title
     map_subtitle = map_custom_subtitle
   } else {
-    map_title = "Correlation coefficient"
+    map_title = "Regression"
     map_subtitle = paste("Test")
   }
   
