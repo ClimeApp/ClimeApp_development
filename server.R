@@ -181,52 +181,52 @@ server <- function(input, output, session) {
       # Return the result
       if (overlap_lon && overlap_lat) {
         shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
-  
-        // Show the tabPanel
-        tabPanelToHide.show();
-      ')
+      // Get the tabPanel element by ID
+      var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+      // Show the tabPanel
+      tabPanelToHide.show();
+    ')
         shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
-  
-        // Show the tabPanel
-        tabPanelToHide.show();
-      ')
+      // Get the tabPanel element by ID
+      var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+
+      // Show the tabPanel
+      tabPanelToHide.show();
+    ')
         
       } else {
         shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
-  
-        // Hide the tabPanel
-        tabPanelToHide.hide();
-      ')
+      // Get the tabPanel element by ID
+      var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+      // Hide the tabPanel
+      tabPanelToHide.hide();
+    ')
         
         shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
-  
-        // Hide the tabPanel
-        tabPanelToHide.hide();
-      ')
+      // Get the tabPanel element by ID
+      var tabPanelToHide = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+
+      // Hide the tabPanel
+      tabPanelToHide.hide();
+    ')
       }
     } else if ((input$type_v1 == "Field" && input$type_v2 == "Timeseries") || (input$type_v1 == "Timeseries" && input$type_v2 == "Field")) {
       shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToShow = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
-  
-        // Show the tabPanel
-        tabPanelToShow.show();
-      ')
+      // Get the tabPanel element by ID
+      var tabPanelToShow = $("#tabset3 a[data-value=\'corr_map_tab\']").parent();
+
+      // Show the tabPanel
+      tabPanelToShow.show();
+    ')
       shinyjs::runjs('
-        // Get the tabPanel element by ID
-        var tabPanelToShow = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
-  
-        // Show the tabPanel
-        tabPanelToShow.show();
-      ')
+      // Get the tabPanel element by ID
+      var tabPanelToShow = $("#tabset3 a[data-value=\'corr_map_data_tab\']").parent();
+
+      // Show the tabPanel
+      tabPanelToShow.show();
+    ')
     }
   })
   
@@ -3715,22 +3715,30 @@ server <- function(input, output, session) {
     selected_type_v1 = input$type_v1
     
     # Check if source is user data OR map area is very small
-    if ((input$source_v1 == "User Data") | (((input$range_longitude_v1[2]-input$range_longitude_v1[1])<4) & ((input$range_latitude_v1[2]-input$range_latitude_v1[1]<4)))){
+    if ((input$source_v1 == "User Data") |
+        (((
+          input$range_longitude_v1[2] - input$range_longitude_v1[1]
+        ) < 4) &
+        ((
+          input$range_latitude_v1[2] - input$range_latitude_v1[1] < 4
+        )))) {
       updateRadioButtons(
         session = getDefaultReactiveDomain(),
         inputId = "type_v1",
         label = NULL,
         choices = c("Timeseries"),
-        selected =  "Timeseries")
+        selected =  "Timeseries"
+      )
       
     } else {
       updateRadioButtons(
         session = getDefaultReactiveDomain(),
         inputId = "type_v1",
         label = NULL,
-        choices  = c( "Field","Timeseries"),
+        choices  = c("Field", "Timeseries"),
         selected = selected_type_v1,
-        inline = TRUE)
+        inline = TRUE
+      )
     }
   })    
   
@@ -4339,15 +4347,24 @@ server <- function(input, output, session) {
   
   # Update ts/map correlation method
   observeEvent(input$cor_method_ts, {
-    updateRadioButtonsGroup(input$cor_method_ts, c("cor_method_ts", "cor_method_map", "cor_method_map_data"))
+    updateRadioButtonsGroup(
+      input$cor_method_ts,
+      c("cor_method_ts", "cor_method_map", "cor_method_map_data")
+    )
   })
   
   observeEvent(input$cor_method_map, {
-    updateRadioButtonsGroup(input$cor_method_map, c("cor_method_ts", "cor_method_map", "cor_method_map_data"))
+    updateRadioButtonsGroup(
+      input$cor_method_map,
+      c("cor_method_ts", "cor_method_map", "cor_method_map_data")
+    )
   })
   
   observeEvent(input$cor_method_map_data, {
-    updateRadioButtonsGroup(input$cor_method_map_data, c("cor_method_ts", "cor_method_map", "cor_method_map_data"))
+    updateRadioButtonsGroup(
+      input$cor_method_map_data,
+      c("cor_method_ts", "cor_method_map", "cor_method_map_data")
+    )
   })
   
   
@@ -8497,45 +8514,65 @@ server <- function(input, output, session) {
   # Generate plot dimensions
   plot_dimensions_v1 <- reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
-    if (input$type_v1 == "Timeseries"){
-      map_dims_v1 = c(session$clientData$output_plot_v1_width,400)
+    if (input$type_v1 == "Timeseries") {
+      map_dims_v1 = c(session$clientData$output_plot_v1_width, 400)
     } else {
-      map_dims_v1 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_plot_v1_width, (input$dimension[2]), FALSE)
+      map_dims_v1 = generate_map_dimensions(
+        subset_lons_primary(),
+        subset_lats_primary(),
+        session$clientData$output_plot_v1_width,
+        (input$dimension[2]),
+        FALSE
+      )
     }
-    return(map_dims_v1)  
+    return(map_dims_v1)
   })
   
   plot_dimensions_v2 <- reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
-    if (input$type_v2 == "Timeseries"){
-      map_dims_v2 = c(session$clientData$output_plot_v2_width,400)
+    if (input$type_v2 == "Timeseries") {
+      map_dims_v2 = c(session$clientData$output_plot_v2_width, 400)
     } else {
-      map_dims_v2 = generate_map_dimensions(subset_lons_secondary(), subset_lats_secondary(), session$clientData$output_plot_v2_width, (input$dimension[2]), FALSE)
+      map_dims_v2 = generate_map_dimensions(
+        subset_lons_secondary(),
+        subset_lats_secondary(),
+        session$clientData$output_plot_v2_width,
+        (input$dimension[2]),
+        FALSE
+      )
     }
-    return(map_dims_v2)  
+    return(map_dims_v2)
   })     
   
-  # Plot 
+  # Plot
   output$plot_v1 <- renderPlot({
-    if (input$source_v1 == "User Data"){
-      plot_user_timeseries(user_subset_v1(),"darkorange2")
-    } else if (input$type_v1 == "Timeseries"){
+    if (input$source_v1 == "User Data") {
+      plot_user_timeseries(user_subset_v1(), "darkorange2")
+    } else if (input$type_v1 == "Timeseries") {
       timeseries_plot_v1()
     } else{
       ME_map_plot_v1()
     }
-  },width = function(){plot_dimensions_v1()[1]},height = function(){plot_dimensions_v1()[2]})  
+  }, width = function() {
+    plot_dimensions_v1()[1]
+  }, height = function() {
+    plot_dimensions_v1()[2]
+  })  
   
   
   output$plot_v2 <- renderPlot({
-    if (input$source_v2 == "User Data"){
-      plot_user_timeseries(user_subset_v2(),"saddlebrown")
-    } else if (input$type_v2 == "Timeseries"){
+    if (input$source_v2 == "User Data") {
+      plot_user_timeseries(user_subset_v2(), "saddlebrown")
+    } else if (input$type_v2 == "Timeseries") {
       timeseries_plot_v2()
     } else{
       ME_map_plot_v2()
     }
-  },width = function(){plot_dimensions_v2()[1]},height = function(){plot_dimensions_v2()[2]})  
+  }, width = function() {
+    plot_dimensions_v2()[1]
+  }, height = function() {
+    plot_dimensions_v2()[2]
+  })  
   
   
   #### Plot shared TS plot
@@ -8857,18 +8894,31 @@ server <- function(input, output, session) {
     
     req(input$nav1 == "tab3") # Only run code if in the current tab
     
-    corrmd = generate_correlation_map_data(correlation_map_data_v1(),correlation_map_data_v2(),input$cor_method_map,
-                                           input$type_v1,input$type_v2,lonlat_vals_v1()[1:2],lonlat_vals_v2()[1:2],
-                                           lonlat_vals_v1()[3:4],lonlat_vals_v2()[3:4])
+    corrmd = generate_correlation_map_data(
+      correlation_map_data_v1(),
+      correlation_map_data_v2(),
+      input$cor_method_map,
+      input$type_v1,
+      input$type_v2,
+      lonlat_vals_v1()[1:2],
+      lonlat_vals_v2()[1:2],
+      lonlat_vals_v1()[3:4],
+      lonlat_vals_v2()[3:4]
+    )
     return(corrmd)
   })
   
   # Generate plot dimensions
   correlation_map_dimensions <- reactive({
-    
     req(input$nav1 == "tab3") # Only run code if in the current tab
     
-    c_m_d = generate_map_dimensions(correlation_map_data()[[1]], correlation_map_data()[[2]], session$clientData$output_correlation_map_width, input$dimension[2], FALSE)
+    c_m_d = generate_map_dimensions(
+      correlation_map_data()[[1]],
+      correlation_map_data()[[2]],
+      session$clientData$output_correlation_map_width,
+      (input$dimension[2]),
+      FALSE
+    )
     
     return(c_m_d)
   })
@@ -8881,23 +8931,104 @@ server <- function(input, output, session) {
     create_geotiff(generate_correlation_map_datatable(correlation_map_data()))
   })
   
-  # Plot
-  corr_m1 = function(){
-    if ((input$type_v1 == "Field") | (input$type_v2 == "Field")){
-      if(input$type_v1 == "Field"){
-        lonlat_vals = lonlat_vals_v1()
+  
+  # Get dynamically calculated axis values
+  axis_range_dynamic <- reactive({
+    vals <- values(correlation_map_data_tiff())
+    max_abs <- max(abs(vals), na.rm = TRUE)
+    print(paste("Max abs:", max_abs))
+    c(-max_abs, max_abs)
+  })
+  
+  # Plot Correlation Map
+  corr_m1 <- function() {
+    if ((input$type_v1 == "Field") | (input$type_v2 == "Field")) {
+      if (input$type_v1 == "Field" & input$type_v2 == "Field") {
+        v1 <- lonlat_vals_v1()
+        v2 <- lonlat_vals_v2()
+        lonlat_vals <- c(max(v1[1], v2[1]), min(v1[2], v2[2]), max(v1[3], v2[3]), min(v1[4], v2[4]))
+      } else if (input$type_v1 == "Field") {
+        lonlat_vals <- lonlat_vals_v1()
       } else {
-        lonlat_vals = lonlat_vals_v2()
+        lonlat_vals <- lonlat_vals_v2()
       }
-      plot_map(data_input=correlation_map_data_tiff(), lon_lat_range=lonlat_vals,  mode="Correlation", 
-               titles=plot_titles_cor(),axis_range=input$axis_input3, hide_axis=input$hide_axis3, 
-               points_data=map_points_data3(), highlights_data=map_highlights_data3(),
-               c_borders=input$hide_borders3, white_ocean=input$white_ocean3, white_land=input$white_land3, 
-               plotOrder=plotOrder3(), shpPickers=input$shpPickers3)
+      
+      # Dynamic axis range
+      dynamic_axis <- axis_range_dynamic()
+      
+      # Use input axis or dynamic
+      axis_input_empty <- is.null(input$axis_input3) ||
+        any(is.na(input$axis_input3)) ||
+        length(input$axis_input3) != 2
+      
+      axis_range_used <- if (axis_input_empty) {
+        dynamic_axis
+      } else {
+        input$axis_input3
+      }
+      
+      # Get correlation data
+      corr_data <- correlation_map_data_tiff()
+      
+      # If dynamic axis is exactly [-1, 1], set all values to 1 (white map),
+      # Ignore manual axis input
+      if (all.equal(dynamic_axis, c(-1, 1)) == TRUE) {
+        corr_data[] <- 1
+      }
+      
+      titles <- plot_titles_cor()
+      
+      p <- plot_map(
+        data_input = corr_data,
+        lon_lat_range = lonlat_vals,
+        mode = "Correlation",
+        titles = plot_titles_cor(),
+        axis_range = axis_range_used,
+        hide_axis = input$hide_axis3,
+        points_data = map_points_data3(),
+        highlights_data = map_highlights_data3(),
+        c_borders = input$hide_borders3,
+        white_ocean = input$white_ocean3,
+        white_land = input$white_land3,
+        plotOrder = plotOrder3(),
+        shpPickers = input$shpPickers3
+      )
+      
+      width <- correlation_map_dimensions()[1]
+      
+      if (width < 550) {
+        p <- p + theme(
+          plot.title = element_text(size = titles$map_title_size, face = "bold"),
+          plot.subtitle = ggtext::element_textbox_simple(
+            size = 12,
+            padding = margin(5, 0, 5, 0),
+            margin = margin(5, 0, 5, 0)
+          ),
+          axis.text = element_text(size = titles$map_title_size / 1.6)
+        )
+        
+        
+      } else {
+        p <- p + theme(
+          plot.title = element_text(size = titles$map_title_size, face = "bold"),
+          plot.subtitle = element_text(size = titles$map_title_size / 1.3, face = "plain"),
+          axis.text = element_text(size = titles$map_title_size / 1.6),
+        )
+      }
+      print(width)
+      return(p)
     }
   }
   
-  output$correlation_map = renderPlot({corr_m1()},width = function(){correlation_map_dimensions()[1]},height = function(){correlation_map_dimensions()[2]})
+  
+  output$correlation_map = renderPlot({
+    corr_m1()
+  }, width = function() {
+    correlation_map_dimensions()[1]
+  }, height = function() {
+    correlation_map_dimensions()[2]
+  })
+  
   
   #### Data tables & Downloads 
   
@@ -9431,7 +9562,7 @@ server <- function(input, output, session) {
     }
     return(v_dv)
   })
-
+  
   observeEvent(input$remove_last_point, {
     map_points_data(map_points_data()[-nrow(map_points_data()),])
   })
@@ -11159,22 +11290,35 @@ server <- function(input, output, session) {
   })
   
   observe({
-    input_ids <- c("range_longitude", "range_longitude2", "range_longitude_v1", "range_longitude_v2", "range_longitude_iv", "range_longitude_dv", "range_longitude5", "fad_longitude_a5")
+    input_ids <- c(
+      "range_longitude",
+      "range_longitude2",
+      "range_longitude_v1",
+      "range_longitude_v2",
+      "range_longitude_iv",
+      "range_longitude_dv",
+      "range_longitude5",
+      "fad_longitude_a5"
+    )
     
     for (input_id in input_ids) {
       range_values <- input[[input_id]]
       
       update_values <- function(left, right) {
         if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = input_id, value = c(-180, range_values[2]))
+          updateNumericRangeInput(inputId = input_id,
+                                  value = c(-180, range_values[2]))
         } else if (left > 180) {
-          updateNumericRangeInput(inputId = input_id, value = c(-180, range_values[2]))
+          updateNumericRangeInput(inputId = input_id,
+                                  value = c(-180, range_values[2]))
         }
         
         if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 180))
+          updateNumericRangeInput(inputId = input_id,
+                                  value = c(range_values[1], 180))
         } else if (right > 180) {
-          updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 180))
+          updateNumericRangeInput(inputId = input_id,
+                                  value = c(range_values[1], 180))
         }
       }
       
