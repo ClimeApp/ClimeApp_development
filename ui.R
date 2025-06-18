@@ -212,7 +212,7 @@ ui <- navbarPage(
                  
                ), width = 12)
                
-               ## Sidebar Panels END ---- 
+             ## Sidebar Panels END ---- 
              )),
              ## Main panel START ----
              mainPanel(
@@ -436,9 +436,9 @@ ui <- navbarPage(
                                     ),
                            ),
                            
-                           ### Tabs END ----
+               ### Tabs END ----
                )            
-               ## Main Panel END ----
+             ## Main Panel END ----
              )
              # Welcome END ----  
            )),
@@ -636,7 +636,7 @@ ui <- navbarPage(
                  ),
                  
                ), width = 12)
-               ## Sidebar Panels END ----
+             ## Sidebar Panels END ----
              )),
              
              ## Main Panel START ----
@@ -908,7 +908,7 @@ ui <- navbarPage(
                                                      ),
                                               ),
                                               
-                                              #### Customization panels END ----
+                                            #### Customization panels END ----
                                             ),
                                             
                                             #### Downloads ----
@@ -956,9 +956,8 @@ ui <- navbarPage(
                                                                 ),
                                             )),
                                             
-                                            ### Map plot END ----
+                                   ### Map plot END ----
                                    ),
-                                   
                                    
                                    ### TS plot START ----
                                    tabPanel("Timeseries", 
@@ -1272,7 +1271,7 @@ ui <- navbarPage(
                                                        )),
                                               ),
                                               
-                                              #### Customization panels END ----
+                                            #### Customization panels END ----
                                             ),
                                             #### Downloads TS ----
                                             h4("Downloads", style = "color: #094030;",downloads_popover("pop_anomalies_ts_downloads")),
@@ -1297,7 +1296,7 @@ ui <- navbarPage(
                                                                 ),
                                             )),
                                             
-                                            ### TS plot END ----       
+                                   ### TS plot END ----       
                                    ),
                                    
                                    ### Other plots ----
@@ -1406,7 +1405,7 @@ ui <- navbarPage(
                                               column(3,downloadButton(outputId = "download_fad_data", label = "Download Map Data"))
                                             )
                                    )          
-                                   ## Main Panel END ----
+             ## Main Panel END ----
              ), width = 8),
              # Anomalies END ----  
            )),
@@ -1654,7 +1653,7 @@ ui <- navbarPage(
                  ),
                  
                ), width = 12)
-               ## Sidebar Panels END ----
+             ## Sidebar Panels END ----
              )),
              
              ## Main Panel START ----
@@ -1941,7 +1940,7 @@ ui <- navbarPage(
                                                            
                                                        )),
                                               ),
-                                              #### Customization panels END ----
+                                            #### Customization panels END ----
                                             ),
                                             
                                             #### Downloads Map ----
@@ -1989,7 +1988,7 @@ ui <- navbarPage(
                                                                 ),
                                             )),
                                             
-                                            ### Map plot END ----  
+                                   ### Map plot END ----  
                                    ),
                                    
                                    ### Composite TS plot START ----
@@ -2246,7 +2245,7 @@ ui <- navbarPage(
                                                        )),
                                               ),
                                               
-                                              #### Customization panels END ----
+                                            #### Customization panels END ----
                                             ),
                                             
                                             #### Downloads TS ----
@@ -2272,7 +2271,7 @@ ui <- navbarPage(
                                                                   column(2, actionButton(inputId = "update_metadata_ts2", label = "Update upload inputs")),
                                                                 ),
                                             )),
-                                            ### Composite TS plot END ----
+                                   ### Composite TS plot END ----
                                    ),
                                    
                                    ### Other plots ----
@@ -2373,9 +2372,9 @@ ui <- navbarPage(
                                             )
                                    )          
                                    
-                                   ## Main Panel END ----
+             ## Main Panel END ----
              ), width = 8),
-             # Composites END ----           
+           # Composites END ----           
            )),
   
   # SEA START ----
@@ -2646,144 +2645,144 @@ ui <- navbarPage(
              
              ## Main Panel START ----
              mainPanel(tabsetPanel(id = "tabset6",
-                                   ### SEA START ----
-                                   tabPanel("SEA", br(),
-                                            
-                                            h4("Superposed epoch analysis", style = "color: #094030;"),
-                                            
-                                            br(),
-                                            
-                                            withSpinner(ui_element = plotOutput("SEA_plot_6",click = "ts_click6", dblclick = "ts_dblclick6", brush = brushOpts(id = "ts_brush6", resetOnNew = TRUE)),
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height),
-                                            
-                                            #### Customization panels START ----       
-                                            fluidRow(
-                                              
-                                              #### Timeseries customization ----
-                                              column(width = 4,
-                                                     h4("Customize your SEA", style = "color: #094030;", timeseries_customization_popover("pop_sea_custime")),  
-                                                     
-                                                     checkboxInput(inputId = "custom_6",
-                                                                   label   = "SEA customization",
-                                                                   value   = FALSE),
-                                                     
-                                                     shinyjs::hidden( 
-                                                       div(id = "hidden_custom_6",
-                                                           
-                                                           radioButtons(inputId  = "title_mode_6",
-                                                                        label    = "Title customization:",
-                                                                        choices  = c("Default", "Custom"),
-                                                                        selected = "Default" ,
-                                                                        inline = TRUE),
-                                                           
-                                                           shinyjs::hidden( 
-                                                             div(id = "hidden_custom_title_6",
-                                                                 
-                                                                 textInput(inputId     = "title1_input_6",
-                                                                           label       = "Custom plot title:", 
-                                                                           value       = NA,
-                                                                           width       = NULL,
-                                                                           placeholder = "Custom title")
-                                                             )),
-                                                           
-                                                           textInput(inputId    = "y_label_6",
-                                                                     label     = "Y-axis label:",
-                                                                     value     = "",
-                                                                     placeholder = "Default"),
-                                                           
-                                                           checkboxInput(inputId = "show_observations_6",
-                                                                         label   = "Show all observations",
-                                                                         value   = FALSE),
-                                                           
-                                                           checkboxInput(inputId = "show_pvalues_6",
-                                                                         label   = "Show p values",
-                                                                         value   = FALSE),
-                                                           
-                                                           checkboxInput(inputId = "show_ticks_6",
-                                                                         label   = "Show yearly ticks",
-                                                                         value   = FALSE),
-                                                           
-                                                           checkboxInput(inputId = "show_key_6",
-                                                                         label   = "Show key",
-                                                                         value   = FALSE),
-                                                       )),    
-                                              ),
-                                              
-                                              #### No Custom Features ----                        
-                                              column(width = 4
-                                              ),
-                                              
-                                              #### Custom statistics ----
-                                              column(width = 4,
-                                                     
-                                                     h4("Custom statistics", style = "color: #094030;", sea_statistics_popover("pop_sea_statistics")),
-                                                     
-                                                     checkboxInput(inputId = "enable_custom_statistics_6",
-                                                                   label   = "Enable custom statistics",
-                                                                   value   = FALSE),
-                                                     
-                                                     shinyjs::hidden(
-                                                       div(id = "hidden_custom_statistics_6",
-                                                           
-                                                           numericInput(inputId   = "sample_size_6",
-                                                                        label     = "Size of random sample",
-                                                                        value     = 1000,
-                                                                        min       = 100,
-                                                                        max       = 100000000000),
-                                                           
-                                                           checkboxInput(inputId = "show_means_6",
-                                                                         label   = "Show sample means",
-                                                                         value   = FALSE),
-                                                           
-                                                           radioButtons(inputId  = "show_confidence_bands_6",
-                                                                        label    = "Confidence interval",
-                                                                        choices  = c("None","95%", "99%"),
-                                                                        selected = "None" , inline = TRUE)
-                                                           
-                                                       )),
-                                              ),
-                                              
-                                              #### Customization panels END ----
-                                            ),
-                                            
-                                            #### Downloads SEA ----
-                                            h4("Downloads", style = "color: #094030;", downloads_popover("pop_sea_ts_downloads")),
-                                            checkboxInput(inputId = "download_options_6",
-                                                          label   = "Enable download options",
-                                                          value   = FALSE),
-                                            
-                                            shinyjs::hidden(div(id = "hidden_download_6",
-                                                                
-                                                                # Downloads 
-                                                                h4(helpText("SEA plot")),
-                                                                fluidRow(
-                                                                  column(2, radioButtons(inputId = "file_type_timeseries6", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                                                  column(3, downloadButton(outputId = "download_timeseries6", label = "Download SEA"))
-                                                                ),
-                                                                
-                                                                fluidRow(
-                                                                  column(2, radioButtons(inputId = "file_type_timeseries_data6", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                                                  column(3, downloadButton(outputId = "download_timeseries_data6", label = "Download SEA data"))
-                                                                ),
-                                                                
-                                                                # Upload Meta data 
-                                                                h4(helpText("Metadata")),
-                                                                fluidRow(
-                                                                  column(3, downloadButton(outputId = "download_metadata_6", label = "Download metadata")),
-                                                                  column(4, fileInput(inputId= "upload_metadata_6", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
-                                                                  column(2, actionButton(inputId = "update_metadata_6", label = "Update upload inputs")),
-                                                                ),
-                                            )),
-                                            ### SEA END ----
-                                   ),
-                                   
-                                   ## Main Panel END ----
+                                 ### SEA START ----
+                                 tabPanel("SEA", br(),
+                                          
+                                          h4("Superposed epoch analysis", style = "color: #094030;"),
+                                          
+                                          br(),
+                                          
+                                          withSpinner(ui_element = plotOutput("SEA_plot_6",click = "ts_click6", dblclick = "ts_dblclick6", brush = brushOpts(id = "ts_brush6", resetOnNew = TRUE)),
+                                                      image = spinner_image,
+                                                      image.width = spinner_width,
+                                                      image.height = spinner_height),
+                                          
+                                    #### Customization panels START ----       
+                                    fluidRow(
+                                      
+                                      #### Timeseries customization ----
+                                      column(width = 4,
+                                             h4("Customize your SEA", style = "color: #094030;", timeseries_customization_popover("pop_sea_custime")),  
+                                             
+                                             checkboxInput(inputId = "custom_6",
+                                                           label   = "SEA customization",
+                                                           value   = FALSE),
+                                             
+                                             shinyjs::hidden( 
+                                               div(id = "hidden_custom_6",
+                                                   
+                                                   radioButtons(inputId  = "title_mode_6",
+                                                                label    = "Title customization:",
+                                                                choices  = c("Default", "Custom"),
+                                                                selected = "Default" ,
+                                                                inline = TRUE),
+                                                   
+                                                   shinyjs::hidden( 
+                                                     div(id = "hidden_custom_title_6",
+                                                         
+                                                         textInput(inputId     = "title1_input_6",
+                                                                   label       = "Custom plot title:", 
+                                                                   value       = NA,
+                                                                   width       = NULL,
+                                                                   placeholder = "Custom title")
+                                                     )),
+                                                   
+                                                   textInput(inputId    = "y_label_6",
+                                                             label     = "Y-axis label:",
+                                                             value     = "",
+                                                             placeholder = "Default"),
+                                                   
+                                                   checkboxInput(inputId = "show_observations_6",
+                                                                 label   = "Show all observations",
+                                                                 value   = FALSE),
+                                                   
+                                                   checkboxInput(inputId = "show_pvalues_6",
+                                                                 label   = "Show p values",
+                                                                 value   = FALSE),
+                                                   
+                                                   checkboxInput(inputId = "show_ticks_6",
+                                                                 label   = "Show yearly ticks",
+                                                                 value   = FALSE),
+                                                   
+                                                   checkboxInput(inputId = "show_key_6",
+                                                                 label   = "Show key",
+                                                                 value   = FALSE),
+                                               )),    
+                                      ),
+                                      
+                                      #### No Custom Features ----                        
+                                      column(width = 4
+                                      ),
+                                      
+                                      #### Custom statistics ----
+                                      column(width = 4,
+                                             
+                                             h4("Custom statistics", style = "color: #094030;", sea_statistics_popover("pop_sea_statistics")),
+                                             
+                                             checkboxInput(inputId = "enable_custom_statistics_6",
+                                                           label   = "Enable custom statistics",
+                                                           value   = FALSE),
+                                             
+                                             shinyjs::hidden(
+                                               div(id = "hidden_custom_statistics_6",
+                                                   
+                                                   numericInput(inputId   = "sample_size_6",
+                                                                label     = "Size of random sample",
+                                                                value     = 1000,
+                                                                min       = 100,
+                                                                max       = 100000000000),
+                                                   
+                                                   checkboxInput(inputId = "show_means_6",
+                                                                 label   = "Show sample means",
+                                                                 value   = FALSE),
+                                                   
+                                                   radioButtons(inputId  = "show_confidence_bands_6",
+                                                                label    = "Confidence interval",
+                                                                choices  = c("None","95%", "99%"),
+                                                                selected = "None" , inline = TRUE)
+                                                   
+                                               )),
+                                      ),
+                                      
+                                      #### Customization panels END ----
+                                    ),
+                                    
+                                    #### Downloads SEA ----
+                                    h4("Downloads", style = "color: #094030;", downloads_popover("pop_sea_ts_downloads")),
+                                    checkboxInput(inputId = "download_options_6",
+                                                  label   = "Enable download options",
+                                                  value   = FALSE),
+                                    
+                                    shinyjs::hidden(div(id = "hidden_download_6",
+                                                        
+                                                        # Downloads 
+                                                        h4(helpText("SEA plot")),
+                                                        fluidRow(
+                                                          column(2, radioButtons(inputId = "file_type_timeseries6", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                                          column(3, downloadButton(outputId = "download_timeseries6", label = "Download SEA"))
+                                                        ),
+                                                        
+                                                        fluidRow(
+                                                          column(2, radioButtons(inputId = "file_type_timeseries_data6", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                                          column(3, downloadButton(outputId = "download_timeseries_data6", label = "Download SEA data"))
+                                                        ),
+                                                        
+                                                        # Upload Meta data 
+                                                        h4(helpText("Metadata")),
+                                                        fluidRow(
+                                                          column(3, downloadButton(outputId = "download_metadata_6", label = "Download metadata")),
+                                                          column(4, fileInput(inputId= "upload_metadata_6", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                                          column(2, actionButton(inputId = "update_metadata_6", label = "Update upload inputs")),
+                                                        ),
+                                    )),
+                                 ### SEA END ----
+                                 ),
+                                 
+             ## Main Panel END ----
              ), width = 8)
              
-             # SEA END ----  
-           )),
+  # SEA END ----  
+  )),
   
   # Correlation START ----
   tabPanel("Correlation", value = "tab3",
@@ -3251,7 +3250,7 @@ ui <- navbarPage(
                  
                ), width = 12)
                
-               ## Sidebar Panels END ----
+             ## Sidebar Panels END ----
              )),
              
              ## Main Panel START ----
@@ -3535,7 +3534,7 @@ ui <- navbarPage(
                                                        )),
                                               ),
                                               
-                                              #### Customization panels END ----
+                                            #### Customization panels END ----
                                             ),
                                             
                                             #### Downloads TS ----
@@ -3577,65 +3576,65 @@ ui <- navbarPage(
                                                                             image.width = spinner_width,
                                                                             image.height = spinner_height),
                                                                 
-                                                                #### Scatter plot customization ----
-                                                                h4("Customize your scatter plot", style = "color: #094030;", timeseries_scatter_popover("pop_correlation_scatter")), 
-                                                                fluidRow(column(width = 4,
-                                                                                
-                                                                                checkboxInput(inputId = "custom_ref_ts3",
-                                                                                              label   = "Scatter plot customization",
-                                                                                              value   = FALSE),
-                                                                                
-                                                                                shinyjs::hidden( 
-                                                                                  div(id = "hidden_custom_ref_ts3",
-                                                                                      
-                                                                                      checkboxInput(inputId = "add_trend_ref_ts3",
-                                                                                                    label   = "Add trendline:",
-                                                                                                    value   = FALSE),
-                                                                                      
-                                                                                      radioButtons(inputId  = "add_outliers_ref_ts3"   ,
-                                                                                                   label    = "Highlight statistical outliers:",
-                                                                                                   choices  = c("None", "z-score", "Trend deviation"),
-                                                                                                   selected = "None",
-                                                                                                   inline = TRUE),
-                                                                                      
-                                                                                      shinyjs::hidden( 
-                                                                                        div(id = "hidden_custom_score_ref_ts3",
-                                                                                            
-                                                                                            numericInput( inputId     = "sd_input_ref_ts3",
-                                                                                                          label       = "Adjust SD for z-score:", 
-                                                                                                          value       = 1,
-                                                                                                          min         = 1,
-                                                                                                          max         = 10,
-                                                                                                          step        = 0.1,
-                                                                                                          width       = "50%")
-                                                                                        )),
-                                                                                      
-                                                                                      shinyjs::hidden( 
-                                                                                        div(id = "hidden_custom_trend_sd_ref_ts3",
-                                                                                            
-                                                                                            numericInput( inputId     = "trend_sd_input_ref_ts3",
-                                                                                                          label       = "Adjust SD for trend deviation:", 
-                                                                                                          value       = 1,
-                                                                                                          min         = 1,
-                                                                                                          max         = 10,
-                                                                                                          step        = 0.1,
-                                                                                                          width       = "50%")
-                                                                                        )),
-                                                                                      
-                                                                                      checkboxInput(inputId = "show_key_ref_ts3",
-                                                                                                    label   = "Show key",
-                                                                                                    value   = FALSE),
-                                                                                      
-                                                                                  )),    
-                                                                )),
-                                                                
-                                                                #### Download scatter plot ----
-                                                                h4("Download scatter plot", style = "color: #094030;"),
-                                                                fluidRow(
-                                                                  column(2, radioButtons(inputId = "file_type_map_sec3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                                                  column(3, downloadButton(outputId = "download_map_sec3", label = "Download scatter plot"))
-                                                                ),
-                                                                #### Scatter Plot END ----
+                                              #### Scatter plot customization ----
+                                              h4("Customize your scatter plot", style = "color: #094030;", timeseries_scatter_popover("pop_correlation_scatter")), 
+                                              fluidRow(column(width = 4,
+                                                              
+                                                              checkboxInput(inputId = "custom_ref_ts3",
+                                                                            label   = "Scatter plot customization",
+                                                                            value   = FALSE),
+                                                              
+                                                              shinyjs::hidden( 
+                                                                div(id = "hidden_custom_ref_ts3",
+                                                                    
+                                                                    checkboxInput(inputId = "add_trend_ref_ts3",
+                                                                                  label   = "Add trendline:",
+                                                                                  value   = FALSE),
+                                                                    
+                                                                    radioButtons(inputId  = "add_outliers_ref_ts3"   ,
+                                                                                 label    = "Highlight statistical outliers:",
+                                                                                 choices  = c("None", "z-score", "Trend deviation"),
+                                                                                 selected = "None",
+                                                                                 inline = TRUE),
+                                                                    
+                                                                    shinyjs::hidden( 
+                                                                      div(id = "hidden_custom_score_ref_ts3",
+                                                                          
+                                                                          numericInput( inputId     = "sd_input_ref_ts3",
+                                                                                        label       = "Adjust SD for z-score:", 
+                                                                                        value       = 1,
+                                                                                        min         = 1,
+                                                                                        max         = 10,
+                                                                                        step        = 0.1,
+                                                                                        width       = "50%")
+                                                                      )),
+                                                                    
+                                                                    shinyjs::hidden( 
+                                                                      div(id = "hidden_custom_trend_sd_ref_ts3",
+                                                                          
+                                                                          numericInput( inputId     = "trend_sd_input_ref_ts3",
+                                                                                        label       = "Adjust SD for trend deviation:", 
+                                                                                        value       = 1,
+                                                                                        min         = 1,
+                                                                                        max         = 10,
+                                                                                        step        = 0.1,
+                                                                                        width       = "50%")
+                                                                      )),
+                                                                    
+                                                                    checkboxInput(inputId = "show_key_ref_ts3",
+                                                                                  label   = "Show key",
+                                                                                  value   = FALSE),
+                                                                    
+                                                                )),    
+                                              )),
+                                              
+                                              #### Download scatter plot ----
+                                              h4("Download scatter plot", style = "color: #094030;"),
+                                              fluidRow(
+                                                column(2, radioButtons(inputId = "file_type_map_sec3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
+                                                column(3, downloadButton(outputId = "download_map_sec3", label = "Download scatter plot"))
+                                              ),
+                                            #### Scatter Plot END ----
                                             )),
                                             
                                             #Easter Calm
@@ -3921,7 +3920,7 @@ ui <- navbarPage(
                                                      #     ),
                                                      # )),
                                               ),
-                                              #### Customization panels END ----
+                                            #### Customization panels END ----
                                             ),
                                             
                                             #### Downloads Map ----
@@ -3948,7 +3947,7 @@ ui <- navbarPage(
                                                                 ),
                                             )),
                                             
-                                            ### Map plot: END ----        
+                                   ### Map plot: END ----        
                                    ),
                                    
                                    ### Other plots ----
@@ -4052,7 +4051,7 @@ ui <- navbarPage(
                                             )
                                    )       
                                    
-                                   ## Main Panel END ----
+             ## Main Panel END ----
              ), width = 8)
              
              # Correlation END ----  
@@ -4497,7 +4496,7 @@ ui <- navbarPage(
                  
                ), width = 12)
                
-               ## Sidebar Panels END ----
+             ## Sidebar Panels END ----
              )),
              ## Main Panel START ----
              mainPanel(tabsetPanel(id = "tabset4",
@@ -5936,7 +5935,7 @@ ui <- navbarPage(
                  
                ), width = 12),
                
-               ## Sidebar Panels END ----
+             ## Sidebar Panels END ----
              )),
              
              ## Main Panel START ----
@@ -6158,7 +6157,7 @@ ui <- navbarPage(
                                                      
                                               ),
                                               
-                                              #### Customization panels END ----
+                                            #### Customization panels END ----
                                             ),
                                             
                                             #### Downloads ----
@@ -6168,7 +6167,7 @@ ui <- navbarPage(
                                               column(3, downloadButton(outputId = "download_timeseries5", label = "Download timeseries"))
                                             ),
                                             
-                                            ### TS plot END ----       
+                                   ### TS plot END ----       
                                    ),
                                    
                                    ### TS data ----
@@ -6242,9 +6241,9 @@ ui <- navbarPage(
                                             )
                                    )       
                                    
-                                   ## Main Panel END ----
+             ## Main Panel END ----
              ), width = 8),
-             # Annual cycles END ---- 
+  # Annual cycles END ---- 
            )),
   
   # ModE-RA Sources START ----                             
@@ -6316,7 +6315,7 @@ ui <- navbarPage(
            #   }
            # "))
            
-           # ModE-RA Sources END ----         
+  # ModE-RA Sources END ----         
   )
   
   # END ----
