@@ -731,19 +731,52 @@ ui <- navbarPage(
                                                            
                                                            br(),
                                                            
-                                                           h4(helpText("Shape file and border options", map_customization_layers_popover("pop_anomalies_layers"))),
+                                                           h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_anomalies_layers"))),
                                                            
-                                                           checkboxInput(inputId = "hide_borders",
-                                                                         label   = "Show country borders",
-                                                                         value   = TRUE),
-                                                           
-                                                           checkboxInput(inputId = "white_ocean",
-                                                                         label   = "White ocean",
+                                                           checkboxInput(inputId = "custom_topo",
+                                                                         label   = "Topographical customization",
                                                                          value   = FALSE),
                                                            
-                                                           checkboxInput(inputId = "white_land",
-                                                                         label   = "White land",
-                                                                         value   = FALSE),
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_geo_options",
+                                                           
+                                                               checkboxInput(inputId = "hide_borders",
+                                                                             label   = "Show country borders",
+                                                                             value   = TRUE),
+                                                               
+                                                               checkboxInput(inputId = "white_ocean",
+                                                                             label   = "White ocean",
+                                                                             value   = FALSE),
+                                                               
+                                                               checkboxInput(inputId = "white_land",
+                                                                             label   = "White land",
+                                                                             value   = FALSE),
+                                                               
+                                                               checkboxInput(inputId = "show_rivers",
+                                                                             label   = "Show Rivers",
+                                                                             value   = FALSE),
+                                                               
+                                                               checkboxInput(inputId = "label_rivers",
+                                                                             label   = "Label Rivers",
+                                                                             value   = FALSE),
+                                                               
+                                                               checkboxInput(inputId = "show_lakes",
+                                                                             label   = "Show Lakes",
+                                                                             value   = FALSE),
+                                                               
+                                                               checkboxInput(inputId = "label_lakes",
+                                                                             label   = "Label Lakes",
+                                                                             value   = FALSE),
+                                                               
+                                                               checkboxInput(inputId = "show_mountains",
+                                                                             label   = "Show Mountains",
+                                                                             value   = FALSE),
+                                                               
+                                                               checkboxInput(inputId = "label_mountains",
+                                                                             label   = "Label Mountains",
+                                                                             value   = FALSE),
+                                                           
+                                                             )),
                                                            
                                                            #Shape File Option
                                                            
@@ -1754,19 +1787,52 @@ ui <- navbarPage(
                                                            
                                                            br(),
                                                            
-                                                           h4(helpText("Shape file and border options", map_customization_layers_popover("pop_composites_layers"))),
+                                                           h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_composites_layers"))),
                                                            
-                                                           checkboxInput(inputId = "hide_borders2",
-                                                                         label   = "Show country borders",
-                                                                         value   = TRUE),
-                                                           
-                                                           checkboxInput(inputId = "white_ocean2",
-                                                                         label   = "White ocean",
+                                                           checkboxInput(inputId = "custom_topo2",
+                                                                         label   = "Topographical customization",
                                                                          value   = FALSE),
                                                            
-                                                           checkboxInput(inputId = "white_land2",
-                                                                         label   = "White land",
-                                                                         value   = FALSE),
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_geo_options2",
+                                                                 
+                                                                 checkboxInput(inputId = "hide_borders2",
+                                                                               label   = "Show country borders",
+                                                                               value   = TRUE),
+                                                                 
+                                                                 checkboxInput(inputId = "white_ocean2",
+                                                                               label   = "White ocean",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "white_land2",
+                                                                               label   = "White land",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_rivers2",
+                                                                               label   = "Show Rivers",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_rivers2",
+                                                                               label   = "Label Rivers",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_lakes2",
+                                                                               label   = "Show Lakes",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_lakes2",
+                                                                               label   = "Label Lakes",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_mountains2",
+                                                                               label   = "Show Mountains",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_mountains2",
+                                                                               label   = "Label Mountains",
+                                                                               value   = FALSE),
+                                                                 
+                                                             )),
                                                            
                                                            #Shape File Option
                                                            
@@ -3747,19 +3813,52 @@ ui <- navbarPage(
                                                            
                                                            br(),
                                                            
-                                                           h4(helpText("Shape file and border options", map_customization_layers_popover("pop_correlation_layers"))),
+                                                           h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_correlation_layers"))),
                                                            
-                                                           checkboxInput(inputId = "hide_borders3",
-                                                                         label   = "Show country borders",
-                                                                         value   = TRUE),
-                                                           
-                                                           checkboxInput(inputId = "white_ocean3",
-                                                                         label   = "White ocean",
-                                                                         value   = FALSE), 
-                                                           
-                                                           checkboxInput(inputId = "white_land3",
-                                                                         label   = "White land",
+                                                           checkboxInput(inputId = "custom_topo3",
+                                                                         label   = "Topographical customization",
                                                                          value   = FALSE),
+                                                           
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_geo_options3",
+                                                                 
+                                                                 checkboxInput(inputId = "hide_borders3",
+                                                                               label   = "Show country borders",
+                                                                               value   = TRUE),
+                                                                 
+                                                                 checkboxInput(inputId = "white_ocean3",
+                                                                               label   = "White ocean",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "white_land3",
+                                                                               label   = "White land",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_rivers3",
+                                                                               label   = "Show Rivers",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_rivers3",
+                                                                               label   = "Label Rivers",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_lakes3",
+                                                                               label   = "Show Lakes",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_lakes3",
+                                                                               label   = "Label Lakes",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_mountains3",
+                                                                               label   = "Show Mountains",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_mountains3",
+                                                                               label   = "Label Mountains",
+                                                                               value   = FALSE),
+                                                                 
+                                                             )),
                                                            
                                                            #Shape File Option
                                                            
@@ -4876,19 +4975,52 @@ ui <- navbarPage(
                                                            
                                                            br(),
                                                            
-                                                           h4(helpText("Shape file and border options", map_customization_layers_popover("pop_anomalies_layers"))),
+                                                           h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_anomalies_layers"))),
                                                            
-                                                           checkboxInput(inputId = "hide_borders_reg_coeff",
-                                                                         label   = "Show country borders",
-                                                                         value   = TRUE),
-                                                           
-                                                           checkboxInput(inputId = "white_ocean_reg_coeff",
-                                                                         label   = "White ocean",
+                                                           checkboxInput(inputId = "custom_topo_reg_coeff",
+                                                                         label   = "Topographical customization",
                                                                          value   = FALSE),
                                                            
-                                                           checkboxInput(inputId = "white_land_reg_coeff",
-                                                                         label   = "White land",
-                                                                         value   = FALSE),
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_geo_options_reg_coeff",
+                                                                 
+                                                                 checkboxInput(inputId = "hide_borders_reg_coeff",
+                                                                               label   = "Show country borders",
+                                                                               value   = TRUE),
+                                                                 
+                                                                 checkboxInput(inputId = "white_ocean_reg_coeff",
+                                                                               label   = "White ocean",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "white_land_reg_coeff",
+                                                                               label   = "White land",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_rivers_reg_coeff",
+                                                                               label   = "Show Rivers",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_rivers_reg_coeff",
+                                                                               label   = "Label Rivers",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_lakes_reg_coeff",
+                                                                               label   = "Show Lakes",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_lakes_reg_coeff",
+                                                                               label   = "Label Lakes",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_mountains_reg_coeff",
+                                                                               label   = "Show Mountains",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_mountains_reg_coeff",
+                                                                               label   = "Label Mountains",
+                                                                               value   = FALSE),
+                                                                 
+                                                             )),
                                                            
                                                            #Shape File Option
                                                            
@@ -5164,19 +5296,52 @@ ui <- navbarPage(
                                                            
                                                            br(),
                                                            
-                                                           h4(helpText("Shape file and border options", map_customization_layers_popover("pop_anomalies_layers"))),
+                                                           h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_anomalies_layers"))),
                                                            
-                                                           checkboxInput(inputId = "hide_borders_reg_pval",
-                                                                         label   = "Show country borders",
-                                                                         value   = TRUE),
-                                                           
-                                                           checkboxInput(inputId = "white_ocean_reg_pval",
-                                                                         label   = "White ocean",
+                                                           checkboxInput(inputId = "custom_topo_reg_pval",
+                                                                         label   = "Topographical customization",
                                                                          value   = FALSE),
                                                            
-                                                           checkboxInput(inputId = "white_land_reg_pval",
-                                                                         label   = "White land",
-                                                                         value   = FALSE),
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_geo_options_reg_pval",
+                                                                 
+                                                                 checkboxInput(inputId = "hide_borders_reg_pval",
+                                                                               label   = "Show country borders",
+                                                                               value   = TRUE),
+                                                                 
+                                                                 checkboxInput(inputId = "white_ocean_reg_pval",
+                                                                               label   = "White ocean",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "white_land_reg_pval",
+                                                                               label   = "White land",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_rivers_reg_pval",
+                                                                               label   = "Show Rivers",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_rivers_reg_pval",
+                                                                               label   = "Label Rivers",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_lakes_reg_pval",
+                                                                               label   = "Show Lakes",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_lakes_reg_pval",
+                                                                               label   = "Label Lakes",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_mountains_reg_pval",
+                                                                               label   = "Show Mountains",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_mountains_reg_pval",
+                                                                               label   = "Label Mountains",
+                                                                               value   = FALSE),
+                                                                 
+                                                             )),
                                                            
                                                            #Shape File Option
                                                            
@@ -5452,19 +5617,48 @@ ui <- navbarPage(
                                                            
                                                            br(),
                                                            
-                                                           h4(helpText("Shape file and border options", map_customization_layers_popover("pop_anomalies_layers"))),
+                                                           h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_anomalies_layers"))),
                                                            
-                                                           checkboxInput(inputId = "hide_borders_reg_res",
-                                                                         label   = "Show country borders",
-                                                                         value   = TRUE),
-                                                           
-                                                           checkboxInput(inputId = "white_ocean_reg_res",
-                                                                         label   = "White ocean",
-                                                                         value   = FALSE),
-                                                           
-                                                           checkboxInput(inputId = "white_land_reg_res",
-                                                                         label   = "White land",
-                                                                         value   = FALSE),
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_geo_options_reg_res",
+                                                                 
+                                                                 checkboxInput(inputId = "hide_borders_reg_res",
+                                                                               label   = "Show country borders",
+                                                                               value   = TRUE),
+                                                                 
+                                                                 checkboxInput(inputId = "white_ocean_reg_res",
+                                                                               label   = "White ocean",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "white_land_reg_res",
+                                                                               label   = "White land",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_rivers_reg_res",
+                                                                               label   = "Show Rivers",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_rivers_reg_res",
+                                                                               label   = "Label Rivers",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_lakes_reg_res",
+                                                                               label   = "Show Lakes",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_lakes_reg_res",
+                                                                               label   = "Label Lakes",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "show_mountains_reg_res",
+                                                                               label   = "Show Mountains",
+                                                                               value   = FALSE),
+                                                                 
+                                                                 checkboxInput(inputId = "label_mountains_reg_res",
+                                                                               label   = "Label Mountains",
+                                                                               value   = FALSE),
+                                                                 
+                                                             )),
                                                            
                                                            #Shape File Option
                                                            

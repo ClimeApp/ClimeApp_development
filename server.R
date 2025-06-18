@@ -398,6 +398,16 @@ server <- function(input, output, session) {
                            condition = input$download_options == TRUE,
                            asis = FALSE)})
   
+  observe({shinyjs::toggle(id = "hidden_geo_options",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_topo == TRUE,
+                           asis = FALSE)})
+  
+  
+  
   ## Anomalies TS
   
   observe({shinyjs::toggle(id = "hidden_custom_ts",
@@ -710,6 +720,14 @@ server <- function(input, output, session) {
                            time = 0.5,
                            selector = NULL,
                            condition = input$download_options2 == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_geo_options2",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_topo2 == TRUE,
                            asis = FALSE)})
   
   ## Composites TS
@@ -1111,6 +1129,14 @@ server <- function(input, output, session) {
                            time = 0.5,
                            selector = NULL,
                            condition = input$download_options3 == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_geo_options3",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_topo3 == TRUE,
                            asis = FALSE)})
   
   ## Correlation TS
@@ -1519,6 +1545,14 @@ server <- function(input, output, session) {
                            condition = input$download_options_coeff == TRUE,
                            asis = FALSE)})
   
+  observe({shinyjs::toggle(id = "hidden_geo_options_reg_coeff",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_topo_reg_coeff == TRUE,
+                           asis = FALSE)})
+  
   
   # Hidden Customization and Download Regression P-Values
   observe({shinyjs::toggle(id = "hidden_custom_map_reg_pval",
@@ -1577,6 +1611,14 @@ server <- function(input, output, session) {
                            condition = input$download_options_pval == TRUE,
                            asis = FALSE)})
   
+  observe({shinyjs::toggle(id = "hidden_geo_options_reg_pval",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_topo_reg_pval == TRUE,
+                           asis = FALSE)})
+  
   
   # Hidden Customization and Download Regression Residuals
   observe({shinyjs::toggle(id = "hidden_custom_maps_reg_res",
@@ -1625,6 +1667,14 @@ server <- function(input, output, session) {
                            time = 0.5,
                            selector = NULL,
                            condition = input$feature_reg_res == "Highlight",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_geo_options_reg_res",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$custom_topo_reg_res == TRUE,
                            asis = FALSE)})
   
   # Download Reg Res
@@ -7578,12 +7628,17 @@ server <- function(input, output, session) {
       input$white_land,
       plotOrder(),
       input$shpPickers,
-      input,
-      "shp_colour_",
+      input = input,
+      plotType = "shp_colour_",
       input$projection,
       input$center_lat,
-      input$center_lon
-    )
+      input$center_lon,
+      input$show_rivers,
+      input$label_rivers,
+      input$show_lakes,
+      input$label_lakes,
+      input$show_mountains,
+      input$label_mountains)
   }
 
   
@@ -7631,9 +7686,30 @@ server <- function(input, output, session) {
     } else if(input$ref_map_mode == "SD Ratio"){
       v=NULL; m="SD Ratio"; axis_range=c(0,1)
     }
-    plot_map(data_input=create_geotiff(ref_map_data()), lon_lat_range=lonlat_vals(), variable=v, mode=m, titles=ref_map_titles(), axis_range=axis_range, 
-             c_borders=input$hide_borders, white_ocean=input$white_ocean, white_land=input$white_land, plotOrder=plotOrder(), 
-             shpPickers=input$shpPickers, input=input, plotType="shp_colour_", projection=input$projection, center_lat=input$center_lat, center_lon=input$center_lon)
+    plot_map(
+      data_input = create_geotiff(ref_map_data()),
+      lon_lat_range = lonlat_vals(),
+      variable = v,
+      mode = m,
+      titles = ref_map_titles(),
+      axis_range = axis_range,
+      c_borders = input$hide_borders,
+      white_ocean = input$white_ocean,
+      white_land = input$white_land,
+      plotOrder = plotOrder(),
+      shpPickers = input$shpPickers,
+      input = input,
+      plotType = "shp_colour_",
+      projection = input$projection,
+      center_lat = input$center_lat,
+      center_lon = input$center_lon,
+      show_rivers = input$show_rivers,
+      label_rivers = input$label_rivers,
+      show_lakes = input$show_lakes,
+      label_lakes = input$label_lakes,
+      show_mountains = input$show_mountains,
+      label_mountains = input$label_mountains
+    )
   }
   
   output$ref_map <- renderPlot({
@@ -8021,25 +8097,34 @@ server <- function(input, output, session) {
     return(m_d_2)
   })
   
-  map_plot_2 <- function(){plot_map(create_geotiff(map_data_2()),
-                                    lonlat_vals2(),
-                                    input$variable_selected2,
-                                    input$mode_selected2,
-                                    plot_titles_composites(),
-                                    input$axis_input2,
-                                    input$hide_axis2,
-                                    map_points_data2(),
-                                    map_highlights_data2(),
-                                    map_statistics_2(),
-                                    input$hide_borders2,
-                                    input$white_ocean2,
-                                    input$white_land2,
-                                    plotOrder2(),
-                                    input$shpPickers2,
-                                    input, "shp_colour2_",
-                                    input$projection2,
-                                    input$center_lat2,
-                                    input$center_lon2)}
+  map_plot_2 <- function(){plot_map(
+    create_geotiff(map_data_2()),
+    lonlat_vals2(),
+    input$variable_selected2,
+    input$mode_selected2,
+    plot_titles_composites(),
+    input$axis_input2,
+    input$hide_axis2,
+    map_points_data2(),
+    map_highlights_data2(),
+    map_statistics_2(),
+    input$hide_borders2,
+    input$white_ocean2,
+    input$white_land2,
+    plotOrder2(),
+    input$shpPickers2,
+    input,
+    "shp_colour2_",
+    input$projection2,
+    input$center_lat2,
+    input$center_lon2,
+    input$show_rivers2,
+    input$label_rivers2,
+    input$show_lakes2,
+    input$label_lakes2,
+    input$show_mountains2,
+    input$label_mountains2
+  )}
   
   output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
   # code line below sets height as a function of the ratio of lat/lon 
@@ -8100,7 +8185,13 @@ server <- function(input, output, session) {
              plotType="shp_colour2_", 
              projection=input$projection2,
              center_lat=input$center_lat2,
-             center_lon=input$center_lon2)
+             center_lon=input$center_lon2,
+             show_rivers = input$show_rivers2,
+             label_rivers = input$label_rivers2,
+             show_lakes = input$show_lakes2,
+             label_lakes = input$label_lakes2,
+             show_mountains = input$show_mountains2,
+             label_mountains = input$label_mountains2)
   }
   
   output$ref_map2 <- renderPlot({
@@ -8514,6 +8605,7 @@ server <- function(input, output, session) {
   
   ### Generate plot data ---- 
   
+  # for variable 1:
   #Map titles
   plot_titles_v1 <- reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
@@ -8527,8 +8619,13 @@ server <- function(input, output, session) {
   # Generate Map data & plotting function
   map_data_v1 <- function(){create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
   
-  ME_map_plot_v1 <- function(){plot_map(data_input=create_geotiff(map_data_v1()), lon_lat_range=lonlat_vals_v1(), variable=input$ME_variable_v1, mode=input$mode_selected_v1, 
-                                        titles=plot_titles_v1())}
+  ME_map_plot_v1 <- function(){plot_map(
+    data_input = create_geotiff(map_data_v1()),
+    lon_lat_range = lonlat_vals_v1(),
+    variable = input$ME_variable_v1,
+    mode = input$mode_selected_v1,
+    titles = plot_titles_v1()
+  )}
   
   # Generate timeseries data & plotting function
   timeseries_data_v1 <- reactive({
@@ -8569,8 +8666,13 @@ server <- function(input, output, session) {
     create_geotiff(map_data_v2())
   })
   
-  ME_map_plot_v2 <- function(){plot_map(data_input=map_data_v2_tiff(), lon_lat_range=lonlat_vals_v2(), variable=input$ME_variable_v2, mode = input$mode_selected_v2, 
-                                        titles=plot_titles_v2())}
+  ME_map_plot_v2 <- function(){plot_map(
+    data_input = map_data_v2_tiff(),
+    lon_lat_range = lonlat_vals_v2(),
+    variable = input$ME_variable_v2,
+    mode = input$mode_selected_v2,
+    titles = plot_titles_v2()
+  )}
   
   # Generate timeseries data & plotting function
   timeseries_data_v2 <- reactive({
@@ -9062,9 +9164,9 @@ server <- function(input, output, session) {
       titles <- plot_titles_cor()
       
       p <- plot_map(
-        data_input = corr_data,
+        data_input    = corr_data,
         lon_lat_range = lonlat_vals,
-        mode = "Correlation",
+        mode          = "Correlation",
         titles = plot_titles_cor(),
         axis_range = axis_range_used,
         hide_axis = input$hide_axis3,
@@ -9074,7 +9176,18 @@ server <- function(input, output, session) {
         white_ocean = input$white_ocean3,
         white_land = input$white_land3,
         plotOrder = plotOrder3(),
-        shpPickers = input$shpPickers3
+        shpPickers = input$shpPickers3,
+        input=input,
+        plotType="shp_colour3_",
+        projection=input$projection3,
+        center_lat=input$center_lat3,
+        center_lon=input$center_lon3,
+        show_rivers = input$show_rivers3,
+        label_rivers = input$label_rivers3,
+        show_lakes = input$show_lakes3,
+        label_lakes = input$label_lakes3,
+        show_mountains = input$show_mountains3,
+        label_mountains = input$label_mountains3
       )
       
       width <- correlation_map_dimensions()[1]
@@ -9459,8 +9572,13 @@ server <- function(input, output, session) {
     req(data_output4_primary(), subset_lons_primary(), subset_lats_primary())
     create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
   
-  ME_map_plot_dv <- function(){plot_map(data_input=create_geotiff(map_data_dv()), lon_lat_range=lonlat_vals_dv(),
-                                        variable=input$ME_variable_dv, mode=input$mode_selected_dv, titles=plot_titles_dv())}
+  ME_map_plot_dv <- function(){plot_map(
+    data_input = create_geotiff(map_data_dv()),
+    lon_lat_range = lonlat_vals_dv(),
+    variable = input$ME_variable_dv,
+    mode = input$mode_selected_dv,
+    titles = plot_titles_dv()
+  )}
   
   # Generate timeseries data & plotting function for iv
   ME_ts_data_iv <- reactive({
@@ -9956,7 +10074,14 @@ server <- function(input, output, session) {
       
       c_borders = input$hide_borders_reg_coeff,
       white_ocean = input$white_ocean_reg_coeff,
-      white_land = input$white_land_reg_coeff
+      white_land = input$white_land_reg_coeff,
+      
+      show_rivers = input$show_rivers_reg_coeff,
+      label_rivers = input$label_rivers_reg_coeff,
+      show_lakes = input$show_lakes_reg_coeff,
+      label_lakes = input$label_lakes_reg_coeff,
+      show_mountains = input$show_mountains_reg_coeff,
+      label_mountains = input$label_mountains_reg_coeff
     )
   }
   
@@ -10078,7 +10203,14 @@ server <- function(input, output, session) {
       
       c_borders = input$hide_borders_reg_pval,
       white_ocean = input$white_ocean_reg_pval,
-      white_land = input$white_land_reg_pval
+      white_land = input$white_land_reg_pval,
+      
+      show_rivers = input$show_rivers_reg_pval,
+      label_rivers = input$label_rivers_reg_pval,
+      show_lakes = input$show_lakes_reg_pval,
+      label_lakes = input$label_lakes_reg_pval,
+      show_mountains = input$show_mountains_reg_pval,
+      label_mountains = input$label_mountains_reg_pval
     )
   }
   
@@ -10211,7 +10343,14 @@ server <- function(input, output, session) {
       
       c_borders = input$hide_borders_reg_res,
       white_ocean = input$white_ocean_reg_res,
-      white_land = input$white_land_reg_res
+      white_land = input$white_land_reg_res,
+      
+      show_rivers = input$show_rivers_reg_res,
+      label_rivers = input$label_rivers_reg_res,
+      show_lakes = input$show_lakes_reg_res,
+      label_lakes = input$label_lakes_reg_res,
+      show_mountains = input$show_mountains_reg_res,
+      label_mountains = input$label_mountains_reg_res
     )
   }
   

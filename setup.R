@@ -296,3 +296,8 @@ countries <- st_read("data/geodata_maps/countries.shp")
 oceans <- st_read("data/geodata_maps/oceans.shp")
 land <- st_read("data/geodata_maps/land.shp")
 
+# Load RDS Files for maps (rnaturalearth)
+lakes <- readRDS("data/geodata_custom_maps/lakes.rds")
+mountains <- readRDS("data/geodata_custom_maps/mountains.rds")
+rivers <- readRDS("data/geodata_custom_maps/rivers.rds")
+

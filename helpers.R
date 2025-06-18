@@ -744,10 +744,16 @@ plot_map <- function(data_input,
                      plotType = "default",
                      projection = "UTM (default)",
                      center_lat = 0,
-                     center_lon = 0) {
+                     center_lon = 0,
+                     show_rivers = FALSE,
+                     label_rivers = FALSE,
+                     show_lakes = FALSE,
+                     label_lakes = FALSE,
+                     show_mountains = FALSE,
+                     label_mountains =FALSE) {
 
   # Define color picker prefix for shapefiles
-  color_picker_prefix <- ifelse(plotType == "shp_colour_", "shp_colour_", "shp_colour2_")
+  color_picker_prefix <- ifelse(plotType == "shp_colour_", "shp_colour2_", "shp_colour3_")
   
   # Define the color palette and unit based on the variable and mode
   if (!is.null(variable)) {  # Check if variable is not NULL
@@ -851,6 +857,42 @@ plot_map <- function(data_input,
     p <- p + geom_sf(data = land, fill = "#DDDDDD", size = 0.5, inherit.aes = FALSE)}
   if (c_borders) {
     p <- p + geom_sf(data = countries, color = "#333333", fill = NA, size = 0.5, inherit.aes = FALSE)}
+  
+  if (show_rivers) {
+    p <- p + geom_sf(data = rivers, color = "blue2", size = 0.2, inherit.aes = FALSE)
+    if (label_rivers && "name" %in% names(rivers)) {
+      p <- p + geom_text(data = st_centroid(rivers), aes(label = name, geometry = geometry), stat = "sf_coordinates", size = 5, color = "blue2", inherit.aes = FALSE)
+    }
+  }
+  if (show_lakes) {
+    p <- p + geom_sf(data = lakes, fill = "lightblue1", color = NA, inherit.aes = FALSE)
+    if (label_lakes && "name" %in% names(lakes)) {
+      p <- p + geom_text(
+        data = st_point_on_surface(lakes),
+        aes(label = name, geometry = geometry),
+        stat = "sf_coordinates",
+        size = 5,
+        color = "lightblue1",
+        nudge_x = -1,  # leftward
+        inherit.aes = FALSE
+      )
+    }
+  }
+  
+  if (show_mountains) {
+    p <- p + geom_sf(data = mountains, color = "darkred", size = 3, shape = 17, inherit.aes = FALSE)
+    if (label_mountains && "name" %in% names(mountains)) {
+      p <- p + geom_text(
+        data = mountains,
+        aes(label = name, geometry = geometry),
+        stat = "sf_coordinates",
+        size = 5,
+        color = "darkred",
+        nudge_y = 0.75,  # upward
+        inherit.aes = FALSE
+      )
+    }
+  }
   
   # Add shapefiles (if provided) based on plotOrder and shpPickers
   for (file in plotOrder) {
