@@ -59,13 +59,17 @@ create_subset_lat_IDs = function(lat_range){
 ##           output_height = session$clientData$output_>>INSERT OUTPUT NAME <<_height
 ##           hide_axis = TRUE or FALSE
 
-generate_map_dimensions = function(subset_lon_IDs,subset_lat_IDs,output_width,
-                                   output_height, hide_axis){
+generate_map_dimensions = function(subset_lon_IDs,
+                                   subset_lat_IDs,
+                                   output_width,
+                                   output_height,
+                                   hide_axis) {
   
-  lon_over_lat = ((length(subset_lon_IDs)-1)*1.875)/((length(subset_lat_IDs)-1)*1.849638)
+  lon_over_lat = ((length(subset_lon_IDs) - 1) * 1.875) / ((length(subset_lat_IDs) -
+                                                              1) * 1.849638)
   
   # Width of left axis + key in pixels
-  if (hide_axis == TRUE){
+  if (hide_axis == TRUE) {
     w_ax = 175
   } else {
     w_ax = 70 # TO CHECK!!!
@@ -74,40 +78,44 @@ generate_map_dimensions = function(subset_lon_IDs,subset_lat_IDs,output_width,
   h_ax = 110
   
   # Set width and height when map is BELOW input tab
-  if (output_width<750){
+  if (output_width < 750) {
     w = output_width
-    h = ((w - w_ax)*(1/lon_over_lat))+h_ax
+    h = ((w - w_ax) * (1 / lon_over_lat)) + h_ax
     
     # Set w/h by height (i.e for a tall map)
-  } else if ((output_width/output_height)>lon_over_lat){
-    h = output_height*0.8
-    w = ((h - h_ax)*(lon_over_lat))+w_ax
+  } else if ((output_width / output_height) > lon_over_lat) {
+    h = output_height * 0.8
+    w = ((h - h_ax) * (lon_over_lat)) + w_ax
     # Deal with too large widths
-    if (w>output_width){
-      w = output_width*0.75
-      h = ((w - w_ax)*(1/lon_over_lat))+h_ax
+    if (w > output_width) {
+      w = output_width * 0.75
+      h = ((w - w_ax) * (1 / lon_over_lat)) + h_ax
       # Deal with very tiny widths
-    } else if (w<500){w = 500}
+    } else if (w < 500) {
+      w = 500
+    }
     
     # Set w/h by width (i.e.for wide map)
   } else {
-    w = output_width*0.9
-    h = ((w - w_ax)*(1/lon_over_lat))+h_ax
+    w = output_width * 0.9
+    h = ((w - w_ax) * (1 / lon_over_lat)) + h_ax
     # Deal with too large heights
-    if (h>output_height){
-      h = output_height*0.75
-      w = ((h - h_ax)*(lon_over_lat))+w_ax
+    if (h > output_height) {
+      h = output_height * 0.75
+      w = ((h - h_ax) * (lon_over_lat)) + w_ax
       # Deal with very tiny heights
-    } else if (h<175){h = 175} 
+    } else if (h < 175) {
+      h = 175
+    }
   }
   
   # Generate download dimensions
   total_image_size = 6000000
-  m = sqrt(total_image_size/(w*h))
-  w_d = m*w
-  h_d = m*h
+  m = sqrt(total_image_size / (w * h))
+  w_d = m * w
+  h_d = m * h
   
-  return(c(w,h,w_d,h_d,lon_over_lat))
+  return(c(w, h, w_d, h_d, lon_over_lat))
 }
 
 
@@ -737,8 +745,7 @@ plot_map <- function(data_input,
                      projection = "UTM (default)",
                      center_lat = 0,
                      center_lon = 0) {
-  print(paste("Hide axis:", hide_axis))
-  
+
   # Define color picker prefix for shapefiles
   color_picker_prefix <- ifelse(plotType == "shp_colour_", "shp_colour_", "shp_colour2_")
   
@@ -795,7 +802,6 @@ plot_map <- function(data_input,
     axis_range <- c(-max_abs_z, max_abs_z)
   }
   
-  print("Code runs until here")
   p <- ggplot() +
     geom_spatraster_contour_filled(data = data_input, aes(fill = after_stat(level_mid)), bins = 20)+
     scale_fill_stepsn(
@@ -3513,8 +3519,11 @@ plot_combined_timeseries = function(variable1_data,variable2_data,correlation_ti
 ##                               or ModE-RA timeseries_datatable
 ##               method = "pearson" or "spearman" ("pearson" by default)
 
-correlate_timeseries = function(variable1_data,variable2_data,method){
-  r = cor.test(variable1_data[,2],variable2_data[,2],method = method,use = "complete.obs")
+correlate_timeseries = function(variable1_data, variable2_data, method) {
+  r = cor.test(variable1_data[, 2],
+               variable2_data[, 2],
+               method = method,
+               use = "complete.obs")
   return (r)
 }
 
@@ -3527,10 +3536,16 @@ correlate_timeseries = function(variable1_data,variable2_data,method){
 ##               method = "pearson" or "spearman" ("pearson" by default)
 ##               Note: uses the subset_lat/lon functions
 
-generate_correlation_map_data = function(variable1_data, variable2_data, method,
-                                         variable1_type, variable2_type,
-                                         variable1_lon_range, variable2_lon_range,
-                                         variable1_lat_range, variable2_lat_range){
+generate_correlation_map_data = function(variable1_data,
+                                         variable2_data,
+                                         method,
+                                         variable1_type,
+                                         variable2_type,
+                                         variable1_lon_range,
+                                         variable2_lon_range,
+                                         variable1_lat_range,
+                                         variable2_lat_range) {
+  
   
   # Generate subset lon/lat IDs
   subset_lon_IDs1 = create_subset_lon_IDs(variable1_lon_range)
@@ -3580,7 +3595,7 @@ generate_correlation_map_data = function(variable1_data, variable2_data, method,
   
   # Combine x, y and z into a dataframe
   xyz = list(x,y,z)
-  
+
   return(xyz)
 }
 

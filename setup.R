@@ -150,6 +150,7 @@ library(tidyterra,include.only = c("select", "aes", "after_stat", "arrange", "di
 # library(rnaturalearth) # for water bodies
 # library(rnaturalearthdata) # for water bodies
 library(viridis,include.only = "viridis" )
+library(ggtext)
 
 # SEA Loading
 library(dplR)
