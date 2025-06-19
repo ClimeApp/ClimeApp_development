@@ -8,14 +8,13 @@
 
 generate_title_months = function(MR){
   print(MR)
-  print(MR[1]==1)
-  print(MR[2]==12)
-  print(MR[1]==1 && MR[2]==12)
-  if (MR[1]==1 && MR[2]==12){
+  if (!is.null(MR) && length(MR) >= 2 && !any(is.na(MR)) && MR[1] == 1 && MR[2] == 12){
     title_months = "Annual"
-  } else {
+  } else if (!is.null(MR) && length(MR) >= 2 && !any(is.na(MR))) {
     month_letters  = c("D","J","F","M","A","M","J","J","A","S","O","N","D")
-    title_months = paste(month_letters[(MR[1]:MR[2])+1],collapse = "")
+    title_months = paste(month_letters[(MR[1]:MR[2])+1], collapse = "")
+  } else {
+    title_months = "Invalid"
   }
   return(title_months)
 }
@@ -619,18 +618,34 @@ generate_titles = function(tab,
     ts_axis = paste(title_months," ",variable," Anomaly [",v_unit, "]",sep = "")
   }
   
-  if (is.data.frame(ts_data)){ # using is.null doesn't work because is.null(NA) = FALSE, using is.na doesn't work because is.na(data.frame) = c(FALSE, FALSE, FALSE, ...)
+  if (is.data.frame(ts_data)){# using is.null doesn't work because is.null(NA) = FALSE, using is.na doesn't work because is.na(data.frame) = c(FALSE, FALSE, FALSE, ...)
     stats = generate_stats_ts(as.vector(ts_data$Mean)) #transform into vector, because generate_stats_ts expects a vector
     
     ts_subtitle <- paste(
-      "Mean = ", signif(stats$mean, 3), v_unit,
-      "   Range = ", signif(stats$min, 3), v_unit, ":", signif(stats$max, 3), v_unit,
-      "   SD = ", signif(stats$sd, 3), v_unit, sep = ""
+      "Mean = ",
+      signif(stats$mean, 3),
+      v_unit,
+      "   Range = ",
+      signif(stats$min, 3),
+      v_unit,
+      ":",
+      signif(stats$max, 3),
+      v_unit,
+      "   SD = ",
+      signif(stats$sd, 3),
+      v_unit,
+      sep = ""
     )
-    if (map_subtitle != ""){
+    if (map_subtitle != "") {
       ts_subtitle = paste0(ts_subtitle, "\n", map_subtitle)
     }
-  } else {ts_subtitle = NA}
+  } else {
+    if (map_subtitle != "") {
+      ts_subtitle <- map_subtitle
+    } else {
+      ts_subtitle <- ""
+    }
+  }
   
   # Replace with custom titles
   if (map_title_mode == "Custom"){
@@ -1891,8 +1906,13 @@ plot_timeseries <- function(type, mode=NA, data=NA, variable=NA,
     if (titles$ts_title != " ") {
       p <- p + ggtitle(titles$ts_title)
     }
-    if (!is.null(titles$ts_subtitle)) {
-      p <- p + labs(subtitle = titles$ts_subtitle) # overwrites subtitle created above
+    
+    # if (!is.null(titles$ts_subtitle)) {
+    #   p <- p + labs(subtitle = titles$ts_subtitle)
+    # }
+    
+    if (!is.null(titles$ts_subtitle) && !is.na(titles$ts_subtitle) && titles$ts_subtitle != "") {
+      p <- p + labs(subtitle = titles$ts_subtitle)
     }
     
     p <- p + theme(
@@ -3346,16 +3366,30 @@ plot_user_timeseries = function(data_input,color){
 ##             variable_mode = "Absolute" or "Anomaly"
 ##             method = "pearson" or "spearman" ("pearson" by default)
 
-generate_correlation_titles = function(variable1_source,variable2_source,
-                                       variable1_dataset,variable2_dataset,
-                                       variable1,variable2,
-                                       variable1_type,variable2_type,
-                                       variable1_mode,variable2_mode,
-                                       variable1_month_range,variable2_month_range,
-                                       variable1_lon_range, variable2_lon_range,
-                                       variable1_lat_range, variable2_lat_range,
-                                       year_range, method,map_title_mode,ts_title_mode,
-                                       map_custom_title, map_custom_subtitle, ts_custom_title, title_size){
+generate_correlation_titles = function(variable1_source,
+                                       variable2_source,
+                                       variable1_dataset,
+                                       variable2_dataset,
+                                       variable1,
+                                       variable2,
+                                       variable1_type,
+                                       variable2_type,
+                                       variable1_mode,
+                                       variable2_mode,
+                                       variable1_month_range,
+                                       variable2_month_range,
+                                       variable1_lon_range,
+                                       variable2_lon_range,
+                                       variable1_lat_range,
+                                       variable2_lat_range,
+                                       year_range,
+                                       method,
+                                       map_title_mode,
+                                       ts_title_mode,
+                                       map_custom_title,
+                                       map_custom_subtitle,
+                                       ts_custom_title,
+                                       title_size) {
   
   # Set values for variable 1:
   if (variable1_source=="User Data"){
