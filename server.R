@@ -4050,28 +4050,18 @@ server <- function(input, output, session) {
     )
   })
   
-  observeEvent(year_range_cor(),{
-    if (input$range_years3[1]<year_range_cor()[1]){
-      updateNumericRangeInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_years3",
-        value = c(year_range_cor()[1],input$range_years3[2])
-      )
-    }
-    
-    if (input$range_years3[2]>year_range_cor()[2]){
-      updateNumericRangeInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_years3",
-        value = c(input$range_years3[1],year_range_cor()[2])
-      )
-    }
+  observeEvent(year_range_cor(), {
+    if (is.null(year_range_cor()) ||
+        length(year_range_cor()) < 2)
+      return()
     
     updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_years3",
-      label = paste("Select the range of years (",year_range_cor()[1],"-",year_range_cor()[2],")",sep = "")
+      label = paste("Select the range of years (", year_range_cor()[1], "-", year_range_cor()[2], ")", sep = ""),
+      value = year_range_cor()[1:2]
     )
+    
   })
   
   # Set iniital lon/lat values and update on button press
@@ -8509,27 +8499,64 @@ server <- function(input, output, session) {
   
   # Extract shared year range
   
+  # year_range_cor = reactive({
+  #   result <- tryCatch({
+  #     return(
+  #       extract_year_range(
+  #         input$source_v1,
+  #         input$source_v2,
+  #         input$user_file_v1$datapath,
+  #         input$user_file_v2$datapath,
+  #         input$lagyears_v1_cor,
+  #         input$lagyears_v2_cor
+  #       )
+  #     )
+  #   }, error = function(e) {
+  #     showModal(
+  #       # Add modal dialog for warning message
+  #       modalDialog(
+  #         title = "Error",
+  #         "There was an error in processing your uploaded data.
+  #                     \nPlease check if the file has the correct format.",
+  #         easyClose = FALSE,
+  #         footer = tagList(modalButton("OK"))
+  #       )
+  #     )
+  #     return(NULL)
+  #   })
+  #   return(result)
+  # })  
+  
   year_range_cor = reactive({
-    
-    result <- tryCatch(
-      {
-        return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath,input$lagyears_v1_cor,input$lagyears_v2_cor))
-      },
-      error = function(e) {
-        showModal(
-          # Add modal dialog for warning message
-          modalDialog(
-            title = "Error",
-            "There was an error in processing your uploaded data. 
-                      \nPlease check if the file has the correct format.",
-            easyClose = FALSE,
-            footer = tagList(modalButton("OK"))
-          ))
-        return(NULL)
-      }
-    )
+    result <- tryCatch({
+      year_range <- extract_year_range(
+        input$source_v1,
+        input$source_v2,
+        input$user_file_v1$datapath,
+        input$user_file_v2$datapath,
+        input$lagyears_v1_cor,
+        input$lagyears_v2_cor
+      )
+      
+      ### REMOVE
+      print("DEBUG: Extracted Year Range")
+      print(year_range)
+      
+      return(year_range)
+    }, error = function(e) {
+      showModal(
+        modalDialog(
+          title = "Error",
+          "There was an error in processing your uploaded data.\nPlease check if the file has the correct format.",
+          easyClose = FALSE,
+          footer = tagList(modalButton("OK"))
+        )
+      )
+      return(NULL)
+    })
     return(result)
-  })  
+  })
+  
   
   
   ### User data processing ----
@@ -8540,7 +8567,14 @@ server <- function(input, output, session) {
     req(input$user_file_v1)
     
     if (input$source_v1 == "User Data"){
-      new_data1 = read_regcomp_data(input$user_file_v1$datapath)   
+      new_data1 = read_regcomp_data(input$user_file_v1$datapath)
+      
+      ### REMOVE
+      print("DEBUG: user_data_v1 loaded")
+      print(head(new_data1))
+      print(dim(new_data1))
+      
+      
       return(new_data1)
     }
     else{
@@ -8563,45 +8597,46 @@ server <- function(input, output, session) {
   })
   
   # Subset v1 data to year_range and chosen variable
-  user_subset_v1 = reactive({
-    
-    req(user_data_v1(),input$user_variable_v1)
-    year_range_cor = reactive({
+      user_subset_v1 = reactive({
+        
+        req(user_data_v1(),input$user_variable_v1)
+            year_range_cor = reactive({
+        
+        result <- tryCatch(
+          {
+            return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath))
+            return(yrc)
+          },
+          error = function(e) {
+            showModal(
+              # Add modal dialog for warning message
+              modalDialog(
+                title = "Error",
+                "There was an error in processing your uploaded data. 
+                    \nPlease check if the file has the correct format.",
+                easyClose = FALSE,
+                footer = tagList(modalButton("OK"))
+              ))
+            return(NULL)
+          }
+        )
+        return(result)
+      })  
       
-      result <- tryCatch(
-        {
-          return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath))
-        },
-        error = function(e) {
-          showModal(
-            # Add modal dialog for warning message
-            modalDialog(
-              title = "Error",
-              "There was an error in processing your uploaded data. 
-                        \nPlease check if the file has the correct format.",
-              easyClose = FALSE,
-              footer = tagList(modalButton("OK"))
-            ))
-          return(NULL)
-        }
-      )
-      return(result)
-    })  
-    
-    usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3, lag=input$lagyears_v1_cor)
-    
-    return(usr_ss1)
-  })
-  
-  # Subset v2 data to year_range and chosen variable
-  user_subset_v2 = reactive({
-    
-    req(user_data_v2(),input$user_variable_v2)
-    
-    usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3, lag=input$lagyears_v1_cor)
-    
-    return(usr_ss2)
-  })
+        usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3)
+        
+        return(usr_ss1)
+      })
+      
+      # Subset v2 data to year_range and chosen variable
+      user_subset_v2 = reactive({
+        
+        req(user_data_v2(),input$user_variable_v2)
+        
+        usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3)
+        
+        return(usr_ss2)
+      })
   
   ### Generate plot data ---- 
   
@@ -9506,27 +9541,60 @@ server <- function(input, output, session) {
   ### User data processing ----
   
   # Extract Shared year range
+  # year_range_reg = reactive({
+  #   
+  #   result <- tryCatch(
+  #     {
+  #       return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath))
+  #     },
+  #     error = function(e) {
+  #       showModal(
+  #         # Add modal dialog for warning message
+  #         modalDialog(
+  #           title = "Error",
+  #           "There was an error in processing your uploaded data. 
+  #               \nPlease check if the file has the correct format.",
+  #           easyClose = FALSE,
+  #           footer = tagList(modalButton("OK"))
+  #         ))
+  #       return(NULL)
+  #     }
+  #   )
+  #   return(result)
+  # })
+  
   year_range_reg = reactive({
     
-    result <- tryCatch(
-      {
-        return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath))
-      },
-      error = function(e) {
-        showModal(
-          # Add modal dialog for warning message
-          modalDialog(
-            title = "Error",
-            "There was an error in processing your uploaded data. 
-                \nPlease check if the file has the correct format.",
-            easyClose = FALSE,
-            footer = tagList(modalButton("OK"))
-          ))
-        return(NULL)
-      }
+    result <- tryCatch({
+      res <- extract_year_range(
+        input$source_iv,
+        input$source_dv,
+        input$user_file_iv$datapath,
+        input$user_file_dv$datapath
+      )
+      
+      ### REMOVE
+      print("DEBUG: Extracted Year Range (Regression)")
+      print(res)
+      return(res)
+    },
+    error = function(e) {
+      showModal(
+        modalDialog(
+          title = "Error",
+          "There was an error in processing your uploaded data. 
+          \nPlease check if the file has the correct format.",
+          easyClose = FALSE,
+          footer = tagList(modalButton("OK"))
+        )
+      )
+      return(NULL)
+    }
     )
+    
     return(result)
   })
+  
   
   # Load in user data for independent variable
   user_data_iv = reactive({
@@ -9534,7 +9602,14 @@ server <- function(input, output, session) {
     req(input$user_file_iv)
     
     if (input$source_iv == "User Data"){
-      new_data1 = read_regcomp_data(input$user_file_iv$datapath)      
+
+      new_data1 = read_regcomp_data(input$user_file_iv$datapath)  
+      
+      ### REMOVE
+      print("DEBUG: user_data_v1 loaded")
+      print(head(new_data1))
+      print(dim(new_data1))
+      
       return(new_data1)
     }
     else{
@@ -9559,42 +9634,44 @@ server <- function(input, output, session) {
   
   # Subset iv data to year_range and chosen variable
   user_subset_iv = reactive({
-    
-    req(user_data_iv(),input$user_variable_iv)
+    req(user_data_iv(), input$user_variable_iv)
     
     year_range_reg = reactive({
-      
-      result <- tryCatch(
-        {
-          return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath))
-        },
-        error = function(e) {
-          showModal(
-            # Add modal dialog for warning message
-            modalDialog(
-              title = "Error",
-              "There was an error in processing your uploaded data. 
+      result <- tryCatch({
+        return(
+          extract_year_range(
+            input$source_iv,
+            input$source_dv,
+            input$user_file_iv$datapath,
+            input$user_file_dv$datapath
+          )
+        )
+      }, error = function(e) {
+        showModal(
+          # Add modal dialog for warning message
+          modalDialog(
+            title = "Error",
+            "There was an error in processing your uploaded data.
                         \nPlease check if the file has the correct format.",
-              easyClose = FALSE,
-              footer = tagList(modalButton("OK"))
-            ))
-          return(NULL)
-        }
-      )
+            easyClose = FALSE,
+            footer = tagList(modalButton("OK"))
+          )
+        )
+        return(NULL)
+      })
       return(result)
-    })  
+    })
     
-    usr_ss1 = create_user_data_subset(user_data_iv(),input$user_variable_iv,input$range_years4)
+    usr_ss1 = create_user_data_subset(user_data_iv(), input$user_variable_iv, input$range_years4)
     
     return(usr_ss1)
   }) 
   
   # Subset dv data to year_range and chosen variable
   user_subset_dv = reactive({
+    req(user_data_dv(), input$user_variable_dv)
     
-    req(user_data_dv(),input$user_variable_dv)
-    
-    usr_ss2 = create_user_data_subset(user_data_dv(),input$user_variable_dv,input$range_years4)
+    usr_ss2 = create_user_data_subset(user_data_dv(), input$user_variable_dv, input$range_years4)
     
     return(usr_ss2)
   }) 
@@ -9696,20 +9773,24 @@ server <- function(input, output, session) {
   
   # Plot 
   output$plot_iv <- renderPlot({
-    if (input$source_iv == "User Data"){
-      plot_user_timeseries(user_subset_iv(),"darkorange2")
+    if (input$source_iv == "User Data") {
+      plot_user_timeseries(user_subset_iv(), "darkorange2")
     } else {
       timeseries_plot_iv()
-    } 
-  },height = 400)  
+    }
+  }, height = 400)  
   
   output$plot_dv <- renderPlot({
-    if (input$source_dv == "User Data"){
-      plot_user_timeseries(user_subset_dv(),"saddlebrown")
+    if (input$source_dv == "User Data") {
+      plot_user_timeseries(user_subset_dv(), "saddlebrown")
     } else{
       ME_map_plot_dv()
     }
-  },width = function(){plot_dimensions_dv()[1]},height = function(){plot_dimensions_dv()[2]})  
+  }, width = function() {
+    plot_dimensions_dv()[1]
+  }, height = function() {
+    plot_dimensions_dv()[2]
+  })  
   
   ### Regression plots ----
   ### Initialise and update custom points lines highlights ----
