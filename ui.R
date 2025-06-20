@@ -3373,8 +3373,8 @@ ui <- navbarPage(
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
-                                            br(),
-                                            h4("Variable 2", style = "color: #094030;"),
+
+                                                                                        h4("Variable 2", style = "color: #094030;"),
                                             withSpinner(ui_element = plotOutput("plot_v2", height = "auto"),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
