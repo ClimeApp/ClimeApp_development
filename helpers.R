@@ -693,6 +693,7 @@ generate_stats_ts = function(data){
 ##           data_input = same as data_input for mapping function
 ##           mode = "Absolute" or "Anomalies"
 
+#For Map Plots
 set_axis_values = function(data_input,mode){
   
   if (mode == "Absolute"){
@@ -705,6 +706,12 @@ set_axis_values = function(data_input,mode){
   minmax = signif(minmax,digits = 3)
   
   return(minmax)
+}
+
+#For TS Plots
+set_ts_axis_values = function(data_input) {
+  minmax = range(data_input, na.rm = TRUE)
+  return(signif(minmax, digits = 3))
 }
 
 
@@ -1359,14 +1366,32 @@ plot_default_timeseries <- function(data_input, tab, variable, titles, title_mod
 #'
 #' @return A ggplot object.
 
-plot_timeseries <- function(type, mode=NA, data=NA, variable=NA,
-                            data_v1=NA, data_v2=NA, variable1=NA, variable2=NA,
-                            ref = NA, year_range=NA, month_range_1=NA, month_range_2=NA,
-                            titles=NA, #titles_mode=NA, titles_corr=NA, titles_reg=NA, titles_custom=NA,
-                            show_key=FALSE, key_position=NA, show_ref=FALSE,
-                            moving_ave=FALSE, moving_ave_year=NA, 
-                            custom_percentile=FALSE, percentiles=NA, 
-                            highlights=NA, lines=NA, points=NA) {
+plot_timeseries <- function(type,
+                            mode = NA,
+                            data = NA,
+                            variable = NA,
+                            data_v1 = NA,
+                            data_v2 = NA,
+                            variable1 = NA,
+                            variable2 = NA,
+                            ref = NA,
+                            year_range = NA,
+                            month_range_1 = NA,
+                            month_range_2 = NA,
+                            titles = NA,
+                            #titles_mode=NA, titles_corr=NA, titles_reg=NA, titles_custom=NA,
+                            show_key = FALSE,
+                            key_position = NA,
+                            show_ref = FALSE,
+                            moving_ave = FALSE,
+                            moving_ave_year = NA,
+                            custom_percentile = FALSE,
+                            percentiles = NA,
+                            highlights = NA,
+                            lines = NA,
+                            points = NA,
+                            axis_range = NULL)
+{
   
   # Create empty dataframes for Lines, Points, Fills and boxes  
   lines_data = data.frame(matrix(ncol = 8, nrow = 0))
@@ -1393,10 +1418,20 @@ plot_timeseries <- function(type, mode=NA, data=NA, variable=NA,
     y_min = min(data[,4]) ; y_max = max(data[,4])
   } else {
     y_min = min(data[,2]) ; y_max = max(data[,2])
-  } 
-  
-  y_range = y_max-y_min
-  y_Min = y_min-(0.1*y_range) ; y_Max = y_max+(0.1*y_range)
+  }
+
+  # Axis Range Setting with optional padding
+  if (!is.null(axis_range) && length(axis_range) == 2 && !any(is.na(axis_range))) {
+    # Apply padding even to user-specified range
+    y_range <- axis_range[2] - axis_range[1]
+    y_Min <- axis_range[1] - (0.1 * y_range)
+    y_Max <- axis_range[2] + (0.1 * y_range)
+  } else {
+    # Auto mode
+    y_range <- y_max - y_min
+    y_Min <- y_min - (0.1 * y_range)
+    y_Max <- y_max + (0.1 * y_range)
+  }
   
   # Edit year range if required:
   if (type == "Composites"){
@@ -4131,26 +4166,7 @@ generate_regression_titles_ts = function(independent_source,
                            " ", title_mode_i, title_lonlat_i, "\nDependent variable: ",
                            title_months_d, dependent_variable,
                            title_mode_d, "\nYear:", year_selected, sep = "")
-  
-  # Replace with custom titles
-  if (map_title_mode == "Custom"){
-    if(map_custom_title1 != ""){
-      map_title = map_custom_title1
-    }
-    if(map_custom_title2 != ""){
-      map_subtitle = map_custom_title2
-    }
-  }
-  
-  # Generate combined titles:
-  if (map_title_mode == "Custom"){
-    map_title = map_custom_title
-    map_subtitle = map_custom_subtitle
-  } else {
-    map_title = "Regression"
-    map_subtitle = paste("Test")
-  }
-  
+
   # Generate download titles
   tf0 = paste("Reg",title_months_i,"ind. var.", ">", title_months_d, modERA_dependent_variable)
   tf1 = gsub("[[:punct:]]", "", tf0)
@@ -4159,11 +4175,18 @@ generate_regression_titles_ts = function(independent_source,
   
   # Generate TS titles
   ts_axis = paste(dependent_variable,unit_d)
-  ts_title = "Regression Timeseries"
-  ts_subtitle = paste("Independent variables: ", title_months_i, title_variables_i,
-                      " ", title_mode_i, title_lonlat_i, "\nDependent variable: ",
-                      title_months_d, dependent_variable,
-                      title_mode_d, sep = "")
+  
+  if (map_title_mode == "Custom") {
+    ts_title = map_custom_title
+    ts_subtitle = map_custom_subtitle
+  } else {
+    ts_title = "Regression Timeseries"
+    ts_subtitle = paste("Independent variables: ", title_months_i, title_variables_i,
+                        " ", title_mode_i, title_lonlat_i, "\nDependent variable: ",
+                        title_months_d, dependent_variable,
+                        title_mode_d, sep = "")
+  }
+  
   ts_title_size = 18
   
   # Combine all titles into a dataframe
@@ -4922,4 +4945,16 @@ generate_metadata_sea_ts <- function(title_mode_6, title1_input_6, y_label_6, sh
   )
   
   return(meta_input_sea_ts)
+}
+
+
+## (SEA) SET AXIS VALUES IN CUSTOMIZATION
+##       data input = Input from SEA_datatable()
+
+set_sea_axis_values <- function(data_input) {
+  min_val <- min(data_input, na.rm = TRUE)
+  max_val <- max(data_input, na.rm = TRUE)
+  range_val <- max_val - min_val
+  padded <- c(min_val - 0.05 * range_val, max_val + 0.05 * range_val)
+  return(signif(padded, digits = 3))
 }

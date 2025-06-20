@@ -522,6 +522,14 @@ server <- function(input, output, session) {
                            condition = input$show_line_on_legend_ts == TRUE,
                            asis = FALSE)})
   
+  observe({shinyjs::toggle(id = "hidden_custom_axis_ts",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$axis_mode_ts == "Fixed",
+                           asis = FALSE)})
+  
   
   ### Composite ----
   
@@ -834,6 +842,14 @@ server <- function(input, output, session) {
                            time = 0.5,
                            selector = NULL,
                            condition = input$show_line_on_legend_ts2 == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_axis_ts2",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$axis_mode_ts2 == "Fixed",
                            asis = FALSE)})
   
   
@@ -1237,6 +1253,14 @@ server <- function(input, output, session) {
                            condition = input$show_line_on_legend_ts3 == TRUE,
                            asis = FALSE)})
   
+  observe({shinyjs::toggle(id = "hidden_custom_axis_ts3",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$axis_mode_ts3 == "Fixed",
+                           asis = FALSE)})
+  
   ### Regression ----
   
   ##Sidebar IV
@@ -1485,6 +1509,22 @@ server <- function(input, output, session) {
                            time = 0.5,
                            selector = NULL,
                            condition = input$show_line_on_legend_ts4 == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_axis_ts4a",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$axis_mode_ts4a == "Fixed",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_custom_axis_ts4b",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$axis_mode_ts4b == "Fixed",
                            asis = FALSE)})
   
   ## Regression Maps
@@ -2044,6 +2084,14 @@ server <- function(input, output, session) {
                            condition = input$download_options_6 == TRUE,
                            asis = FALSE)})
   
+  observe({shinyjs::toggle(id = "hidden_custom_axis_6",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$axis_mode_6 == "Fixed",
+                           asis = FALSE)})
+  
   ## ANOMALIES observe, update & interactive controls ----
   
   ### Input updaters ----
@@ -2299,10 +2347,8 @@ server <- function(input, output, session) {
         selected = c("September", "November"))
     }
   })
-  
-  
-  
-  # Axis values updater 
+
+  # Axis values updater MAP
   observe({
     if (input$axis_mode == "Automatic"){
       updateNumericRangeInput(
@@ -2318,6 +2364,25 @@ server <- function(input, output, session) {
         session = getDefaultReactiveDomain(),
         inputId = "axis_input",
         value = set_axis_values(map_data(), "Anomaly"))
+    }
+  })
+  
+  # Axis values updater TS
+  observe({
+    if (input$axis_mode_ts == "Automatic"){
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_ts",
+        value = c(NA,NA))
+    }
+  })
+  
+  observe({
+    if (input$axis_mode_ts == "Fixed" & is.null(input$axis_input_ts)){
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_ts",
+        value = set_ts_axis_values(timeseries_data()$Mean))
     }
   })
   
@@ -3198,7 +3263,7 @@ server <- function(input, output, session) {
     }
   })
   
-  # Composite Axis values updater 
+  # Composite Axis values updater MAP
   observe({
     if (input$axis_mode2 == "Automatic"){
       updateNumericRangeInput(
@@ -3214,6 +3279,25 @@ server <- function(input, output, session) {
         session = getDefaultReactiveDomain(),
         inputId = "axis_input2",
         value = set_axis_values(map_data_2(), input$mode_selected2))
+    }
+  })
+  
+  # Composite Axis values updater TS
+  observe({
+    if (input$axis_mode_ts2 == "Automatic"){
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_ts2",
+        value = c(NA,NA))
+    }
+  })
+  
+  observe({
+    if (input$axis_mode_ts2 == "Fixed" & is.null(input$axis_input_ts2)){
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_ts2",
+        value = set_ts_axis_values(timeseries_data_2()$Mean))
     }
   })
   
@@ -4459,7 +4543,7 @@ server <- function(input, output, session) {
     }
   })
   
-  # Correlation axis values updater 
+  # Correlation axis values updater Map
   observe({
     if (input$axis_mode3 == "Automatic"){
       updateNumericRangeInput(
@@ -4475,6 +4559,25 @@ server <- function(input, output, session) {
         session = getDefaultReactiveDomain(),
         inputId = "axis_input3",
         value = set_axis_values(correlation_map_data()[[3]], "Anomaly"))
+    }
+  })
+  
+  # Correlation Axis values updater TS
+  observe({
+    if (input$axis_mode_ts3 == "Automatic"){
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_ts3",
+        value = c(NA,NA))
+    }
+  })
+  
+  observe({
+    if (input$axis_mode_ts3 == "Fixed" & is.null(input$axis_input_ts3)){
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_ts3",
+        value = set_ts_axis_values(timeseries_data_v1()$Mean))
     }
   })
   
@@ -5691,6 +5794,48 @@ server <- function(input, output, session) {
       addClass("button_s_america_dv", "green-background")
     } else {
       removeClass("button_s_america_dv", "green-background")
+    }
+  })
+  
+  # Regression Trend Axis values updater TS
+  observe({
+    if (input$axis_mode_ts4a == "Automatic") {
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_ts4a",
+        value = c(NA, NA)
+      )
+    }
+  })
+
+  observe({
+    if (input$axis_mode_ts4a == "Fixed" && is.null(input$axis_input_ts4a)) {
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_ts4a",
+        value = set_ts_axis_values(regression_ts_data()[,3])  # Trend
+      )
+    }
+  })
+
+  # Regression Residual Axis values updater TS
+  observe({
+    if (input$axis_mode_ts4b == "Automatic") {
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_ts4b",
+        value = c(NA, NA)
+      )
+    }
+  })
+
+  observe({
+    if (input$axis_mode_ts4b == "Fixed" && is.null(input$axis_input_ts4b)) {
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_ts4b",
+        value = set_ts_axis_values(regression_ts_data()[,4])  # Residuals
+      )
     }
   })
   
@@ -7098,6 +7243,34 @@ server <- function(input, output, session) {
     }
   })
   
+  # Y-axis updater for SEA plot
+  observe({
+    if (input$axis_mode_6 == "Automatic") {
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_6",
+        value = c(NA, NA)
+      )
+    }
+  })
+  
+  observe({
+    if (input$axis_mode_6 == "Fixed" &&
+        (is.null(input$axis_input_6) || any(is.na(input$axis_input_6)))) {
+      
+      data <- SEA_datatable()
+      relevant_cols <- data[, !names(data) %in% c("LAG_YEAR", "P")]
+      
+      padded_range <- set_sea_axis_values(relevant_cols)
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_6",
+        value = padded_range
+      )
+    }
+  })
+  
   ### Generate Metadata for SEA ----
   
   #Download Plot data 
@@ -7787,13 +7960,26 @@ server <- function(input, output, session) {
     }
     
     # New 
-    p <- plot_timeseries(type="Anomaly", data=timeseries_data(), variable=input$variable_selected,
-                         ref=ref_ts, year_range=input$range_years, month_range_1=month_range_primary(),
-                         titles=plot_titles(), 
-                         show_key=input$show_key_ts, key_position=input$key_position_ts, show_ref = input$show_ref_ts,
-                         moving_ave=input$custom_average_ts, moving_ave_year=input$year_moving_ts, 
-                         custom_percentile=input$custom_percentile_ts, percentiles=input$percentile_ts, 
-                         highlights=ts_highlights_data(), lines=ts_lines_data(), points=ts_points_data())
+    p <- plot_timeseries(
+      type = "Anomaly",
+      data = timeseries_data(),
+      variable = input$variable_selected,
+      ref = ref_ts,
+      year_range = input$range_years,
+      month_range_1 = month_range_primary(),
+      titles = plot_titles(),
+      show_key = input$show_key_ts,
+      key_position = input$key_position_ts,
+      show_ref = input$show_ref_ts,
+      moving_ave = input$custom_average_ts,
+      moving_ave_year = input$year_moving_ts,
+      custom_percentile = input$custom_percentile_ts,
+      percentiles = input$percentile_ts,
+      highlights = ts_highlights_data(),
+      lines = ts_lines_data(),
+      points = ts_points_data(),
+      axis_range = input$axis_input_ts
+      )
     
     return(p)
   }
@@ -8308,12 +8494,25 @@ server <- function(input, output, session) {
     # }
     
     # New 
-    p <- plot_timeseries(type="Composites", data=timeseries_data_2(), variable=input$variable_selected2,
-                         ref=ref_ts2, year_range=year_set_comp(), month_range_1=month_range_primary(),
-                         titles=plot_titles_composites(), #titles_mode=input$title_mode_ts2, 
-                         show_key=input$show_key_ts2, key_position=input$key_position_ts2, show_ref = input$show_ref_ts2, 
-                         custom_percentile=input$custom_percentile_ts2, percentiles=input$percentile_ts2, 
-                         highlights=ts_highlights_data2(), lines=ts_lines_data2(), points=ts_points_data2())
+    p <- plot_timeseries(
+      type = "Composites",
+      data = timeseries_data_2(),
+      variable = input$variable_selected2,
+      ref = ref_ts2,
+      year_range = year_set_comp(),
+      month_range_1 = month_range_primary(),
+      titles = plot_titles_composites(),
+      #titles_mode=input$title_mode_ts2,
+      show_key = input$show_key_ts2,
+      key_position = input$key_position_ts2,
+      show_ref = input$show_ref_ts2,
+      custom_percentile = input$custom_percentile_ts2,
+      percentiles = input$percentile_ts2,
+      highlights = ts_highlights_data2(),
+      lines = ts_lines_data2(),
+      points = ts_points_data2(),
+      axis_range = input$axis_input_ts2
+    )
     
     return(p)
   }
@@ -8635,11 +8834,22 @@ server <- function(input, output, session) {
   })
   
   timeseries_plot_v1 = function(){
-    p <- plot_timeseries(type="Anomaly", data=timeseries_data_v1(), variable=input$ME_variable_v1,
-                         ref=NULL, year_range=input$range_years3, month_range_1=month_range_primary(),
-                         titles=plot_titles_v1(), show_key=FALSE, show_ref = FALSE,
-                         moving_ave=FALSE,custom_percentile=FALSE,
-                         highlights=data.frame(), lines=data.frame(), points=data.frame())
+    p <- plot_timeseries(
+      type = "Anomaly",
+      data = timeseries_data_v1(),
+      variable = input$ME_variable_v1,
+      ref = NULL,
+      year_range = input$range_years3,
+      month_range_1 = month_range_primary(),
+      titles = plot_titles_v1(),
+      show_key = FALSE,
+      show_ref = FALSE,
+      moving_ave = FALSE,
+      custom_percentile = FALSE,
+      highlights = data.frame(),
+      lines = data.frame(),
+      points = data.frame()
+    )
     
     return(p)
   }
@@ -8684,11 +8894,22 @@ server <- function(input, output, session) {
   #REMOVE
   #timeseries_plot_v2 = function(){plot_default_timeseries(,"general",input$ME_variable_v2,plot_titles_v2(),"Default",NA)}
   timeseries_plot_v2 = function(){
-    p <- plot_timeseries(type="Anomaly", data=timeseries_data_v2(), variable=input$ME_variable_v2,
-                         ref=NULL, year_range=input$range_years3, month_range_2=month_range_secondary(),
-                         titles=plot_titles_v2(), show_key=FALSE, show_ref = FALSE,
-                         moving_ave=FALSE,custom_percentile=FALSE,
-                         highlights=data.frame(), lines=data.frame(), points=data.frame())
+    p <- plot_timeseries(
+      type = "Anomaly",
+      data = timeseries_data_v2(),
+      variable = input$ME_variable_v2,
+      ref = NULL,
+      year_range = input$range_years3,
+      month_range_2 = month_range_secondary(),
+      titles = plot_titles_v2(),
+      show_key = FALSE,
+      show_ref = FALSE,
+      moving_ave = FALSE,
+      custom_percentile = FALSE,
+      highlights = data.frame(),
+      lines = data.frame(),
+      points = data.frame()
+    )
     return(p)
   }
   
@@ -8884,13 +9105,25 @@ server <- function(input, output, session) {
       variable_v2 = input$user_variable_v2
     }
     
-    plot_timeseries(type="Correlation", data_v1=ts_data_v1(), data_v2=ts_data_v2(), 
-                    variable1=variable_v1, variable2=variable_v2,year_range=input$range_years3,
-                    month_range_1=month_range_primary(), month_range_2=month_range_secondary(),
-                    titles=plot_titles_cor(),
-                    show_key=input$show_key_ts3, key_position=input$key_position_ts3, 
-                    moving_ave=input$custom_average_ts3, moving_ave_year=input$year_moving_ts3, 
-                    highlights=ts_highlights_data3(), lines=ts_lines_data3(), points=ts_points_data3())
+    plot_timeseries(
+      type = "Correlation",
+      data_v1 = ts_data_v1(),
+      data_v2 = ts_data_v2(),
+      variable1 = variable_v1,
+      variable2 = variable_v2,
+      year_range = input$range_years3,
+      month_range_1 = month_range_primary(),
+      month_range_2 = month_range_secondary(),
+      titles = plot_titles_cor(),
+      show_key = input$show_key_ts3,
+      key_position = input$key_position_ts3,
+      moving_ave = input$custom_average_ts3,
+      moving_ave_year = input$year_moving_ts3,
+      highlights = ts_highlights_data3(),
+      lines = ts_lines_data3(),
+      points = ts_points_data3(),
+      axis_range = input$axis_input_ts3
+    )
     
   }
   
@@ -9596,11 +9829,22 @@ server <- function(input, output, session) {
   #REMOVE
   #_iv = function(){plot_default_timeseries(,"general",input$ME_variable_iv[1],,"Default",NA)}
   timeseries_plot_iv = function(){
-    p <- plot_timeseries(type="Anomaly", data=ME_ts_data_iv(), variable=input$ME_variable_iv[1],
-                         ref = NULL,year_range=input$range_years4, month_range_1=month_range_primary(),
-                         titles=plot_titles_iv(), show_key=FALSE, show_ref = FALSE,
-                         moving_ave=FALSE,custom_percentile=FALSE,
-                         highlights=data.frame(), lines=data.frame(), points=data.frame())
+    p <- plot_timeseries(
+      type = "Anomaly",
+      data = ME_ts_data_iv(),
+      variable = input$ME_variable_iv[1],
+      ref = NULL,
+      year_range = input$range_years4,
+      month_range_1 = month_range_primary(),
+      titles = plot_titles_iv(),
+      show_key = FALSE,
+      show_ref = FALSE,
+      moving_ave = FALSE,
+      custom_percentile = FALSE,
+      highlights = data.frame(),
+      lines = data.frame(),
+      points = data.frame()
+    )
     return(p)
   }
   
@@ -9923,29 +10167,29 @@ server <- function(input, output, session) {
     req(month_range_secondary(), month_range_primary())
     
     ptr = generate_regression_titles_ts(
-            input$source_iv,
-            input$source_dv,
-            input$dataset_selected_iv,
-            input$dataset_selected_dv,
-            input$ME_variable_dv,
-            input$mode_selected_iv,
-            input$mode_selected_dv,
-            month_range_secondary(),
-            month_range_primary(),
-            lonlat_vals_iv()[1:2],
-            lonlat_vals_dv()[1:2],
-            lonlat_vals_iv()[3:4],
-            lonlat_vals_dv()[3:4],
-            input$range_years4,
-            reg_resi_year_val(),
-            variables_iv(),
-            variable_dv(),
-            match(input$coeff_variable, variables_iv()),
-            match(input$pvalue_variable, variables_iv()),
-            input$title_mode_ts4,
-            input$title1_input_ts4,
-            "Default",
-            18
+      independent_source = input$source_iv,
+      dependent_source = input$source_dv,
+      dataset_i = input$dataset_selected_iv,
+      dataset_d = input$dataset_selected_dv,
+      modERA_dependent_variable = input$ME_variable_dv,
+      mode_i = input$mode_selected_iv,
+      mode_d = input$mode_selected_dv,
+      month_range_i = month_range_secondary(),
+      month_range_d = month_range_primary(),
+      lon_range_i = lonlat_vals_iv()[1:2],
+      lon_range_d = lonlat_vals_dv()[1:2],
+      lat_range_i = lonlat_vals_iv()[3:4],
+      lat_range_d = lonlat_vals_dv()[3:4],
+      year_range = input$range_years4,
+      year_selected = reg_resi_year_val(),
+      independent_variables = variables_iv(),
+      dependent_variable = variable_dv(),
+      iv_number_coeff = match(input$coeff_variable, variables_iv()),
+      iv_number_pvals = match(input$pvalue_variable, variables_iv()),
+      map_title_mode = input$title_mode_ts4,
+      map_custom_title = input$title1_input_ts4,
+      map_custom_subtitle = input$title2_input_ts4,
+      title_size = 18
     )
     return(ptr)
   })
@@ -9994,22 +10238,46 @@ server <- function(input, output, session) {
     return(rtsd)
   })
   
-  timeseries_plot_reg1 = function(){
-    plot_timeseries(type="Regression_Trend", data=regression_ts_data(),ref=NULL,
-                    year_range=input$range_years4, titles=plot_titles_reg_ts(),
-                    show_key=TRUE, key_position="right", show_ref = FALSE,
-                    moving_ave=FALSE,custom_percentile=FALSE,
-                    highlights=data.frame(), lines=data.frame(), points=data.frame())
+  timeseries_plot_reg1 = function() {
+    plot_timeseries(
+      type = "Regression_Trend",
+      data = regression_ts_data(),
+      ref = NULL,
+      year_range = input$range_years4,
+      titles = plot_titles_reg_ts(),
+      show_key = TRUE,
+      key_position = "right",
+      show_ref = FALSE,
+      moving_ave = FALSE,
+      custom_percentile = FALSE,
+      highlights = data.frame(),
+      lines = data.frame(),
+      points = data.frame(),
+      axis_range = input$axis_input_ts4a
+    )
   }
   
-  output$plot_reg_ts1 = renderPlot({timeseries_plot_reg1()},height=400)
+  output$plot_reg_ts1 = renderPlot({
+    timeseries_plot_reg1()
+  }, height = 400)
   
-  timeseries_plot_reg2 = function(){
-    plot_timeseries(type="Regression_Residual", data=regression_ts_data(),ref=NULL,
-                    year_range=input$range_years4, titles=plot_titles_reg_ts(),
-                    show_key=TRUE, key_position="right", show_ref = FALSE,
-                    moving_ave=FALSE,custom_percentile=FALSE,
-                    highlights=data.frame(), lines=data.frame(), points=data.frame())
+  timeseries_plot_reg2 = function() {
+    plot_timeseries(
+      type = "Regression_Residual",
+      data = regression_ts_data(),
+      ref = NULL,
+      year_range = input$range_years4,
+      titles = plot_titles_reg_ts(),
+      show_key = TRUE,
+      key_position = "right",
+      show_ref = FALSE,
+      moving_ave = FALSE,
+      custom_percentile = FALSE,
+      highlights = data.frame(),
+      lines = data.frame(),
+      points = data.frame(),
+      axis_range = input$axis_input_ts4b
+    )
   }
   
   output$plot_reg_ts2 = renderPlot({timeseries_plot_reg2()},height=400)
@@ -11262,12 +11530,19 @@ server <- function(input, output, session) {
   SEA_plotfunction <- function() {
     data <- SEA_datatable()
     
-    # Find y limits
-    SEAmax <- max(data[, !names(data) %in% c("LAG_YEAR", "P")], na.rm = TRUE)
-    SEAmin <- min(data[, !names(data) %in% c("LAG_YEAR", "P")], na.rm = TRUE)
+    # Set y-axis range
+    y_data <- data[, !names(data) %in% c("LAG_YEAR", "P")]
+    SEAmin <- min(y_data, na.rm = TRUE)
+    SEAmax <- max(y_data, na.rm = TRUE)
     SEArange <- SEAmax - SEAmin
-    ymax <- SEAmax + (0.05 * SEArange)
-    ymin <- SEAmin - (0.05 * SEArange)
+    
+    if (!is.null(input$axis_input_6) && all(!is.na(input$axis_input_6))) {
+      ymin <- input$axis_input_6[1]
+      ymax <- input$axis_input_6[2]
+    } else {
+      ymin <- SEAmin - (0.05 * SEArange)
+      ymax <- SEAmax + (0.05 * SEArange)
+    }
     
     # Base plot
     p <- ggplot(data, aes(x = LAG_YEAR)) +

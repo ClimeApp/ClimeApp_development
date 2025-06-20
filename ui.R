@@ -1031,6 +1031,21 @@ ui <- navbarPage(
                                                                               min     = 1,
                                                                               max     = 40))),
                                                            
+                                                           radioButtons(inputId  = "axis_mode_ts",
+                                                                        label    = "Axis customization:",
+                                                                        choices  = c("Automatic","Fixed"),
+                                                                        selected = "Automatic" , inline = TRUE),
+                                                           
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_custom_axis_ts",
+                                                                 
+                                                                 numericRangeInput(inputId    = "axis_input_ts",
+                                                                                   label      = "Set your axis values:",
+                                                                                   value      = c(NULL, NULL),
+                                                                                   separator  = " to ",
+                                                                                   min        = -Inf,
+                                                                                   max        = Inf))),
+                                                           
                                                            checkboxInput(inputId = "show_key_ts",
                                                                          label   = "Show key",
                                                                          value   = FALSE),
@@ -2099,6 +2114,21 @@ ui <- navbarPage(
                                                                            placeholder = "Custom title")
                                                              )),
                                                            
+                                                           radioButtons(inputId  = "axis_mode_ts2",
+                                                                        label    = "Axis customization:",
+                                                                        choices  = c("Automatic","Fixed"),
+                                                                        selected = "Automatic" , inline = TRUE),
+                                                           
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_custom_axis_ts2",
+                                                                 
+                                                                 numericRangeInput(inputId    = "axis_input_ts2",
+                                                                                   label      = "Set your axis values:",
+                                                                                   value      = c(NULL, NULL),
+                                                                                   separator  = " to ",
+                                                                                   min        = -Inf,
+                                                                                   max        = Inf))),
+                                                           
                                                            checkboxInput(inputId = "show_key_ts2",
                                                                          label   = "Show key",
                                                                          value   = FALSE),
@@ -2758,6 +2788,21 @@ ui <- navbarPage(
                                                              value     = "",
                                                              placeholder = "Default"),
                                                    
+                                                   radioButtons(inputId  = "axis_mode_6",
+                                                                label    = "Y-axis customization:",
+                                                                choices  = c("Automatic","Fixed"),
+                                                                selected = "Automatic" , inline = TRUE),
+                                                   
+                                                   shinyjs::hidden(
+                                                     div(id = "hidden_custom_axis_6",
+                                                         
+                                                         numericRangeInput(inputId    = "axis_input_6",
+                                                                           label      = "Set your axis values:",
+                                                                           value      = c(NULL, NULL),
+                                                                           separator  = " to ",
+                                                                           min        = -Inf,
+                                                                           max        = Inf))),
+                                                   
                                                    checkboxInput(inputId = "show_observations_6",
                                                                  label   = "Show all observations",
                                                                  value   = FALSE),
@@ -3384,6 +3429,21 @@ ui <- navbarPage(
                                                                            width       = NULL,
                                                                            placeholder = "Custom title")
                                                              )),
+                                                           
+                                                           radioButtons(inputId  = "axis_mode_ts3",
+                                                                        label    = "Axis customization:",
+                                                                        choices  = c("Automatic","Fixed"),
+                                                                        selected = "Automatic" , inline = TRUE),
+                                                           
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_custom_axis_ts3",
+                                                                 
+                                                                 numericRangeInput(inputId    = "axis_input_ts3",
+                                                                                   label      = "Set your axis values for V1:",
+                                                                                   value      = c(NULL, NULL),
+                                                                                   separator  = " to ",
+                                                                                   min        = -Inf,
+                                                                                   max        = Inf))),
                                                            
                                                            checkboxInput(inputId = "show_key_ts3",
                                                                          label   = "Show key",
@@ -4653,8 +4713,48 @@ ui <- navbarPage(
                                                                            label       = "Custom plot title:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title")
+                                                                           placeholder = "Custom title"),
+                                                                 
+                                                                 textInput(inputId     = "title2_input_ts4",
+                                                                           label       = "Custom plot subtitle:", 
+                                                                           value       = NA,
+                                                                           width       = NULL,
+                                                                           placeholder = "Custom subtitle")
                                                              )),
+                                                           
+                                                           radioButtons(inputId  = "axis_mode_ts4a",
+                                                                        label    = "Trend axis customization:",
+                                                                        choices  = c("Automatic","Fixed"),
+                                                                        selected = "Automatic" , inline = TRUE),
+                                                           
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_custom_axis_ts4a",
+                                                                 
+                                                                 numericRangeInput(inputId    = "axis_input_ts4a",
+                                                                                   label      = "Set your axis values for trend plot:",
+                                                                                   value      = c(NULL, NULL),
+                                                                                   separator  = " to ",
+                                                                                   min        = -Inf,
+                                                                                   max        = Inf),
+                                                                 
+                                                             )),
+                                                           
+                                                           radioButtons(inputId  = "axis_mode_ts4b",
+                                                                        label    = "Residual axis customization:",
+                                                                        choices  = c("Automatic","Fixed"),
+                                                                        selected = "Automatic" , inline = TRUE),
+                                                           
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_custom_axis_ts4b",
+                                                                 
+                                                                 numericRangeInput(inputId    = "axis_input_ts4b",
+                                                                                   label      = "Set your axis values for residual plot:",
+                                                                                   value      = c(NULL, NULL),
+                                                                                   separator  = " to ",
+                                                                                   min        = -Inf,
+                                                                                   max        = Inf),
+                                                                 
+                                                                 )),
                                                            
                                                            checkboxInput(inputId = "show_key_ts4",
                                                                          label   = "Show key",
