@@ -2151,6 +2151,28 @@ get_variable_properties <- function(variable, secondary = FALSE) {
   return(list(unit = unit, color = color))
 }
 
+## (General) REWRITE MAPTABLE - rewrites maptable to get rid of degree symbols 
+##                              Set subset_lon/lat to NA for correlation/regression
+
+rewrite_maptable = function(maptable,subset_lon_IDs,subset_lat_IDs){
+  
+  if (is.na(subset_lon_IDs[1])){
+    rnames = rownames(maptable)
+    cnames = colnames(maptable)
+    
+    maptable1 = rbind(as.numeric(substr(cnames, 1, nchar(cnames) - 1)),as.matrix(maptable))
+    maptable2 = cbind(c("Lat/Lon", as.numeric(substr(rnames, 1, nchar(rnames) - 1))), maptable1)
+    colnames(maptable2)<- NULL
+    
+  } else {
+    maptable1 = rbind(round(lon[subset_lon_IDs],digits = 3),as.matrix(maptable))
+    maptable2 = cbind(c("Lat/Lon", round(lat[subset_lat_IDs],digits = 3)), maptable1)
+  }
+  
+  return(maptable2)
+}
+
+
 ## (General) REWRITE TS TABLE - rewites ts_datatable to round values and add units
 ##                              to column headings 
 
