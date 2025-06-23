@@ -6550,8 +6550,9 @@ server <- function(input, output, session) {
     monthly_ts_data_ID = generate_data_ID(input$dataset_selected5,input$variable_selected5,c(NA,NA))
     
     # Update custom_data if required
-    if (!identical(custom_data_id_primary()[2:3],monthly_ts_data_ID[2:3])){ # ....i.e. changed variable or dataset
-      custom_data_primary(load_ModE_data(input$dataset_selected5,input$variable_selected5)) # load new custom data
+    if (!identical(custom_data_id_primary()[2:3], monthly_ts_data_ID[2:3])) {
+      # ....i.e. changed variable or dataset
+      custom_data_primary(load_ModE_data(input$dataset_selected5, input$variable_selected5)) # load new custom data
       custom_data_id_primary(monthly_ts_data_ID) # update custom data ID
     }
     
@@ -6937,10 +6938,17 @@ server <- function(input, output, session) {
   
   # timeseries Points
   observeEvent(input$add_point_ts5, {
-    ts_points_data5(rbind(ts_points_data5(),
-                          create_new_points_data(input$point_location_x_ts5,input$point_location_y_ts5,
-                                                 input$point_label_ts5,input$point_shape_ts5,
-                                                 input$point_colour_ts5,input$point_size_ts5)))
+    ts_points_data5(rbind(
+      ts_points_data5(),
+      create_new_points_data(
+        input$point_location_x_ts5,
+        input$point_location_y_ts5,
+        input$point_label_ts5,
+        input$point_shape_ts5,
+        input$point_colour_ts5,
+        input$point_size_ts5
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_point_ts5, {
@@ -6953,10 +6961,17 @@ server <- function(input, output, session) {
   
   # timeseries Highlights
   observeEvent(input$add_highlight_ts5, {
-    ts_highlights_data5(rbind(ts_highlights_data5(),
-                              create_new_highlights_data(input$highlight_x_values_ts5,input$highlight_y_values_ts5,
-                                                         input$highlight_colour_ts5,input$highlight_type_ts5,
-                                                         input$show_highlight_on_legend_ts5,input$highlight_label_ts5)))
+    ts_highlights_data5(rbind(
+      ts_highlights_data5(),
+      create_new_highlights_data(
+        input$highlight_x_values_ts5,
+        input$highlight_y_values_ts5,
+        input$highlight_colour_ts5,
+        input$highlight_type_ts5,
+        input$show_highlight_on_legend_ts5,
+        input$highlight_label_ts5
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_highlight_ts5, {
@@ -7745,14 +7760,16 @@ server <- function(input, output, session) {
   observe({
     req(plot_titles())
     if (input$title1_input == "") {
-      updateTextInput(session, "title1_input",
-                      value = plot_titles()$map_title)
+      updateTextInput(session, "title1_input", value = plot_titles()$map_title)
     }
     if (input$title2_input == "") {
-      updateTextInput(session, "title2_input",
-                      value = plot_titles()$map_subtitle)
+      updateTextInput(session, "title2_input", value = plot_titles()$map_subtitle)
+    }
+    if (input$title1_input_ts == "") {
+      updateTextInput(session, "title1_input_ts", value = plot_titles()$ts_title)
     }
   })
+
   
   map_statistics = reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
@@ -8235,12 +8252,13 @@ server <- function(input, output, session) {
   observe({
     req(plot_titles_composites())
     if (input$title1_input2 == "") {
-      updateTextInput(session, "title1_input2",
-                      value = plot_titles_composites()$map_title)
+      updateTextInput(session, "title1_input2", value = plot_titles_composites()$map_title)
     }
     if (input$title2_input2 == "") {
-      updateTextInput(session, "title2_input2",
-                      value = plot_titles_composites()$map_subtitle)
+      updateTextInput(session, "title2_input2", value = plot_titles_composites()$map_subtitle)
+    }
+    if (input$title1_input_ts2 == "") {
+      updateTextInput(session, "title1_input_ts2", value = plot_titles_composites()$ts_title)
     }
   })
   
@@ -9104,30 +9122,38 @@ server <- function(input, output, session) {
   observe({
     req(plot_titles_cor())
     if (input$title1_input3 == "") {
-      updateTextInput(session, "title1_input3",
-                      value = plot_titles_cor()$map_title)
+      updateTextInput(session, "title1_input3", value = plot_titles_cor()$map_title)
     }
     if (input$title2_input3 == "") {
-      updateTextInput(session, "title2_input3",
-                      value = plot_titles_cor()$map_subtitle)
+      updateTextInput(session, "title2_input3", value = plot_titles_cor()$map_subtitle)
+    }
+    
+    if (input$title1_input_ts3 == "") {
+      updateTextInput(session, "title1_input_ts3", value = plot_titles_cor()$ts_title)
     }
   })
-  
+
   
   # Select variable timeseries data
   ts_data_v1 = reactive({
-    
     req(input$nav1 == "tab3") # Only run code if in the current tab
     
-    if (input$source_v1 == "ModE-"){
+    if (input$source_v1 == "ModE-") {
       tsd_v1 = timeseries_data_v1()
     } else {
       tsd_v1 = user_subset_v1()
     }
     
     # Add moving averages (if chosen)
-    tsds_v1 = add_stats_to_TS_datatable(tsd_v1,input$custom_average_ts3,input$year_moving_ts3,
-                                        "center",FALSE,NA,FALSE)
+    tsds_v1 = add_stats_to_TS_datatable(
+      tsd_v1,
+      input$custom_average_ts3,
+      input$year_moving_ts3,
+      "center",
+      FALSE,
+      NA,
+      FALSE
+    )
     
     return(tsds_v1)
   })
@@ -9151,17 +9177,28 @@ server <- function(input, output, session) {
   
   # Correlate timeseries
   correlation_stats = reactive({
-    
     req(input$nav1 == "tab3") # Only run code if in the current tab
     
-    c_st = correlate_timeseries(ts_data_v1(),ts_data_v2(),input$cor_method_ts)
+    c_st = correlate_timeseries(ts_data_v1(), ts_data_v2(), input$cor_method_ts)
     
     return(c_st)
   })
   
   # Plot
-  output$correlation_r_value = renderText({paste("Timeseries correlation coefficient: r =",signif(correlation_stats()$estimate,digits =3), sep = "")})
-  output$correlation_p_value = renderText({paste("Timeseries correlation p-value: p =",signif(correlation_stats()$p.value,digits =3), sep = "")})    
+  output$correlation_r_value = renderText({
+    paste(
+      "Timeseries correlation coefficient: r =",
+      signif(correlation_stats()$estimate, digits = 3),
+      sep = ""
+    )
+  })
+  output$correlation_p_value = renderText({
+    paste(
+      "Timeseries correlation p-value: p =",
+      signif(correlation_stats()$p.value, digits = 3),
+      sep = ""
+    )
+  })
   
   timeseries_plot_corr = function(){
     
@@ -10312,6 +10349,21 @@ server <- function(input, output, session) {
     return(ptr)
   })
   
+  # Add value to custom title
+  observe({
+    req(plot_titles_reg_ts())
+    if (input$title1_input_ts4 == "") {
+      updateTextInput(session,
+                      "title1_input_ts4",
+                      value = plot_titles_reg_ts()$ts_title)
+    }
+    if (input$title2_input_ts4 == "") {
+      updateTextInput(session,
+                      "title2_input_ts4",
+                      value = plot_titles_reg_ts()$ts_subtitle)
+    }
+  })
+  
   # Select variable timeseries data
   ts_data_iv = reactive({
     
@@ -11121,11 +11173,23 @@ server <- function(input, output, session) {
     return(titles_df)
   }) 
   
+  # Add value to custom title
+  observe({
+    req(monthly_ts_titles())
+    if (input$title1_input_ts5 == "") {
+      updateTextInput(session, "title1_input_ts5", value = monthly_ts_titles()$ts_title)
+    }
+  })
   
   monthly_ts_plot = reactive({
-    plot_monthly_timeseries(data = monthly_ts_data(), titles = monthly_ts_titles(),
-                            key_position = input$key_position_ts5, highlights=ts_highlights_data5(),
-                            lines=ts_lines_data5(), points=ts_points_data5())
+    plot_monthly_timeseries(
+      data = monthly_ts_data(),
+      titles = monthly_ts_titles(),
+      key_position = input$key_position_ts5,
+      highlights = ts_highlights_data5(),
+      lines = ts_lines_data5(),
+      points = ts_points_data5()
+    )
   })
   
   output$timeseries5 <- renderPlot({monthly_ts_plot()}, height = 400)
@@ -11523,22 +11587,36 @@ server <- function(input, output, session) {
       return(y_label)
     }
   })
+
   
   ts_title = reactive({
     if (input$source_sea_6 == "User Data") {
-      if (is.null(input$title1_input_6) || input$title1_input_6 == ""){
-        return(paste("SEA of",colnames(user_subset_6())[2]))  
-      } else {
+      if (input$title1_input_6 != "" && input$title_mode_6 == "Custom") {
         return(input$title1_input_6)
+      } else {
+        return(paste("SEA of", colnames(user_subset_6())[2], "-", input$ME_statistic_6))
       }
     } else {
-      if (is.null(input$title1_input_6) || input$title1_input_6 == ""){
-        return(paste("SEA of",colnames(timeseries_data_sea())[2],input$ME_variable_6))  
-      } else {
+      if (input$title1_input_6 != "" && input$title_mode_6 == "Custom") {
         return(input$title1_input_6)
+      } else {
+        return(paste("SEA of", input$ME_statistic_6, input$ME_variable_6))
       }
     }
   })
+  
+  
+  # Add value to custom title
+  observe({
+    req(ts_title())
+    if (input$title1_input_6 == "" && input$title_mode_6 != "Custom") {
+      updateTextInput(session, "title1_input_6", value = ts_title())
+    }
+    if (input$y_label_6 == "" && input$title_mode_6 != "Custom") {
+      updateTextInput(session, "y_label_6", value = ts_y_label())
+    }
+  })
+  
   
   # Turn "years" column into rownames
   ts_data = reactive({
