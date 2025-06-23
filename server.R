@@ -6096,7 +6096,320 @@ server <- function(input, output, session) {
   })
   
   
+  ### Initialise and update custom points lines highlights ----
+  
+  #### Regression TS (Trend (4a) / Residual (4b))
+  
+  ts_points_data4a = reactiveVal(data.frame())
+  ts_highlights_data4a = reactiveVal(data.frame())
+  ts_lines_data4a = reactiveVal(data.frame())
+  
+  ts_points_data4b = reactiveVal(data.frame())
+  ts_highlights_data4b = reactiveVal(data.frame())
+  ts_lines_data4b = reactiveVal(data.frame())
+  
+  # timeseries Points Trend (4a)
+  observeEvent(input$add_point_ts4, {
+    ts_points_data4a(rbind(ts_points_data4a(),
+                          create_new_points_data(input$point_location_x_ts4,input$point_location_y_ts4,
+                                                 input$point_label_ts4,input$point_shape_ts4,
+                                                 input$point_colour_ts4,input$point_size_ts4)))
+  })  
+  
+  observeEvent(input$remove_last_point_ts4, {
+    ts_points_data4a(ts_points_data4a()[-nrow(ts_points_data4a()),])
+  })
+  
+  observeEvent(input$remove_all_points_ts4, {
+    ts_points_data4a(data.frame())
+  })
+  
+  # timeseries Points Residual (4b)
+  observeEvent(input$add_point_ts4, {
+    ts_points_data4b(rbind(ts_points_data4b(),
+                          create_new_points_data(input$point_location_x_ts4,input$point_location_y_ts4,
+                                                 input$point_label_ts4,input$point_shape_ts4,
+                                                 input$point_colour_ts4,input$point_size_ts4)))
+  })  
+  
+  observeEvent(input$remove_last_point_ts4, {
+    ts_points_data4b(ts_points_data4b()[-nrow(ts_points_data4b()),])
+  })
+  
+  observeEvent(input$remove_all_points_ts4, {
+    ts_points_data4b(data.frame())
+  })
+  
+  
+  # timeseries Highlights Trend (4a)
+  observeEvent(input$add_highlight_ts4, {
+    ts_highlights_data4a(rbind(ts_highlights_data4a(),
+                              create_new_highlights_data(input$highlight_x_values_ts4,input$highlight_y_values_ts4,
+                                                         input$highlight_colour_ts4,input$highlight_type_ts4,
+                                                         input$show_highlight_on_legend_ts4,input$highlight_label_ts4)))
+  })  
+  
+  observeEvent(input$remove_last_highlight_ts4, {
+    ts_highlights_data4a(ts_highlights_data4a()[-nrow(ts_highlights_data4a()),])
+  })
+  
+  observeEvent(input$remove_all_highlights_ts4, {
+    ts_highlights_data4a(data.frame())
+  })
+  
+  # timeseries Highlights Residual (4b)
+  observeEvent(input$add_highlight_ts4, {
+    ts_highlights_data4b(rbind(ts_highlights_data4b(),
+                              create_new_highlights_data(input$highlight_x_values_ts4,input$highlight_y_values_ts4,
+                                                         input$highlight_colour_ts4,input$highlight_type_ts4,
+                                                         input$show_highlight_on_legend_ts4,input$highlight_label_ts4)))
+  })  
+  
+  observeEvent(input$remove_last_highlight_ts4, {
+    ts_highlights_data4b(ts_highlights_data4b()[-nrow(ts_highlights_data4b()),])
+  })
+  
+  observeEvent(input$remove_all_highlights_ts4, {
+    ts_highlights_data4b(data.frame())
+  })
+  
+  # timeseries Lines Trend (4a)
+  observeEvent(input$add_line_ts4, {
+    ts_lines_data4a(rbind(ts_lines_data4a(),
+                         create_new_lines_data(input$line_orientation_ts4,input$line_position_ts4,
+                                               input$line_colour_ts4,input$line_type_ts4,
+                                               input$show_line_on_legend_ts4,input$line_label_ts4)))
+  })  
+  
+  observeEvent(input$remove_last_line_ts4, {
+    ts_lines_data4a(ts_lines_data4a()[-nrow(ts_lines_data4a()),])
+  })
+  
+  observeEvent(input$remove_all_lines_ts4, {
+    ts_lines_data4a(data.frame())
+  })
+  
+  # timeseries Lines Residual (4b)
+  observeEvent(input$add_line_ts4, {
+    ts_lines_data4b(rbind(ts_lines_data4b(),
+                         create_new_lines_data(input$line_orientation_ts4,input$line_position_ts4,
+                                               input$line_colour_ts4,input$line_type_ts4,
+                                               input$show_line_on_legend_ts4,input$line_label_ts4)))
+  })  
+  
+  observeEvent(input$remove_last_line_ts4, {
+    ts_lines_data4b(ts_lines_data4b()[-nrow(ts_lines_data4b()),])
+  })
+  
+  observeEvent(input$remove_all_lines_ts4, {
+    ts_lines_data4b(data.frame())
+  })
+  
+  #### Regression Coefficient Map Plot
+  
+  # Custom Features - Points
+  map_points_data_reg_coeff = reactiveVal(data.frame())
+  map_highlights_data_reg_coeff = reactiveVal(data.frame())
+
+  # Map Points
+  observeEvent(input$add_point_reg_coeff, {
+    map_points_data_reg_coeff(rbind(map_points_data_reg_coeff(),
+                                    create_new_points_data(input$point_location_x_reg_coeff,
+                                                           input$point_location_y_reg_coeff,
+                                                           input$point_label_reg_coeff,
+                                                           input$point_shape_reg_coeff,
+                                                           input$point_colour_reg_coeff,
+                                                           input$point_size_reg_coeff)))
+  })  
+  
+  observeEvent(input$remove_last_point_reg_coeff, {
+    map_points_data_reg_coeff(map_points_data_reg_coeff()[-nrow(map_points_data_reg_coeff()),])
+  })
+  
+  observeEvent(input$remove_all_points_reg_coeff, {
+    map_points_data_reg_coeff(data.frame())
+  })
+  
+  # Input geo-coded locations
+  observeEvent(input$search_reg_coeff, {
+    location_reg_coeff <- input$location_reg_coeff
+    if (!is.null(location_reg_coeff) && nchar(location_reg_coeff) > 0) {
+      location_encoded_reg_coeff <- URLencode(location_reg_coeff)
+      result <- geocode_OSM(location_encoded_reg_coeff)
+      if (!is.null(result$coords)) {
+        longitude_reg_coeff <- result$coords[1]
+        latitude_reg_coeff <- result$coords[2]
+        updateTextInput(session, "point_location_x_reg_coeff", value = as.character(longitude_reg_coeff))
+        updateTextInput(session, "point_location_y_reg_coeff", value = as.character(latitude_reg_coeff))
+        shinyjs::hide(id = "inv_location_reg_coeff")  # Hide the "Invalid location" message
+      } else {
+        shinyjs::show(id = "inv_location_reg_coeff")  # Show the "Invalid location" message
+      }
+    } else {
+      shinyjs::hide(id = "inv_location_reg_coeff")  # Hide the "Invalid location" message when no input
+    }
+  })
+  
+  # Map Highlights
+  observeEvent(input$add_highlight_reg_coeff, {
+    map_highlights_data_reg_coeff(rbind(map_highlights_data_reg_coeff(),
+                                        create_new_highlights_data(input$highlight_x_values_reg_coeff,
+                                                                   input$highlight_y_values_reg_coeff,
+                                                                   input$highlight_colour_reg_coeff,
+                                                                   input$highlight_type_reg_coeff,
+                                                                   NA,
+                                                                   NA)))
+  })  
+  
+  observeEvent(input$remove_last_highlight_reg_coeff, {
+    map_highlights_data_reg_coeff(map_highlights_data_reg_coeff()[-nrow(map_highlights_data_reg_coeff()),])
+  })
+  
+  observeEvent(input$remove_all_highlights_reg_coeff, {
+    map_highlights_data_reg_coeff(data.frame())
+  })
+  
+  
+  
+  #### Regression P Value Map Plot
+  
+  # Custom Features - Points
+  map_points_data_reg_pval = reactiveVal(data.frame())
+  map_highlights_data_reg_pval = reactiveVal(data.frame())
+  
+  # Map Points
+  observeEvent(input$add_point_reg_pval, {
+    map_points_data_reg_pval(rbind(map_points_data_reg_pval(),
+                                   create_new_points_data(input$point_location_x_reg_pval,
+                                                          input$point_location_y_reg_pval,
+                                                          input$point_label_reg_pval,
+                                                          input$point_shape_reg_pval,
+                                                          input$point_colour_reg_pval,
+                                                          input$point_size_reg_pval)))
+  })  
+  
+  observeEvent(input$remove_last_point_reg_pval, {
+    map_points_data_reg_pval(map_points_data_reg_pval()[-nrow(map_points_data_reg_pval()),])
+  })
+  
+  observeEvent(input$remove_all_points_reg_pval, {
+    map_points_data_reg_pval(data.frame())
+  })
+  
+  # Map Highlights
+  observeEvent(input$add_highlight_reg_pval, {
+    map_highlights_data_reg_pval(rbind(map_highlights_data_reg_pval(),
+                                       create_new_highlights_data(input$highlight_x_values_reg_pval,
+                                                                  input$highlight_y_values_reg_pval,
+                                                                  input$highlight_colour_reg_pval,
+                                                                  input$highlight_type_reg_pval,
+                                                                  NA,
+                                                                  NA)))
+  })  
+  
+  observeEvent(input$remove_last_highlight_reg_pval, {
+    map_highlights_data_reg_pval(map_highlights_data_reg_pval()[-nrow(map_highlights_data_reg_pval()),])
+  })
+  
+  observeEvent(input$remove_all_highlights_reg_pval, {
+    map_highlights_data_reg_pval(data.frame())
+  })
+  
+  # Input geo-coded locations
+  observeEvent(input$search_reg_pval, {
+    location_reg_pval <- input$location_reg_pval
+    if (!is.null(location_reg_pval) &&
+        nchar(location_reg_pval) > 0) {
+      location_encoded_reg_pval <- URLencode(location_reg_pval)
+      result <- geocode_OSM(location_encoded_reg_pval)
+      if (!is.null(result$coords)) {
+        longitude_reg_pval <- result$coords[1]
+        latitude_reg_pval <- result$coords[2]
+        updateTextInput(session,
+                        "point_location_x_reg_pval",
+                        value = as.character(longitude_reg_pval))
+        updateTextInput(session,
+                        "point_location_y_reg_pval",
+                        value = as.character(latitude_reg_pval))
+        shinyjs::hide(id = "inv_location_reg_pval")  # Hide the "Invalid location" message
+      } else {
+        shinyjs::show(id = "inv_location_reg_pval")  # Show the "Invalid location" message
+      }
+    } else {
+      shinyjs::hide(id = "inv_location_reg_pval") # Hide the "Invalid location" message when no input
+    }
+  })
+  
+  #### Regression Residual Map Plot
+  
+  # Custom Features - Points
+  map_points_data_reg_res = reactiveVal(data.frame())
+  map_highlights_data_reg_res = reactiveVal(data.frame())
+  
+
+  # Map Points
+  observeEvent(input$add_point_reg_res, {
+    map_points_data_reg_res(rbind(map_points_data_reg_res(),
+                                  create_new_points_data(input$point_location_x_reg_res,
+                                                         input$point_location_y_reg_res,
+                                                         input$point_label_reg_res,
+                                                         input$point_shape_reg_res,
+                                                         input$point_colour_reg_res,
+                                                         input$point_size_reg_res)))
+  })  
+  
+  observeEvent(input$remove_last_point_reg_res, {
+    map_points_data_reg_res(map_points_data_reg_res()[-nrow(map_points_data_reg_res()),])
+  })
+  
+  observeEvent(input$remove_all_points_reg_res, {
+    map_points_data_reg_res(data.frame())
+  })
+  
+  
+  # Input geo-coded locations
+  observeEvent(input$search_reg_res, {
+    location_reg_res <- input$location_reg_res
+    if (!is.null(location_reg_res) && nchar(location_reg_res) > 0) {
+      location_encoded_reg_res <- URLencode(location_reg_res)
+      result <- geocode_OSM(location_encoded_reg_res)
+      if (!is.null(result$coords)) {
+        longitude_reg_res <- result$coords[1]
+        latitude_reg_res <- result$coords[2]
+        updateTextInput(session, "point_location_x_reg_res", value = as.character(longitude_reg_res))
+        updateTextInput(session, "point_location_y_reg_res", value = as.character(latitude_reg_res))
+        shinyjs::hide(id = "inv_location_reg_res")  # Hide the "Invalid location" message
+      } else {
+        shinyjs::show(id = "inv_location_reg_res")  # Show the "Invalid location" message
+      }}})
+  
+  observeEvent(input$brush_fad5,{
+    brush = input$brush_fad5
+    fad_zoom5(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))})
+  
+  # Map Highlights
+  observeEvent(input$add_highlight_reg_res, {
+    map_highlights_data_reg_res(rbind(map_highlights_data_reg_res(),
+                                      create_new_highlights_data(input$highlight_x_values_reg_res,
+                                                                 input$highlight_y_values_reg_res,
+                                                                 input$highlight_colour_reg_res,
+                                                                 input$highlight_type_reg_res,
+                                                                 NA,
+                                                                 NA)))
+  })  
+  
+  observeEvent(input$remove_last_highlight_reg_res, {
+    map_highlights_data_reg_res(map_highlights_data_reg_res()[-nrow(map_highlights_data_reg_res()),])
+  })
+  
+  observeEvent(input$remove_all_highlights_reg_res, {
+    map_highlights_data_reg_res(data.frame())
+  })
+  
+  
+  
   ### Generate Metadata for map customization ----
+  
   # Generate metadata plot for IV
   plot_gen_input_iv <- reactive({
     plot_gen_iv = generate_metadata_plot_reg(input$dataset_selected_iv,
@@ -9653,7 +9966,7 @@ server <- function(input, output, session) {
   ### Downloads ----
   # Downloads
   
-  output$download_timeseries3      <- downloadHandler(filename = function(){paste(plot_titles_cor()$Download_title,"-ts.",input$file_type_timeseries3, sep = "")},
+  output$download_timeseries3      <- downloadHandler(filename = function(){paste(plot_titles_cor()$file_title,"-ts.",input$file_type_timeseries3, sep = "")},
                                                       content  = function(file) {
                                                         if (input$file_type_timeseries3 == "png"){
                                                           png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
@@ -9679,7 +9992,7 @@ server <- function(input, output, session) {
                                                      dev.off()
                                                    }) 
   
-  output$download_map3              <- downloadHandler(filename = function() {paste(plot_titles_cor()$Download_title, "-map.", input$file_type_map3, sep = "")},
+  output$download_map3              <- downloadHandler(filename = function() {paste(plot_titles_cor()$file_title, "-map.", input$file_type_map3, sep = "")},
                                                        content = function(file) {
                                                          if (input$file_type_map3 == "png") {
                                                            png(file, width = correlation_map_dimensions()[3], height = correlation_map_dimensions()[4], res = 200, bg = "transparent")
@@ -9692,7 +10005,7 @@ server <- function(input, output, session) {
                                                          dev.off()}
   )
   
-  output$download_timeseries_data3  <- downloadHandler(filename = function(){paste(plot_titles_cor()$Download_title, "-tsdata.",input$file_type_timeseries_data3, sep = "")},
+  output$download_timeseries_data3  <- downloadHandler(filename = function(){paste(plot_titles_cor()$file_title, "-tsdata.",input$file_type_timeseries_data3, sep = "")},
                                                        content  = function(file) {
                                                          if (input$file_type_timeseries_data3 == "csv"){
                                                            write.csv(correlation_ts_datatable(), file,
@@ -9704,7 +10017,7 @@ server <- function(input, output, session) {
                                                                       col.names = TRUE)
                                                          }}) 
   
-  output$download_map_data3        <- downloadHandler(filename = function(){paste(plot_titles_cor()$Download_title, "-mapdata.",input$file_type_map_data3, sep = "")},
+  output$download_map_data3        <- downloadHandler(filename = function(){paste(plot_titles_cor()$file_title, "-mapdata.",input$file_type_map_data3, sep = "")},
                                                       content  = function(file) {
                                                         if (input$file_type_map_data3 == "csv"){
                                                           map_data_new_3 <- rewrite_maptable(correlation_map_datatable(),NA,NA)
@@ -9754,28 +10067,6 @@ server <- function(input, output, session) {
   ### User data processing ----
   
   # Extract Shared year range
-  # year_range_reg = reactive({
-  #   
-  #   result <- tryCatch(
-  #     {
-  #       return(extract_year_range(input$source_iv,input$source_dv,input$user_file_iv$datapath,input$user_file_dv$datapath))
-  #     },
-  #     error = function(e) {
-  #       showModal(
-  #         # Add modal dialog for warning message
-  #         modalDialog(
-  #           title = "Error",
-  #           "There was an error in processing your uploaded data. 
-  #               \nPlease check if the file has the correct format.",
-  #           easyClose = FALSE,
-  #           footer = tagList(modalButton("OK"))
-  #         ))
-  #       return(NULL)
-  #     }
-  #   )
-  #   return(result)
-  # })
-  
   year_range_reg = reactive({
     
     result <- tryCatch({
@@ -10016,95 +10307,8 @@ server <- function(input, output, session) {
     plot_dimensions_dv()[2]
   })  
   
-  ### Regression plots ----
-  ### Initialise and update custom points lines highlights ----
-  
-  map_points_data2 = reactiveVal(data.frame())
-  map_highlights_data2 = reactiveVal(data.frame())
-  
-  ts_points_data2 = reactiveVal(data.frame())
-  ts_highlights_data2 = reactiveVal(data.frame())
-  ts_lines_data2 = reactiveVal(data.frame())
-  
-  # Map Points
-  observeEvent(input$add_point2, {
-    map_points_data2(rbind(map_points_data2(),
-                           create_new_points_data(input$point_location_x2,input$point_location_y2,
-                                                  input$point_label2,input$point_shape2,
-                                                  input$point_colour2,input$point_size2)))
-  })  
-  
-  observeEvent(input$remove_last_point2, {
-    map_points_data2(map_points_data2()[-nrow(map_points_data2()),])
-  })
-  
-  observeEvent(input$remove_all_points2, {
-    map_points_data2(data.frame())
-  })
-  
-  # Map Highlights
-  observeEvent(input$add_highlight2, {
-    map_highlights_data2(rbind(map_highlights_data2(),
-                               create_new_highlights_data(input$highlight_x_values2,input$highlight_y_values2,
-                                                          input$highlight_colour2,input$highlight_type2,NA,NA)))
-  })  
-  
-  observeEvent(input$remove_last_highlight2, {
-    map_highlights_data2(map_highlights_data2()[-nrow(map_highlights_data2()),])
-  })
-  
-  observeEvent(input$remove_all_highlights2, {
-    map_highlights_data2(data.frame())
-  })
-  
-  # timeseries Points
-  observeEvent(input$add_point_ts2, {
-    ts_points_data2(rbind(ts_points_data2(),
-                          create_new_points_data(input$point_location_x_ts2,input$point_location_y_ts2,
-                                                 input$point_label_ts2,input$point_shape_ts2,
-                                                 input$point_colour_ts2,input$point_size_ts2)))
-  })  
-  
-  observeEvent(input$remove_last_point_ts2, {
-    ts_points_data2(ts_points_data2()[-nrow(ts_points_data2()),])
-  })
-  
-  observeEvent(input$remove_all_points_ts2, {
-    ts_points_data2(data.frame())
-  })
-  
-  # timeseries Highlights
-  observeEvent(input$add_highlight_ts2, {
-    ts_highlights_data2(rbind(ts_highlights_data2(),
-                              create_new_highlights_data(input$highlight_x_values_ts2,input$highlight_y_values_ts2,
-                                                         input$highlight_colour_ts2,input$highlight_type_ts2,
-                                                         input$show_highlight_on_legend_ts2,input$highlight_label_ts2)))
-  })  
-  
-  observeEvent(input$remove_last_highlight_ts2, {
-    ts_highlights_data2(ts_highlights_data2()[-nrow(ts_highlights_data2()),])
-  })
-  
-  observeEvent(input$remove_all_highlights_ts2, {
-    ts_highlights_data2(data.frame())
-  })
-  
-  # timeseries Lines
-  observeEvent(input$add_line_ts2, {
-    ts_lines_data2(rbind(ts_lines_data2(),
-                         create_new_lines_data(input$line_orientation_ts2,input$line_position_ts2,
-                                               input$line_colour_ts2,input$line_type_ts2,
-                                               input$show_line_on_legend_ts2,input$line_label_ts2)))
-  })  
-  
-  observeEvent(input$remove_last_line_ts2, {
-    ts_lines_data2(ts_lines_data2()[-nrow(ts_lines_data2()),])
-  })
-  
-  observeEvent(input$remove_all_lines_ts2, {
-    ts_lines_data2(data.frame())
-  })
-  
+  ### Generate plot data ----
+
   ## Preparation
   
   # Set independent variables:
@@ -10125,15 +10329,7 @@ server <- function(input, output, session) {
     }
     return(v_dv)
   })
-  
-  observeEvent(input$remove_last_point, {
-    map_points_data(map_points_data()[-nrow(map_points_data()),])
-  })
-  
-  observeEvent(input$remove_all_points, {
-    map_points_data(data.frame())
-  })
-  
+
   # Generate regression titles coefficients 
   plot_titles_reg_coeff = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
@@ -10346,8 +10542,10 @@ server <- function(input, output, session) {
     
     return(p_d_r)
   })
-  
-  ## Regression timeseries plot
+
+  ### Plotting ----
+
+  #### Regression timeseries plot 
   
   regression_ts_data = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
@@ -10355,7 +10553,7 @@ server <- function(input, output, session) {
                                                   plot_titles_reg_ts())
     return(rtsd)
   })
-  
+    
   timeseries_plot_reg1 = function() {
     plot_timeseries(
       type = "Regression_Trend",
@@ -10363,14 +10561,14 @@ server <- function(input, output, session) {
       ref = NULL,
       year_range = input$range_years4,
       titles = plot_titles_reg_ts(),
-      show_key = TRUE,
-      key_position = "right",
+      show_key = input$show_key_ts4,
+      key_position = input$key_position_ts4,
       show_ref = FALSE,
       moving_ave = FALSE,
       custom_percentile = FALSE,
-      highlights = data.frame(),
-      lines = data.frame(),
-      points = data.frame(),
+      highlights = ts_highlights_data4a(),
+      lines = ts_lines_data4a(),
+      points = ts_points_data4a(),
       axis_range = input$axis_input_ts4a
     )
   }
@@ -10386,14 +10584,14 @@ server <- function(input, output, session) {
       ref = NULL,
       year_range = input$range_years4,
       titles = plot_titles_reg_ts(),
-      show_key = TRUE,
-      key_position = "right",
+      show_key = input$show_key_ts4,
+      key_position = input$key_position_ts4,
       show_ref = FALSE,
       moving_ave = FALSE,
       custom_percentile = FALSE,
-      highlights = data.frame(),
-      lines = data.frame(),
-      points = data.frame(),
+      highlights = ts_highlights_data4b(),
+      lines = ts_lines_data4b(),
+      points = ts_points_data4b(),
       axis_range = input$axis_input_ts4b
     )
   }
@@ -10424,7 +10622,7 @@ server <- function(input, output, session) {
   
   output$regression_summary_data = renderPrint({reg_sd()})  
   
-  ## Regression coefficient plot
+  #### Regression coefficient plot
   
   regression_coeff_data = reactive({
     
@@ -10473,6 +10671,7 @@ server <- function(input, output, session) {
   
   output$plot_reg_coeff = renderPlot({reg_coef_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
   
+  # Plot Table
   reg_coef_table = function(){
     req(input$coeff_variable)
     if (length(variables_iv()) == 1){ #  Deals with the 'variable' dimension disappearing
@@ -10487,77 +10686,8 @@ server <- function(input, output, session) {
   
   output$data_reg_coeff = renderTable({reg_coef_table()}, rownames = TRUE)
   
-  # Custom Features - Points
-  map_points_data_reg_coeff = reactiveVal(data.frame())
-  map_highlights_data_reg_coeff = reactiveVal(data.frame())
-  map_highlights_data2 = reactiveVal(data.frame())
   
-  
-  # ts_points_data2 = reactiveVal(data.frame())
-  # ts_highlights_data2 = reactiveVal(data.frame())
-  # ts_lines_data2 = reactiveVal(data.frame())
-  
-  # Map Points
-  observeEvent(input$add_point_reg_coeff, {
-    map_points_data_reg_coeff(rbind(map_points_data_reg_coeff(),
-                                    create_new_points_data(input$point_location_x_reg_coeff,
-                                                           input$point_location_y_reg_coeff,
-                                                           input$point_label_reg_coeff,
-                                                           input$point_shape_reg_coeff,
-                                                           input$point_colour_reg_coeff,
-                                                           input$point_size_reg_coeff)))
-  })  
-  
-  observeEvent(input$remove_last_point_reg_coeff, {
-    map_points_data_reg_coeff(map_points_data_reg_coeff()[-nrow(map_points_data_reg_coeff()),])
-  })
-  
-  observeEvent(input$remove_all_points_reg_coeff, {
-    map_points_data_reg_coeff(data.frame())
-  })
-  
-  # Input geo-coded locations
-  observeEvent(input$search_reg_coeff, {
-    location_reg_coeff <- input$location_reg_coeff
-    if (!is.null(location_reg_coeff) && nchar(location_reg_coeff) > 0) {
-      location_encoded_reg_coeff <- URLencode(location_reg_coeff)
-      result <- geocode_OSM(location_encoded_reg_coeff)
-      if (!is.null(result$coords)) {
-        longitude_reg_coeff <- result$coords[1]
-        latitude_reg_coeff <- result$coords[2]
-        updateTextInput(session, "point_location_x_reg_coeff", value = as.character(longitude_reg_coeff))
-        updateTextInput(session, "point_location_y_reg_coeff", value = as.character(latitude_reg_coeff))
-        shinyjs::hide(id = "inv_location_reg_coeff")  # Hide the "Invalid location" message
-      } else {
-        shinyjs::show(id = "inv_location_reg_coeff")  # Show the "Invalid location" message
-      }
-    } else {
-      shinyjs::hide(id = "inv_location_reg_coeff")  # Hide the "Invalid location" message when no input
-    }
-  })
-  
-  
-  # Map Highlights
-  observeEvent(input$add_highlight_reg_coeff, {
-    map_highlights_data_reg_coeff(rbind(map_highlights_data_reg_coeff(),
-                                        create_new_highlights_data(input$highlight_x_values_reg_coeff,
-                                                                   input$highlight_y_values_reg_coeff,
-                                                                   input$highlight_colour_reg_coeff,
-                                                                   input$highlight_type_reg_coeff,
-                                                                   NA,
-                                                                   NA)))
-  })  
-  
-  observeEvent(input$remove_last_highlight_reg_coeff, {
-    map_highlights_data_reg_coeff(map_highlights_data_reg_coeff()[-nrow(map_highlights_data_reg_coeff()),])
-  })
-  
-  observeEvent(input$remove_all_highlights_reg_coeff, {
-    map_highlights_data_reg_coeff(data.frame())
-  })
-  
-  
-  ## Regression pvalue plot
+  #### Regression pvalue plot
   
   regression_pvalue_data = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
@@ -10616,80 +10746,9 @@ server <- function(input, output, session) {
   }
   
   output$data_reg_pval = renderTable({reg_pval_table()},rownames = TRUE)
+
   
-  # Custom Features - Points
-  map_points_data_reg_pval = reactiveVal(data.frame())
-  map_highlights_data_reg_pval = reactiveVal(data.frame())
-  
-  # ts_points_data2 = reactiveVal(data.frame())
-  # ts_highlights_data2 = reactiveVal(data.frame())
-  # ts_lines_data2 = reactiveVal(data.frame())
-  
-  # Map Points
-  observeEvent(input$add_point_reg_pval, {
-    map_points_data_reg_pval(rbind(map_points_data_reg_pval(),
-                                   create_new_points_data(input$point_location_x_reg_pval,
-                                                          input$point_location_y_reg_pval,
-                                                          input$point_label_reg_pval,
-                                                          input$point_shape_reg_pval,
-                                                          input$point_colour_reg_pval,
-                                                          input$point_size_reg_pval)))
-  })  
-  
-  observeEvent(input$remove_last_point_reg_pval, {
-    map_points_data_reg_pval(map_points_data_reg_pval()[-nrow(map_points_data_reg_pval()),])
-  })
-  
-  observeEvent(input$remove_all_points_reg_pval, {
-    map_points_data_reg_pval(data.frame())
-  })
-  
-  # Map Highlights
-  observeEvent(input$add_highlight_reg_pval, {
-    map_highlights_data_reg_pval(rbind(map_highlights_data_reg_pval(),
-                                       create_new_highlights_data(input$highlight_x_values_reg_pval,
-                                                                  input$highlight_y_values_reg_pval,
-                                                                  input$highlight_colour_reg_pval,
-                                                                  input$highlight_type_reg_pval,
-                                                                  NA,
-                                                                  NA)))
-  })  
-  
-  observeEvent(input$remove_last_highlight_reg_pval, {
-    map_highlights_data_reg_pval(map_highlights_data_reg_pval()[-nrow(map_highlights_data_reg_pval()),])
-  })
-  
-  observeEvent(input$remove_all_highlights_reg_pval, {
-    map_highlights_data_reg_pval(data.frame())
-  })
-  
-  
-  # Input geo-coded locations
-  observeEvent(input$search_reg_pval, {
-    location_reg_pval <- input$location_reg_pval
-    if (!is.null(location_reg_pval) &&
-        nchar(location_reg_pval) > 0) {
-      location_encoded_reg_pval <- URLencode(location_reg_pval)
-      result <- geocode_OSM(location_encoded_reg_pval)
-      if (!is.null(result$coords)) {
-        longitude_reg_pval <- result$coords[1]
-        latitude_reg_pval <- result$coords[2]
-        updateTextInput(session,
-                        "point_location_x_reg_pval",
-                        value = as.character(longitude_reg_pval))
-        updateTextInput(session,
-                        "point_location_y_reg_pval",
-                        value = as.character(latitude_reg_pval))
-        shinyjs::hide(id = "inv_location_reg_pval")  # Hide the "Invalid location" message
-      } else {
-        shinyjs::show(id = "inv_location_reg_pval")  # Show the "Invalid location" message
-      }
-    } else {
-      shinyjs::hide(id = "inv_location_reg_pval") # Hide the "Invalid location" message when no input
-    }
-  })
-  
-  ## Regression residuals plot
+  #### Regression residuals plot
   
   regression_residuals_data = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
@@ -10751,129 +10810,7 @@ server <- function(input, output, session) {
   }
   
   output$data_reg_res = renderTable({reg_res_table()},rownames = TRUE)
-  # Custom Features - Points
-  map_points_data_reg_res = reactiveVal(data.frame())
-  map_highlights_data_reg_res = reactiveVal(data.frame())
-  
-  # ts_points_data2 = reactiveVal(data.frame())
-  # ts_highlights_data2 = reactiveVal(data.frame())
-  # ts_lines_data2 = reactiveVal(data.frame())
-  
-  # Map Points
-  observeEvent(input$add_point_reg_res, {
-    map_points_data_reg_res(rbind(map_points_data_reg_res(),
-                                  create_new_points_data(input$point_location_x_reg_res,
-                                                         input$point_location_y_reg_res,
-                                                         input$point_label_reg_res,
-                                                         input$point_shape_reg_res,
-                                                         input$point_colour_reg_res,
-                                                         input$point_size_reg_res)))
-  })  
-  
-  observeEvent(input$remove_last_point_reg_res, {
-    map_points_data_reg_res(map_points_data_reg_res()[-nrow(map_points_data_reg_res()),])
-  })
-  
-  observeEvent(input$remove_all_points_reg_res, {
-    map_points_data_reg_res(data.frame())
-  })
-  
-  
-  # Input geo-coded locations
-  observeEvent(input$search_reg_res, {
-    location_reg_res <- input$location_reg_res
-    if (!is.null(location_reg_res) && nchar(location_reg_res) > 0) {
-      location_encoded_reg_res <- URLencode(location_reg_res)
-      result <- geocode_OSM(location_encoded_reg_res)
-      if (!is.null(result$coords)) {
-        longitude_reg_res <- result$coords[1]
-        latitude_reg_res <- result$coords[2]
-        updateTextInput(session, "point_location_x_reg_res", value = as.character(longitude_reg_res))
-        updateTextInput(session, "point_location_y_reg_res", value = as.character(latitude_reg_res))
-        shinyjs::hide(id = "inv_location_reg_res")  # Hide the "Invalid location" message
-      } else {
-        shinyjs::show(id = "inv_location_reg_res")  # Show the "Invalid location" message
-      }}})
-  
-  observeEvent(input$brush_fad5,{
-    brush = input$brush_fad5
-    fad_zoom5(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))})
-  
-  # Map Highlights
-  observeEvent(input$add_highlight_reg_res, {
-    map_highlights_data_reg_res(rbind(map_highlights_data_reg_res(),
-                                      create_new_highlights_data(input$highlight_x_values_reg_res,
-                                                                 input$highlight_y_values_reg_res,
-                                                                 input$highlight_colour_reg_res,
-                                                                 input$highlight_type_reg_res,
-                                                                 NA,
-                                                                 NA)))
-  })  
-  
-  observeEvent(input$remove_last_highlight_reg_res, {
-    map_highlights_data_reg_res(map_highlights_data_reg_res()[-nrow(map_highlights_data_reg_res()),])
-  })
-  
-  observeEvent(input$remove_all_highlights_reg_res, {
-    map_highlights_data_reg_res(data.frame())
-  })
-  
-  
-  ### Downloading Annual cycles data ----
-  
-  output$download_timeseries5      <- downloadHandler(filename = function(){paste("monthly-ts.",input$file_type_timeseries5, sep = "")},
-                                                      content  = function(file) {
-                                                        if (input$file_type_timeseries5 == "png"){
-                                                          png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
-                                                        } else if (input$file_type_timeseries5 == "jpeg"){
-                                                          jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
-                                                        } else {
-                                                          pdf(file, width = 14, height = 6, bg = "transparent") 
-                                                        }
-                                                        plot_monthly_timeseries(monthly_ts_data(),input$title1_input_ts5,input$title_mode_ts5,input$main_key_position_ts5)
-                                                        dev.off()
-                                                      }) 
-  
-  
-  output$download_timeseries_data5  <- downloadHandler(filename = function(){paste("monthly-tsdata.",input$file_type_timeseries_data5, sep = "")},
-                                                       content  = function(file) {
-                                                         if (input$file_type_timeseries_data5 == "csv"){
-                                                           write.csv(monthly_ts_data(), file,
-                                                                     row.names = FALSE,
-                                                                     fileEncoding = "latin1")
-                                                         } else {
-                                                           write.xlsx(monthly_ts_data(), file,
-                                                                      row.names = FALSE,
-                                                                      col.names = TRUE)
-                                                         }})
-  
-  output$download_fad5            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season5),"_",input$fad_year5,".",input$file_type_fad5, sep = "")},
-                                                     content  = function(file) {
-                                                       
-                                                       mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map5_width, input$dimension[2], FALSE)
-                                                       
-                                                       if (input$file_type_fad5 == "png"){
-                                                         png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
-                                                       } else if (input$file_type_fad5 == "jpeg"){
-                                                         jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
-                                                       } else {
-                                                         pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
-                                                       }
-                                                       print(fad_plot5())
-                                                       dev.off()
-                                                     })
-  
-  output$download_fad_data5       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season5),"_",input$fad_year5,"_data.",input$data_file_type_fad5, sep = "")},
-                                                     content  = function(file) {
-                                                       if (input$data_file_type_fad5 == "csv"){
-                                                         write.csv(fad_data5(), file,
-                                                                   row.names = FALSE)
-                                                       } else {
-                                                         write.xlsx(fad_data5(), file,
-                                                                    col.names = TRUE,
-                                                                    row.names = FALSE)
-                                                       }})
-  
+
   ### ModE-RA sources ----
   
   # Set up values and functions for plotting
@@ -10944,7 +10881,7 @@ server <- function(input, output, session) {
   
   ### Downloads ----
   
-  output$download_reg_ts_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-ts.",input$reg_ts_plot_type, sep = "")},
+  output$download_reg_ts_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg_ts()$file_title, "-ts.",input$reg_ts_plot_type, sep = "")},
                                                       content  = function(file) {
                                                         if (input$reg_ts_plot_type == "png"){
                                                           png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
@@ -10953,11 +10890,11 @@ server <- function(input, output, session) {
                                                         } else {
                                                           pdf(file, width = 14, height = 6, bg = "transparent") 
                                                         }                                                          
-                                                        timeseries_plot_reg1()
+                                                        print(timeseries_plot_reg1())
                                                         dev.off()
                                                       })
   
-  output$download_reg_ts2_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title,"-ts.",input$reg_ts2_plot_type, sep = "")},
+  output$download_reg_ts2_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg_ts()$file_title,"-ts.",input$reg_ts2_plot_type, sep = "")},
                                                        content  = function(file) {
                                                          if (input$reg_ts2_plot_type == "png"){
                                                            png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
@@ -10966,11 +10903,11 @@ server <- function(input, output, session) {
                                                          } else {
                                                            pdf(file, width = 14, height = 6, bg = "transparent") 
                                                          }
-                                                         timeseries_plot_reg2()
+                                                         print(timeseries_plot_reg2())
                                                          dev.off()
                                                        })
   
-  output$download_reg_ts_plot_data  <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-tsdata.",input$reg_ts_plot_data_type, sep = "")},
+  output$download_reg_ts_plot_data  <- downloadHandler(filename = function(){paste(plot_titles_reg_ts()$file_title, "-tsdata.",input$reg_ts_plot_data_type, sep = "")},
                                                        content  = function(file) {
                                                          if (input$reg_ts_plot_data_type == "csv"){
                                                            write.csv(regression_ts_data(), file,
@@ -10993,7 +10930,7 @@ server <- function(input, output, session) {
   )
   
   
-  output$download_reg_coe_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title,"-map.",input$reg_coe_plot_type, sep = "")},
+  output$download_reg_coe_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg_coeff()$file_title,"-map.",input$reg_coe_plot_type, sep = "")},
                                                        content  = function(file) {
                                                          if (input$reg_coe_plot_type == "png"){
                                                            png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "transparent")  
@@ -11002,11 +10939,11 @@ server <- function(input, output, session) {
                                                          } else {
                                                            pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200, bg = "transparent") 
                                                          }
-                                                         reg_coef_map()
+                                                         print(reg_coef_map())
                                                          dev.off()
                                                        })
   
-  output$download_reg_coe_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-mapdata.",input$reg_coe_plot_data_type, sep = "")},
+  output$download_reg_coe_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg_coeff()$file_title, "-mapdata.",input$reg_coe_plot_data_type, sep = "")},
                                                               content  = function(file) {
                                                                 if (input$reg_coe_plot_data_type == "csv"){
                                                                   map_data_new_4a <- rewrite_maptable(reg_coef_table(),NA,NA)
@@ -11020,7 +10957,7 @@ server <- function(input, output, session) {
                                                                              col.names = FALSE)
                                                                 }})
   
-  output$download_reg_pval_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title,"-map.",input$reg_pval_plot_type, sep = "")},
+  output$download_reg_pval_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg_pval()$file_title,"-map.",input$reg_pval_plot_type, sep = "")},
                                                         content  = function(file) {
                                                           if (input$reg_pval_plot_type == "png"){
                                                             png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "transparent")  
@@ -11029,11 +10966,11 @@ server <- function(input, output, session) {
                                                           } else {
                                                             pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200, bg = "transparent") 
                                                           }
-                                                          reg_pval_map()
+                                                          print(reg_pval_map())
                                                           dev.off()
                                                         })
   
-  output$download_reg_pval_plot_data       <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-mapdata.",input$reg_pval_plot_data_type, sep = "")},
+  output$download_reg_pval_plot_data       <- downloadHandler(filename = function(){paste(plot_titles_reg_pval()$file_title, "-mapdata.",input$reg_pval_plot_data_type, sep = "")},
                                                               content  = function(file) {
                                                                 if (input$reg_pval_plot_data_type == "csv"){
                                                                   map_data_new_4b <- rewrite_maptable(reg_pval_table(),NA,NA)
@@ -11047,7 +10984,7 @@ server <- function(input, output, session) {
                                                                              col.names = FALSE)
                                                                 }})
   
-  output$download_reg_res_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title,"-map.",input$reg_res_plot_type, sep = "")},
+  output$download_reg_res_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg_res()$file_title,"-map.",input$reg_res_plot_type, sep = "")},
                                                        content  = function(file) {
                                                          if (input$reg_res_plot_type == "png"){
                                                            png(file, width = plot_dimensions_reg()[3] , height = plot_dimensions_reg()[4], res = 200, bg = "transparent")  
@@ -11056,11 +10993,11 @@ server <- function(input, output, session) {
                                                          } else {
                                                            pdf(file, width = plot_dimensions_reg()[3]/200 , height = plot_dimensions_reg()[4]/200, bg = "transparent") 
                                                          }
-                                                         reg_res_map()
+                                                         print(reg_res_map())
                                                          dev.off()
                                                        })
   
-  output$download_reg_res_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg()$Download_title, "-mapdata.",input$reg_res_plot_data_type, sep = "")},
+  output$download_reg_res_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg_res()$file_title, "-mapdata.",input$reg_res_plot_data_type, sep = "")},
                                                               content  = function(file) {
                                                                 if (input$reg_res_plot_data_type == "csv"){
                                                                   map_data_new_4c <- rewrite_maptable(reg_res_table(),NA,NA)
