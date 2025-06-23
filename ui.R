@@ -3397,6 +3397,7 @@ ui <- navbarPage(
                                             
                                             textOutput("correlation_r_value"),
                                             textOutput("correlation_p_value"),
+                                            br(),
                                             withSpinner(ui_element = plotOutput("correlation_ts",click = "ts_click3", dblclick = "ts_dblclick3", brush = brushOpts(id = "ts_brush3",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
@@ -6238,6 +6239,7 @@ ui <- navbarPage(
                                    
                                    ### TS plot START ----
                                    tabPanel("Timeseries", 
+                                            br(),
                                             withSpinner(ui_element = plotOutput("timeseries5", click = "ts_click5",dblclick = "ts_dblclick5",brush = brushOpts(id = "ts_brush5",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,

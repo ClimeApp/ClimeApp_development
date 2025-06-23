@@ -1425,14 +1425,18 @@ plot_timeseries <- function(type,
   lID = 1 ; pID = 1 ; fID = 1 ; bID = 1
   
   # Extract ylimits from data
-  if (type =="Correlation"){
-    y_min = min(data_v1[,2]) ; y_max = max(data_v1[,2])
-  } else if (type =="Regression_Trend"){
-    y_min = min(data[,c(2,3)]) ; y_max = max(data[,c(2,3)])
-  } else if (type =="Regression_Residual"){
-    y_min = min(data[,4]) ; y_max = max(data[,4])
+  if (type == "Correlation") {
+    y_min = min(data_v1[, 2], na.rm = TRUE)
+    y_max = max(data_v1[, 2], na.rm = TRUE)
+  } else if (type == "Regression_Trend") {
+    y_min = min(data[, c(2, 3)])
+    y_max = max(data[, c(2, 3)])
+  } else if (type == "Regression_Residual") {
+    y_min = min(data[, 4])
+    y_max = max(data[, 4])
   } else {
-    y_min = min(data[,2]) ; y_max = max(data[,2])
+    y_min = min(data[, 2])
+    y_max = max(data[, 2])
   }
 
   # Axis Range Setting with optional padding
@@ -1610,8 +1614,10 @@ plot_timeseries <- function(type,
   # Add secondary line to data:
   if (type == "Correlation") {
     # Convert data
-    min_v1 <- y_min ; max_v1 <- y_max
-    min_v2 <- min(data_v2[,2]) ; max_v2 <- max(data_v2[,2])
+    min_v1 <- y_min
+    max_v1 <- y_max
+    min_v2 <- min(data_v2[,2], na.rm = TRUE)
+    max_v2 <- max(data_v2[,2], na.rm = TRUE)
     
     v2_adjusted <- (data_v2[,2] - min_v2) / (max_v2 - min_v2)  # normalize to [0, 1]
     v2_adjusted <- v2_adjusted * (max_v1 - min_v1) + min_v1     # scale to v1 range
@@ -2144,6 +2150,28 @@ get_variable_properties <- function(variable, secondary = FALSE) {
   # Return both unit and color
   return(list(unit = unit, color = color))
 }
+
+## (General) REWRITE MAPTABLE - rewrites maptable to get rid of degree symbols 
+##                              Set subset_lon/lat to NA for correlation/regression
+
+rewrite_maptable = function(maptable,subset_lon_IDs,subset_lat_IDs){
+  
+  if (is.na(subset_lon_IDs[1])){
+    rnames = rownames(maptable)
+    cnames = colnames(maptable)
+    
+    maptable1 = rbind(as.numeric(substr(cnames, 1, nchar(cnames) - 1)),as.matrix(maptable))
+    maptable2 = cbind(c("Lat/Lon", as.numeric(substr(rnames, 1, nchar(rnames) - 1))), maptable1)
+    colnames(maptable2)<- NULL
+    
+  } else {
+    maptable1 = rbind(round(lon[subset_lon_IDs],digits = 3),as.matrix(maptable))
+    maptable2 = cbind(c("Lat/Lon", round(lat[subset_lat_IDs],digits = 3)), maptable1)
+  }
+  
+  return(maptable2)
+}
+
 
 ## (General) REWRITE TS TABLE - rewites ts_datatable to round values and add units
 ##                              to column headings 
@@ -4307,11 +4335,25 @@ generate_regression_titles_ts = function(independent_source,
   ts_title_size = 18
   
   # Combine all titles into a dataframe
-  titles_df = data.frame(title_months_i, title_mode_i, title_lonlat_i,
-                         title_months_d, title_mode_d, title_lonlat_d,
-                         color_d, unit_d, title_year_range, file_title,
-                         map_subtitle_coeff, map_subtitle_pvals, map_subtitle_res,
-                         ts_axis, ts_title, ts_subtitle, ts_title_size)
+  titles_df = data.frame(
+    title_months_i,
+    title_mode_i,
+    title_lonlat_i,
+    title_months_d,
+    title_mode_d,
+    title_lonlat_d,
+    color_d,
+    unit_d,
+    title_year_range,
+    file_title,
+    map_subtitle_coeff,
+    map_subtitle_pvals,
+    map_subtitle_res,
+    ts_axis,
+    ts_title,
+    ts_subtitle,
+    ts_title_size
+  )
   
   return(titles_df)
 }
