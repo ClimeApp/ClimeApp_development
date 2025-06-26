@@ -1076,44 +1076,9 @@ ui <- navbarPage(
                                                                               inline = TRUE))),
                                                            
                                                            checkboxInput(inputId = "show_ref_ts",
-                                                                         label   = "Show 0-anomaly line",
+                                                                         label   = "Show absolute mean for reference period",
                                                                          value   = FALSE),
-                                                           
-                                                           # shinyjs::hidden( 
-                                                           #   div(id = "hidden_custom_yaxis_ts",
-                                                           #       radioButtons(inputId  = "yaxis_custom_choice_ts",
-                                                           #                    label    = "Y axis range:",
-                                                           #                    choices  = c("Automatic", "Fixed"),
-                                                           #                    selected = "Automatic" ,
-                                                           #                    inline = TRUE),
-                                                           #       
-                                                           #       shinyjs::hidden( 
-                                                           #         div(id = "hidden_yaxis_range_ts",
-                                                           #             
-                                                           #             numericRangeInput(inputId = "yaxis_numeric_range_ts",
-                                                           #                               label   = "Font size:",
-                                                           #                               value   = 18,
-                                                           #                               min     = 1,
-                                                           #                               max     = 40))),
-                                                           #   )),
-                                                           # 
-                                                           # shinyjs::hidden( 
-                                                           #   div(id = "hidden_custom_xaxis_ts",
-                                                           #       radioButtons(inputId  = "xaxis_custom_choice_ts",
-                                                           #                    label    = "X axis year intervals:",
-                                                           #                    choices  = c("Automatic", "Fixed"),
-                                                           #                    selected = "Automatic",
-                                                           #                    inline = TRUE),
-                                                           #       
-                                                           #       shinyjs::hidden( 
-                                                           #         div(id = "hidden_xaxis_interval_ts",
-                                                           #             
-                                                           #             numericInput(inputId = "xaxis_numeric_interval_ts",
-                                                           #                          label   = "Year axis intervals:",
-                                                           #                          value   = 50,
-                                                           #                          min     = 1,
-                                                           #                          max     = 600))),
-                                                           #   )),
+                                                    
                                                        )),
                                                      
                                                      
@@ -2177,7 +2142,7 @@ ui <- navbarPage(
                                                                               inline = TRUE))),
                                                            
                                                            checkboxInput(inputId = "show_ref_ts2",
-                                                                         label   = "Show 0-anomaly line",
+                                                                         label   = "Show absolute mean for reference period",
                                                                          value   = FALSE),
                                                        )),    
                                               ),
@@ -4801,19 +4766,13 @@ ui <- navbarPage(
                                                                               value   = 50,
                                                                               min     = 1,
                                                                               max     = 500))),
-                                                           
-                                                           checkboxInput(inputId = "show_key_ts4",
-                                                                         label   = "Show key",
-                                                                         value   = FALSE),
-                                                           
-                                                           shinyjs::hidden(
-                                                             div(id = "hidden_key_position_ts4",
+                                             
                                                                  radioButtons(inputId  = "key_position_ts4",
                                                                               label    = "Key position:",
                                                                               choiceNames  = c("right","bottom"),
                                                                               choiceValues = c("right","bottom"),
                                                                               selected = "right" ,
-                                                                              inline = TRUE))),
+                                                                              inline = TRUE)
                                                        )),    
                                               ),
                                               
