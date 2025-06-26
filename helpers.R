@@ -1176,9 +1176,14 @@ add_stats_to_TS_datatable = function(data_input,
   
   if (add_percentiles == TRUE){
     
-    # Test data for normality
-    p_value = shapiro.test(Mean)[[2]]
-    
+    # Check to see if there there are more than 10 year values
+    if (length(Year) > 10){
+      # Test data for normality
+      p_value = shapiro.test(Mean)[[2]]
+    } else {
+      p_value = 0
+    }
+
     # 0.9 Percentile 
     if (0.9 %in% percentiles){
       # Use normal distribution to find percentiles
