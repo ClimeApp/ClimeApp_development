@@ -530,6 +530,14 @@ server <- function(input, output, session) {
                            condition = input$axis_mode_ts == "Fixed",
                            asis = FALSE)})
   
+  observe({shinyjs::toggle(id = "hidden_xaxis_interval_ts",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$show_ticks_ts == TRUE,
+                           asis = FALSE)})
+  
   
   ### Composite ----
   
@@ -850,6 +858,14 @@ server <- function(input, output, session) {
                            time = 0.5,
                            selector = NULL,
                            condition = input$axis_mode_ts2 == "Fixed",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_xaxis_interval_ts2",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$show_ticks_ts2 == TRUE,
                            asis = FALSE)})
   
   
@@ -1261,6 +1277,14 @@ server <- function(input, output, session) {
                            condition = input$axis_mode_ts3 == "Fixed",
                            asis = FALSE)})
   
+  observe({shinyjs::toggle(id = "hidden_xaxis_interval_ts3",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$show_ticks_ts3 == TRUE,
+                           asis = FALSE)})
+  
   ### Regression ----
   
   ##Sidebar IV
@@ -1527,6 +1551,14 @@ server <- function(input, output, session) {
                            condition = input$axis_mode_ts4b == "Fixed",
                            asis = FALSE)})
   
+  observe({shinyjs::toggle(id = "hidden_xaxis_interval_ts4",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$show_ticks_ts4 == TRUE,
+                           asis = FALSE)})
+  
   ## Regression Maps
   # Hidden Customization and Download Regression Coefficients
   observe({shinyjs::toggle(id = "hidden_custom_map_reg_coeff",
@@ -1757,90 +1789,6 @@ server <- function(input, output, session) {
                            condition = input$source_dv == "ModE-",
                            asis = FALSE)})
   
-  # #Customization
-  # ## Regression Maps
-  # observe({shinyjs::toggle(id = "hidden_custom_maps_reg",
-  #                          anim = TRUE,
-  #                          animType = "slide",
-  #                          time = 0.5,
-  #                          selector = NULL,
-  #                          condition = input$custom_map_reg == TRUE,
-  #                          asis = FALSE)})
-  # 
-  # observe({shinyjs::toggle(id = "hidden_custom_axis_reg",
-  #                          anim = TRUE,
-  #                          animType = "slide",
-  #                          time = 0.5,
-  #                          selector = NULL,
-  #                          condition = input$axis_mode_reg == "Fixed",
-  #                          asis = FALSE)})
-  # 
-  # observe({shinyjs::toggle(id = "hidden_custom_title4",
-  #                          anim = TRUE,
-  #                          animType = "slide",
-  #                          time = 0.5,
-  #                          selector = NULL,
-  #                          condition = input$title_mode4 == "Custom",
-  #                          asis = FALSE)})
-  # 
-  # observe({shinyjs::toggle(id = "hidden_custom_features4",
-  #                          anim = TRUE,
-  #                          animType = "slide",
-  #                          time = 0.5,
-  #                          selector = NULL,
-  #                          condition = input$custom_features4 == TRUE,
-  #                          asis = FALSE)})
-  # 
-  # observe({shinyjs::toggle(id = "hidden_custom_points4",
-  #                          anim = TRUE,
-  #                          animType = "slide",
-  #                          time = 0.5,
-  #                          selector = NULL,
-  #                          condition = input$feature4 == "Point",
-  #                          asis = FALSE)})
-  # 
-  # observe({shinyjs::toggle(id = "hidden_custom_highlights4",
-  #                          anim = TRUE,
-  #                          animType = "slide",
-  #                          time = 0.5,
-  #                          selector = NULL,
-  #                          condition = input$feature4 == "Highlight",
-  #                          asis = FALSE)})
-  # 
-  # observe({shinyjs::toggle(id = "hidden_download4",
-  #                          anim = TRUE,
-  #                          animType = "slide",
-  #                          time = 0.5,
-  #                          selector = NULL,
-  #                          condition = input$download_options4 == TRUE,
-  #                          asis = FALSE)})
-  # 
-  # observe({shinyjs::toggle(id = "hidden_custom_title_reg",
-  #                          anim = TRUE,
-  #                          animType = "slide",
-  #                          time = 0.5,
-  #                          selector = NULL,
-  #                          condition = input$title_mode_reg == "Custom",
-  #                          asis = FALSE)})
-  # 
-  # observe({shinyjs::toggle(id = "hidden_custom_title1_reg",
-  #                          anim = TRUE,
-  #                          animType = "slide",
-  #                          time = 0.5,
-  #                          selector = NULL,
-  #                          condition = input$title1_input_reg == "Custom",
-  #                          asis = FALSE)})
-  # 
-  # observe({shinyjs::toggle(id = "hidden_custom_title2_reg",
-  #                          anim = TRUE,
-  #                          animType = "slide",
-  #                          time = 0.5,
-  #                          selector = NULL,
-  #                          condition = input$title2_input_reg == "Custom",
-  #                          asis = FALSE)})
-  # 
-  
-  
   ### Annual cycles ----
   
   #Sidebar Panel
@@ -1948,6 +1896,14 @@ server <- function(input, output, session) {
                            time = 0.5,
                            selector = NULL,
                            condition = input$show_line_on_legend_ts5 == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_key_position_ts5",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$show_key_ts5 == TRUE,
                            asis = FALSE)})
   
   ### SEA ----
@@ -2519,6 +2475,30 @@ server <- function(input, output, session) {
       shinyjs::show("hidden_map_center3")
     } else {
       shinyjs::hide("hidden_map_center3")
+    }
+  })
+
+  observeEvent(input$projection_reg_coeff, {
+    if (input$projection_reg_coeff == "Orthographic") {
+      shinyjs::show("hidden_map_center_reg_coeff")
+    } else {
+      shinyjs::hide("hidden_map_center_reg_coeff")
+    }
+  })
+  
+  observeEvent(input$projection_reg_pval, {
+    if (input$projection_reg_pval == "Orthographic") {
+      shinyjs::show("hidden_map_center_reg_pval")
+    } else {
+      shinyjs::hide("hidden_map_center_reg_pval")
+    }
+  })
+  
+  observeEvent(input$projection_reg_res, {
+    if (input$projection_reg_res == "Orthographic") {
+      shinyjs::show("hidden_map_center_reg_res")
+    } else {
+      shinyjs::hide("hidden_map_center_reg_res")
     }
   })
   
@@ -4133,20 +4113,24 @@ server <- function(input, output, session) {
       min = year_range_cor()[5]-input$range_years3[1]
     )
   })
-  
-  observeEvent(year_range_cor(), {
-    if (is.null(year_range_cor()) ||
-        length(year_range_cor()) < 2)
-      return()
+
+  observeEvent({
+    input$source_v1
+    input$source_v2
+    year_range_cor()
+  }, {
+    req(year_range_cor(), length(year_range_cor()) >= 2)
     
-    updateNumericRangeInput(
-      session = getDefaultReactiveDomain(),
-      inputId = "range_years3",
-      label = paste("Select the range of years (", year_range_cor()[1], "-", year_range_cor()[2], ")", sep = ""),
-      value = year_range_cor()[1:2]
-    )
-    
+    if (input$source_v1 == "User Data" || input$source_v2 == "User Data") {
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_years3",
+        label = paste("Select the range of years (", year_range_cor()[1], "-", year_range_cor()[2], ")"),
+        value = year_range_cor()[1:2]
+      )
+    }
   })
+  
   
   # Set iniital lon/lat values and update on button press
   lonlat_vals_v1 = reactiveVal(c(4,12,43,50))
@@ -5410,13 +5394,21 @@ server <- function(input, output, session) {
   })
   
   # Update year range
-  observeEvent(year_range_reg(),{
-    updateNumericRangeInput(
-      session = getDefaultReactiveDomain(),
-      inputId = "range_years4",
-      label = paste("Select the range of years (",year_range_reg()[3],"-",year_range_reg()[4],")",sep = ""),
-      value = year_range_reg()[1:2]
-    )
+  observeEvent({
+    input$source_iv
+    input$source_dv
+    year_range_reg()
+  }, {
+    req(year_range_reg(), length(year_range_reg()) >= 4)
+    
+    if (input$source_iv == "User Data" || input$source_dv == "User Data") {
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_years4",
+        label = paste("Select the range of years (", year_range_reg()[3], "-", year_range_reg()[4], ")"),
+        value = year_range_reg()[1:2]
+      )
+    }
   })
   
   # Set iniital lon/lat values and update on button press
@@ -6754,14 +6746,14 @@ server <- function(input, output, session) {
     metadata_reg_res <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "custom_map_reg_res")
     
     # Update inputs based on metadata_reg_res sheet custom_map_reg_res
-    updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode_reg", selected = metadata_reg_res[1, "axis_mode_reg"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input_reg", value = metadata_reg_res[1:2, "axis_input_reg"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis_reg", value = metadata_reg_res[1, "hide_axis_reg"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_reg", selected = metadata_reg_res[1, "title_mode_reg"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title1_input_reg", value = metadata_reg_res[1, "title1_input_reg"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders_reg", value = metadata_reg_res[1, "hide_borders_reg"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean_reg", value = metadata_reg_res[1, "white_ocean_reg"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land_reg", value = metadata_reg_res[1, "white_land_reg"])
+    updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode_reg_res", selected = metadata_reg_res[1, "axis_mode_reg_res"])
+    updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input_reg", value = metadata_reg_res[1:2, "axis_input_reg_res"])
+    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis_reg_res", value = metadata_reg_res[1, "hide_axis_reg_res"])
+    updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_reg_res", selected = metadata_reg_res[1, "title_mode_reg_res"])
+    updateTextInput(session = getDefaultReactiveDomain(), "title1_input_reg_res", value = metadata_reg_res[1, "title1_input_reg_res"])
+    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders_reg_res", value = metadata_reg_res[1, "hide_borders_reg_res"])
+    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean_reg_res", value = metadata_reg_res[1, "white_ocean_reg_res"])
+    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land_reg_res", value = metadata_reg_res[1, "white_land_reg_res"])
     updateNumericInput(session = getDefaultReactiveDomain(), "reg_resi_year", value = metadata_reg_res[1, "variable"])
     
     # Read metadata from "custom_points_reg_res" sheet
@@ -6845,8 +6837,83 @@ server <- function(input, output, session) {
         "Please upload the correct Metadata!"
       ))
     }
-  })   
+  })
   
+  ### Generate Layer Options for customization ----
+  
+  ### Regression Coefficient
+  # Reactive value to store the plot order
+  plotOrder_reg_coeff <- reactiveVal(character(0))
+  
+  # Usage example:
+  observeEvent(input$shpFile_reg_coeff, {
+    updatePlotOrder_reg_coeff(input$shpFile_reg_coeff$datapath, plotOrder_reg_coeff, "shpPickers_reg_coeff")
+  })
+  
+  # Function to generate color picker UI dynamically
+  output$colorpickers_reg_coeff <- renderUI({
+    createColorPickers4a(plotOrder_reg_coeff(), input$shpFile_reg_coeff)
+  })
+  
+  # Manually reorder shapefiles
+  observeEvent(input$reorderButton_reg_coeff, {
+    createReorderModal(plotOrder_reg_coeff(), input$shpFile_reg_coeff)
+    
+  })
+  
+  observeEvent(input$reorderConfirm, {
+    reorder_shapefiles(plotOrder_reg_coeff, input$reorderSelect, input$reorderAfter, "shpPickers_reg_coeff")
+  })
+  
+  
+  ### Regression P-Value
+  # Reactive value to store the plot order
+  plotOrder_reg_pval <- reactiveVal(character(0))
+  
+  # Usage example:
+  observeEvent(input$shpFile_reg_pval, {
+    updatePlotOrder_reg_pval(input$shpFile_reg_pval$datapath, plotOrder_reg_pval, "shpPickers_reg_pval")
+  })
+  
+  # Function to generate color picker UI dynamically
+  output$colorpickers_reg_pval <- renderUI({
+    createColorPickers4b(plotOrder_reg_pval(), input$shpFile_reg_pval)
+  })
+  
+  # Manually reorder shapefiles
+  observeEvent(input$reorderButton_reg_pval, {
+    createReorderModal(plotOrder_reg_pval(), input$shpFile_reg_pval)
+    
+  })
+  
+  observeEvent(input$reorderConfirm, {
+    reorder_shapefiles(plotOrder_reg_pval, input$reorderSelect, input$reorderAfter, "shpPickers_reg_pval")
+  })
+  
+  
+  ### Regression Residual
+  # Reactive value to store the plot order
+  plotOrder_reg_res <- reactiveVal(character(0))
+  
+  # Usage example:
+  observeEvent(input$shpFile_reg_res, {
+    updatePlotOrder_reg_res(input$shpFile_reg_res$datapath, plotOrder_reg_res, "shpPickers_reg_res")
+  })
+  
+  # Function to generate color picker UI dynamically
+  output$colorpickers_reg_res <- renderUI({
+    createColorPickers4c(plotOrder_reg_res(), input$shpFile_reg_res)
+  })
+  
+  # Manually reorder shapefiles
+  observeEvent(input$reorderButton_reg_res, {
+    createReorderModal(plotOrder_reg_res(), input$shpFile_reg_res)
+    
+  })
+  
+  observeEvent(input$reorderConfirm, {
+    reorder_shapefiles(plotOrder_reg_res, input$reorderSelect, input$reorderAfter, "shpPickers_reg_res")
+  })
   
   ## ANNUAL CYCLES observe, update & interactive controls----
   ### Initialise and update timeseries dataframe ----
@@ -8070,20 +8137,34 @@ server <- function(input, output, session) {
   })
   
   # Add value to custom title
-  observe({
-    req(plot_titles())
-    if (input$title1_input == "") {
-      updateTextInput(session, "title1_input", value = plot_titles()$map_title)
-    }
-    if (input$title2_input == "") {
-      updateTextInput(session, "title2_input", value = plot_titles()$map_subtitle)
-    }
-    if (input$title1_input_ts == "") {
-      updateTextInput(session, "title1_input_ts", value = plot_titles()$ts_title)
+
+  # Step 1: Clear the inputs when switching to "Default"
+  observeEvent(input$title_mode, {
+    if (input$title_mode == "Default" || input$title_mode_ts == "Default") {
+      updateTextInput(session, "title1_input", value = "")
+      updateTextInput(session, "title2_input", value = "")
+      updateTextInput(session, "title1_input_ts", value = "")
     }
   })
-
   
+  # Step 2: Fill updated default values after a short delay (only in Default mode)
+  observeEvent({
+    input$title_mode
+    plot_titles()
+  }, {
+    req(input$title_mode == "Default" || input$title_mode_ts == "Default")
+    req(plot_titles())
+    
+    # Short delay to ensure reset happens first
+    invalidateLater(100, session)
+    
+    isolate({
+      updateTextInput(session, "title1_input", value = plot_titles()$map_title)
+      updateTextInput(session, "title2_input", value = plot_titles()$map_subtitle)
+      updateTextInput(session, "title1_input_ts", value = plot_titles()$ts_title)
+    })
+  })
+
   map_statistics = reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
     my_stats = create_stat_highlights_data(data_output4_primary(),SDratio_subset(),
@@ -8095,7 +8176,26 @@ server <- function(input, output, session) {
   #Plotting the Data (Maps)
   map_data <- function(){create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
   
-  output$data1 <- renderTable({map_data()}, rownames = TRUE)
+  final_map_data <- reactive({
+    req(input$value_type_map_data)  # Ensure input is available
+    
+    option <- input$value_type_map_data
+    
+    if (option == "Anomalies") {
+      map_data()
+    } else if (option == "Absolute") {
+      create_map_datatable(data_output2_primary(), subset_lons_primary(), subset_lats_primary())
+    } else if (option == "Reference") {
+      create_map_datatable(data_output3_primary(), subset_lons_primary(), subset_lats_primary())
+    } else if (option == "SD Ratio") {
+      req(SDratio_subset())
+      create_map_datatable(SDratio_subset(), subset_lons_primary(), subset_lats_primary())
+    } else {
+      NULL  # fallback in case of unexpected input
+    }
+  })
+  
+  output$data1 <- renderTable({final_map_data()}, rownames = TRUE)
   
   #Plotting the Map
   map_dimensions <- reactive({
@@ -8106,32 +8206,39 @@ server <- function(input, output, session) {
   
   map_plot <- function() {
     plot_map(
-      create_geotiff(map_data()),
-      lonlat_vals(),
-      input$variable_selected,
-      "Anomaly",
-      plot_titles(),
-      input$axis_input,
-      input$hide_axis,
-      map_points_data(),
-      map_highlights_data(),
-      map_statistics(),
-      input$hide_borders,
-      input$white_ocean,
-      input$white_land,
-      plotOrder(),
-      input$shpPickers,
+      data_input = create_geotiff(map_data()),
+      lon_lat_range = lonlat_vals(),
+      variable = input$variable_selected,
+      
+      mode = "Anomaly",
+      
+      titles = plot_titles(),
+      axis_range = input$axis_input,
+      hide_axis = input$hide_axis,
+      
+      points_data = map_points_data(),
+      highlights_data = map_highlights_data(),
+      stat_highlights_data = map_statistics(),
+      
+      c_borders = input$hide_borders,
+      white_ocean = input$white_ocean,
+      white_land = input$white_land,
+      
+      plotOrder = plotOrder(),
+      shpPickers = input$shpPickers,
       input = input,
       plotType = "shp_colour_",
-      input$projection,
-      input$center_lat,
-      input$center_lon,
-      input$show_rivers,
-      input$label_rivers,
-      input$show_lakes,
-      input$label_lakes,
-      input$show_mountains,
-      input$label_mountains)
+      
+      projection = input$projection,
+      center_lat = input$center_lat,
+      center_lon = input$center_lon,
+      
+      show_rivers = input$show_rivers,
+      label_rivers = input$label_rivers,
+      show_lakes = input$show_lakes,
+      label_lakes = input$label_lakes,
+      show_mountains = input$show_mountains,
+      label_mountains = input$label_mountains)
   }
 
   
@@ -8164,11 +8271,20 @@ server <- function(input, output, session) {
     years_or_ref <- ifelse(input$ref_map_mode == "Reference Values", input$ref_period, input$range_years)
     
     rm_title <- generate_titles(
-      tab=active_tab, dataset=input$dataset_selected, variable=input$variable_selected, mode="Absolute",
-      map_title_mode=input$title_mode, ts_title_mode=input$title_mode_ts, 
-      month_range=month_range_primary(), year_range=years_or_ref,
-      lon_range=lonlat_vals()[1:2], lat_range=lonlat_vals()[3:4],
-      map_custom_title1=input$title1_input, map_custom_title2=input$title2_input, ts_custom_title1=input$title1_input_ts, map_title_size=input$title_size_input
+      tab = active_tab,
+      dataset = input$dataset_selected,
+      variable = input$variable_selected,
+      mode = "Absolute",
+      map_title_mode = input$title_mode,
+      ts_title_mode = input$title_mode_ts, 
+      month_range = month_range_primary(),
+      year_range = years_or_ref,
+      lon_range = lonlat_vals()[1:2],
+      lat_range = lonlat_vals()[3:4],
+      map_custom_title1 = input$title1_input,
+      map_custom_title2 = input$title2_input,
+      ts_custom_title1 = input$title1_input_ts,
+      map_title_size = input$title_size_input
     )
   })  
   
@@ -8183,19 +8299,25 @@ server <- function(input, output, session) {
       data_input = create_geotiff(ref_map_data()),
       lon_lat_range = lonlat_vals(),
       variable = v,
+      
       mode = m,
+      
       titles = ref_map_titles(),
       axis_range = axis_range,
+      
       c_borders = input$hide_borders,
       white_ocean = input$white_ocean,
       white_land = input$white_land,
+      
       plotOrder = plotOrder(),
       shpPickers = input$shpPickers,
       input = input,
       plotType = "shp_colour_",
+      
       projection = input$projection,
       center_lat = input$center_lat,
       center_lon = input$center_lon,
+      
       show_rivers = input$show_rivers,
       label_rivers = input$label_rivers,
       show_lakes = input$show_lakes,
@@ -8291,6 +8413,8 @@ server <- function(input, output, session) {
       show_key = input$show_key_ts,
       key_position = input$key_position_ts,
       show_ref = input$show_ref_ts,
+      show_ticks = input$show_ticks_ts,
+      tick_interval = input$xaxis_numeric_interval_ts,
       moving_ave = input$custom_average_ts,
       moving_ave_year = input$year_moving_ts,
       custom_percentile = input$custom_percentile_ts,
@@ -8421,15 +8545,17 @@ server <- function(input, output, session) {
   output$download_map_data        <- downloadHandler(filename = function() {paste(plot_titles()$file_title, "-mapdata.", input$file_type_map_data, sep = "")},
                                                      content = function(file) {
                                                        if (input$file_type_map_data == "csv"){
-                                                         map_data_new <- rewrite_maptable(map_data(), subset_lons_primary(), subset_lats_primary())
+                                                         map_data_new <- rewrite_maptable(final_map_data(), subset_lons_primary(), subset_lats_primary())
                                                          colnames(map_data_new) <- NULL
+                                                         
                                                          write.csv(map_data_new, file,
                                                                    row.names = FALSE)
                                                        } else if (input$file_type_map_data == "xlsx") {
-                                                         write.xlsx(rewrite_maptable(map_data(), subset_lons_primary(), subset_lats_primary()), file,
-                                                                    row.names = FALSE, col.names = FALSE)
+                                                         openxlsx::write.xlsx(rewrite_maptable(final_map_data(), subset_lons_primary(), subset_lats_primary()), file,
+                                                                              row.names = FALSE,
+                                                                              col.names = FALSE)
                                                        } else if (input$file_type_map_data == "GeoTIFF") {
-                                                         create_geotiff(map_data(), file)
+                                                         create_geotiff(final_map_data(), file)
                                                        }})
   
   output$download_timeseries_data  <- downloadHandler(filename = function(){paste(plot_titles()$file_title, "-tsdata.",input$file_type_timeseries_data, sep = "")},
@@ -8439,9 +8565,9 @@ server <- function(input, output, session) {
                                                                     row.names = FALSE,
                                                                     fileEncoding = "latin1")
                                                         } else {
-                                                          write.xlsx(timeseries_data_output(), file,
-                                                                     row.names = FALSE,
-                                                                     col.names = TRUE)
+                                                          openxlsx::write.xlsx(timeseries_data_output(), file,
+                                                                               row.names = FALSE,
+                                                                               col.names = TRUE)
                                                         }})
   
   output$download_fad            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season),"_",input$fad_year,".",input$file_type_fad, sep = "")},
@@ -8469,9 +8595,9 @@ server <- function(input, output, session) {
                                                         write.csv(fad_data(), file,
                                                                   row.names = FALSE)
                                                       } else {
-                                                        write.xlsx(fad_data(), file,
-                                                                   col.names = TRUE,
-                                                                   row.names = FALSE)
+                                                        openxlsx::write.xlsx(fad_data(), file,
+                                                                             col.names = TRUE,
+                                                                             row.names = FALSE)
                                                       }})
   
   output$download_netcdf             <- downloadHandler(filename = function() {paste(plot_titles()$netcdf_title, ".nc", sep = "")},
@@ -8562,17 +8688,30 @@ server <- function(input, output, session) {
   })
   
   # Add value to custom title
-  observe({
+  # Step 1: Clear the inputs when switching to "Default"
+  observeEvent(input$title_mode2, {
+    if (input$title_mode2 == "Default" || input$title_mode_ts2 == "Default") {
+      updateTextInput(session, "title1_input2", value = "")
+      updateTextInput(session, "title2_input2", value = "")
+      updateTextInput(session, "title1_input_ts2", value = "")
+    }
+  })
+  
+  # Step 2: After clearing, fill in updated values (in Default mode only)
+  observeEvent({
+    input$title_mode2
+    plot_titles_composites()
+  }, {
+    req(input$title_mode2 == "Default" || input$title_mode_ts2 == "Default")
     req(plot_titles_composites())
-    if (input$title1_input2 == "") {
+    
+    invalidateLater(100, session)
+    
+    isolate({
       updateTextInput(session, "title1_input2", value = plot_titles_composites()$map_title)
-    }
-    if (input$title2_input2 == "") {
       updateTextInput(session, "title2_input2", value = plot_titles_composites()$map_subtitle)
-    }
-    if (input$title1_input_ts2 == "") {
       updateTextInput(session, "title1_input_ts2", value = plot_titles_composites()$ts_title)
-    }
+    })
   })
   
   
@@ -8591,7 +8730,26 @@ server <- function(input, output, session) {
   #Plotting the Data (Maps)
   map_data_2 <- function(){create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
   
-  output$data3 <- renderTable({map_data_2()},
+  final_map_data_2 <- reactive({
+    req(input$value_type_map_data2)  # Ensure input is available
+    
+    option <- input$value_type_map_data2
+    
+    if (option == "Anomalies") {
+      map_data()
+    } else if (option == "Absolute") {
+      create_map_datatable(data_output2_primary(), subset_lons_primary(), subset_lats_primary())
+    } else if (option == "Reference") {
+      create_map_datatable(data_output3_primary(), subset_lons_primary(), subset_lats_primary())
+    } else if (option == "SD Ratio") {
+      req(SDratio_subset_2())
+      create_map_datatable(SDratio_subset_2(), subset_lons_primary(), subset_lats_primary())
+    } else {
+      NULL  # fallback in case of unexpected input
+    }
+  })
+  
+  output$data3 <- renderTable({final_map_data_2()},
                               rownames = TRUE)
   
   #Plotting the Map
@@ -8605,32 +8763,37 @@ server <- function(input, output, session) {
   })
   
   map_plot_2 <- function(){plot_map(
-    create_geotiff(map_data_2()),
-    lonlat_vals2(),
-    input$variable_selected2,
-    input$mode_selected2,
-    plot_titles_composites(),
-    input$axis_input2,
-    input$hide_axis2,
-    map_points_data2(),
-    map_highlights_data2(),
-    map_statistics_2(),
-    input$hide_borders2,
-    input$white_ocean2,
-    input$white_land2,
-    plotOrder2(),
-    input$shpPickers2,
-    input,
-    "shp_colour2_",
-    input$projection2,
-    input$center_lat2,
-    input$center_lon2,
-    input$show_rivers2,
-    input$label_rivers2,
-    input$show_lakes2,
-    input$label_lakes2,
-    input$show_mountains2,
-    input$label_mountains2
+    data_input = create_geotiff(map_data_2()),
+    lon_lat_range = lonlat_vals2(),
+    variable = input$variable_selected2,
+    mode = input$mode_selected2,
+    titles = plot_titles_composites(),
+    axis_range = input$axis_input2,
+    hide_axis = input$hide_axis2,
+    
+    points_data = map_points_data2(),
+    highlights_data = map_highlights_data2(),
+    stat_highlights_data = map_statistics_2(),
+    
+    c_borders = input$hide_borders2,
+    white_ocean = input$white_ocean2,
+    white_land = input$white_land2,
+    
+    plotOrder = plotOrder2(),
+    shpPickers = input$shpPickers2,
+    input = input,
+    plotType = "shp_colour2_",
+    
+    projection = input$projection2,
+    center_lat = input$center_lat2,
+    center_lon = input$center_lon2,
+    
+    show_rivers = input$show_rivers2,
+    label_rivers = input$label_rivers2,
+    show_lakes = input$show_lakes2,
+    label_lakes = input$label_lakes2,
+    show_mountains = input$show_mountains2,
+    label_mountains = input$label_mountains2
   )}
   
   output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
@@ -8661,12 +8824,20 @@ server <- function(input, output, session) {
     params <- mode_params[[input$ref_map_mode2]]
     
     rm_title2 <- generate_titles(
-      tab=params$type, dataset=input$dataset_selected2, variable=input$variable_selected2, mode="Absolute", 
-      map_title_mode=input$title_mode2, ts_title_mode=input$title_mode_ts2, 
-      month_range=month_range_primary(), year_range=params$years, 
-      lon_range=lonlat_vals2()[1:2], lat_range=lonlat_vals2()[3:4], 
-      map_custom_title1=input$title1_input2, map_custom_title2=input$title2_input2, ts_custom_title1=input$title1_input_ts2, 
-      map_title_size=input$title_size_input2
+      tab = params$type,
+      dataset = input$dataset_selected2,
+      variable = input$variable_selected2,
+      mode = "Absolute", 
+      map_title_mode = input$title_mode2,
+      ts_title_mode = input$title_mode_ts2, 
+      month_range = month_range_primary(),
+      year_range = params$years, 
+      lon_range = lonlat_vals2()[1:2],
+      lat_range = lonlat_vals2()[3:4], 
+      map_custom_title1 = input$title1_input2,
+      map_custom_title2 = input$title2_input2,
+      ts_custom_title1 = input$title1_input_ts2, 
+      map_title_size = input$title_size_input2
     )
   })  
   
@@ -8677,22 +8848,26 @@ server <- function(input, output, session) {
     } else if (input$ref_map_mode2 == "SD Ratio"){
       v=NULL; m="SD Ratio"; axis_range=c(0,1)
     }
-    plot_map(data_input=create_geotiff(ref_map_data_2()),
-             lonlat_vals2(),
-             variable=v,
-             mode=m,
-             titles=ref_map_titles_2(),
-             axis_range, 
-             c_borders=input$hide_borders2,
-             white_ocean=input$white_ocean2,
-             white_land=input$white_land2, 
-             plotOrder=plotOrder2(),
-             shpPickers=input$shpPickers2,
-             input=input,
-             plotType="shp_colour2_", 
-             projection=input$projection2,
-             center_lat=input$center_lat2,
-             center_lon=input$center_lon2,
+    plot_map(data_input = create_geotiff(ref_map_data_2()),
+             lon_lat_range = lonlat_vals2(),
+             variable = v,
+             mode = m,
+             titles = ref_map_titles_2(),
+             axis_range,
+             
+             c_borders = input$hide_borders2,
+             white_ocean = input$white_ocean2,
+             white_land = input$white_land2,
+             
+             plotOrder = plotOrder2(),
+             shpPickers = input$shpPickers2,
+             input = input,
+             plotType = "shp_colour2_", 
+             
+             projection = input$projection2,
+             center_lat = input$center_lat2,
+             center_lon = input$center_lon2,
+             
              show_rivers = input$show_rivers2,
              label_rivers = input$label_rivers2,
              show_lakes = input$show_lakes2,
@@ -8787,33 +8962,7 @@ server <- function(input, output, session) {
     } else {
       ref_ts2 = NA
     }
-    
-    #   plot_default_timeseries(timeseries_data_2(),"composites",input$variable_selected2,plot_titles_composites(),input$title_mode_ts2,ref_ts2)
-    #   add_highlighted_areas(ts_highlights_data2())
-    #   add_percentiles(timeseries_data_2())
-    #   add_custom_lines(ts_lines_data2())
-    #   add_timeseries(timeseries_data_2(),"composites",input$variable_selected2)
-    #   add_boxes(ts_highlights_data2())
-    #   add_custom_points(ts_points_data2())
-    #   if (input$show_key_ts2 == TRUE){
-    #     add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_primary(),
-    #                FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
-    #   }
-    # }
-    # # Plot monthly TS if year range = 1 year
-    # else {
-    #   plot_monthly_timeseries(timeseries_data_2(),plot_titles_composites()$ts_title,"Custom","topright","base")
-    #   add_highlighted_areas(ts_highlights_data2())
-    #   add_custom_lines(ts_lines_data2())
-    #   plot_monthly_timeseries(timeseries_data_2(),plot_titles_composites()$ts_title,"Custom","topright","lines")
-    #   add_boxes(ts_highlights_data2())
-    #   add_custom_points(ts_points_data2())
-    #   if (input$show_key_ts2 == TRUE){
-    #     add_TS_key(input$key_position_ts2,ts_highlights_data2(),ts_lines_data2(),input$variable_selected2,month_range_primary(),
-    #                FALSE,NA,input$custom_percentile_ts2,input$percentile_ts2,NA,NA,TRUE)
-    #   }
-    # }
-    
+
     # New 
     p <- plot_timeseries(
       type = "Composites",
@@ -8826,6 +8975,8 @@ server <- function(input, output, session) {
       #titles_mode=input$title_mode_ts2,
       show_key = input$show_key_ts2,
       key_position = input$key_position_ts2,
+      show_ticks = input$show_ticks_ts2,
+      tick_interval = input$xaxis_numeric_interval_ts2,
       show_ref = input$show_ref_ts2,
       custom_percentile = input$custom_percentile_ts2,
       percentiles = input$percentile_ts2,
@@ -8962,15 +9113,17 @@ server <- function(input, output, session) {
   output$download_map_data2        <- downloadHandler(filename = function(){paste(plot_titles_composites()$file_title, "-mapdata.",input$file_type_map_data2, sep = "")},
                                                       content  = function(file) {
                                                         if (input$file_type_map_data2 == "csv"){
-                                                          map_data_new_2 <- rewrite_maptable(map_data_2(), subset_lons_primary(), subset_lats_primary())
+                                                          map_data_new_2 <- rewrite_maptable(final_map_data_2(), subset_lons_primary(), subset_lats_primary())
                                                           colnames(map_data_new_2) <- NULL
+                                                          
                                                           write.csv(map_data_new_2, file,
                                                                     row.names = FALSE)
                                                         } else if (input$file_type_map_data2 == "xlsx") {
-                                                          write.xlsx(rewrite_maptable(map_data(), subset_lons_primary(), subset_lats_primary()), file,
-                                                                     row.names = FALSE, col.names = FALSE)
+                                                          openxlsx::write.xlsx(rewrite_maptable(final_map_data_2(), subset_lons_primary(), subset_lats_primary()), file,
+                                                                               row.names = FALSE,
+                                                                               col.names = FALSE)
                                                         } else if (input$file_type_map_data2 == "GeoTIFF") {
-                                                          create_geotiff(map_data(), file)
+                                                          create_geotiff(final_map_data_2(), file)
                                                         }})
   
   output$download_timeseries_data2  <- downloadHandler(filename = function(){paste(plot_titles_composites()$file_title, "-tsdata.",input$file_type_timeseries_data2, sep = "")},
@@ -8980,9 +9133,9 @@ server <- function(input, output, session) {
                                                                      row.names = FALSE,
                                                                      fileEncoding = "latin1")
                                                          } else {
-                                                           write.xlsx(timeseries_data_output_2(), file,
-                                                                      row.names = FALSE,
-                                                                      col.names = TRUE)
+                                                           openxlsx::write.xlsx(timeseries_data_output_2(), file,
+                                                                                row.names = FALSE,
+                                                                                col.names = TRUE)
                                                          }})
   
   output$download_fad2            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season2),"_",input$fad_year2,".",input$file_type_fad2, sep = "")},
@@ -9010,9 +9163,9 @@ server <- function(input, output, session) {
                                                          write.csv(fad_data2(), file,
                                                                    row.names = FALSE)
                                                        } else {
-                                                         write.xlsx(fad_data2(), file,
-                                                                    col.names = TRUE,
-                                                                    row.names = FALSE)
+                                                         openxlsx::write.xlsx(fad_data2(), file,
+                                                                              col.names = TRUE,
+                                                                              row.names = FALSE)
                                                        }})
   
   ## CORRELATION shared lonlat/year range, user data, plotting & downloads ----
@@ -9028,44 +9181,16 @@ server <- function(input, output, session) {
   })
   
   # Extract shared year range
-  
-  # year_range_cor = reactive({
-  #   result <- tryCatch({
-  #     return(
-  #       extract_year_range(
-  #         input$source_v1,
-  #         input$source_v2,
-  #         input$user_file_v1$datapath,
-  #         input$user_file_v2$datapath,
-  #         input$lagyears_v1_cor,
-  #         input$lagyears_v2_cor
-  #       )
-  #     )
-  #   }, error = function(e) {
-  #     showModal(
-  #       # Add modal dialog for warning message
-  #       modalDialog(
-  #         title = "Error",
-  #         "There was an error in processing your uploaded data.
-  #                     \nPlease check if the file has the correct format.",
-  #         easyClose = FALSE,
-  #         footer = tagList(modalButton("OK"))
-  #       )
-  #     )
-  #     return(NULL)
-  #   })
-  #   return(result)
-  # })  
-  
+
   year_range_cor = reactive({
     result <- tryCatch({
       year_range <- extract_year_range(
-        input$source_v1,
-        input$source_v2,
-        input$user_file_v1$datapath,
-        input$user_file_v2$datapath,
-        input$lagyears_v1_cor,
-        input$lagyears_v2_cor
+        variable1_source = input$source_v1,
+        variable2_source = input$source_v2,
+        variable1_data_filepath = input$user_file_v1$datapath,
+        variable2_data_filepath = input$user_file_v2$datapath,
+        variable1_lag = input$lagyears_v1_cor,
+        variable2_lag = input$lagyears_v2_cor
       )
       
       ### REMOVE
@@ -9127,46 +9252,33 @@ server <- function(input, output, session) {
   })
   
   # Subset v1 data to year_range and chosen variable
-      user_subset_v1 = reactive({
-        
-        req(user_data_v1(),input$user_variable_v1)
-            year_range_cor = reactive({
-        
-        result <- tryCatch(
-          {
-            return(extract_year_range(input$source_v1,input$source_v2,input$user_file_v1$datapath,input$user_file_v2$datapath))
-            return(yrc)
-          },
-          error = function(e) {
-            showModal(
-              # Add modal dialog for warning message
-              modalDialog(
-                title = "Error",
-                "There was an error in processing your uploaded data. 
-                    \nPlease check if the file has the correct format.",
-                easyClose = FALSE,
-                footer = tagList(modalButton("OK"))
-              ))
-            return(NULL)
-          }
-        )
-        return(result)
-      })  
+  user_subset_v1 = reactive({
+    req(user_data_v1(), input$user_variable_v1)
+    
+    usr_ss1 = create_user_data_subset(
+      data_input = user_data_v1(),
+      variable = input$user_variable_v1,
+      year_range = input$range_years3,
+      lag = input$lagyears_v1_cor # pass the lag
+    )
+    
+    return(usr_ss1)
+  })
       
-        usr_ss1 = create_user_data_subset(user_data_v1(),input$user_variable_v1,input$range_years3)
-        
-        return(usr_ss1)
-      })
-      
-      # Subset v2 data to year_range and chosen variable
-      user_subset_v2 = reactive({
-        
-        req(user_data_v2(),input$user_variable_v2)
-        
-        usr_ss2 = create_user_data_subset(user_data_v2(),input$user_variable_v2,input$range_years3)
-        
-        return(usr_ss2)
-      })
+  # Subset v2 data to year_range and chosen variable
+  user_subset_v2 = reactive({
+    
+    req(user_data_v2(),input$user_variable_v2)
+    
+    usr_ss2 = create_user_data_subset(
+      data_input = user_data_v2(),
+      variable = input$user_variable_v2,
+      year_range = input$range_years3,
+      lag = input$lagyears_v2_cor # pass the lag
+    )
+    
+    return(usr_ss2)
+  })
   
   ### Generate plot data ---- 
   
@@ -9247,10 +9359,10 @@ server <- function(input, output, session) {
   plot_titles_v2 <- reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
     my_title_v2 <- generate_titles(
-      "general",
-      input$dataset_selected_v2,
-      input$ME_variable_v2,
-      input$mode_selected_v2,
+      tab = "general",
+      dataset = input$dataset_selected_v2,
+      variable = input$ME_variable_v2,
+      mode = input$mode_selected_v2,
       map_title_mode = "Default",
       ts_title_mode = "Default",
       month_range = month_range_secondary(),
@@ -9297,7 +9409,7 @@ server <- function(input, output, session) {
 
   timeseries_plot_v2 = function(){
 
-        p <- plot_timeseries(
+  p <- plot_timeseries(
       type = "Anomaly",
       data = timeseries_data_v2(),
       variable = input$ME_variable_v2,
@@ -9403,47 +9515,59 @@ server <- function(input, output, session) {
     }
     
     ptc = generate_correlation_titles(
-      input$source_v1,
-      input$source_v2,
-      input$dataset_selected_v1,
-      input$dataset_selected_v2,
-      variable_v1,
-      variable_v2,
-      input$type_v1,
-      input$type_v2,
-      input$mode_selected_v1,
-      input$mode_selected_v2,
-      month_range_primary(),
-      month_range_secondary(),
-      lonlat_vals_v1()[1:2],
-      lonlat_vals_v2()[1:2],
-      lonlat_vals_v1()[3:4],
-      lonlat_vals_v2()[3:4],
-      input$range_years3,
-      input$cor_method_ts,
-      input$title_mode3,
-      input$title_mode_ts3,
-      input$title1_input3,
-      input$title2_input3,
-      input$title1_input_ts3,
-      input$title_size_input3
+      variable1_source = input$source_v1,
+      variable2_source = input$source_v2,
+      variable1_dataset = input$dataset_selected_v1,
+      variable2_dataset = input$dataset_selected_v2,
+      variable1 = variable_v1,
+      variable2 = variable_v2,
+      variable1_type = input$type_v1,
+      variable2_type = input$type_v2,
+      variable1_mode = input$mode_selected_v1,
+      variable2_mode = input$mode_selected_v2,
+      variable1_month_range = month_range_primary(),
+      variable2_month_range = month_range_secondary(),
+      variable1_lon_range = lonlat_vals_v1()[1:2],
+      variable2_lon_range = lonlat_vals_v2()[1:2],
+      variable1_lat_range = lonlat_vals_v1()[3:4],
+      variable2_lat_range = lonlat_vals_v2()[3:4],
+      year_range = input$range_years3,
+      method = input$cor_method_ts,
+      map_title_mode = input$title_mode3,
+      ts_title_mode = input$title_mode_ts3,
+      map_custom_title = input$title1_input3,
+      map_custom_subtitle = input$title2_input3,
+      ts_custom_title = input$title1_input_ts3,
+      title_size = input$title_size_input3
     )
     return(ptc)
   }) 
   
   # Add value to custom title
-  observe({
+  # Step 1: Clear inputs when switching to "Default"
+  observeEvent(input$title_mode3, {
+    if (input$title_mode3 == "Default" || input$title_mode_ts3 == "Default") {
+      updateTextInput(session, "title1_input3", value = "")
+      updateTextInput(session, "title2_input3", value = "")
+      updateTextInput(session, "title1_input_ts3", value = "")
+    }
+  })
+  
+  # Step 2: Refill with updated defaults after clearing
+  observeEvent({
+    input$title_mode3
+    plot_titles_cor()
+  }, {
+    req(input$title_mode3 == "Default" || input$title_mode_ts3 == "Default")
     req(plot_titles_cor())
-    if (input$title1_input3 == "") {
-      updateTextInput(session, "title1_input3", value = plot_titles_cor()$map_title)
-    }
-    if (input$title2_input3 == "") {
-      updateTextInput(session, "title2_input3", value = plot_titles_cor()$map_subtitle)
-    }
     
-    if (input$title1_input_ts3 == "") {
+    invalidateLater(100, session)
+    
+    isolate({
+      updateTextInput(session, "title1_input3", value = plot_titles_cor()$map_title)
+      updateTextInput(session, "title2_input3", value = plot_titles_cor()$map_subtitle)
       updateTextInput(session, "title1_input_ts3", value = plot_titles_cor()$ts_title)
-    }
+    })
   })
 
   
@@ -9537,6 +9661,8 @@ server <- function(input, output, session) {
       month_range_1 = month_range_primary(),
       month_range_2 = month_range_secondary(),
       titles = plot_titles_cor(),
+      show_ticks = input$show_ticks_ts3,
+      tick_interval = input$xaxis_numeric_interval_ts3,
       show_key = input$show_key_ts3,
       key_position = input$key_position_ts3,
       moving_ave = input$custom_average_ts3,
@@ -9825,18 +9951,23 @@ server <- function(input, output, session) {
         titles = plot_titles_cor(),
         axis_range = axis_range_used,
         hide_axis = input$hide_axis3,
+        
         points_data = map_points_data3(),
         highlights_data = map_highlights_data3(),
+        
         c_borders = input$hide_borders3,
         white_ocean = input$white_ocean3,
         white_land = input$white_land3,
+        
         plotOrder = plotOrder3(),
         shpPickers = input$shpPickers3,
         input=input,
         plotType="shp_colour3_",
+        
         projection=input$projection3,
         center_lat=input$center_lat3,
         center_lon=input$center_lon3,
+        
         show_rivers = input$show_rivers3,
         label_rivers = input$label_rivers3,
         show_lakes = input$show_lakes3,
@@ -10049,23 +10180,25 @@ server <- function(input, output, session) {
                                                                      row.names = FALSE,
                                                                      fileEncoding = "latin1")
                                                          } else {
-                                                           write.xlsx(correlation_ts_datatable(), file,
-                                                                      row.names = FALSE,
-                                                                      col.names = TRUE)
+                                                           openxlsx::write.xlsx(correlation_ts_datatable(), file,
+                                                                                row.names = FALSE,
+                                                                                col.names = TRUE)
                                                          }}) 
   
   output$download_map_data3        <- downloadHandler(filename = function(){paste(plot_titles_cor()$file_title, "-mapdata.",input$file_type_map_data3, sep = "")},
                                                       content  = function(file) {
                                                         if (input$file_type_map_data3 == "csv"){
-                                                          map_data_new_3 <- rewrite_maptable(correlation_map_datatable(),NA,NA)
+                                                          map_data_new_3 <- rewrite_maptable(correlation_map_datatable(),subset_lons_secondary(),subset_lats_secondary())
                                                           colnames(map_data_new_3) <- NULL
+                                                          
                                                           write.csv(map_data_new_3, file,
                                                                     row.names = FALSE)
                                                         } else if (input$file_type_map_data3 == "xlsx") {
-                                                          write.xlsx(rewrite_maptable(map_data(), subset_lons_primary(), subset_lats_primary()), file,
-                                                                     row.names = FALSE, col.names = FALSE)
+                                                          openxlsx::write.xlsx(rewrite_maptable(correlation_map_datatable(),subset_lons_secondary(),subset_lats_secondary()), file,
+                                                                               row.names = FALSE,
+                                                                               col.names = FALSE)
                                                         } else if (input$file_type_map_data3 == "GeoTIFF") {
-                                                          create_geotiff(map_data(), file)
+                                                          create_geotiff(correlation_map_datatable(), file)
                                                         }})
   
   output$download_fad3            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season3),"_",input$fad_year3,".",input$file_type_fad3, sep = "")},
@@ -10093,9 +10226,9 @@ server <- function(input, output, session) {
                                                          write.csv(fad_data3(), file,
                                                                    row.names = FALSE)
                                                        } else {
-                                                         write.xlsx(fad_data3(), file,
-                                                                    col.names = TRUE,
-                                                                    row.names = FALSE)
+                                                         openxlsx::write.xlsx(fad_data3(), file,
+                                                                              col.names = TRUE,
+                                                                              row.names = FALSE)
                                                        }})
   
   
@@ -10177,32 +10310,6 @@ server <- function(input, output, session) {
   user_subset_iv = reactive({
     req(user_data_iv(), input$user_variable_iv)
     
-    year_range_reg = reactive({
-      result <- tryCatch({
-        return(
-          extract_year_range(
-            input$source_iv,
-            input$source_dv,
-            input$user_file_iv$datapath,
-            input$user_file_dv$datapath
-          )
-        )
-      }, error = function(e) {
-        showModal(
-          # Add modal dialog for warning message
-          modalDialog(
-            title = "Error",
-            "There was an error in processing your uploaded data.
-                        \nPlease check if the file has the correct format.",
-            easyClose = FALSE,
-            footer = tagList(modalButton("OK"))
-          )
-        )
-        return(NULL)
-      })
-      return(result)
-    })
-    
     usr_ss1 = create_user_data_subset(user_data_iv(), input$user_variable_iv, input$range_years4)
     
     return(usr_ss1)
@@ -10224,10 +10331,21 @@ server <- function(input, output, session) {
     
     req(input$nav1 == "tab4") # Only run code if in the current tab
     
-    my_title_dv <- generate_titles ("general",input$dataset_selected_dv, input$ME_variable_dv, input$mode_selected_dv,
-                                    "Default","Default", month_range_primary(),input$range_years4,
-                                    input$ref_period_dv, NA,lonlat_vals_dv()[1:2],lonlat_vals_dv()[3:4],
-                                    NA, NA, NA)
+    my_title_dv <- generate_titles (tab = "general",
+                                    dataset = input$dataset_selected_dv,
+                                    variable = input$ME_variable_dv,
+                                    mode = input$mode_selected_dv,
+                                    map_title_mode = "Default",
+                                    ts_title_mode = "Default",
+                                    month_range = month_range_primary(),
+                                    year_range = input$range_years4,
+                                    baseline_range = input$ref_period_dv,
+                                    baseline_years_before = NA,
+                                    lon_range = lonlat_vals_dv()[1:2],
+                                    lat_range = lonlat_vals_dv()[3:4],
+                                    map_custom_title1 = NA,
+                                    map_custom_title2 = NA,
+                                    ts_custom_title1 = NA)
     return(my_title_dv)
   }) 
   
@@ -10235,10 +10353,21 @@ server <- function(input, output, session) {
     
     req(input$nav1 == "tab4") # Only run code if in the current tab
     
-    my_title_iv <- generate_titles ("general",input$dataset_selected_iv, input$ME_variable_iv[1], input$mode_selected_iv,
-                                    "Default","Default", month_range_secondary(),input$range_years4,
-                                    input$ref_period_iv, NA,lonlat_vals_iv()[1:2],lonlat_vals_iv()[3:4],
-                                    NA, NA, NA)
+    my_title_iv <- generate_titles (tab = "general",
+                                    dataset = input$dataset_selected_iv,
+                                    variable = input$ME_variable_iv[1],
+                                    mode = input$mode_selected_iv,
+                                    map_title_mode = "Default",
+                                    ts_title_mode = "Default",
+                                    month_range = month_range_secondary(),
+                                    year_range = input$range_years4,
+                                    baseline_range = input$ref_period_iv,
+                                    baseline_years_before = NA,
+                                    lon_range = lonlat_vals_iv()[1:2],
+                                    lat_range = lonlat_vals_iv()[3:4],
+                                    map_custom_title1 = NA,
+                                    map_custom_title2 = NA,
+                                    ts_custom_title1 = NA)
     return(my_title_iv)
   }) 
   
@@ -10268,24 +10397,22 @@ server <- function(input, output, session) {
     return(me_tsd_iv)
   })
   
-  #REMOVE
-  #_iv = function(){plot_default_timeseries(,"general",input$ME_variable_iv[1],,"Default",NA)}
   timeseries_plot_iv = function(){
     p <- plot_timeseries(
-      type = "Anomaly",
-      data = ME_ts_data_iv(),
-      variable = input$ME_variable_iv[1],
-      ref = NULL,
-      year_range = input$range_years4,
-      month_range_1 = month_range_primary(),
-      titles = plot_titles_iv(),
-      show_key = FALSE,
-      show_ref = FALSE,
-      moving_ave = FALSE,
-      custom_percentile = FALSE,
-      highlights = data.frame(),
-      lines = data.frame(),
-      points = data.frame()
+              type = "Anomaly",
+              data = ME_ts_data_iv(),
+              variable = input$ME_variable_iv[1],
+              ref = NULL,
+              year_range = input$range_years4,
+              month_range_1 = month_range_primary(),
+              titles = plot_titles_iv(),
+              show_key = FALSE,
+              show_ref = FALSE,
+              moving_ave = FALSE,
+              custom_percentile = FALSE,
+              highlights = data.frame(),
+              lines = data.frame(),
+              points = data.frame()
     )
     return(p)
   }
@@ -10299,9 +10426,7 @@ server <- function(input, output, session) {
     return(ts_data1_dv)
   })
   
-  #timeseries_plot_dv = function(){plot_default_timeseries(timeseries_data_dv(),"general",input$ME_variable_dv,plot_titles_dv(),"Default")}
-  
-  
+
   ### Plotting initial IV/DV ----
   
   # Generate plot dimensions
@@ -10374,46 +10499,60 @@ server <- function(input, output, session) {
     req(month_range_secondary(), month_range_primary())
     
     ptr = generate_regression_titles(
-      input$source_iv,
-      input$source_dv,
-      input$dataset_selected_iv,
-      input$dataset_selected_dv,
-      input$ME_variable_dv,
-      input$mode_selected_iv,
-      input$mode_selected_dv,
-      month_range_secondary(),
-      month_range_primary(),
-      lonlat_vals_iv()[1:2],
-      lonlat_vals_dv()[1:2],
-      lonlat_vals_iv()[3:4],
-      lonlat_vals_dv()[3:4],
-      input$range_years4,
-      reg_resi_year_val(),
-      variables_iv(),
-      variable_dv(),
-      match(input$coeff_variable, variables_iv()),
-      match(input$pvalue_variable, variables_iv()),
-      input$title_mode_reg_coeff,
-      input$title1_input_reg_coeff,
-      input$title2_input_reg_coeff,
-      input$title_size_input_reg_coeff
+      independent_source = input$source_iv,
+      dependent_source = input$source_dv,
+      dataset_i = input$dataset_selected_iv,
+      dataset_d = input$dataset_selected_dv,
+      modERA_dependent_variable = input$ME_variable_dv,
+      mode_i = input$mode_selected_iv,
+      mode_d = input$mode_selected_dv,
+      month_range_i = month_range_secondary(),
+      month_range_d = month_range_primary(),
+      lon_range_i = lonlat_vals_iv()[1:2],
+      lon_range_d = lonlat_vals_dv()[1:2],
+      lat_range_i = lonlat_vals_iv()[3:4],
+      lat_range_d = lonlat_vals_dv()[3:4],
+      year_range = input$range_years4,
+      year_selected = reg_resi_year_val(),
+      independent_variables = variables_iv(),
+      dependent_variable = variable_dv(),
+      iv_number_coeff = match(input$coeff_variable, variables_iv()),
+      iv_number_pvals = match(input$pvalue_variable, variables_iv()),
+      map_title_mode = input$title_mode_reg_coeff,
+      map_custom_title = input$title1_input_reg_coeff,
+      map_custom_subtitle = input$title2_input_reg_coeff,
+      title_size = input$title_size_input_reg_coeff
     )
     return(ptr)
   })
   
   # Add value to custom title
-  observe({
+  # Step 1: Clear inputs when switching to "Default"
+  observeEvent(input$title_mode_reg_coeff, {
+    if (input$title_mode_reg_coeff == "Default") {
+      updateTextInput(session, "title1_input_reg_coeff", value = "")
+      updateTextInput(session, "title2_input_reg_coeff", value = "")
+    }
+  })
+  
+  # Step 2: Fill with default titles after clearing
+  observeEvent({
+    input$title_mode_reg_coeff
+    plot_titles_reg_coeff()
+  }, {
+    req(input$title_mode_reg_coeff == "Default")
     req(plot_titles_reg_coeff())
-    if (input$title1_input_reg_coeff == "") {
+    
+    invalidateLater(100, session)
+    
+    isolate({
       updateTextInput(session,
                       "title1_input_reg_coeff",
                       value = plot_titles_reg_coeff()$map_title_coeff)
-    }
-    if (input$title2_input_reg_coeff == "") {
       updateTextInput(session,
                       "title2_input_reg_coeff",
                       value = plot_titles_reg_coeff()$map_subtitle_coeff)
-    }
+    })
   })
   
   # Generate regression titles pvals
@@ -10423,47 +10562,62 @@ server <- function(input, output, session) {
     req(month_range_secondary(), month_range_primary())
     
     ptr = generate_regression_titles(
-      input$source_iv,
-      input$source_dv,
-      input$dataset_selected_iv,
-      input$dataset_selected_dv,
-      input$ME_variable_dv,
-      input$mode_selected_iv,
-      input$mode_selected_dv,
-      month_range_secondary(),
-      month_range_primary(),
-      lonlat_vals_iv()[1:2],
-      lonlat_vals_dv()[1:2],
-      lonlat_vals_iv()[3:4],
-      lonlat_vals_dv()[3:4],
-      input$range_years4,
-      reg_resi_year_val(),
-      variables_iv(),
-      variable_dv(),
-      match(input$coeff_variable, variables_iv()),
-      match(input$pvalue_variable, variables_iv()),
-      input$title_mode_reg_pval,
-      input$title1_input_reg_pval,
-      input$title2_input_reg_pval,
-      input$title_size_input_reg_pval
+      independent_source = input$source_iv,
+      dependent_source = input$source_dv,
+      dataset_i = input$dataset_selected_iv,
+      dataset_d = input$dataset_selected_dv,
+      modERA_dependent_variable = input$ME_variable_dv,
+      mode_i = input$mode_selected_iv,
+      mode_d = input$mode_selected_dv,
+      month_range_i = month_range_secondary(),
+      month_range_d = month_range_primary(),
+      lon_range_i = lonlat_vals_iv()[1:2],
+      lon_range_d = lonlat_vals_dv()[1:2],
+      lat_range_i = lonlat_vals_iv()[3:4],
+      lat_range_d = lonlat_vals_dv()[3:4],
+      year_range = input$range_years4,
+      year_selected = reg_resi_year_val(),
+      independent_variables = variables_iv(),
+      dependent_variable = variable_dv(),
+      iv_number_coeff = match(input$coeff_variable, variables_iv()),
+      iv_number_pvals = match(input$pvalue_variable, variables_iv()),
+      map_title_mode = input$title_mode_reg_pval,
+      map_custom_title = input$title1_input_reg_pval,
+      map_custom_subtitle = input$title2_input_reg_pval,
+      title_size = input$title_size_input_reg_pval
     )
     return(ptr)
   })
   
   # Add value to custom title
-  observe({
+  # Step 1: Clear the inputs when switching to "Default"
+  observeEvent(input$title_mode_reg_pval, {
+    if (input$title_mode_reg_pval == "Default") {
+      updateTextInput(session, "title1_input_reg_pval", value = "")
+      updateTextInput(session, "title2_input_reg_pval", value = "")
+    }
+  })
+  
+  # Step 2: Refill inputs with updated defaults after clearing
+  observeEvent({
+    input$title_mode_reg_pval
+    plot_titles_reg_pval()
+  }, {
+    req(input$title_mode_reg_pval == "Default")
     req(plot_titles_reg_pval())
-    if (input$title1_input_reg_pval == "") {
+    
+    invalidateLater(100, session)
+    
+    isolate({
       updateTextInput(session,
                       "title1_input_reg_pval",
                       value = plot_titles_reg_pval()$map_title_pvals)
-    }
-    if (input$title2_input_reg_pval == "") {
       updateTextInput(session,
                       "title2_input_reg_pval",
                       value = plot_titles_reg_pval()$map_subtitle_pvals)
-    }
+    })
   })
+  
   
   # Generate regression titles residuals
   plot_titles_reg_res = reactive({
@@ -10472,46 +10626,62 @@ server <- function(input, output, session) {
     req(month_range_secondary(), month_range_primary())
     
     ptr = generate_regression_titles(
-      input$source_iv,
-      input$source_dv,
-      input$dataset_selected_iv,
-      input$dataset_selected_dv,
-      input$ME_variable_dv,
-      input$mode_selected_iv,
-      input$mode_selected_dv,
-      month_range_secondary(),
-      month_range_primary(),
-      lonlat_vals_iv()[1:2],
-      lonlat_vals_dv()[1:2],
-      lonlat_vals_iv()[3:4],
-      lonlat_vals_dv()[3:4],
-      input$range_years4,
-      reg_resi_year_val(),
-      variables_iv(),
-      variable_dv(),
-      match(input$coeff_variable, variables_iv()),
-      match(input$pvalue_variable, variables_iv()),
-      input$title_mode_reg_res,
-      input$title1_input_reg_res,
-      input$title2_input_reg_res,
-      input$title_size_input_reg_res
+      independent_source = input$source_iv,
+      dependent_source = input$source_dv,
+      dataset_i = input$dataset_selected_iv,
+      dataset_d = input$dataset_selected_dv,
+      modERA_dependent_variable = input$ME_variable_dv,
+      mode_i = input$mode_selected_iv,
+      mode_d = input$mode_selected_dv,
+      month_range_i = month_range_secondary(),
+      month_range_d = month_range_primary(),
+      lon_range_i = lonlat_vals_iv()[1:2],
+      lon_range_d = lonlat_vals_dv()[1:2],
+      lat_range_i = lonlat_vals_iv()[3:4],
+      lat_range_d = lonlat_vals_dv()[3:4],
+      year_range = input$range_years4,
+      year_selected = reg_resi_year_val(),
+      independent_variables = variables_iv(),
+      dependent_variable = variable_dv(),
+      iv_number_coeff = match(input$coeff_variable, variables_iv()),
+      iv_number_pvals = match(input$pvalue_variable, variables_iv()),
+      map_title_mode = input$title_mode_reg_res,
+      map_custom_title = input$title1_input_reg_res,
+      map_custom_subtitle = input$title2_input_reg_res,
+      title_size = input$title_size_input_reg_res
     )
     return(ptr)
   })
   
   # Add value to custom title
-  observe({
-    req(plot_titles_reg_res())
-    if (input$title1_input_reg_res == "") {
-      updateTextInput(session, "title1_input_reg_res", value = plot_titles_reg_res()$map_title_res)
-    }
-    if (input$title2_input_reg_res == "") {
-      updateTextInput(session,
-                      "title2_input_reg_res",
-                      value = plot_titles_reg_res()$map_subtitle_res)
+  # Step 1: Clear title inputs when switching to "Default"
+  observeEvent(input$title_mode_reg_res, {
+    if (input$title_mode_reg_res == "Default") {
+      updateTextInput(session, "title1_input_reg_res", value = "")
+      updateTextInput(session, "title2_input_reg_res", value = "")
     }
   })
   
+  # Step 2: Refill inputs with defaults after clearing
+  observeEvent({
+    input$title_mode_reg_res
+    plot_titles_reg_res()
+  }, {
+    req(input$title_mode_reg_res == "Default")
+    req(plot_titles_reg_res())
+    
+    invalidateLater(100, session)
+    
+    isolate({
+      updateTextInput(session, "title1_input_reg_res",
+                      value = plot_titles_reg_res()$map_title_res)
+      updateTextInput(session, "title2_input_reg_res",
+                      value = plot_titles_reg_res()$map_subtitle_res)
+    })
+  })
+  
+  
+  # Regression TS Titles
   plot_titles_reg_ts = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
     
@@ -10546,18 +10716,32 @@ server <- function(input, output, session) {
   })
   
   # Add value to custom title
-  observe({
+  # Step 1: Clear inputs when switching to "Default"
+  observeEvent(input$title_mode_ts4, {
+    if (input$title_mode_ts4 == "Default") {
+      updateTextInput(session, "title1_input_ts4", value = "")
+      updateTextInput(session, "title2_input_ts4", value = "")
+    }
+  })
+  
+  # Step 2: Refill inputs with updated defaults after clearing
+  observeEvent({
+    input$title_mode_ts4
+    plot_titles_reg_ts()
+  }, {
+    req(input$title_mode_ts4 == "Default")
     req(plot_titles_reg_ts())
-    if (input$title1_input_ts4 == "") {
+    
+    invalidateLater(100, session)
+    
+    isolate({
       updateTextInput(session,
                       "title1_input_ts4",
                       value = plot_titles_reg_ts()$ts_title)
-    }
-    if (input$title2_input_ts4 == "") {
       updateTextInput(session,
                       "title2_input_ts4",
                       value = plot_titles_reg_ts()$ts_subtitle)
-    }
+    })
   })
   
   # Select variable timeseries data
@@ -10615,6 +10799,8 @@ server <- function(input, output, session) {
       titles = plot_titles_reg_ts(),
       show_key = input$show_key_ts4,
       key_position = input$key_position_ts4,
+      show_ticks = input$show_ticks_ts4,
+      tick_interval = input$xaxis_numeric_interval_ts4,
       show_ref = FALSE,
       moving_ave = FALSE,
       custom_percentile = FALSE,
@@ -10636,6 +10822,8 @@ server <- function(input, output, session) {
       ref = NULL,
       year_range = input$range_years4,
       titles = plot_titles_reg_ts(),
+      show_ticks = input$show_ticks_ts4,
+      tick_interval = input$xaxis_numeric_interval_ts4,
       show_key = input$show_key_ts4,
       key_position = input$key_position_ts4,
       show_ref = FALSE,
@@ -10708,10 +10896,19 @@ server <- function(input, output, session) {
       points_data = map_points_data_reg_coeff(),
       highlights_data = map_highlights_data_reg_coeff(),
       
+      plotOrder = plotOrder_reg_coeff(),
+      shpPickers = input$shpPickers_reg_coeff,
+      input=input,
+      plotType="shp_colour4a_",
+      
       c_borders = input$hide_borders_reg_coeff,
       white_ocean = input$white_ocean_reg_coeff,
       white_land = input$white_land_reg_coeff,
       
+      projection = input$projection_reg_coeff,
+      center_lat = input$center_lat_reg_coeff,
+      center_lon = input$center_lon_reg_coeff,
+
       show_rivers = input$show_rivers_reg_coeff,
       label_rivers = input$label_rivers_reg_coeff,
       show_lakes = input$show_lakes_reg_coeff,
@@ -10769,9 +10966,18 @@ server <- function(input, output, session) {
       points_data = map_points_data_reg_pval(),
       highlights_data = map_highlights_data_reg_pval(),
       
+      plotOrder = plotOrder_reg_pval(),
+      shpPickers = input$shpPickers_reg_pval,
+      input=input,
+      plotType="shp_colour4b_",
+      
       c_borders = input$hide_borders_reg_pval,
       white_ocean = input$white_ocean_reg_pval,
       white_land = input$white_land_reg_pval,
+      
+      projection = input$projection_reg_pval,
+      center_lat = input$center_lat_reg_pval,
+      center_lon = input$center_lon_reg_pval,
       
       show_rivers = input$show_rivers_reg_pval,
       label_rivers = input$label_rivers_reg_pval,
@@ -10838,9 +11044,18 @@ server <- function(input, output, session) {
       points_data = map_points_data_reg_res(),
       highlights_data = map_highlights_data_reg_res(),
       
+      plotOrder = plotOrder_reg_res(),
+      shpPickers = input$shpPickers_reg_res,
+      input=input,
+      plotType="shp_colour4c_",
+      
       c_borders = input$hide_borders_reg_res,
       white_ocean = input$white_ocean_reg_res,
       white_land = input$white_land_reg_res,
+      
+      projection = input$projection_reg_res,
+      center_lat = input$center_lat_reg_res,
+      center_lon = input$center_lon_reg_res,
       
       show_rivers = input$show_rivers_reg_res,
       label_rivers = input$label_rivers_reg_res,
@@ -10966,9 +11181,9 @@ server <- function(input, output, session) {
                                                                      row.names = FALSE,
                                                                      fileEncoding = "latin1")
                                                          } else {
-                                                           write.xlsx(regression_ts_data(), file,
-                                                                      row.names = FALSE,
-                                                                      col.names = TRUE)
+                                                           openxlsx::write.xlsx(regression_ts_data(), file,
+                                                                                row.names = FALSE,
+                                                                                col.names = TRUE)
                                                          }})                                                        
   
   
@@ -10998,15 +11213,17 @@ server <- function(input, output, session) {
   output$download_reg_coe_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg_coeff()$file_title, "-mapdata.",input$reg_coe_plot_data_type, sep = "")},
                                                               content  = function(file) {
                                                                 if (input$reg_coe_plot_data_type == "csv"){
-                                                                  map_data_new_4a <- rewrite_maptable(reg_coef_table(),NA,NA)
+                                                                  map_data_new_4a <- rewrite_maptable(reg_coef_table(),subset_lons_secondary(),subset_lats_secondary())
                                                                   colnames(map_data_new_4a) <- NULL
                                                                   
                                                                   write.csv(map_data_new_4a, file,
                                                                             row.names = FALSE)
-                                                                } else {
-                                                                  write.xlsx(rewrite_maptable(reg_coef_table(),NA,NA), file,
-                                                                             row.names = FALSE,
-                                                                             col.names = FALSE)
+                                                                } else if (input$reg_coe_plot_data_type == "xlsx"){
+                                                                  openxlsx::write.xlsx(rewrite_maptable(reg_coef_table(),subset_lons_secondary(),subset_lats_secondary()), file,
+                                                                                       row.names = FALSE,
+                                                                                       col.names = FALSE)
+                                                                } else if (input$reg_coe_plot_data_type == "GeoTIFF") {
+                                                                  create_geotiff(reg_coef_table(), file)
                                                                 }})
   
   output$download_reg_pval_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg_pval()$file_title,"-map.",input$reg_pval_plot_type, sep = "")},
@@ -11025,15 +11242,17 @@ server <- function(input, output, session) {
   output$download_reg_pval_plot_data       <- downloadHandler(filename = function(){paste(plot_titles_reg_pval()$file_title, "-mapdata.",input$reg_pval_plot_data_type, sep = "")},
                                                               content  = function(file) {
                                                                 if (input$reg_pval_plot_data_type == "csv"){
-                                                                  map_data_new_4b <- rewrite_maptable(reg_pval_table(),NA,NA)
+                                                                  map_data_new_4b <- rewrite_maptable(reg_pval_table(),subset_lons_secondary(),subset_lats_secondary())
                                                                   colnames(map_data_new_4b) <- NULL
                                                                   
                                                                   write.csv(map_data_new_4b, file,
                                                                             row.names = FALSE)
-                                                                } else {
-                                                                  write.xlsx(rewrite_maptable(reg_pval_table(),NA,NA), file,
-                                                                             row.names = FALSE,
-                                                                             col.names = FALSE)
+                                                                } else if (input$reg_pval_plot_data_type == "xlsx"){
+                                                                  openxlsx::write.xlsx(rewrite_maptable(reg_pval_table(),subset_lons_secondary(),subset_lats_secondary()), file,
+                                                                                       row.names = FALSE,
+                                                                                       col.names = FALSE)
+                                                                } else if (input$reg_pval_plot_data_type == "GeoTIFF") {
+                                                                  create_geotiff(reg_pval_table(), file)
                                                                 }})
   
   output$download_reg_res_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg_res()$file_title,"-map.",input$reg_res_plot_type, sep = "")},
@@ -11052,15 +11271,17 @@ server <- function(input, output, session) {
   output$download_reg_res_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg_res()$file_title, "-mapdata.",input$reg_res_plot_data_type, sep = "")},
                                                               content  = function(file) {
                                                                 if (input$reg_res_plot_data_type == "csv"){
-                                                                  map_data_new_4c <- rewrite_maptable(reg_res_table(),NA,NA)
+                                                                  map_data_new_4c <- rewrite_maptable(reg_res_table(),subset_lons_secondary(),subset_lats_secondary())
                                                                   colnames(map_data_new_4c) <- NULL
                                                                   
                                                                   write.csv(map_data_new_4c, file,
                                                                             row.names = FALSE)
-                                                                } else {
-                                                                  write.xlsx(rewrite_maptable(reg_res_table(),NA,NA), file,
-                                                                             row.names = FALSE,
-                                                                             col.names = FALSE)
+                                                                } else if (input$reg_res_plot_data_type == "xlsx"){
+                                                                  openxlsx::write.xlsx(rewrite_maptable(reg_res_table(),subset_lons_secondary(),subset_lats_secondary()), file,
+                                                                                       row.names = FALSE,
+                                                                                       col.names = FALSE)
+                                                                } else if (input$reg_res_plot_data_type == "GeoTIFF") {
+                                                                  create_geotiff(reg_res_table(), file)
                                                                 }})
   
   output$download_fad4            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season4),"_",input$fad_year4,".",input$file_type_fad4, sep = "")},
@@ -11085,9 +11306,9 @@ server <- function(input, output, session) {
                                                          write.csv(fad_data4(), file,
                                                                    row.names = FALSE)
                                                        } else {
-                                                         write.xlsx(fad_data4(), file,
-                                                                    col.names = TRUE,
-                                                                    row.names = FALSE)
+                                                         openxlsx::write.xlsx(fad_data4(), file,
+                                                                              col.names = TRUE,
+                                                                              row.names = FALSE)
                                                        }})
   
   
@@ -11122,6 +11343,7 @@ server <- function(input, output, session) {
     plot_monthly_timeseries(
       data = monthly_ts_data(),
       titles = monthly_ts_titles(),
+      show_key = input$show_key_ts5,
       key_position = input$key_position_ts5,
       highlights = ts_highlights_data5(),
       lines = ts_lines_data5(),
@@ -11139,11 +11361,8 @@ server <- function(input, output, session) {
     paging = TRUE,
     pagingType = "numbers"
   ))
+
   
-  
-  
-  
-  # Close Server    
   
   ### ModE-RA sources ----
   
@@ -11197,7 +11416,7 @@ server <- function(input, output, session) {
   
   ### Downloading Annual cycles data ----
   
-  output$download_timeseries5      <- downloadHandler(filename = function(){paste("monthly-ts.",input$file_type_timeseries5, sep = "")},
+  output$download_timeseries5      <- downloadHandler(filename = function(){paste("annual-cycle_plot.",input$file_type_timeseries5, sep = "")},
                                                       content  = function(file) {
                                                         if (input$file_type_timeseries5 == "png"){
                                                           png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
@@ -11211,16 +11430,16 @@ server <- function(input, output, session) {
                                                       }) 
   
   
-  output$download_timeseries_data5  <- downloadHandler(filename = function(){paste("monthly-tsdata.",input$file_type_timeseries_data5, sep = "")},
+  output$download_timeseries_data5  <- downloadHandler(filename = function(){paste("annual-cycle_data.",input$file_type_timeseries_data5, sep = "")},
                                                        content  = function(file) {
                                                          if (input$file_type_timeseries_data5 == "csv"){
                                                            write.csv(monthly_ts_data(), file,
                                                                      row.names = FALSE,
                                                                      fileEncoding = "latin1")
                                                          } else {
-                                                           write.xlsx(monthly_ts_data(), file,
-                                                                      row.names = FALSE,
-                                                                      col.names = TRUE)
+                                                           openxlsx::write.xlsx(monthly_ts_data(), file,
+                                                                                row.names = FALSE,
+                                                                                col.names = TRUE)
                                                          }})
   
   output$download_fad5            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season5),"_",input$fad_year5,".",input$file_type_fad5, sep = "")},
@@ -11245,9 +11464,9 @@ server <- function(input, output, session) {
                                                          write.csv(fad_data5(), file,
                                                                    row.names = FALSE)
                                                        } else {
-                                                         write.xlsx(fad_data5(), file,
-                                                                    col.names = TRUE,
-                                                                    row.names = FALSE)
+                                                         openxlsx::write.xlsx(fad_data5(), file,
+                                                                              col.names = TRUE,
+                                                                              row.names = FALSE)
                                                        }})
   
   ## MODE-RA SOURCES data procession and plotting ----
@@ -11391,9 +11610,9 @@ server <- function(input, output, session) {
                                                         write.csv(fad_data_MES(), file,
                                                                   row.names = FALSE)
                                                       } else {
-                                                        write.xlsx(fad_data_MES(), file,
-                                                                   col.names = TRUE,
-                                                                   row.names = FALSE)
+                                                        openxlsx::write.xlsx(fad_data_MES(), file,
+                                                                             col.names = TRUE,
+                                                                             row.names = FALSE)
                                                       }})
   
   ### TS Sources and Observation Map ----
@@ -11506,53 +11725,68 @@ server <- function(input, output, session) {
     }
   })
   
+  
+  # Y Label and Plot Title
   ts_y_label = reactive({
     if (input$source_sea_6 == "User Data") {
-      if (is.null(input$y_label_6) || input$y_label_6 == ""){
-        y_label = paste(colnames(user_subset_6())[2])
+      if (input$y_label_6 != "" && input$title_mode_6 == "Custom"){
+        return(input$y_label_6)
       } else {
-        y_label = input$y_label_6
+        return(paste(colnames(user_subset_6())[2]))
       }
-      return(y_label)
-      
+
     } else {
-      if (is.null(input$y_label_6) || input$y_label_6 == ""){
-        y_label = paste(colnames(timeseries_data_sea())[2],input$ME_variable_6)
+      if (input$y_label_6 != "" && input$title_mode_6 == "Custom"){
+        return(input$y_label_6)
       } else {
-        y_label = input$y_label_6
+        return(paste(input$ME_statistic_6,input$season_selected_6,input$ME_variable_6))
       }
-      return(y_label)
     }
   })
-
   
   ts_title = reactive({
     if (input$source_sea_6 == "User Data") {
       if (input$title1_input_6 != "" && input$title_mode_6 == "Custom") {
         return(input$title1_input_6)
       } else {
-        return(paste("SEA of", colnames(user_subset_6())[2], "-", input$ME_statistic_6))
+        return(paste("SEA of", colnames(user_subset_6())[2]))
       }
     } else {
       if (input$title1_input_6 != "" && input$title_mode_6 == "Custom") {
         return(input$title1_input_6)
       } else {
-        return(paste("SEA of", input$ME_statistic_6, input$ME_variable_6))
+        return(paste("SEA of", input$ME_statistic_6,input$season_selected_6,input$ME_variable_6))
       }
     }
   })
   
   
-  # Add value to custom title
-  observe({
-    req(ts_title())
-    if (input$title1_input_6 == "" && input$title_mode_6 != "Custom") {
-      updateTextInput(session, "title1_input_6", value = ts_title())
-    }
-    if (input$y_label_6 == "" && input$title_mode_6 != "Custom") {
-      updateTextInput(session, "y_label_6", value = ts_y_label())
+  # # Add value to custom title
+
+    # Step 1: When switching to Default, reset the inputs to blank
+  observeEvent(input$title_mode_6, {
+    if (input$title_mode_6 != "Custom") {
+      updateTextInput(session, "title1_input_6", value = "")
+      updateTextInput(session, "y_label_6", value = "")
     }
   })
+  
+  # Step 2: Fill the fields after they are blanked out
+  observeEvent({
+    input$title_mode_6
+    input$ME_statistic_6
+    input$ME_variable_6
+    input$source_sea_6
+  }, {
+    req(input$title_mode_6 != "Custom")  # Only do this in Default mode
+    # Delay by one reactive tick to allow inputs to update
+    invalidateLater(100, session)
+    isolate({
+      updateTextInput(session, "title1_input_6", value = ts_title())
+      updateTextInput(session, "y_label_6", value = ts_y_label())
+    })
+  })
+  
   
   
   # Turn "years" column into rownames
@@ -11815,7 +12049,9 @@ server <- function(input, output, session) {
                                                                      row.names = FALSE,
                                                                      fileEncoding = "latin1")
                                                          } else {
-                                                           openxlsx::write.xlsx(SEA_datatable(), file)
+                                                           openxlsx::write.xlsx(SEA_datatable(), file,
+                                                                                col.names = TRUE,
+                                                                                row.names = FALSE)
                                                          }})
   
   ## Concerning all modes (mainly updating Ui) ----
@@ -11906,10 +12142,24 @@ server <- function(input, output, session) {
   #Updates Values outside of min / max (numericRangeInput)
   
   observe({
-    input_ids <- c("range_years", "range_years3", "range_years4", "ref_period", "ref_period2", "ref_period_v1", "ref_period_v2", "ref_period_iv", "ref_period_dv", "ref_period5")
+    input_ids <- c("range_years", "range_years3", "range_years4", 
+                   "ref_period", "ref_period2", "ref_period_v1", 
+                   "ref_period_v2", "ref_period_iv", "ref_period_dv", 
+                   "ref_period5")
     
     for (input_id in input_ids) {
       range_values <- input[[input_id]]
+      
+      # Skip updates for certain inputs under certain conditions
+      if (input_id == "range_years3" &&
+          input$source_v1 == "User Data" && input$source_v2 == "User Data") {
+        next
+      }
+      
+      if (input_id == "range_years4" &&
+          input$source_dv == "User Data" && input$source_iv == "User Data") {
+        next
+      }
       
       update_values <- function(left, right) {
         if (!is.numeric(left) || is.na(left) || left < 1422) {

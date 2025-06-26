@@ -17,8 +17,8 @@ ui <- navbarPage(
   # --- Navbar title with logos and version ---
   title = div(
     style = "display: inline-flex; align-items: center; gap: 10px;",
-    uiOutput("logo_output", inline = TRUE),
-    uiOutput("logo_output2", inline = TRUE),
+    uiOutput(outputId = "logo_output", inline = TRUE),
+    uiOutput(outputId = "logo_output2", inline = TRUE),
     span("(v1.4)")
   ),
   
@@ -642,17 +642,17 @@ ui <- navbarPage(
              ## Main Panel START ----
              mainPanel(tabsetPanel(id = "tabset1",
                                    ### Map plot START ----   
-                                   tabPanel("Map", 
-                                            withSpinner(ui_element = 
-                                                          #plotlyOutput("map"),
-                                                          plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
+                                   tabPanel("Map", br(),
+                                            h4("Anomalies map", style = "color: #094030;"),
+                                            
+                                            withSpinner(ui_element = plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
                                             
-                                            uiOutput("vices", inline = TRUE),
-                                            uiOutput("dev_team", inline = TRUE),
-                                            uiOutput("ruebli", inline = TRUE),
+                                            uiOutput(outputId = "vices", inline = TRUE),
+                                            uiOutput(outputId = "dev_team", inline = TRUE),
+                                            uiOutput(outputId = "ruebli", inline = TRUE),
                                             
                                             #### Customization panels START ----       
                                             fluidRow(
@@ -687,7 +687,7 @@ ui <- navbarPage(
                                                                               max = 180))),
                                                            
                                                            radioButtons(inputId  = "axis_mode",
-                                                                        label    = "Axis customization:",
+                                                                        label    = "Y-axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -780,15 +780,16 @@ ui <- navbarPage(
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput("shpFile", "Upload Shapefile (ZIP)"), # File input to upload ZIP file
-                                                           actionButton("reorderButton", "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
-                                                           pickerInput(
-                                                             "shpPickers",
-                                                             "Select Shapefiles to Display",
-                                                             choices = NULL,
-                                                             multiple = TRUE
-                                                           ), uiOutput("colorpickers"), # Dynamically generate color pickers for each shapefile
-
+                                                           fileInput(inputId = "shpFile",
+                                                                     label = "Upload Shapefile (ZIP)"), # File input to upload ZIP file
+                                                           actionButton(inputId = "reorderButton",
+                                                                        label = "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
+                                                           pickerInput(inputId = "shpPickers",
+                                                                       label = "Select Shapefiles to Display",
+                                                                       choices = NULL,
+                                                                       multiple = TRUE),
+                                                           uiOutput(outputId = "colorpickers"), # Dynamically generate color pickers for each shapefile
+                                                           
                                                            
                                                        )),
                                               ),
@@ -993,7 +994,9 @@ ui <- navbarPage(
                                    ),
                                    
                                    ### TS plot START ----
-                                   tabPanel("Timeseries", 
+                                   tabPanel("Timeseries", br(),
+                                            h4("Anomalies timeseries", style = "color: #094030;"),
+                                            
                                             withSpinner(ui_element = plotOutput("timeseries", click = "ts_click1",dblclick = "ts_dblclick1",brush = brushOpts(id = "ts_brush1",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
@@ -1032,7 +1035,7 @@ ui <- navbarPage(
                                                                               max     = 40))),
                                                            
                                                            radioButtons(inputId  = "axis_mode_ts",
-                                                                        label    = "Axis customization:",
+                                                                        label    = "Y-axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -1040,11 +1043,24 @@ ui <- navbarPage(
                                                              div(id = "hidden_custom_axis_ts",
                                                                  
                                                                  numericRangeInput(inputId    = "axis_input_ts",
-                                                                                   label      = "Set your axis values:",
+                                                                                   label      = "Set your y-axis values:",
                                                                                    value      = c(NULL, NULL),
                                                                                    separator  = " to ",
                                                                                    min        = -Inf,
                                                                                    max        = Inf))),
+                                                           
+                                                           checkboxInput(inputId = "show_ticks_ts",
+                                                                         label   = "Customize year axis intervals",
+                                                                         value   = FALSE),
+                                                           
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_xaxis_interval_ts",
+
+                                                                 numericInput(inputId = "xaxis_numeric_interval_ts",
+                                                                              label   = "Year axis intervals:",
+                                                                              value   = 50,
+                                                                              min     = 1,
+                                                                              max     = 500))),
                                                            
                                                            checkboxInput(inputId = "show_key_ts",
                                                                          label   = "Show key",
@@ -1060,44 +1076,44 @@ ui <- navbarPage(
                                                                               inline = TRUE))),
                                                            
                                                            checkboxInput(inputId = "show_ref_ts",
-                                                                         label   = "Show reference",
+                                                                         label   = "Show 0-anomaly line",
                                                                          value   = FALSE),
                                                            
-                                                           shinyjs::hidden( 
-                                                             div(id = "hidden_custom_yaxis_ts",
-                                                                 radioButtons(inputId  = "yaxis_custom_choice_ts",
-                                                                              label    = "Y axis range:",
-                                                                              choices  = c("Automatic", "Fixed"),
-                                                                              selected = "Automatic" ,
-                                                                              inline = TRUE),
-                                                                 
-                                                                 shinyjs::hidden( 
-                                                                   div(id = "hidden_yaxis_range_ts",
-                                                                       
-                                                                       numericRangeInput(inputId = "yaxis_numeric_range_ts",
-                                                                                         label   = "Font size:",
-                                                                                         value   = 18,
-                                                                                         min     = 1,
-                                                                                         max     = 40))),
-                                                             )),
-                                                           
-                                                           shinyjs::hidden( 
-                                                             div(id = "hidden_custom_xaxis_ts",
-                                                                 radioButtons(inputId  = "xaxis_custom_choice_ts",
-                                                                              label    = "X axis year intervals:",
-                                                                              choices  = c("Automatic", "Fixed"),
-                                                                              selected = "Automatic",
-                                                                              inline = TRUE),
-                                                                 
-                                                                 shinyjs::hidden( 
-                                                                   div(id = "hidden_xaxis_interval_ts",
-                                                                       
-                                                                       numericInput(inputId = "xaxis_numeric_interval_ts",
-                                                                                    label   = "Year axis intervals:",
-                                                                                    value   = 50,
-                                                                                    min     = 1,
-                                                                                    max     = 600))),
-                                                             )),
+                                                           # shinyjs::hidden( 
+                                                           #   div(id = "hidden_custom_yaxis_ts",
+                                                           #       radioButtons(inputId  = "yaxis_custom_choice_ts",
+                                                           #                    label    = "Y axis range:",
+                                                           #                    choices  = c("Automatic", "Fixed"),
+                                                           #                    selected = "Automatic" ,
+                                                           #                    inline = TRUE),
+                                                           #       
+                                                           #       shinyjs::hidden( 
+                                                           #         div(id = "hidden_yaxis_range_ts",
+                                                           #             
+                                                           #             numericRangeInput(inputId = "yaxis_numeric_range_ts",
+                                                           #                               label   = "Font size:",
+                                                           #                               value   = 18,
+                                                           #                               min     = 1,
+                                                           #                               max     = 40))),
+                                                           #   )),
+                                                           # 
+                                                           # shinyjs::hidden( 
+                                                           #   div(id = "hidden_custom_xaxis_ts",
+                                                           #       radioButtons(inputId  = "xaxis_custom_choice_ts",
+                                                           #                    label    = "X axis year intervals:",
+                                                           #                    choices  = c("Automatic", "Fixed"),
+                                                           #                    selected = "Automatic",
+                                                           #                    inline = TRUE),
+                                                           #       
+                                                           #       shinyjs::hidden( 
+                                                           #         div(id = "hidden_xaxis_interval_ts",
+                                                           #             
+                                                           #             numericInput(inputId = "xaxis_numeric_interval_ts",
+                                                           #                          label   = "Year axis intervals:",
+                                                           #                          value   = 50,
+                                                           #                          min     = 1,
+                                                           #                          max     = 600))),
+                                                           #   )),
                                                        )),
                                                      
                                                      
@@ -1754,7 +1770,7 @@ ui <- navbarPage(
                                                                               max = 180))),
                                                            
                                                            radioButtons(inputId  = "axis_mode2",
-                                                                        label    = "Axis customization:",
+                                                                        label    = "Y-axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -1851,10 +1867,15 @@ ui <- navbarPage(
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput("shpFile2", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
-                                                           actionButton("reorderButton2", "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
-                                                           pickerInput("shpPickers2", "Select Shapefiles to Display", choices = NULL, multiple = TRUE),
-                                                           uiOutput("colorpickers2"),  # Dynamically generate color pickers for each shapefile
+                                                           fileInput(inputId = "shpFile2",
+                                                                     label = "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
+                                                           actionButton(inputId = "reorderButton2",
+                                                                        label = "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
+                                                           pickerInput(inputId = "shpPickers2",
+                                                                       label = "Select Shapefiles to Display",
+                                                                       choices = NULL,
+                                                                       multiple = TRUE),
+                                                           uiOutput(outputId = "colorpickers2"),  # Dynamically generate color pickers for each shapefile
                                                            
                                                        )),
                                               ),
@@ -2115,7 +2136,7 @@ ui <- navbarPage(
                                                              )),
                                                            
                                                            radioButtons(inputId  = "axis_mode_ts2",
-                                                                        label    = "Axis customization:",
+                                                                        label    = "Y-axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -2128,6 +2149,19 @@ ui <- navbarPage(
                                                                                    separator  = " to ",
                                                                                    min        = -Inf,
                                                                                    max        = Inf))),
+                                                           
+                                                           checkboxInput(inputId = "show_ticks_ts2",
+                                                                         label   = "Customize year axis intervals",
+                                                                         value   = FALSE),
+                                                           
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_xaxis_interval_ts2",
+                                                                 
+                                                                 numericInput(inputId = "xaxis_numeric_interval_ts2",
+                                                                              label   = "Year axis intervals:",
+                                                                              value   = 50,
+                                                                              min     = 1,
+                                                                              max     = 500))),
                                                            
                                                            checkboxInput(inputId = "show_key_ts2",
                                                                          label   = "Show key",
@@ -2143,7 +2177,7 @@ ui <- navbarPage(
                                                                               inline = TRUE))),
                                                            
                                                            checkboxInput(inputId = "show_ref_ts2",
-                                                                         label   = "Show reference",
+                                                                         label   = "Show 0-anomaly line",
                                                                          value   = FALSE),
                                                        )),    
                                               ),
@@ -2768,7 +2802,7 @@ ui <- navbarPage(
                                                div(id = "hidden_custom_6",
                                                    
                                                    radioButtons(inputId  = "title_mode_6",
-                                                                label    = "Title customization:",
+                                                                label    = "Title and lable customization:",
                                                                 choices  = c("Default", "Custom"),
                                                                 selected = "Default" ,
                                                                 inline = TRUE),
@@ -2780,14 +2814,15 @@ ui <- navbarPage(
                                                                    label       = "Custom plot title:", 
                                                                    value       = NA,
                                                                    width       = NULL,
-                                                                   placeholder = "Custom title")
+                                                                   placeholder = "Custom title"),
+                                                         
+                                                         textInput(inputId    = "y_label_6",
+                                                                   label     = "Custom y-axis label:",
+                                                                   value     = NA,
+                                                                   width       = NULL,
+                                                                   placeholder = "Custom lable"),
                                                      )),
-                                                   
-                                                   textInput(inputId    = "y_label_6",
-                                                             label     = "Y-axis label:",
-                                                             value     = "",
-                                                             placeholder = "Default"),
-                                                   
+
                                                    radioButtons(inputId  = "axis_mode_6",
                                                                 label    = "Y-axis customization:",
                                                                 choices  = c("Automatic","Fixed"),
@@ -3129,10 +3164,10 @@ ui <- navbarPage(
                         
                         numericRangeInput(inputId    = "range_years3",
                                           label     = "Select the range of years (1422 - 2008):",
-                                          value     = c(1900,2000),
+                                          value     = initial_year_values,
                                           separator = " to ",
-                                          min       = 1422,
-                                          max       = 2008)
+                                          min       = -3000,
+                                          max       = 3000)
                  ),
                  
                  # Set lag years
@@ -3433,7 +3468,7 @@ ui <- navbarPage(
                                                              )),
                                                            
                                                            radioButtons(inputId  = "axis_mode_ts3",
-                                                                        label    = "Axis customization:",
+                                                                        label    = "Y-axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -3446,6 +3481,19 @@ ui <- navbarPage(
                                                                                    separator  = " to ",
                                                                                    min        = -Inf,
                                                                                    max        = Inf))),
+                                                           
+                                                           checkboxInput(inputId = "show_ticks_ts3",
+                                                                         label   = "Customize year axis intervals",
+                                                                         value   = FALSE),
+                                                           
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_xaxis_interval_ts3",
+                                                                 
+                                                                 numericInput(inputId = "xaxis_numeric_interval_ts3",
+                                                                              label   = "Year axis intervals:",
+                                                                              value   = 50,
+                                                                              min     = 1,
+                                                                              max     = 500))),
                                                            
                                                            checkboxInput(inputId = "show_key_ts3",
                                                                          label   = "Show key",
@@ -3766,7 +3814,7 @@ ui <- navbarPage(
                                             )),
                                             
                                             #Easter Calm
-                                            uiOutput("keep_calm", inline = TRUE),
+                                            uiOutput(outputId = "keep_calm", inline = TRUE),
                                             
                                    ### Shared TS plot: End ----          
                                    ),
@@ -3790,7 +3838,7 @@ ui <- navbarPage(
                                                         image.height = spinner_height),
                                             
                                             #Easter Leaves
-                                            uiOutput("leaves", inline = TRUE),
+                                            uiOutput(outputId = "leaves", inline = TRUE),
                                             
                                             #### Customization panels START ----       
                                             fluidRow(
@@ -3826,7 +3874,7 @@ ui <- navbarPage(
                                                                               max = 180))),
                                                            
                                                            radioButtons(inputId  = "axis_mode3",
-                                                                        label    = "Axis customization:",
+                                                                        label    = "Y-axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -3924,10 +3972,15 @@ ui <- navbarPage(
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput("shpFile3", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
-                                                           actionButton("reorderButton3", "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
-                                                           pickerInput("shpPickers3", "Select Shapefiles to Display", choices = NULL, multiple = TRUE),
-                                                           uiOutput("colorpickers3"),  # Dynamically generate color pickers for each shapefile
+                                                           fileInput(inputId = "shpFile3",
+                                                                     label = "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
+                                                           actionButton(inputId = "reorderButton3",
+                                                                        label = "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
+                                                           pickerInput(inputId = "shpPickers3",
+                                                                       label = "Select Shapefiles to Display",
+                                                                       choices = NULL,
+                                                                       multiple = TRUE),
+                                                           uiOutput(outputId = "colorpickers3"),  # Dynamically generate color pickers for each shapefile
                                                            
                                                        )),
                                               ),
@@ -4056,30 +4109,8 @@ ui <- navbarPage(
                                               ),
                                               
                                               #### Custom statistics ----
-                                              column(width = 4#,
-                                                     #h4("Custom statistics", style = "color: #094030;"),
-                                                     
-                                                     #checkboxInput(inputId = "enable_custom_statistics3",
-                                                     #               label   = "Enable custom statistics",
-                                                     #               value   = FALSE),
-                                                     # 
-                                                     #shinyjs::hidden(
-                                                     # div(id = "hidden_custom_statistics3",
-                                                     #    h4(helpText("Choose custom statistic:")),
-                                                     
-                                                     #   radioButtons(inputId      = "custom_statistic3",
-                                                     #               label        = NULL,
-                                                     #              inline       = TRUE,
-                                                     #             choices      = c("% sign match")),
-                                                     
-                                                     # div(id = "hidden_sign_match3",  
-                                                     #    numericInput(inputId = "percentage_sign_match3",
-                                                     #                label  = "% of years with matching sign:",
-                                                     #               value  = 90,
-                                                     #              min    = 1,
-                                                     #             max    = 100)
-                                                     #     ),
-                                                     # )),
+                                              column(width = 4
+                                                     #[NOT IMPLEMENTED]
                                               ),
                                             #### Customization panels END ----
                                             ),
@@ -4443,10 +4474,10 @@ ui <- navbarPage(
                  #Choose your year of interest   
                  numericRangeInput(inputId    = "range_years4",
                                    label     = "Select the range of years (1422-2008):",
-                                   value     = c(1900,2000),
+                                   value     = initial_year_values,
                                    separator = " to ",
-                                   min       = 1422,
-                                   max       = 2008),
+                                   min       = -3000,
+                                   max       = 3000),
                  
                ), width = 12),
                
@@ -4758,6 +4789,19 @@ ui <- navbarPage(
                                                                  
                                                                  )),
                                                            
+                                                           checkboxInput(inputId = "show_ticks_ts4",
+                                                                         label   = "Customize year axis intervals",
+                                                                         value   = FALSE),
+                                                           
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_xaxis_interval_ts4",
+                                                                 
+                                                                 numericInput(inputId = "xaxis_numeric_interval_ts4",
+                                                                              label   = "Year axis intervals:",
+                                                                              value   = 50,
+                                                                              min     = 1,
+                                                                              max     = 500))),
+                                                           
                                                            checkboxInput(inputId = "show_key_ts4",
                                                                          label   = "Show key",
                                                                          value   = FALSE),
@@ -4961,7 +5005,7 @@ ui <- navbarPage(
                                                          downloadButton(outputId = "download_reg_ts2_plot", label = "Download plot 2")), 
                                                   
                                                   column(width = 3,
-                                                         radioButtons(inputId = "reg_ts_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
+                                                         radioButtons(inputId = "reg_ts_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx", "GeoTIFF"), selected = "csv", inline = TRUE),
                                                          downloadButton(outputId = "download_reg_ts_plot_data", label = "Download data")),
                                                   
                                                   column(width = 3,
@@ -5013,27 +5057,27 @@ ui <- navbarPage(
                                                      shinyjs::hidden(
                                                        div(id = "hidden_custom_map_reg_coeff",
                                                            
-                                                           selectInput(inputId = "projection4a",
+                                                           selectInput(inputId = "projection_reg_coeff",
                                                                        label = "Projection:",
                                                                        choices = c("UTM (default)", "Robinson", "Orthographic", "LAEA"),
                                                                        selected = "UTM (default)"),
                                                            
                                                            shinyjs::hidden(
-                                                             div(id = "hidden_map_center_reg",
+                                                             div(id = "hidden_map_center_reg_coeff",
                                                                  
-                                                                 numericInput(inputId = "center_lat4a",
+                                                                 numericInput(inputId = "center_lat_reg_coeff",
                                                                               label = "Center latitude:",
                                                                               value = 0,
                                                                               min = -90,
                                                                               max = 90),
-                                                                 numericInput(inputId = "center_lon4a",
+                                                                 numericInput(inputId = "center_lon_reg_coeff",
                                                                               label = "Center longitude:",
                                                                               value = 0,
                                                                               min = -180,
                                                                               max = 180))),
                                                            
                                                            radioButtons(inputId  = "axis_mode_reg_coeff",
-                                                                        label    = "Axis customization:",
+                                                                        label    = "Y-axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -5126,10 +5170,15 @@ ui <- navbarPage(
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput("shpFile", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
-                                                           actionButton("reorderButton", "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
-                                                           pickerInput("shpPickers4", "Select Shapefiles to Display", choices = NULL, multiple = TRUE),
-                                                           uiOutput("colorpickers4"),  # Dynamically generate color pickers for each shapefile
+                                                           fileInput(inputId = "shpFile_reg_coeff",
+                                                                     label = "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
+                                                           actionButton(inputId = "reorderButton_reg_coeff",
+                                                                        label = "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
+                                                           pickerInput(inputId = "shpPickers_reg_coeff",
+                                                                       label = "Select Shapefiles to Display",
+                                                                       choices = NULL,
+                                                                       multiple = TRUE),
+                                                           uiOutput(outputId = "colorpickers_reg_coeff"),  # Dynamically generate color pickers for each shapefile
                                                            
                                                        )),
                                               ),
@@ -5191,7 +5240,7 @@ ui <- navbarPage(
                                                                
                                                                colourInput(inputId = "point_colour_reg_coeff",
                                                                            label   = "Point colour:",
-                                                                           returnName = TRUE,
+                                                                           showColour = "background",
                                                                            palette = "limited"),
                                                                
                                                                
@@ -5277,7 +5326,7 @@ ui <- navbarPage(
                                                                   column(2, radioButtons(inputId = "reg_coe_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                                                                   column(3, downloadButton(outputId = "download_reg_coe_plot", label = "Download map")),
                                                                   # Download map data
-                                                                  column(2,radioButtons(inputId = "reg_coe_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                                                  column(2,radioButtons(inputId = "reg_coe_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx", "GeoTIFF"), selected = "csv", inline = TRUE)),
                                                                   column(3, downloadButton(outputId = "download_reg_coe_plot_data", label = "Download map data")),
                                                                 ),
                                                                 # Download, upload and update metadata
@@ -5331,27 +5380,27 @@ ui <- navbarPage(
                                                      shinyjs::hidden(
                                                        div(id = "hidden_custom_map_reg_pval",
                                                            
-                                                           selectInput(inputId = "projection4b",
+                                                           selectInput(inputId = "projection_reg_pval",
                                                                        label = "Projection:",
                                                                        choices = c("UTM (default)", "Robinson", "Orthographic", "LAEA"),
                                                                        selected = "UTM (default)"),
                                                            
                                                            shinyjs::hidden(
-                                                             div(id = "hidden_map_center_reg",
+                                                             div(id = "hidden_map_center_reg_pval",
                                                                  
-                                                                 numericInput(inputId = "center_lat4b",
+                                                                 numericInput(inputId = "center_lat_reg_pval",
                                                                               label = "Center latitude:",
                                                                               value = 0,
                                                                               min = -90,
                                                                               max = 90),
-                                                                 numericInput(inputId = "center_lon4b",
+                                                                 numericInput(inputId = "center_lon_reg_pval",
                                                                               label = "Center longitude:",
                                                                               value = 0,
                                                                               min = -180,
                                                                               max = 180))),
                                                            
                                                            radioButtons(inputId  = "axis_mode_reg_pval",
-                                                                        label    = "Axis customization:",
+                                                                        label    = "Y-axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -5447,10 +5496,15 @@ ui <- navbarPage(
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput("shpFile", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
-                                                           actionButton("reorderButton", "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
-                                                           pickerInput("shpPickers4", "Select Shapefiles to Display", choices = NULL, multiple = TRUE),
-                                                           uiOutput("colorpickers4"),  # Dynamically generate color pickers for each shapefile
+                                                           fileInput(inputId = "shpFile_reg_pval",
+                                                                     label = "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
+                                                           actionButton(inputId = "reorderButton_reg_pval",
+                                                                        label = "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
+                                                           pickerInput(inputId = "shpPickers_reg_pval",
+                                                                       label = "Select Shapefiles to Display",
+                                                                       choices = NULL,
+                                                                       multiple = TRUE),
+                                                           uiOutput(outputId = "colorpickers_reg_pval"),  # Dynamically generate color pickers for each shapefile
                                                            
                                                        )),
                                               ),
@@ -5512,7 +5566,7 @@ ui <- navbarPage(
                                                                
                                                                colourInput(inputId = "point_colour_reg_pval",
                                                                            label   = "Point colour:",
-                                                                           returnName = TRUE,
+                                                                           showColour = "background",
                                                                            palette = "limited"),
                                                                
                                                                
@@ -5595,7 +5649,7 @@ ui <- navbarPage(
                                                                   column(2, radioButtons(inputId = "reg_pval_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                                                                   column(3, downloadButton(outputId = "download_reg_pval_plot", label = "Download map")),
                                                                   # Download map data
-                                                                  column(2,radioButtons(inputId = "reg_pval_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                                                  column(2,radioButtons(inputId = "reg_pval_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx", "GeoTIFF"), selected = "csv", inline = TRUE)),
                                                                   column(3, downloadButton(outputId = "download_reg_pval_plot_data", label = "Download map data")),
                                                                 ),
                                                                 
@@ -5654,27 +5708,27 @@ ui <- navbarPage(
                                                      shinyjs::hidden(
                                                        div(id = "hidden_custom_maps_reg_res",
                                                            
-                                                           selectInput(inputId = "projection4c",
+                                                           selectInput(inputId = "projection_reg_res",
                                                                        label = "Projection:",
                                                                        choices = c("UTM (default)", "Robinson", "Orthographic", "LAEA"),
                                                                        selected = "UTM (default)"),
                                                            
                                                            shinyjs::hidden(
-                                                             div(id = "hidden_map_center_reg",
+                                                             div(id = "hidden_map_center_reg_res",
                                                                  
-                                                                 numericInput(inputId = "center_lat4c",
+                                                                 numericInput(inputId = "center_lat_reg_res",
                                                                               label = "Center latitude:",
                                                                               value = 0,
                                                                               min = -90,
                                                                               max = 90),
-                                                                 numericInput(inputId = "center_lon4c",
+                                                                 numericInput(inputId = "center_lon_reg_res",
                                                                               label = "Center longitude:",
                                                                               value = 0,
                                                                               min = -180,
                                                                               max = 180))),
                                                            
-                                                           radioButtons(inputId  = "axis_mode_reg",
-                                                                        label    = "Axis customization:",
+                                                           radioButtons(inputId  = "axis_mode_reg_res",
+                                                                        label    = "Y-axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -5764,10 +5818,15 @@ ui <- navbarPage(
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput("shpFile", "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
-                                                           actionButton("reorderButton", "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
-                                                           pickerInput("shpPickers4", "Select Shapefiles to Display", choices = NULL, multiple = TRUE),
-                                                           uiOutput("colorpickers4"),  # Dynamically generate color pickers for each shapefile
+                                                           fileInput(inputId = "shpFile_reg_res",
+                                                                     label = "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
+                                                           actionButton(inputId = "reorderButton_reg_res",
+                                                                        label = "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
+                                                           pickerInput(inputId = "shpPickers_reg_res",
+                                                                       label = "Select Shapefiles to Display",
+                                                                       choices = NULL,
+                                                                       multiple = TRUE),
+                                                           uiOutput(outputId = "colorpickers_reg_res"),  # Dynamically generate color pickers for each shapefile
                                                        )),
                                               ),
                                               
@@ -5829,7 +5888,7 @@ ui <- navbarPage(
                                                                
                                                                colourInput(inputId = "point_colour_reg_res",
                                                                            label   = "Point colour:",
-                                                                           returnName = TRUE,
+                                                                           showColour = "background",
                                                                            palette = "limited"),
                                                                
                                                                
@@ -5912,7 +5971,7 @@ ui <- navbarPage(
                                                                   column(2, radioButtons(inputId = "reg_res_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                                                                   column(3, downloadButton(outputId = "download_reg_res_plot", label = "Download map")),
                                                                   # Download map data
-                                                                  column(2,radioButtons(inputId = "reg_res_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
+                                                                  column(2,radioButtons(inputId = "reg_res_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx", "GeoTIFF"), selected = "csv", inline = TRUE)),
                                                                   column(3, downloadButton(outputId = "download_reg_res_plot_data", label = "Download map data")),
                                                                 ),
                                                                 
@@ -6004,7 +6063,7 @@ ui <- navbarPage(
            )),
   
   # Annual cycles START ----                             
-  tabPanel("Annual Cycles", value = "tab5",
+  tabPanel("Annual cycles", value = "tab5",
            shinyjs::useShinyjs(),
            sidebarLayout(
              
@@ -6238,8 +6297,9 @@ ui <- navbarPage(
              mainPanel(tabsetPanel(id = "tabset5",
                                    
                                    ### TS plot START ----
-                                   tabPanel("Timeseries", 
-                                            br(),
+                                   tabPanel("Timeseries", br(),
+                                            h4("Annual cycle plot", style = "color: #094030;"),
+                                            
                                             withSpinner(ui_element = plotOutput("timeseries5", click = "ts_click5",dblclick = "ts_dblclick5",brush = brushOpts(id = "ts_brush5",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
@@ -6273,12 +6333,19 @@ ui <- navbarPage(
                                                                            placeholder = "Custom title")
                                                              )),
                                                            
-                                                           radioButtons(inputId  = "key_position_ts5",
-                                                                        label    = "Key position:",
-                                                                        choiceNames  = c("right","bottom"),
-                                                                        choiceValues = c("right","bottom"),
-                                                                        selected = "right" ,
-                                                                        inline = TRUE),
+                                                           checkboxInput(inputId = "show_key_ts5",
+                                                                         label   = "Show key",
+                                                                         value   = FALSE),
+                                                           
+                                                           shinyjs::hidden(
+                                                             div(id = "hidden_key_position_ts5",
+                                                                 radioButtons(inputId  = "key_position_ts5",
+                                                                              label    = "Key position:",
+                                                                              choiceNames  = c("right","bottom"),
+                                                                              choiceValues = c("right","bottom"),
+                                                                              selected = "right" ,
+                                                                              inline = TRUE))),
+
                                                        )),    
                                               ),
                                               
@@ -6446,12 +6513,8 @@ ui <- navbarPage(
                                               
                                               #### Custom statistics ----
                                               column(width = 4,
-                                                     # h4("Custom statistics", style = "color: #094030;"),
                                                      
-                                                     #checkboxInput(inputId = "enable_custom_statistics_ts",
-                                                     #             label   = "Enable custom statistics",
-                                                     #            value   = FALSE),
-                                                     
+                                                     #[NOT IMPLEMENTED]
                                               ),
                                               
                                             #### Customization panels END ----
@@ -6599,19 +6662,7 @@ ui <- navbarPage(
              )),
            
            br(),
-           
-           #   tags$style(HTML("
-           #   .leaflet-control .legend-labels {
-           #     text-align: left !important;
-           #   }
-           #   .leaflet-control .legend {
-           #     text-align: left !important;
-           #   }
-           #   .leaflet-control .leaflet-legend {
-           #     text-align: left !important;
-           #   }
-           # "))
-           
+
   # ModE-RA Sources END ----         
   )
   

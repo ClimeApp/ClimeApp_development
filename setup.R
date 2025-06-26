@@ -3,8 +3,6 @@
 
 #### User Preparation ----
 
-#### User Preparation ----
-
 Sys.info()[["user"]]
 
 ## Working Directory
@@ -147,8 +145,8 @@ library(plotly,include.only = c("select", "plotlyOutput", "renderPlotly", "style
 library(terra) #, include.only = "rast", "writeRaster", "ext", "crs") 
 library(tidyterra,include.only = c("select", "aes", "after_stat", "arrange", "distinct", "filter", 
                                    "geom_spatraster_contour_filled")  )
-# library(rnaturalearth) # for water bodies
-# library(rnaturalearthdata) # for water bodies
+library(rnaturalearth) # for water bodies
+library(rnaturalearthdata) # for water bodies
 library(viridis,include.only = "viridis" )
 library(ggtext)
 
@@ -291,12 +289,12 @@ initial_year_values = century_years[,random_century]
 latlon_weights = as.matrix(read.csv("data/latlon_weights.csv"))
 
 # Load shapefiles for maps (rnaturalearth)
-coast <- st_read("data/geodata_maps/coast.shp")
+coast <- st_read("data/geodata_maps/coast.shp") 
 countries <- st_read("data/geodata_maps/countries.shp")
 oceans <- st_read("data/geodata_maps/oceans.shp")
 land <- st_read("data/geodata_maps/land.shp")
 
-# Load RDS Files for maps (rnaturalearth)
+# Load RDS Files for map customization (rnaturalearth)
 lakes <- readRDS("data/geodata_custom_maps/lakes.rds")
 mountains <- readRDS("data/geodata_custom_maps/mountains.rds")
 rivers <- readRDS("data/geodata_custom_maps/rivers.rds")

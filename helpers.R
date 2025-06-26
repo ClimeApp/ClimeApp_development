@@ -124,7 +124,9 @@ generate_map_dimensions = function(subset_lon_IDs,
 ##             ,dataset,variable,season)
 ##           data_set = "ModE-RA","ModE-Sim","ModE-RAclim" or "SD Ratio"
 
-generate_data_ID = function(dataset,variable,month_range){
+generate_data_ID = function(dataset,
+                            variable,
+                            month_range){
   
   # Generate dataset reference
   if (dataset == "ModE-RA"){
@@ -203,7 +205,8 @@ generate_data_ID = function(dataset,variable,month_range){
 ##           and data source
 ##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim","SD Ratio"
 
-load_ModE_data = function(dataset,variable){
+load_ModE_data = function(dataset,
+                          variable){
   # Mod E-RA
   if (dataset == "ModE-RA"){
     # get variable name and open file
@@ -451,7 +454,10 @@ load_preprocessed_data = function(data_ID){
 ##                        OR
 ##                        any preprocessed ModE-RA variable
 
-create_latlon_subset = function(data_input,data_ID,subset_lon_IDs,subset_lat_IDs){
+create_latlon_subset = function(data_input,
+                                data_ID,
+                                subset_lon_IDs,
+                                subset_lat_IDs){
   if (data_ID[1] == 1){
     # subset preprocessed data
     data_subset = pp_data[[data_ID[4]]][[data_ID[3]]][subset_lon_IDs,subset_lat_IDs,]
@@ -468,7 +474,10 @@ create_latlon_subset = function(data_input,data_ID,subset_lon_IDs,subset_lat_IDs
 ##                                        within a reduced time range
 ##           data_input = any create_latlon_subset data
 
-create_yearly_subset = function(data_input,data_ID,year_range,month_range){
+create_yearly_subset = function(data_input,
+                                data_ID,
+                                year_range,
+                                month_range){
   # Check for preprocessed subset
   if (data_ID[1] != 0){
     year_IDs = (year_range[1]-1420):(year_range[2]-1420) 
@@ -496,7 +505,8 @@ create_yearly_subset = function(data_input,data_ID,year_range,month_range){
 ##           data_input = any create_yearly_subset data
 ##           ref_data = averaged create_yearly_subset data for the ref period
 
-convert_subset_to_anomalies = function(data_input,ref_data){
+convert_subset_to_anomalies = function(data_input,
+                                       ref_data){
   
   # find dimensions of the reference data
   dim_data = dim(data_input)
@@ -709,7 +719,8 @@ generate_stats_ts = function(data){
 ##           mode = "Absolute" or "Anomalies"
 
 #For Map Plots
-set_axis_values = function(data_input,mode){
+set_axis_values = function(data_input,
+                           mode){
   
   if (mode == "Absolute"){
     minmax = c(min(data_input),max(data_input))  
@@ -743,7 +754,7 @@ set_ts_axis_values = function(data_input) {
 ##           c_borders = TRUE or FALSE depending on whether country borders are to be plotted
 ##           plotOrder = vector of shapefile names in the order they should be plotted
 ##           shpPickers = vector of shapefile names that have colour pickers (?)
-##           plot_type = "shp_colour_" or "shp_colour2_" depending on the type of shapefile (?)
+##           plotType = "shp_colour_" or "shp_colour2_" etc. depending on the Analysis (Anomalies, Composite etc.)
 ##
 
 # Plot map with ggplot2
@@ -772,10 +783,10 @@ plot_map <- function(data_input,
                      show_lakes = FALSE,
                      label_lakes = FALSE,
                      show_mountains = FALSE,
-                     label_mountains =FALSE) {
+                     label_mountains = FALSE) {
 
   # Define color picker prefix for shapefiles
-  color_picker_prefix <- ifelse(plotType == "shp_colour_", "shp_colour2_", "shp_colour3_")
+  color_picker_prefix <- plotType
   
   # Define the color palette and unit based on the variable and mode
   if (!is.null(variable)) {  # Check if variable is not NULL
@@ -883,7 +894,14 @@ plot_map <- function(data_input,
   if (show_rivers) {
     p <- p + geom_sf(data = rivers, color = "blue2", size = 0.2, inherit.aes = FALSE)
     if (label_rivers && "name" %in% names(rivers)) {
-      p <- p + geom_text(data = st_centroid(rivers), aes(label = name, geometry = geometry), stat = "sf_coordinates", size = 5, color = "blue2", inherit.aes = FALSE)
+      p <- p + geom_text(
+        data = st_centroid(rivers),
+        aes(label = name, geometry = geometry),
+        stat = "sf_coordinates",
+        size = 5,
+        color = "blue2",
+        inherit.aes = FALSE
+      )
     }
   }
   if (show_lakes) {
@@ -1045,7 +1063,9 @@ plot_map <- function(data_input,
 ## (General) CREATE MAP DATATABLE
 ##           data_input = yearly_subset or subset_to_anomalies data
 
-create_map_datatable = function(data_input,subset_lon_IDs,subset_lat_IDs){
+create_map_datatable = function(data_input,
+                                subset_lon_IDs,
+                                subset_lat_IDs){
   
   # find x,y & z values
   x = lon[subset_lon_IDs]
@@ -1079,8 +1099,11 @@ create_map_datatable = function(data_input,subset_lon_IDs,subset_lat_IDs){
 ##           year_input_type = "range" (for general) or "set" (for composites)
 ##           returns a dataframe of Year, Mean, Min, Max
 
-create_timeseries_datatable = function(data_input,year_input,year_input_type,
-                                       subset_lon_IDs,subset_lat_IDs){
+create_timeseries_datatable = function(data_input,
+                                       year_input,
+                                       year_input_type,
+                                       subset_lon_IDs,
+                                       subset_lat_IDs){
   
   # Remove outer rows and columns from map data
   cut_data_input = data_input[-c(1,dim(data_input)[1]),-c(1,dim(data_input)[2]),]
@@ -1129,9 +1152,13 @@ create_timeseries_datatable = function(data_input,year_input,year_input_type,
 ##           percentiles = a vector of percentile values c(0.9,0.95 or 0.99)
 ##           use_MA_percentiles = TRUE or FALSE
 
-add_stats_to_TS_datatable = function(data_input, add_moving_average,
-                                     moving_average_range,moving_average_alignment,
-                                     add_percentiles,percentiles,use_MA_percentiles){
+add_stats_to_TS_datatable = function(data_input,
+                                     add_moving_average,
+                                     moving_average_range,
+                                     moving_average_alignment,
+                                     add_percentiles,
+                                     percentiles,
+                                     use_MA_percentiles){
   # Set up variables
   Year = data_input[,1]
   Mean = data_input[,2]
@@ -1260,99 +1287,6 @@ add_stats_to_TS_datatable = function(data_input, add_moving_average,
 }
 
 
-## (General) TIMESERIES PLOTTING FUNCTION - sets up graph for plotting
-##
-##           tab = "general" or "composites"
-##           data_input = timeseries_datatable
-##           variable = "Temperature", "Precipitation", "SLP", "Z500"
-##           titles = list containing titles and subtitles and axis titles
-##           title_mode = "Default" or "Custom"
-##           ref = mean value of the reference data (default: NA)
-##           range = "Annual", "Monthly", "DJF", "MAM", "JJA", "SON"
-##           mode = "Anomaly", "Correlation", "Regression_coefficients", "Regression_p_values", "Regression_residuals", "SD Ratio"
-
-plot_default_timeseries <- function(data_input, tab, variable, titles, title_mode, ref = NA, range = "Annual", mode = "Anomaly") {
-  
-  # Set up variables for plotting
-  x = data_input$Year
-  y = data_input[, 2]
-  y_mean = mean(y, na.rm = TRUE)
-  y_sd = sd(y, na.rm = TRUE)
-  y_range = range(y, na.rm = TRUE)
-  
-  # Generate units & color scheme depending on variable
-  v_col <- switch(variable,
-                  "Temperature" = "red3",
-                  "Precipitation" = "turquoise4",
-                  "SLP" = "purple4",
-                  "Z500" = "green4",
-  )
-  v_unit <- switch(variable,
-                   "Temperature" = "\u00B0C",
-                   "Precipitation" = "mm/month",
-                   "SLP" = "hPa",
-                   "Z500" = "m",
-  )
-  
-  # Create dynamic legend label for variable line
-  legend_label_variable <- paste(range, variable, mode)
-  
-  # Map color to the variable for legend
-  p <- ggplot(data_input, aes(x = x, y = y)) +
-    {if (tab == "general") 
-      geom_line(aes(color = legend_label_variable, linetype = legend_label_variable), linewidth = 1, show.legend = TRUE) 
-      else 
-        geom_point(aes(color = legend_label_variable), size = 2, show.legend = TRUE)} +
-    theme_bw(base_size = 15)
-  
-  # Add default title with statistics if 'title_mode' is 'Default'
-  if (title_mode == "Default") {
-    subtitle_text <- paste(
-      "Mean = ", signif(y_mean, 3), v_unit,
-      "  Range = ", signif(y_range[1], 3), v_unit, ":", signif(y_range[2], 3), v_unit,
-      "  SD = ", signif(y_sd, 3), v_unit, sep = ""
-    )
-    p <- p + labs(subtitle = subtitle_text)
-  }  
-  
-  # Add title and subtitle if provided
-  if (!is.null(titles)) {
-    p <- p + labs(x = "Year", y = titles$ts_axis)
-    if (titles$ts_title != " ") {
-      p <- p + ggtitle(titles$ts_title)
-    }
-    if (titles$map_subtitle != " ") {
-      p <- p + labs(subtitle = titles$map_subtitle) # overwrites subtitle created above
-    }
-    p <- p + theme(
-      plot.title = element_text(size = 18, face = "bold"),
-      plot.subtitle = element_text(size = 18 / 1.3, face = "plain"),
-      axis.text = element_text(size = 18 / 1.6)
-    )
-  }  
-  
-  # Add reference line if 'ref' is provided
-  if (!is.na(ref)) {
-    p <- p + geom_hline(aes(yintercept = 0, color = "Reference", linetype = "Reference"), show.legend = TRUE) +
-      annotate("text", x = min(x) + ((max(x) - min(x)) / 25.5), y = 0, 
-               label = paste0(ref, v_unit), vjust = -1)
-  }
-  
-  # Add a simple legend title and position
-  p <- p +
-    scale_color_manual(
-      values = c(setNames(v_col, legend_label_variable), "Reference" = "black"),
-      name = "Legend"
-    ) +
-    scale_linetype_manual(
-      values = c(setNames("solid", legend_label_variable), "Reference" = "dashed"),
-      name = "Legend"
-    )
-  
-  # Return the ggplot object
-  return(p)
-}
-
 #' PLOT TIMESERIES 
 #'
 #' This function sets up time series plots based on the specified type.
@@ -1371,6 +1305,8 @@ plot_default_timeseries <- function(data_input, tab, variable, titles, title_mod
 #' @param titles Character vector. Contains titles, subtitles, axis titles, and custom titles/subtitles.
 #' @param show_key Logical. TRUE or FALSE, whether to show a key.
 #' @param key_position Character. Position of the key: "top", "bottom", "left", "right", "none".
+#' @param show_ticks Show yearly Ticks: Logical. TRUE or FALSE, whether to change ticks
+#' @param tick_interval Numeric. Interval of ticks for X Axis
 #' @param moving_ave Logical. TRUE or FALSE, whether to show a moving average.
 #' @param moving_ave_year Numeric. Number of years for moving average calculation (e.g., 11-year moving average).
 #' @param custom_percentile Logical. TRUE or FALSE, whether to show custom percentiles.
@@ -1398,6 +1334,8 @@ plot_timeseries <- function(type,
                             show_key = FALSE,
                             key_position = NA,
                             show_ref = FALSE,
+                            show_ticks = FALSE,
+                            tick_interval = NA,
                             moving_ave = FALSE,
                             moving_ave_year = NA,
                             custom_percentile = FALSE,
@@ -1910,12 +1848,7 @@ plot_timeseries <- function(type,
   }
   
   print("Error3")
-  # Add reference line
-  if (show_ref){
-    p = p + geom_hline(yintercept = ref, color = "black", linetype = "solid") +  
-      annotate("text", x = year_range[1], y = mean(data$Mean), label = paste0(ref,titles$v_unit),hjust = -0.25,  vjust = -0.5, size = 5)
-  }
-  
+
   # Add theme
   p <- p + theme_bw(base_size = 18)
   
@@ -1998,6 +1931,32 @@ plot_timeseries <- function(type,
     p = p + scale_y_continuous(limits = c(y_Min,y_Max),expand = c(0, 0))
   }
   
+  # Add tick marks
+  if (show_ticks) {
+    p <- p + scale_x_continuous(
+      limits = year_range,
+      expand = c(0, 0),
+      breaks = seq(year_range[1], year_range[2], by = tick_interval)
+    )
+  } else {
+    p <- p + scale_x_continuous(
+      limits = year_range,
+      expand = c(0, 0)
+    )
+  }
+  
+  # Add reference line
+  if (show_ref){
+    p = p + 
+      geom_hline(yintercept = 0, color = "black", linetype = "solid", size = 1) +  
+      annotate("text", 
+               x = year_range[1] + diff(year_range)/25.5,  # mimic text_x offset
+               y = 0,                                      # label at line
+               label = paste0(ref, titles$v_unit),
+               vjust = -0.5,                               # just above line
+               size = 5)
+  }
+  
   # Return the final plot
   return(p)
 }
@@ -2010,7 +1969,12 @@ plot_timeseries <- function(type,
 ##          legend_label = string identifying the colors and linetype later added via scale_color_manual and scale_linetype_manual
 ##          vcol = variable colour (only required for composites)
 
-add_data_to_TS <- function(data, variable, plottype, legend_label, show_key, vcol) {
+add_data_to_TS <- function(data,
+                           variable,
+                           plottype,
+                           legend_label,
+                           show_key,
+                           vcol) {
   
   # Ensure legend_label is part of the data
   data$legend_label <- factor(rep(legend_label, nrow(data)), levels = legend_label)
@@ -2045,9 +2009,15 @@ add_data_to_TS <- function(data, variable, plottype, legend_label, show_key, vco
 ##              points_data = dataframe with columns x_value, y_value, color, shape, size, label
 ##              labels, colors, linetypes = lists that track legend entries
 
-add_timeseries_custom_features <- function(p, highlights_data = NULL, lines_data = NULL, points_data = NULL,
-                                           labels = NULL, colors = NULL, linetypes = NULL,
-                                           year_range = NULL, data_mean = NULL) {
+add_timeseries_custom_features <- function(p,
+                                           highlights_data = NULL,
+                                           lines_data = NULL,
+                                           points_data = NULL,
+                                           labels = NULL,
+                                           colors = NULL,
+                                           linetypes = NULL,
+                                           year_range = NULL,
+                                           data_mean = NULL) {
   
   # --- CUSTOM LINES ---
   if (!is.null(lines_data) && nrow(lines_data) > 0) {
@@ -2119,7 +2089,8 @@ add_timeseries_custom_features <- function(p, highlights_data = NULL, lines_data
 
 ## (General) GET VARIABLE PROPERTIES
 
-get_variable_properties <- function(variable, secondary = FALSE) {
+get_variable_properties <- function(variable,
+                                    secondary = FALSE) {
   # Determine unit
   unit <- switch(variable,
                  "Temperature" = "\u00B0C",
@@ -2154,7 +2125,9 @@ get_variable_properties <- function(variable, secondary = FALSE) {
 ## (General) REWRITE MAPTABLE - rewrites maptable to get rid of degree symbols 
 ##                              Set subset_lon/lat to NA for correlation/regression
 
-rewrite_maptable = function(maptable,subset_lon_IDs,subset_lat_IDs){
+rewrite_maptable = function(maptable,
+                            subset_lon_IDs,
+                            subset_lat_IDs){
   
   if (is.na(subset_lon_IDs[1])){
     rnames = rownames(maptable)
@@ -2176,7 +2149,8 @@ rewrite_maptable = function(maptable,subset_lon_IDs,subset_lat_IDs){
 ## (General) REWRITE TS TABLE - rewites ts_datatable to round values and add units
 ##                              to column headings 
 
-rewrite_tstable = function(tstable,variable){
+rewrite_tstable = function(tstable,
+                           variable){
   
   # Create units
   if (variable == "Temperature"){
@@ -2203,7 +2177,8 @@ rewrite_tstable = function(tstable,variable){
 ##           year = a single user selected or default year
 ##           season = "summer" or "winter"
 
-load_modera_source_data = function(year,season){
+load_modera_source_data = function(year,
+                                   season){
   # Load data
   feedback_data = read.csv(paste0("data/feedback_archive_fin/",season,year,".csv"))  
 }
@@ -2216,7 +2191,10 @@ load_modera_source_data = function(year,season){
 ##           minmax_lonlat = c(min_lon,max_lon,min_lat,max_lat) ->
 ##                           c(-180,180,-90,90) for non-zoomed plot
 
-plot_modera_sources = function(ME_source_data,year,season,minmax_lonlat){
+plot_modera_sources = function(ME_source_data,
+                               year,
+                               season,
+                               minmax_lonlat){
   
   # Load data
   world=map_data("world")
@@ -2272,7 +2250,9 @@ plot_modera_sources = function(ME_source_data,year,season,minmax_lonlat){
 
 ## (General) DOWNLOAD MODE-RA SOURCES DATA
 
-download_feedback_data = function(global_data, lon_range, lat_range) {
+download_feedback_data = function(global_data,
+                                  lon_range,
+                                  lat_range) {
   
   # Subset data based on lon and lat range
   subset_data = global_data[(global_data$LON > lon_range[1]) & (global_data$LON < lon_range[2]) &
@@ -2296,7 +2276,15 @@ comma_apostrophe <- function(x) {
 }
 
 # Function to create the time series plot for selected lines with a legend
-plot_ts_modera_sources <- function(data, year_column, selected_columns, line_titles, title, x_label, y_label, x_ticks_every, year_range) {
+plot_ts_modera_sources <- function(data,
+                                   year_column,
+                                   selected_columns,
+                                   line_titles,
+                                   title,
+                                   x_label,
+                                   y_label,
+                                   x_ticks_every,
+                                   year_range) {
   # Filter data based on the selected year range
   data <- data %>% filter(get(year_column) >= year_range[1], get(year_column) <= year_range[2])
   
@@ -2367,9 +2355,17 @@ plot_ts_modera_sources <- function(data, year_column, selected_columns, line_tit
 ##           year_range = year_range for general tab or year_set for composites 
 ##           baseline_range,baseline_years_before = NA if not used
 
-generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_nc_variables,
-                                  mode,subset_lon_IDs,subset_lat_IDs,month_range,
-                                  year_range,baseline_range,baseline_years_before){
+generate_custom_netcdf = function(data_input,
+                                  tab,dataset,
+                                  ncdf_ID,
+                                  variable,
+                                  user_nc_variables,
+                                  mode,subset_lon_IDs,
+                                  subset_lat_IDs,
+                                  month_range,
+                                  year_range,
+                                  baseline_range,
+                                  baseline_years_before){
   
   # Create NA variables for each ModE-RA variable
   temp_variable_data = NA
@@ -2511,7 +2507,8 @@ generate_custom_netcdf = function(data_input,tab,dataset,ncdf_ID,variable,user_n
 ##           map_data = numeric 2d vector, output of create_map_datatable()
 ##           output_file = where to write it
 
-create_geotiff <- function(map_data, output_file = NULL) {
+create_geotiff <- function(map_data,
+                           output_file = NULL) {
   
   # Extract longitudes and latitudes from column and row names and retaining original sign
   x <- as.numeric(gsub("°[EW]", "", colnames(map_data))) *
@@ -2545,8 +2542,15 @@ create_geotiff <- function(map_data, output_file = NULL) {
 ## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR PLOT
 ##           data input = Input form Plot Customization
 
-generate_metadata <- function(axis_mode, axis_input, hide_axis, title_mode, title1_input, title2_input, 
-                              custom_statistic, sd_ratio, hide_borders) {
+generate_metadata <- function(axis_mode,
+                              axis_input,
+                              hide_axis,
+                              title_mode,
+                              title1_input,
+                              title2_input, 
+                              custom_statistic,
+                              sd_ratio,
+                              hide_borders) {
   
   # Adjust axis_input based on axis_mode
   if (axis_mode == "Automatic") {
@@ -2574,7 +2578,15 @@ generate_metadata <- function(axis_mode, axis_input, hide_axis, title_mode, titl
 ## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR TS
 ##           data input = Input form Plot Customization
 
-generate_metadata_ts <- function(title_mode_ts, title1_input_ts, show_key_ts, key_position_ts, show_ref_ts, custom_average_ts, year_moving_ts, percentile_ts, moving_percentile_ts) {
+generate_metadata_ts <- function(title_mode_ts,
+                                 title1_input_ts,
+                                 show_key_ts,
+                                 key_position_ts,
+                                 show_ref_ts,
+                                 custom_average_ts,
+                                 year_moving_ts,
+                                 percentile_ts,
+                                 moving_percentile_ts) {
   
   
   # Create the metadata data frame with explicit column names
@@ -2597,8 +2609,19 @@ generate_metadata_ts <- function(title_mode_ts, title1_input_ts, show_key_ts, ke
 ## (General) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
 ##           data input = Generation plot inputs from side bar
 
-generate_metadata_plot <- function(dataset,variable,range_years,select_sg_year,sg_year,season_sel,range_months,
-                                   ref_period,select_sg_ref,sg_ref,lon_range,lat_range,lonlat_vals) {
+generate_metadata_plot <- function(dataset,
+                                   variable,
+                                   range_years,
+                                   select_sg_year,
+                                   sg_year,
+                                   season_sel,
+                                   range_months,
+                                   ref_period,
+                                   select_sg_ref,
+                                   sg_ref,
+                                   lon_range,
+                                   lat_range,
+                                   lonlat_vals) {
   
   #Generate dataframe from plot inputs
   plot_input <- data.frame(
@@ -2625,7 +2648,8 @@ generate_metadata_plot <- function(dataset,variable,range_years,select_sg_year,s
 ##           selected_value = the value to be selected
 ##           inputIds = a list of input IDs for the radio buttons to be updated
 
-updateRadioButtonsGroup <- function(selected_value, inputIds) {
+updateRadioButtonsGroup <- function(selected_value,
+                                    inputIds) {
   session <- getDefaultReactiveDomain()
   lapply(inputIds, function(inputId) {
     updateRadioButtons(
@@ -2654,8 +2678,14 @@ updateRadioButtonsGroup <- function(selected_value, inputIds) {
 ##                 tab = "general" or "composites"
 ##                 year_range = year range or year set
 
-create_sdratio_data = function(data_input,data_ID,tab,variable,subset_lon_IDs,subset_lat_IDs,
-                               month_range,year_range){
+create_sdratio_data = function(data_input,
+                               data_ID,
+                               tab,
+                               variable,
+                               subset_lon_IDs,
+                               subset_lat_IDs,
+                               month_range,
+                               year_range){
   
   # Change data_ID to identify data as preprocessed but not preloaded:
   if (data_ID[1]==1){ data_ID[1]=2 } 
@@ -2683,8 +2713,13 @@ create_sdratio_data = function(data_input,data_ID,tab,variable,subset_lon_IDs,su
 ##                 sdratio = any numeric value from 0 to 1
 ##                 percent = any numeric value from 1 to 100
 
-create_stat_highlights_data = function(data_input,sd_data,stat_highlight,sdratio,
-                                       percent,subset_lon_IDs,subset_lat_IDs){
+create_stat_highlights_data = function(data_input,
+                                       sd_data,
+                                       stat_highlight,
+                                       sdratio,
+                                       percent,
+                                       subset_lon_IDs,
+                                       subset_lat_IDs){
   if (stat_highlight != "None"){
     if (stat_highlight == "% sign match"){
       # Create sign_check function
@@ -2789,8 +2824,12 @@ create_new_highlights_data = function(highlight_x_values,
 ##              show_line_on_key = TRUE or FALSE (FALSE by default)
 ##              line_label = a label for the line on the key ("") by default)
 
-create_new_lines_data = function(line_orientation,line_locations,line_color,
-                                 line_type,show_line_on_key,line_label){
+create_new_lines_data = function(line_orientation,
+                                 line_locations,
+                                 line_color,
+                                 line_type,
+                                 show_line_on_key,
+                                 line_label){
   
   # Create location coordinates from string
   location = as.numeric(unlist(strsplit(line_locations,",")))
@@ -2847,7 +2886,10 @@ create_new_points_data = function(point_x_values,
 ##                                              average (if selected)
 ##                 data_input1/2 = output from add_stats_to_TS_datatable for v1/v2
 
-add_correlation_timeseries = function(data_input1,data_input2,variable1,variable2,
+add_correlation_timeseries = function(data_input1,
+                                      data_input2,
+                                      variable1,
+                                      variable2,
                                       correlation_titles){
   
   # Set up variables for plotting
@@ -2902,7 +2944,9 @@ add_correlation_timeseries = function(data_input1,data_input2,variable1,variable
 ##                  input = Colour Input
 
 # Define a function to extract shapefile contents and update plot order (Anomaly)
-updatePlotOrder <- function(zipFile, plotOrder, pickerInput) {
+updatePlotOrder <- function(zipFile,
+                            plotOrder,
+                            pickerInput) {
   # Create a unique temporary directory for this function
   temp_dir <- tempfile(pattern = "anomaly_")
   dir.create(temp_dir)
@@ -2921,7 +2965,9 @@ updatePlotOrder <- function(zipFile, plotOrder, pickerInput) {
 }
 
 # Define a function to extract shapefile contents and update plot order (Composite)
-updatePlotOrder2 <- function(zipFile, plotOrder, pickerInput) {
+updatePlotOrder2 <- function(zipFile,
+                             plotOrder,
+                             pickerInput) {
   # Create a unique temporary directory for this function
   temp_dir <- tempfile(pattern = "composite_")
   dir.create(temp_dir)
@@ -2940,9 +2986,74 @@ updatePlotOrder2 <- function(zipFile, plotOrder, pickerInput) {
 }
 
 # Define a function to extract shapefile contents and update plot order (Correlation)
-updatePlotOrder3 <- function(zipFile, plotOrder, pickerInput) {
+updatePlotOrder3 <- function(zipFile,
+                             plotOrder,
+                             pickerInput) {
   # Create a unique temporary directory for this function
   temp_dir <- tempfile(pattern = "correlation_")
+  dir.create(temp_dir)
+  
+  # Unzip the shapefile
+  unzip(zipFile, exdir = temp_dir)
+  
+  # Find shapefiles in the temporary directory
+  shpFiles <- list.files(temp_dir, pattern = ".shp$", full.names = TRUE)
+  
+  # Update the plot order reactive value
+  plotOrder(shpFiles)
+  
+  # Update picker input choices
+  updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
+}
+
+# Define a function to extract shapefile contents and update plot order (Regression Coefficient)
+updatePlotOrder_reg_coeff <- function(zipFile,
+                                       plotOrder,
+                                       pickerInput) {
+  # Create a unique temporary directory for this function
+  temp_dir <- tempfile(pattern = "reg_coeff_")
+  dir.create(temp_dir)
+  
+  # Unzip the shapefile
+  unzip(zipFile, exdir = temp_dir)
+  
+  # Find shapefiles in the temporary directory
+  shpFiles <- list.files(temp_dir, pattern = ".shp$", full.names = TRUE)
+  
+  # Update the plot order reactive value
+  plotOrder(shpFiles)
+  
+  # Update picker input choices
+  updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
+}
+
+# Define a function to extract shapefile contents and update plot order (Regression P-Value)
+updatePlotOrder_reg_pval <- function(zipFile,
+                                       plotOrder,
+                                       pickerInput) {
+  # Create a unique temporary directory for this function
+  temp_dir <- tempfile(pattern = "reg_pval_")
+  dir.create(temp_dir)
+  
+  # Unzip the shapefile
+  unzip(zipFile, exdir = temp_dir)
+  
+  # Find shapefiles in the temporary directory
+  shpFiles <- list.files(temp_dir, pattern = ".shp$", full.names = TRUE)
+  
+  # Update the plot order reactive value
+  plotOrder(shpFiles)
+  
+  # Update picker input choices
+  updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
+}
+
+# Define a function to extract shapefile contents and update plot order (Regression Residual)
+updatePlotOrder_reg_res <- function(zipFile,
+                                     plotOrder,
+                                     pickerInput) {
+  # Create a unique temporary directory for this function
+  temp_dir <- tempfile(pattern = "reg_res_")
   dir.create(temp_dir)
   
   # Unzip the shapefile
@@ -3021,6 +3132,69 @@ createColorPickers3 <- function(plotOrder, shpFile) {
   do.call(tagList, colorpickers3)
 }
 
+# Function to generate color picker UI dynamically (Reg. Coefficient)
+createColorPickers4a <- function(plotOrder, shpFile) {
+  req(shpFile)
+  # Get the list of shapefiles from the reactive value
+  shp_files <- plotOrder
+  
+  # Create color pickers for each shapefile
+  colorpickers4a <- lapply(shp_files, function(file) {
+    file_name <- tools::file_path_sans_ext(basename(file))
+    colourpicker::colourInput(inputId = paste0("shp_colour4a_", file_name), 
+                              label   = paste("Border Color for", file_name),
+                              value = "black", # default color for the border
+                              showColour = "background",
+                              allowTransparent = TRUE,
+                              palette = "square")
+  })
+  
+  # Combine color pickers into a tag list
+  do.call(tagList, colorpickers4a)
+}
+
+# Function to generate color picker UI dynamically (Reg. P-Value)
+createColorPickers4b <- function(plotOrder, shpFile) {
+  req(shpFile)
+  # Get the list of shapefiles from the reactive value
+  shp_files <- plotOrder
+  
+  # Create color pickers for each shapefile
+  colorpickers4b <- lapply(shp_files, function(file) {
+    file_name <- tools::file_path_sans_ext(basename(file))
+    colourpicker::colourInput(inputId = paste0("shp_colour4b_", file_name), 
+                              label   = paste("Border Color for", file_name),
+                              value = "black", # default color for the border
+                              showColour = "background",
+                              allowTransparent = TRUE,
+                              palette = "square")
+  })
+  
+  # Combine color pickers into a tag list
+  do.call(tagList, colorpickers4b)
+}
+
+# Function to generate color picker UI dynamically (Reg. Residual)
+createColorPickers4c <- function(plotOrder, shpFile) {
+  req(shpFile)
+  # Get the list of shapefiles from the reactive value
+  shp_files <- plotOrder
+  
+  # Create color pickers for each shapefile
+  colorpickers4c <- lapply(shp_files, function(file) {
+    file_name <- tools::file_path_sans_ext(basename(file))
+    colourpicker::colourInput(inputId = paste0("shp_colour4c_", file_name), 
+                              label   = paste("Border Color for", file_name),
+                              value = "black", # default color for the border
+                              showColour = "background",
+                              allowTransparent = TRUE,
+                              palette = "square")
+  })
+  
+  # Combine color pickers into a tag list
+  do.call(tagList, colorpickers4c)
+}
+
 #Create reorder modal
 createReorderModal <- function(plotOrder, shpFile) {
   req(shpFile)
@@ -3037,7 +3211,10 @@ createReorderModal <- function(plotOrder, shpFile) {
 }
 
 #Reorder shape file
-reorder_shapefiles <- function(plotOrder, reorderSelect, reorderAfter, pickerInput) {
+reorder_shapefiles <- function(plotOrder,
+                               reorderSelect,
+                               reorderAfter,
+                               pickerInput) {
   
   new_order <- plotOrder()
   file_to_move_basename <- reorderSelect
@@ -3075,7 +3252,9 @@ reorder_shapefiles <- function(plotOrder, reorderSelect, reorderAfter, pickerInp
 ##                                   years to be composited
 ##                                   (assumes column DOES NOT have a header)
 
-read_composite_data = function(data_input_manual,data_input_filepath,year_input_mode){
+read_composite_data = function(data_input_manual,
+                               data_input_filepath,
+                               year_input_mode){
   
   # Create year_set vector from manual or uploaded years
   if(year_input_mode == "Manual"){
@@ -3105,7 +3284,10 @@ read_composite_data = function(data_input_manual,data_input_filepath,year_input_
 ##             year_set = set of years to be composited (format c(1422,1457,...))
 ##                        as generated by read_composite_data  
 
-create_yearly_subset_composite = function(data_input,data_ID,year_set,month_range){
+create_yearly_subset_composite = function(data_input,
+                                          data_ID,
+                                          year_set,
+                                          month_range){
   
   # Check for preprocessed subset
   if (data_ID[1] != 0){
@@ -3137,7 +3319,12 @@ create_yearly_subset_composite = function(data_input,data_ID,year_set,month_rang
 ##             baseline_years_before = number of years before to calculate each anomaly
 ##                                     w.r.t. (i.e 5 for a mean of the 5 preceding years)
 
-convert_composite_to_anomalies = function(data_input,ref_data,data_ID,year_set,month_range,baseline_year_before){
+convert_composite_to_anomalies = function(data_input,
+                                          ref_data,
+                                          data_ID,
+                                          year_set,
+                                          month_range,
+                                          baseline_year_before){
   
   # Remove years where year_set - baseline_years_before < 1422
   subset_year_IDs = which(year_set-baseline_year_before >= 1422)
@@ -3180,8 +3367,16 @@ convert_composite_to_anomalies = function(data_input,ref_data,data_ID,year_set,m
 ## (Composite) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR PLOT
 ##             data input = Input form Plot Customization
 
-generate_metadata_comp <- function(axis_mode2, axis_input2, hide_axis2, title_mode2, title1_input2, title2_input2, 
-                                   custom_statistic2, percentage_sign_match2, sd_ratio2, hide_borders2) {
+generate_metadata_comp <- function(axis_mode2,
+                                   axis_input2,
+                                   hide_axis2,
+                                   title_mode2,
+                                   title1_input2,
+                                   title2_input2, 
+                                   custom_statistic2,
+                                   percentage_sign_match2,
+                                   sd_ratio2,
+                                   hide_borders2) {
   
   # Adjust axis_input based on axis_mode
   if (axis_mode2 == "Automatic") {
@@ -3210,7 +3405,13 @@ generate_metadata_comp <- function(axis_mode2, axis_input2, hide_axis2, title_mo
 ## (Composite) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR TS
 ##             data input = Input form Plot Customization
 
-generate_metadata_ts_comp <- function(title_mode_ts2, title1_input_ts2, show_key_ts2, key_position_ts2, show_ref_ts2, custom_percentile_ts2, percentile_ts2) {
+generate_metadata_ts_comp <- function(title_mode_ts2,
+                                      title1_input_ts2,
+                                      show_key_ts2,
+                                      key_position_ts2,
+                                      show_ref_ts2,
+                                      custom_percentile_ts2,
+                                      percentile_ts2) {
   
   
   # Create the metadata data frame with explicit column names
@@ -3231,8 +3432,19 @@ generate_metadata_ts_comp <- function(title_mode_ts2, title1_input_ts2, show_key
 ## (Composite) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
 ##             data input = Generation plot inputs from side bar
 
-generate_metadata_plot_comp <- function(dataset2,variable2,range_years2,season_sel2,range_months2,ref_period2,
-                                        select_sg_ref2,sg_ref2,prior_years2,range_years2a,lon_range2,lat_range2,lonlat_vals2) {
+generate_metadata_plot_comp <- function(dataset2,
+                                        variable2,
+                                        range_years2,
+                                        season_sel2,
+                                        range_months2,
+                                        ref_period2,
+                                        select_sg_ref2,
+                                        sg_ref2,
+                                        prior_years2,
+                                        range_years2a,
+                                        lon_range2,
+                                        lat_range2,
+                                        lonlat_vals2) {
   
   #Generate dataframe from plot inputs
   plot_input2 <- data.frame(
@@ -3353,8 +3565,10 @@ extract_year_range = function(variable1_source,
 ##                                   generated by extract_year_range) 
 ##                      lag = number of years user data has been lagged by
 
-create_user_data_subset = function(data_input, variable, year_range, lag =
-                                     0) {
+create_user_data_subset = function(data_input,
+                                   variable,
+                                   year_range,
+                                   lag = 0) {
   lagged_year_range = year_range + lag
   UD_ss_year_range = subset(data_input,
                             data_input[, 1] >= lagged_year_range[1] &
@@ -3375,9 +3589,12 @@ create_user_data_subset = function(data_input, variable, year_range, lag =
 ## (Regression/Correlation) EXTRACT SHARED LONLAT VALUES - Find shared lonlat values for
 ##                          v1 and v2 that will be used for the map plot
 
-extract_shared_lonlat = function(variable1_type,variable2_type,
-                                 variable1_lon_range,variable1_lat_range,
-                                 variable2_lon_range,variable2_lat_range){
+extract_shared_lonlat = function(variable1_type,
+                                 variable2_type,
+                                 variable1_lon_range,
+                                 variable1_lat_range,
+                                 variable2_lon_range,
+                                 variable2_lat_range){
   
   # If variable 1 is a timeseries:
   if (variable1_type == "Timeseries"){
@@ -3414,7 +3631,8 @@ extract_shared_lonlat = function(variable1_type,variable2_type,
 ##                        "darkorange2" for V1 or "saddlebrown" for V2
 
 
-plot_user_timeseries = function(data_input, color) {
+plot_user_timeseries = function(data_input,
+                                color) {
   # Calculate y statistics
   y = data_input[, 2]
   y_range = range(data_input[, 2])
@@ -3455,52 +3673,6 @@ plot_user_timeseries = function(data_input, color) {
     line = 0.5
   )
 }
-
-
-# plot_user_timeseries = function(data_input, color) {
-#   # Calculate y statistics
-#   y = data_input[, 2]
-#   y_range = range(data_input[, 2])
-#   
-#   # Test data for normality
-#   # p_value = shapiro.test(data_input[, 2])[[2]]
-#   # if (p_value > 0.05) {
-#   #   y_sd = sd(data_input[, 2])
-#   # } else {
-#   #   y_sd = NA
-#   # }
-#   
-#   #Plot
-#   print("DEBUG: x/y for plot")
-#   print(head(data_input$Year))
-#   print(head(data_input[, 2]))
-#   plot(
-#     data_input$Year,
-#     y,
-#     type = "l",
-#     col = color,
-#     lwd = 2,
-#     xaxs = "i",
-#     xlab = "Year",
-#     ylab = colnames(data_input)[2]
-#   )
-#   
-#   # title(
-#   #   paste(
-#   #     "Range = ",
-#   #     # signif(y_range[1], 3),
-#   #     ":",
-#   #     # signif(y_range[2], 3),
-#   #     "   SD = ",
-#   #     # signif(y_sd, 3),
-#   #     sep = ""
-#   #   ),
-#   #   cex.main = 1,
-#   #   font.main = 1,
-#   #   adj = 1,
-#   #   line = 0.5
-#   # )
-# }
 
 
 ## (Correlation) GENERATE CORRELATION TITLES - creates a dataframe of V1_axis_label,
@@ -3701,7 +3873,9 @@ generate_correlation_titles = function(variable1_source,
 ##                               or ModE-RA timeseries_datatable
 ##               correlation_titles = as generated by generate_correlation_titles function                 
 
-plot_combined_timeseries = function(variable1_data,variable2_data,correlation_titles){
+plot_combined_timeseries = function(variable1_data,
+                                    variable2_data,
+                                    correlation_titles){
   
   # Set up variables for plotting
   x = variable1_data[,1]
@@ -3741,7 +3915,9 @@ plot_combined_timeseries = function(variable1_data,variable2_data,correlation_ti
 ##                               or ModE-RA timeseries_datatable
 ##               method = "pearson" or "spearman" ("pearson" by default)
 
-correlate_timeseries = function(variable1_data, variable2_data, method) {
+correlate_timeseries = function(variable1_data,
+                                variable2_data,
+                                method) {
   r = cor.test(variable1_data[, 2],
                variable2_data[, 2],
                method = method,
@@ -3854,8 +4030,13 @@ generate_correlation_map_datatable = function(data_input){
 ## (Correlation) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR PLOT
 ##               data input = Input form Plot Customization
 
-generate_metadata_corr <- function(axis_mode3, axis_input3, hide_axis3, title_mode3, title1_input3,
-                                   hide_borders3, cor_method_map3) {
+generate_metadata_corr <- function(axis_mode3,
+                                   axis_input3,
+                                   hide_axis3,
+                                   title_mode3,
+                                   title1_input3,
+                                   hide_borders3,
+                                   cor_method_map3) {
   
   # Adjust axis_input3 based on axis_mode3
   if (axis_mode3 == "Automatic") {
@@ -3881,8 +4062,13 @@ generate_metadata_corr <- function(axis_mode3, axis_input3, hide_axis3, title_mo
 ## (Correlation) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR TS
 ##               data input = Input form Plot Customization
 
-generate_metadata_ts_corr <- function(title_mode_ts3, title1_input_ts3, show_key_ts3,
-                                      key_position_ts3, custom_average_ts3, year_moving_ts3, cor_method_ts3) {
+generate_metadata_ts_corr <- function(title_mode_ts3,
+                                      title1_input_ts3,
+                                      show_key_ts3,
+                                      key_position_ts3,
+                                      custom_average_ts3,
+                                      year_moving_ts3,
+                                      cor_method_ts3) {
   
   # Create the metadata data frame with explicit column names
   meta_input_ts3 <- data.frame(
@@ -3902,8 +4088,18 @@ generate_metadata_ts_corr <- function(title_mode_ts3, title1_input_ts3, show_key
 ## (Correlation) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
 ##               data input = Generation plot inputs from side bar
 
-generate_metadata_plot_corr <- function(dataset,variable,type,mode,season_sel,range_months,
-                                        ref_period,select_sg_ref,sg_ref,lon_range,lat_range,lonlat_vals) {
+generate_metadata_plot_corr <- function(dataset,
+                                        variable,
+                                        type,
+                                        mode,
+                                        season_sel,
+                                        range_months,
+                                        ref_period,
+                                        select_sg_ref,
+                                        sg_ref,
+                                        lon_range,
+                                        lat_range,
+                                        lonlat_vals) {
   
   #Generate dataframe from plot inputs
   plot_input3 <- data.frame(
@@ -3944,8 +4140,14 @@ generate_metadata_y_range_corr <- function(range_years3) {
 ##              Note: Uses the GENERAL functions to create data
 ##              variables = name/names of the modE-RA variable 
 
-create_ME_timeseries_data = function(dataset,variables,subset_lon_IDs,subset_lat_IDs,
-                                     mode,month_range,year_range,baseline_range){
+create_ME_timeseries_data = function(dataset,
+                                     variables,
+                                     subset_lon_IDs,
+                                     subset_lat_IDs,
+                                     mode,
+                                     month_range,
+                                     year_range,
+                                     baseline_range){
   
   # Create year column
   Year = year_range[1]:year_range[2]
@@ -4364,15 +4566,6 @@ generate_regression_titles_ts = function(independent_source,
 ##              independent_variables = selected independent variables user or ModE-Ra
 ##                                      as a list,e.g. (c("CO2.ppm.","TSI.w.m2."))
 
-# create_regression_summary_data = function(independent_variable_data,
-#                                           dependent_variable_data,
-#                                           independent_variables) {
-#   x = as.matrix(independent_variable_data[, independent_variables])
-#   y = as.matrix(dependent_variable_data[, 2])
-#   regression_data = lm(y ~ x)
-#   return(regression_data)
-# }
-
 create_regression_summary_data = function(independent_variable_data,
                                           dependent_variable_data,
                                           independent_variables) {
@@ -4388,7 +4581,9 @@ create_regression_summary_data = function(independent_variable_data,
 ##              independent_variable_data = timeseries data for one or more variables
 ##              dependent_variable_data = any yearly ModE-RA data (absolute or anomaly)
 
-create_regression_coeff_data = function(independent_variable_data, dependent_variable_data, independent_variables){
+create_regression_coeff_data = function(independent_variable_data,
+                                        dependent_variable_data,
+                                        independent_variables){
   reg_coeffs <- apply(dependent_variable_data, c(1:2), function(fy,fx) lm(fy~fx)$coef,as.matrix(independent_variable_data[,independent_variables]))[-1,,]
   # Note that [-1,,] removes the intercepts from the coef data 
   return(reg_coeffs)
@@ -4400,7 +4595,9 @@ create_regression_coeff_data = function(independent_variable_data, dependent_var
 ##              independent_variable_data = timeseries data for one or more variables
 ##              dependent_variable_data = any yearly ModE-RA data (absolute or anomaly)
 
-create_regression_pvalue_data = function(independent_variable_data, dependent_variable_data, independent_variables){
+create_regression_pvalue_data = function(independent_variable_data,
+                                         dependent_variable_data,
+                                         independent_variables){
   # Define lmp function
   lmp <- function (fy,fx) {
     f1 <- lm(fy~fx)
@@ -4419,7 +4616,9 @@ create_regression_pvalue_data = function(independent_variable_data, dependent_va
 ##              independent_variable_data = timeseries data for one or more variables
 ##              dependent_variable_data = any yearly ModE-RA data (absolute or anomaly)
 
-create_regression_residuals = function(independent_variable_data, dependent_variable_data, independent_variables){
+create_regression_residuals = function(independent_variable_data,
+                                       dependent_variable_data,
+                                       independent_variables){
   reg_residuals <- apply(dependent_variable_data, c(1:2), function(fy,fx) lm(fy~fx)$residuals,as.matrix(independent_variable_data[,independent_variables]))
   return(reg_residuals)
 }
@@ -4428,7 +4627,9 @@ create_regression_residuals = function(independent_variable_data, dependent_vari
 ## (REGRESSION) CREATE REGRESSION MAP DATATABLE
 ##              data_input = 2D data that was plotted for coeffs, pvalue or residuals
 
-create_regression_map_datatable = function(data_input,subset_lon_IDs,subset_lat_IDs){
+create_regression_map_datatable = function(data_input,
+                                           subset_lon_IDs,
+                                           subset_lat_IDs){
   
   # find x,y & z values
   x = lon[subset_lon_IDs]
@@ -4461,7 +4662,8 @@ create_regression_map_datatable = function(data_input,subset_lon_IDs,subset_lat_
 ##              residuals_data = as created by create_regression_residuals
 ##              regression_titles = as created by generate_regression_titles
 
-create_regression_timeseries_datatable = function(dependent_variable_data,summary_data,
+create_regression_timeseries_datatable = function(dependent_variable_data,
+                                                  summary_data,
                                                   regression_titles){
   
   # Extract original timeseries
@@ -4481,43 +4683,42 @@ create_regression_timeseries_datatable = function(dependent_variable_data,summar
   return(regression_ts_df)                               
 }
 
-
 ## (Regression) PLOT REGRESSION TIMESERIES plots either original and trend timeseries
 ##              OR residuals timeseries
 ##              data_input = regression_timeseries_datatable 
 ##              plot_type = "original_trend" or "residuals"
 
-plot_regression_timeseries = function(data_input,plot_type,regression_titles,
-                                      independent_variables,dependent_variable){
-  
-  # Generate title & axis label
-  title_variables_i = paste(independent_variables,collapse = " ; ")
-  title_main = paste("Regression Timeseries. ",
-                     regression_titles$title_months_i,title_variables_i,
-                     regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
-                     regression_titles$title_months_d,dependent_variable,
-                     regression_titles$title_mode_d,regression_titles$title_lonlat_d,
-                     sep = "")
-  title_axis = paste(dependent_variable,regression_titles$unit_d)
-  
-  # Plot original_trend timeseries
-  if (plot_type == "original_trend"){
-    plot(data_input[,1],data_input[,2],col = regression_titles$color_d, type = "l", xaxs="i",
-         xlab = "Year", ylab = title_axis,lwd = 1.5)
-    lines(data_input[,1],data_input[,3],lwd = 1.5)
-    title(title_main, cex.main = 1.5,   font.main= 1, adj=0)
-    legend('bottomright',legend=c("Original", "Trend"),
-           col=c(regression_titles$color_d,"black"),lty = c(1,1),lwd=c(1.5,1.5))
-  } 
-  # Plot residuals timeseries
-  else {
-    plot(data_input[,1],data_input[,4],col = regression_titles$color_d, type = "l", xaxs="i",
-         xlab = "Year", ylab = title_axis, lty = 2, lwd = 1.5)
-    title(title_main, cex.main = 1.5,   font.main= 1, adj=0)
-    legend('bottomright',legend=c("Residual"),
-           col=c(regression_titles$color_d),lty = c(2),lwd=c(1.5))
-  }
-}
+# plot_regression_timeseries = function(data_input,plot_type,regression_titles,
+#                                       independent_variables,dependent_variable){
+#   
+#   # Generate title & axis label
+#   title_variables_i = paste(independent_variables,collapse = " ; ")
+#   title_main = paste("Regression Timeseries. ",
+#                      regression_titles$title_months_i,title_variables_i,
+#                      regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
+#                      regression_titles$title_months_d,dependent_variable,
+#                      regression_titles$title_mode_d,regression_titles$title_lonlat_d,
+#                      sep = "")
+#   title_axis = paste(dependent_variable,regression_titles$unit_d)
+#   
+#   # Plot original_trend timeseries
+#   if (plot_type == "original_trend"){
+#     plot(data_input[,1],data_input[,2],col = regression_titles$color_d, type = "l", xaxs="i",
+#          xlab = "Year", ylab = title_axis,lwd = 1.5)
+#     lines(data_input[,1],data_input[,3],lwd = 1.5)
+#     title(title_main, cex.main = 1.5,   font.main= 1, adj=0)
+#     legend('bottomright',legend=c("Original", "Trend"),
+#            col=c(regression_titles$color_d,"black"),lty = c(1,1),lwd=c(1.5,1.5))
+#   } 
+#   # Plot residuals timeseries
+#   else {
+#     plot(data_input[,1],data_input[,4],col = regression_titles$color_d, type = "l", xaxs="i",
+#          xlab = "Year", ylab = title_axis, lty = 2, lwd = 1.5)
+#     title(title_main, cex.main = 1.5,   font.main= 1, adj=0)
+#     legend('bottomright',legend=c("Residual"),
+#            col=c(regression_titles$color_d),lty = c(2),lwd=c(1.5))
+#   }
+# }
 
 
 #### Annual cycles Functions ----
@@ -4549,7 +4750,15 @@ monthly_ts_starter_data = function(){
 ##                      or a range of years "1483-1489"
 ##              type = "Average" or "Individual years"
 
-create_monthly_TS_data = function(data_input,dataset,variable,years,lon_range,lat_range, mode, type, baseline_range){
+create_monthly_TS_data = function(data_input,
+                                  dataset,
+                                  variable,
+                                  years,
+                                  lon_range,
+                                  lat_range,
+                                  mode,
+                                  type,
+                                  baseline_range){
   
   # read in and interpret "years"
   if (grepl(",",years)){
@@ -4680,14 +4889,20 @@ create_monthly_TS_data = function(data_input,dataset,variable,years,lon_range,la
 #' 
 #' @param data data.frame. The main monthly time series data table.
 #' @param titles Character vector. Contains ts_title and ts_title_size
+#' @param show_key Logical. TRUE or FALSE, whether to show a key.
 #' @param key_position Character. Position of the key: "top", "bottom", "left", "right", "none".
 #' @param highlights data.frame. Data frame containing highlight information.
 #' @param lines data.frame. Data frame containing line information.
 #' @param points data.frame. Data frame containing point information.
 #' @return A ggplot object.
 
-plot_monthly_timeseries <- function(data=NA,titles=NA, key_position=NA,
-                                    highlights=NA, lines=NA, points=NA) {
+plot_monthly_timeseries <- function(data = NA,
+                                    titles = NA,
+                                    show_key = NA,
+                                    key_position = NA,
+                                    highlights = NA,
+                                    lines = NA,
+                                    points = NA) {
   
   # Create empty dataframes for Lines, Points, Fills and boxes  
   lines_data = data.frame(matrix(ncol = 8, nrow = 0))
@@ -5028,9 +5243,13 @@ plot_monthly_timeseries <- function(data=NA,titles=NA, key_position=NA,
     shape = guide_legend(title = NULL, order = 2)
   )
   
-  # Set legend position
-  p = p + theme(legend.position = key_position)  # Apply the position from `key_position`
-  
+  # Set legend visibility and position
+  if (show_key) {
+    p <- p + theme(legend.position = key_position)  # Apply the position from `key_position`
+  } else {
+    p <- p + theme(legend.position = "none")  # Remove the legend if `show_key == FALSE`
+  }
+
   # Remove whitespace & label months
   p <- p +   scale_x_date(
     date_labels = "%b",    # Three-letter month labels
@@ -5059,8 +5278,17 @@ generate_month_label <- function(range) {
 ## (SEA) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
 ##       data input = Generation plot inputs from side bar
 
-generate_metadata_sea_plot  <- function(dataset,variable,statistic,season_sel,range_months,
-                                        ref_period,select_sg_ref,sg_ref,lon_range,lat_range,lonlat_vals) {
+generate_metadata_sea_plot  <- function(dataset,
+                                        variable,
+                                        statistic,
+                                        season_sel,
+                                        range_months,
+                                        ref_period,
+                                        select_sg_ref,
+                                        sg_ref,
+                                        lon_range,
+                                        lat_range,
+                                        lonlat_vals) {
   
   #Generate dataframe from plot inputs
   plot_input6 <- data.frame(
@@ -5083,7 +5311,8 @@ generate_metadata_sea_plot  <- function(dataset,variable,statistic,season_sel,ra
 ## (SEA) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
 ##       data input = Generation plot inputs from side bar
 
-generate_metadata_sea_side_plot  <- function(lag_years,event_years) {
+generate_metadata_sea_side_plot  <- function(lag_years,
+                                             event_years) {
   
   #Generate dataframe from plot inputs
   plot_input6b <- data.frame(
@@ -5097,8 +5326,16 @@ generate_metadata_sea_side_plot  <- function(lag_years,event_years) {
 ## (SEA) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR TS
 ##       data input = Input form Plot Customization
 
-generate_metadata_sea_ts <- function(title_mode_6, title1_input_6, y_label_6, show_observations_6,
-                                     show_pvalues_6, show_ticks_6, show_key_6, sample_size_6, show_means_6, show_confidence_bands_6) {
+generate_metadata_sea_ts <- function(title_mode_6,
+                                     title1_input_6,
+                                     y_label_6,
+                                     show_observations_6,
+                                     show_pvalues_6,
+                                     show_ticks_6,
+                                     show_key_6,
+                                     sample_size_6,
+                                     show_means_6,
+                                     show_confidence_bands_6) {
   
   # Create the metadata data frame with explicit column names
   meta_input_sea_ts <- data.frame(
