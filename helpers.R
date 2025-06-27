@@ -699,6 +699,7 @@ generate_titles = function(tab,
   return(m_titles)
 }
 
+
 ## (General) GENERATE STATISTICS TIMESERIES DATA - creates a dataframe of statistics from timeseries data
 ##           data = timeseries data (numeric vector)
 ##           returns a numeric vector of mean, sd, min, max
@@ -5089,6 +5090,9 @@ plot_monthly_timeseries <- function(data = NA,
     #Plot
     for (i in 1:(fID-1)){
       fill_data = subset(fills_data, ID == i)
+      # Convert x values to dates
+      fill_data$x1 = as.Date(fill_data$x1)
+      fill_data$x2 = as.Date(fill_data$x2)
       
       if (fill_data$key_show){ # Show on legend
         p = p +  geom_rect(
@@ -5153,6 +5157,9 @@ plot_monthly_timeseries <- function(data = NA,
     #Plot
     for (i in 1:(bID-1)){
       box_data = subset(boxes_data, ID == i)
+      # Convert x values to dates
+      box_data$x1 = as.Date(box_data$x1)
+      box_data$x2 = as.Date(box_data$x2)
       
       if (box_data$key_show){ # Show on legend
         p = p +  geom_rect(
@@ -5184,6 +5191,8 @@ plot_monthly_timeseries <- function(data = NA,
     
     for (i in 1:nrow(points_data)){
       point_data = points_data[i,]
+      # Convert points_data x value to date
+      point_data$x = as.Date(point_data$x)
       
       if (point_data$key_show){ # Show on legend
         p = p + geom_point(
