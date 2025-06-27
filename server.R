@@ -1471,14 +1471,6 @@ server <- function(input, output, session) {
                            condition = input$title_mode_ts4 == "Custom",
                            asis = FALSE)})
   
-  observe({shinyjs::toggle(id = "hidden_key_position_ts4",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$show_key_ts4 == TRUE,
-                           asis = FALSE)})
-
   observe({shinyjs::toggle(id = "hidden_custom_features_ts4",
                            anim = TRUE,
                            animType = "slide",
@@ -7320,7 +7312,7 @@ server <- function(input, output, session) {
   observeEvent(input$add_point_ts5, {
     ts_points_data5(rbind(
       ts_points_data5(),
-      create_new_points_data(
+      create_new_points_data_ac(
         input$point_location_x_ts5,
         input$point_location_y_ts5,
         input$point_label_ts5,
@@ -7343,7 +7335,7 @@ server <- function(input, output, session) {
   observeEvent(input$add_highlight_ts5, {
     ts_highlights_data5(rbind(
       ts_highlights_data5(),
-      create_new_highlights_data(
+      create_new_highlights_data_ac(
         input$highlight_x_values_ts5,
         input$highlight_y_values_ts5,
         input$highlight_colour_ts5,
@@ -7365,7 +7357,7 @@ server <- function(input, output, session) {
   # timeseries Lines
   observeEvent(input$add_line_ts5, {
     ts_lines_data5(rbind(ts_lines_data5(),
-                         create_new_lines_data(input$line_orientation_ts5,input$line_position_ts5,
+                         create_new_lines_data_ac(input$line_orientation_ts5,input$line_position_ts5,
                                                input$line_colour_ts5,input$line_type_ts5,
                                                input$show_line_on_legend_ts5,input$line_label_ts5)))
   })  
@@ -10797,7 +10789,7 @@ server <- function(input, output, session) {
       ref = NULL,
       year_range = input$range_years4,
       titles = plot_titles_reg_ts(),
-      show_key = input$show_key_ts4,
+      show_key = TRUE,
       key_position = input$key_position_ts4,
       show_ticks = input$show_ticks_ts4,
       tick_interval = input$xaxis_numeric_interval_ts4,
@@ -10824,7 +10816,7 @@ server <- function(input, output, session) {
       titles = plot_titles_reg_ts(),
       show_ticks = input$show_ticks_ts4,
       tick_interval = input$xaxis_numeric_interval_ts4,
-      show_key = input$show_key_ts4,
+      show_key = TRUE,
       key_position = input$key_position_ts4,
       show_ref = FALSE,
       moving_ave = FALSE,
