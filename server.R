@@ -2311,7 +2311,7 @@ server <- function(input, output, session) {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input",
-        value = set_axis_values(map_data(), "Anomaly"))
+        value = set_axis_values(final_map_data(), "Anomaly"))
     }
   })
   
@@ -8182,8 +8182,6 @@ server <- function(input, output, session) {
     } else if (option == "SD Ratio") {
       req(SDratio_subset())
       create_map_datatable(SDratio_subset(), subset_lons_primary(), subset_lats_primary())
-    } else {
-      NULL  # fallback in case of unexpected input
     }
   })
   
@@ -12087,89 +12085,69 @@ server <- function(input, output, session) {
   updateNumericInputRange1("year_moving_ts", 3, 30)
   updateNumericInputRange1("year_moving_ts3", 3, 30)
   updateNumericInputRange1("prior_years2", 1, 50)
+  updateNumericInputRange1("center_lat", -90, 90)
+  updateNumericInputRange1("center_lon", -180, 180)
+  updateNumericInputRange1("center_lat2", -90, 90)
+  updateNumericInputRange1("center_lon2", -180, 180)
+  updateNumericInputRange1("center_lat3", -90, 90)
+  updateNumericInputRange1("center_lon3", -180, 180)
+  updateNumericInputRange1("center_lat_reg_coeff", -90, 90)
+  updateNumericInputRange1("center_lon_reg_coeff", -180, 180)
+  updateNumericInputRange1("center_lat_reg_pval", -90, 90)
+  updateNumericInputRange1("center_lon_reg_pval", -180, 180)
+  updateNumericInputRange1("center_lat_reg_res", -90, 90)
+  updateNumericInputRange1("center_lon_reg_res", -180, 180)
+  updateNumericInputRange1("fad_year_a", 1422, 2008)
+  updateNumericInputRange1("fad_year_a2", 1422, 2008)
+  updateNumericInputRange1("fad_year_a3a", 1422, 2008)
+  updateNumericInputRange1("fad_year_a3b", 1422, 2008)
+  updateNumericInputRange1("fad_year_a4a", 1422, 2008)
+  updateNumericInputRange1("fad_year_a4b", 1422, 2008)
+  updateNumericInputRange1("fad_year_a5", 1422, 2008)
+  updateNumericInputRange1("reg_resi_year", 1422, 2008)
+  updateNumericInputRange1("range_years_sg", 1422, 2008)
+  updateNumericInputRange1("ref_period_sg", 1422, 2008)
+  updateNumericInputRange1("ref_period_sg2", 1422, 2008)
+  updateNumericInputRange1("ref_period_sg_v1", 1422, 2008)
+  updateNumericInputRange1("ref_period_sg_v2", 1422, 2008)
+  updateNumericInputRange1("ref_period_sg_iv", 1422, 2008)
+  updateNumericInputRange1("ref_period_sg_dv", 1422, 2008)
+  updateNumericInputRange1("ref_period_sg5", 1422, 2008)
+  updateNumericInputRange1("year_MES", 1422, 2008)
   
-  updateNumericInputRange2 <- function(inputId, minValue, maxValue) {
-    observe({
-      input_values <- input[[inputId]]
-      
-      delay(3000, {
-        if (is.null(input_values) || is.na(input_values) || nchar(as.character(input_values)) <= 3) { 
-          # If input is null, NA, or has <= 3 characters, take no action
-        } else if (!is.numeric(input_values)) {
-          updateNumericInput(inputId = inputId, value = 1422)
-        } else {
-          update_value <- function(val) {
-            if (val < minValue) {
-              updateNumericInput(inputId = inputId, value = minValue)
-            } else if (val > maxValue) {
-              updateNumericInput(inputId = inputId, value = maxValue)
-            }
-          }
-          
-          update_value(input_values)
-        }
-      })
-    })
-  }
-  
-  # Call the function for each input
-  updateNumericInputRange2("fad_year_a", 1422, 2008)
-  updateNumericInputRange2("fad_year_a2", 1422, 2008)
-  updateNumericInputRange2("fad_year_a3a", 1422, 2008)
-  updateNumericInputRange2("fad_year_a3b", 1422, 2008)
-  updateNumericInputRange2("fad_year_a4a", 1422, 2008)
-  updateNumericInputRange2("fad_year_a4b", 1422, 2008)
-  updateNumericInputRange2("fad_year_a5", 1422, 2008)
-  updateNumericInputRange2("reg_resi_year", 1422, 2008)
-  updateNumericInputRange2("range_years_sg", 1422, 2008)
-  updateNumericInputRange2("ref_period_sg", 1422, 2008)
-  updateNumericInputRange2("ref_period_sg2", 1422, 2008)
-  updateNumericInputRange2("ref_period_sg_v1", 1422, 2008)
-  updateNumericInputRange2("ref_period_sg_v2", 1422, 2008)
-  updateNumericInputRange2("ref_period_sg_iv", 1422, 2008)
-  updateNumericInputRange2("ref_period_sg_dv", 1422, 2008)
-  updateNumericInputRange2("ref_period_sg5", 1422, 2008)
-  updateNumericInputRange2("year_MES", 1422, 2008)
   
   #Updates Values outside of min / max (numericRangeInput)
   
-  observe({
-    input_ids <- c("range_years", "range_years3", "range_years4", 
-                   "ref_period", "ref_period2", "ref_period_v1", 
-                   "ref_period_v2", "ref_period_iv", "ref_period_dv", 
-                   "ref_period5")
-    
-    for (input_id in input_ids) {
-      range_values <- input[[input_id]]
-      
-      # Skip updates for certain inputs under certain conditions
-      if (input_id == "range_years3" &&
-          input$source_v1 == "User Data" && input$source_v2 == "User Data") {
-        next
-      }
-      
-      if (input_id == "range_years4" &&
-          input$source_dv == "User Data" && input$source_iv == "User Data") {
-        next
-      }
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < 1422) {
-          updateNumericRangeInput(inputId = input_id, value = c(1422, range_values[2]))
-        } else if (left > 2008) {
-          updateNumericRangeInput(inputId = input_id, value = c(1422, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < 1422) {
-          updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 2008))
-        } else if (right > 2008) {
-          updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 2008))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    }
-  })
+  # observe({
+  #   input_ids <- c("range_years", "range_years3", "range_years4", 
+  #                  "ref_period", "ref_period2", "ref_period_v1", 
+  #                  "ref_period_v2", "ref_period_iv", "ref_period_dv", 
+  #                  "ref_period5")
+  #   
+  #   for (input_id in input_ids) {
+  #     range_values <- input[[input_id]]
+  #     
+  #     update_values <- function(left, right) {
+  #       if (!is.numeric(left) || is.na(left) || left < 1422) {
+  #         updateNumericRangeInput(inputId = input_id,
+  #                                 value = c(1422, range_values[2]))
+  #       } else if (left > 2008) {
+  #         updateNumericRangeInput(inputId = input_id,
+  #                                 value = c(1422, range_values[2]))
+  #       }
+  #       
+  #       if (!is.numeric(right) || is.na(right) || right < 1422) {
+  #         updateNumericRangeInput(inputId = input_id,
+  #                                 value = c(range_values[1], 2008))
+  #       } else if (right > 2008) {
+  #         updateNumericRangeInput(inputId = input_id,
+  #                                 value = c(range_values[1], 2008))
+  #       }
+  #     }
+  #     
+  #     update_values(range_values[1], range_values[2])
+  #   }
+  # })
   
   observe({
     input_ids <- c(
@@ -12231,6 +12209,7 @@ server <- function(input, output, session) {
       update_values(range_values[1], range_values[2])
     }
   })
+  
   
   #Single Year inputs update
   observe({

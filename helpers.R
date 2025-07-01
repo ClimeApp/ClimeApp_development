@@ -836,37 +836,39 @@ plot_map <- function(data_input,
       v_unit <- ""
     }}
   
-  if (is.null(axis_range)) {  # If axis range is not provided, calculate dynamically
-    max_abs_z <- max(abs(values(data_input)))
-    axis_range <- c(-max_abs_z, max_abs_z)
+  if (is.null(axis_range)) {
+    if (!is.null(mode) && mode == "Regression_p_values") {
+      axis_range <- c(1e-3, 1)  # avoid log(0)
+    } else if (!is.null(mode) && mode == "SD Ratio") {
+      axis_range <- c(0, 1)
+    } else {
+      max_abs_z <- max(abs(values(data_input)), na.rm = TRUE)
+      axis_range <- c(-max_abs_z, max_abs_z)
+    }
   }
   
   p <- ggplot() +
-    geom_spatraster_contour_filled(data = data_input, aes(fill = after_stat(level_mid)), bins = 20)+
-    scale_fill_stepsn(
-      NULL,
-      n.breaks = 20,
-      nice.breaks = TRUE, # Place breaks at nice values
-      #labels = scales::number_format(accuracy = 2), # Uncomment if you want to round to 2 decimal places
-      colors = v_col,
-      limits = axis_range
+    geom_spatraster_contour_filled(
+      data = data_input,
+      aes(fill = after_stat(level_mid)),
+      bins = 20
     ) +
     labs(fill = v_unit) +
-    # Style the color bar
     guides(
-      fill = if(hide_axis) {
+      fill = if (hide_axis) {
         "none"
       } else {
         guide_colorbar(
           barwidth = 2,
-          barheight = unit(0.75, "npc"), # Match the height of the plot
+          barheight = unit(0.75, "npc"),
           title = v_unit,
           title.position = "top",
-          title.hjust = 0.25, # Center the title
+          title.hjust = 0.25,
           display = "rectangles",
-          draw.ulim = FALSE, draw.llim = FALSE,
+          draw.ulim = FALSE,
+          draw.llim = FALSE,
           label.theme = element_text(size = titles$map_title_size / 1.6),
-          title.theme = element_text(size = titles$map_title_size / 1.6), # text size of the color bar labels and title is propotional with the plot title size
+          title.theme = element_text(size = titles$map_title_size / 1.6),
           frame.colour = "black",
           frame.linewidth = 0.5,
           ticks.colour = "black",
@@ -874,6 +876,23 @@ plot_map <- function(data_input,
         )
       }
     )
+  
+  if (!is.null(mode) && mode == "Regression_p_values") {
+    p <- p + scale_fill_gradientn(
+      colors = v_col,
+      trans = "log10",
+      limits = axis_range,
+      breaks = c(0.001, 0.01, 0.1, 1),
+      labels = scales::label_comma(accuracy = 0.001)
+    )
+  } else {
+    p <- p + scale_fill_stepsn(
+      limits = axis_range,
+      colors = v_col,
+      n.breaks = 20,
+      nice.breaks = TRUE
+    )
+  }
   
   # Theme
   if(projection == "UTM (default)"){
@@ -970,7 +989,7 @@ plot_map <- function(data_input,
     formula = paste0("+proj=ortho +lat_0=", center_lat, " +lon_0=", center_lon, " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
     p <- p + coord_sf(crs = st_crs(formula))
   } else if (projection == "LAEA"){
-    formula = paste0("+proj=laea +lat_0=", center_lat, " +lon_0=", center_lon, " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
+    formula = paste0("+proj=laea +lat_0=", 0, " +lon_0=", 0, " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
     p <- p + coord_sf(crs = st_crs(formula))
   } else { # if UTM (default)
     # Edit lon_lat_range if its a point
