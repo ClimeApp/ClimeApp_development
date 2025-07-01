@@ -7312,7 +7312,7 @@ server <- function(input, output, session) {
   observeEvent(input$add_point_ts5, {
     ts_points_data5(rbind(
       ts_points_data5(),
-      create_new_points_data_ac(
+      create_new_points_data(
         input$point_location_x_ts5,
         input$point_location_y_ts5,
         input$point_label_ts5,
@@ -7335,7 +7335,7 @@ server <- function(input, output, session) {
   observeEvent(input$add_highlight_ts5, {
     ts_highlights_data5(rbind(
       ts_highlights_data5(),
-      create_new_highlights_data_ac(
+      create_new_highlights_data(
         input$highlight_x_values_ts5,
         input$highlight_y_values_ts5,
         input$highlight_colour_ts5,
@@ -7357,7 +7357,7 @@ server <- function(input, output, session) {
   # timeseries Lines
   observeEvent(input$add_line_ts5, {
     ts_lines_data5(rbind(ts_lines_data5(),
-                         create_new_lines_data_ac(input$line_orientation_ts5,input$line_position_ts5,
+                         create_new_lines_data(input$line_orientation_ts5,input$line_position_ts5,
                                                input$line_colour_ts5,input$line_type_ts5,
                                                input$show_line_on_legend_ts5,input$line_label_ts5)))
   })  

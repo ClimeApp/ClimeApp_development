@@ -699,6 +699,7 @@ generate_titles = function(tab,
   return(m_titles)
 }
 
+
 ## (General) GENERATE STATISTICS TIMESERIES DATA - creates a dataframe of statistics from timeseries data
 ##           data = timeseries data (numeric vector)
 ##           returns a numeric vector of mean, sd, min, max
@@ -3268,108 +3269,6 @@ reorder_shapefiles <- function(plotOrder,
   }
 }
 
-## (Plot Features - Annual Cycles) CREATE NEW POINTS DATA - creates a dataframe of 
-##             points to be added to the main points_data for annual cycle plots.
-##
-## point_x_values  = a character string or comma-separated vector of dates in YYYY-MM-DD format (e.g., "2000-06-01")
-## point_y_values  = numeric values for y (or comma-separated string)
-## point_label     = a label to show on the plot (and optionally in legend)
-## point_shape     = point shape ID (circle = 16, triangle = 17, square = 15)
-## point_color     = a color string (e.g., "red", "#009900")
-## point_size      = point size (numeric, usually between 4 and 20)
-
-create_new_points_data_ac <- function(point_x_values,
-                                      point_y_values,
-                                      point_label,
-                                      point_shape,
-                                      point_color,
-                                      point_size) {
-  x_value <- as.Date(unlist(strsplit(point_x_values, ",")))
-  y_value <- as.numeric(unlist(strsplit(point_y_values, ",")))
-  
-  label <- rep(point_label, length(x_value))
-  shape <- rep(point_shape, length(x_value))
-  color <- rep(point_color, length(x_value))
-  size  <- rep(point_size, length(x_value))
-  
-  new_p_data <- data.frame(x_value, y_value, label, shape, color, size)
-  
-  return(new_p_data)
-}
-
-
-## (Plot Features - Annual Cycles) CREATE NEW LINES DATA - creates a dataframe of 
-##             custom lines to be added to the main lines_data for annual cycle plots.
-##
-## line_orientation     = "Horizontal" or "Vertical"
-## line_locations       = a CHARACTER string of positions (comma-separated), 
-##                        dates (e.g., "2000-06-01") for vertical lines, numerics for horizontal
-## line_color           = a character string for color (e.g., "black", "#FF00FF")
-## line_type            = line style: "solid", "dashed", etc.
-## show_line_on_key     = TRUE or FALSE (whether to include in legend)
-## line_label           = legend label for this line (optional)
-
-create_new_lines_data_ac <- function(line_orientation,
-                                     line_locations,
-                                     line_color,
-                                     line_type,
-                                     show_line_on_key,
-                                     line_label) {
-  locations_raw <- unlist(strsplit(line_locations, ","))
-  
-  location <- if (line_orientation == "Vertical") {
-    as.Date(locations_raw)
-  } else {
-    as.numeric(locations_raw)
-  }
-  
-  orientation <- rep(line_orientation, length(location))
-  color       <- rep(line_color, length(location))
-  type        <- rep(line_type, length(location))
-  key_show    <- rep(show_line_on_key, length(location))
-  label       <- rep(line_label, length(location))
-  
-  new_l_data <- data.frame(orientation, location, color, type, key_show, label)
-  
-  return(new_l_data)
-}
-
-
-## (Plot Features - Annual Cycles) CREATE NEW HIGHLIGHTS DATA - creates a dataframe of 
-##             fill or box highlights for annual cycle plots, where the x-axis is date-based.
-##
-## highlight_x_values     = numeric month values (e.g., c(7, 9) for July to September)
-## highlight_y_values     = y-range values (e.g., c(-1, 3))
-## highlight_color        = a character string giving fill or border color
-## highlight_type         = "Fill" or "Box"
-## show_highlight_on_key  = TRUE or FALSE (default = FALSE)
-## highlight_label        = optional label for legend
-
-create_new_highlights_data_ac <- function(highlight_x_values,
-                                          highlight_y_values,
-                                          highlight_color,
-                                          highlight_type,
-                                          show_highlight_on_key,
-                                          highlight_label) {
-  x1 <- as.Date(paste0("2000-", highlight_x_values[1], "-01"))
-  x2 <- as.Date(paste0("2000-", highlight_x_values[2], "-01"))
-  y1 <- highlight_y_values[1]
-  y2 <- highlight_y_values[2]
-  
-  new_h_data <- data.frame(
-    x1 = x1,
-    x2 = x2,
-    y1 = y1,
-    y2 = y2,
-    color = highlight_color,
-    type = highlight_type,
-    key_show = show_highlight_on_key,
-    label = highlight_label
-  )
-  
-  return(new_h_data)
-}
-
 
 #### Composite Functions ####
 
@@ -5211,6 +5110,9 @@ plot_monthly_timeseries <- function(data = NA,
     #Plot
     for (i in 1:(fID-1)){
       fill_data = subset(fills_data, ID == i)
+      # Convert x values to dates
+      fill_data$x1 = as.Date(fill_data$x1)
+      fill_data$x2 = as.Date(fill_data$x2)
       
       if (fill_data$key_show){ # Show on legend
         p = p +  geom_rect(
@@ -5275,6 +5177,9 @@ plot_monthly_timeseries <- function(data = NA,
     #Plot
     for (i in 1:(bID-1)){
       box_data = subset(boxes_data, ID == i)
+      # Convert x values to dates
+      box_data$x1 = as.Date(box_data$x1)
+      box_data$x2 = as.Date(box_data$x2)
       
       if (box_data$key_show){ # Show on legend
         p = p +  geom_rect(
@@ -5306,6 +5211,8 @@ plot_monthly_timeseries <- function(data = NA,
     
     for (i in 1:nrow(points_data)){
       point_data = points_data[i,]
+      # Convert points_data x value to date
+      point_data$x = as.Date(point_data$x)
       
       if (point_data$key_show){ # Show on legend
         p = p + geom_point(
