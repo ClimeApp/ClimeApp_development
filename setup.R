@@ -98,7 +98,7 @@ library(leaflet)
 library(htmltools)
 library(mapdata)
 library(dplyr)
-library(plotly)  # Load plotly library for interactivity
+library(plotly)
 library(terra)
 library(tidyterra)
 library(rnaturalearth)
@@ -106,53 +106,11 @@ library(rnaturalearthdata)
 library(ggpattern)
 library(viridis)
 library(markdown)
-library(ncdf4,include.only = c("nc_close", "nc_create", "nc_open", "ncatt_put", "ncdim_def","ncvar_def", "ncvar_get", "ncvar_put"))
-library(shinyWidgets,include.only = c("numericRangeInput", "pickerInput", "sliderTextInput", "updateNumericRangeInput", 
-                                      "updatePickerInput", "updateSliderTextInput"))
-library(RColorBrewer,include.only = "brewer.pal")
-library(shinyjs,include.only =  c("colourInput", "removeClass", "show", "addClass", "delay", 
-                                  "hidden", "hide", "runjs", "toggle", "useShinyjs"))
-library(bslib,include.only = c("bs_theme", "popover"))
-library(readxl,include.only = c("read_excel", "cell_cols") )
-library(DT,include.only = c("dataTableOutput", "renderDataTable"))
-library(zoo,include.only = "rollmean", "na.approx" )
-library(colourpicker,include.only = "colourInput" )
-library(tmaptools,include.only = "geocode_OSM" )
-library(ggplot2,include.only = c("map_data", "aes", "after_stat", "aes_string", "annotate", 
-                                 "coord_sf", "element_rect", "element_text", "geom_hline", "geom_line", 
-                                 "geom_point", "geom_polygon", "geom_rect", "geom_sf", "geom_text", 
-                                 "geom_vline", "ggplot", "ggtitle", "guide_colorbar", "guide_legend", 
-                                 "guides", "labs", "position_nudge", "scale_color_manual", "scale_colour_manual", 
-                                 "scale_fill_stepsn", "scale_linetype_manual", "scale_shape_manual", "scale_x_continuous", 
-                                 "scale_y_continuous", "theme", "theme_bw", "theme_classic", "theme_minimal", 
-                                 "unit") )
-library(sf,include.only = c("st_as_sf", "st_set_crs", "st_crs", "st_geometry_type", "st_read", 
-                            "st_transform") )
-library(shinycssloaders,include.only = "withSpinner" )
-library(openxlsx,include.only =  c("createWorkbook", "read.xlsx", "saveWorkbook", "write.xlsx", 
-                                   "addWorksheet", "getSheetNames", "writeData")) #Don't Change order!
-library(xlsx,include.only = c("createWorkbook", "read.xlsx", "saveWorkbook", "write.xlsx"))
-
-library(leaflet,include.only =  c("colorFactor","leafletOutput","renderLeaflet","leafletProxy","addCircleMarkers",
-                                  "addControl","addLayersControl","addLegend","addProviderTiles","addTiles","clearControls",
-                                  "clearMarkers","layersControlOptions","leaflet","setView","providers"))
-library(htmltools,include.only = c("a", "br", "div", "em", "h1", "h4", "h5", "h6", "hr", "HTML", 
-                                   "img", "includeCSS", "span", "strong", "tagList", "h3"))
-library(dplyr,include.only =c("select", "intersect", "arrange", "distinct", "filter", "add_row", 
-                              "all_of", "case_when","%>%"))
-library(plotly,include.only = c("select", "plotlyOutput", "renderPlotly", "style", "arrange", 
-                                "distinct", "filter", "ggplotly") )  # Load plotly library for interactivity
-library(terra) #, include.only = "rast", "writeRaster", "ext", "crs") 
-library(tidyterra,include.only = c("select", "aes", "after_stat", "arrange", "distinct", "filter", 
-                                   "geom_spatraster_contour_filled")  )
-library(rnaturalearth) # for water bodies
-library(rnaturalearthdata) # for water bodies
-library(viridis,include.only = "viridis" )
+library(tmaptools)
 library(ggtext)
-
-# SEA Loading
 library(dplR)
 library(burnr)
+library(shinyjqui)
 
 #### Design ----
 

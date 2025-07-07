@@ -1,8 +1,5 @@
 ### ClimeApp_beta ###
 # Source for helpers ----
-library(profvis)
-
-
 source("helpers.R")
 source("popovers.R")
 source("setup.R")
@@ -687,7 +684,7 @@ ui <- navbarPage(
                                                                               max = 180))),
                                                            
                                                            radioButtons(inputId  = "axis_mode",
-                                                                        label    = "Y-axis customization:",
+                                                                        label    = "Axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -729,7 +726,7 @@ ui <- navbarPage(
                                                                               min     = 1,
                                                                               max     = 40))),
                                                            
-                                                           br(),
+                                                           br(), hr(),
                                                            
                                                            h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_anomalies_layers"))),
                                                            
@@ -779,17 +776,13 @@ ui <- navbarPage(
                                                              )),
                                                            
                                                            #Shape File Option
+                                        
+                                                           fileInput(inputId = "shpFile", label = "Upload Shapefile (ZIP)"),
                                                            
-                                                           fileInput(inputId = "shpFile",
-                                                                     label = "Upload Shapefile (ZIP)"), # File input to upload ZIP file
-                                                           actionButton(inputId = "reorderButton",
-                                                                        label = "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
-                                                           pickerInput(inputId = "shpPickers",
-                                                                       label = "Select Shapefiles to Display",
-                                                                       choices = NULL,
-                                                                       multiple = TRUE),
-                                                           uiOutput(outputId = "colorpickers"), # Dynamically generate color pickers for each shapefile
+                                                           # Single sortable checkbox group input for selecting and ordering shapefiles
+                                                           uiOutput("shapefileSelector"),
                                                            
+                                                           uiOutput("colorpickers")
                                                            
                                                        )),
                                               ),
@@ -1270,12 +1263,7 @@ ui <- navbarPage(
                                                                               value  = 11,
                                                                               min    = 3,
                                                                               max    = 30),
-                                                                 
-                                                                 #radioButtons(inputId   = "year_position_ts",
-                                                                 #             label     = "Position for each year:"  ,
-                                                                 #            choices   = c("before", "on", "after"),
-                                                                 #           selected  = "on",
-                                                                 #          inline    = TRUE)
+
                                                              )),
                                                            
                                                            checkboxInput(inputId = "custom_percentile_ts",
@@ -1401,11 +1389,7 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("fad_map",
-                                                                                brush = brushOpts(
-                                                                                  id = "brush_fad",
-                                                                                  resetOnNew = TRUE
-                                                                                )), 
+                                            withSpinner(ui_element = plotOutput("fad_map", height = "auto", brush = brushOpts(id = "brush_fad", resetOnNew = TRUE)), 
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -1436,8 +1420,8 @@ ui <- navbarPage(
                                    )          
              ## Main Panel END ----
              ), width = 8),
-             # Anomalies END ----  
-           )),
+  # Anomalies END ----  
+  )),
   
   # Composites START----      
   tabPanel("Composites", value = "tab2",
@@ -1498,7 +1482,7 @@ ui <- navbarPage(
                                                placeholder = "No file selected"),
                                      
                                      shinyjs::hidden(div(id = "optional2e",
-                                                         img(src = 'pics/composite_user_example.jpg', id = "comp_user_example", height = "150px", width = "75px"),
+                                                         img(src = 'pics/composite_user_example.jpg', id = "comp_user_example", height = "300px", width = "150px"),
                                      ))
                  )
                  ),
@@ -1582,7 +1566,7 @@ ui <- navbarPage(
                                                                    placeholder = "No file selected"),
                                                          
                                                          shinyjs::hidden(div(id = "optional2i",
-                                                                             img(src = 'pics/composite_user_example.jpg', id = "comp_user_example_2", height = "150px", width = "75px"),
+                                                                             img(src = 'pics/composite_user_example.jpg', id = "comp_user_example_2", height = "300px", width = "150px"),
                                                          ))
                                      )),
                  )),
@@ -1735,7 +1719,7 @@ ui <- navbarPage(
                                                                               max = 180))),
                                                            
                                                            radioButtons(inputId  = "axis_mode2",
-                                                                        label    = "Y-axis customization:",
+                                                                        label    = "Axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -1781,7 +1765,7 @@ ui <- navbarPage(
                                                                               min     = 1,
                                                                               max     = 40))),
                                                            
-                                                           br(),
+                                                           br(), hr(),
                                                            
                                                            h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_composites_layers"))),
                                                            
@@ -1832,15 +1816,12 @@ ui <- navbarPage(
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput(inputId = "shpFile2",
-                                                                     label = "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
-                                                           actionButton(inputId = "reorderButton2",
-                                                                        label = "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
-                                                           pickerInput(inputId = "shpPickers2",
-                                                                       label = "Select Shapefiles to Display",
-                                                                       choices = NULL,
-                                                                       multiple = TRUE),
-                                                           uiOutput(outputId = "colorpickers2"),  # Dynamically generate color pickers for each shapefile
+                                                           fileInput(inputId = "shpFile2", label = "Upload Shapefile (ZIP)"),
+                                                           
+                                                           # Single sortable checkbox group input for selecting and ordering shapefiles
+                                                           uiOutput("shapefileSelector2"),
+                                                           
+                                                           uiOutput("colorpickers2")
                                                            
                                                        )),
                                               ),
@@ -2433,11 +2414,7 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("fad_map2",
-                                                                                brush = brushOpts(
-                                                                                  id = "brush_fad2",
-                                                                                  resetOnNew = TRUE
-                                                                                )), 
+                                            withSpinner(ui_element = plotOutput("fad_map2", height = "auto", brush = brushOpts(id = "brush_fad2", resetOnNew = TRUE)), 
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -2469,8 +2446,8 @@ ui <- navbarPage(
                                    
              ## Main Panel END ----
              ), width = 8),
-           # Composites END ----           
-           )),
+  # Composites END ----           
+  )),
   
   # SEA START ----
   tabPanel("SEA", value = "tab6",
@@ -2506,7 +2483,7 @@ ui <- navbarPage(
                                  placeholder = "No file selected"),
                        
                        div(id = "upload_example_6",
-                           img(src = 'pics/regcor_user_example.jpg', id = "sea_user_example_6", height = "150px", width = "150px"))
+                           img(src = 'pics/regcor_user_example.jpg', id = "sea_user_example_6", height = "300px", width = "300px"))
                    )),
                  
                  #Choose a variable (USER)
@@ -2726,16 +2703,30 @@ ui <- navbarPage(
                                                placeholder = "No file selected"),
                                      
                                      shinyjs::hidden(div(id = "optional6e",
-                                                         img(src = 'pics/composite_user_example.jpg', id = "sea_user_example_6b", height = "150px", width = "75px"),
-                                     ))
-                 )
-                 ),
+                                                         img(src = 'pics/sea_user_example.jpg', id = "sea_user_example_6b", height = "300px", width = "300px"),
+                                     )),
+                                     
+                                     br(),
+                                     
+                                     h6("Optional SEA event background period", style = "color: #094030;", sea_background_popover("pop_sea_background")),
+                                     
+                                     checkboxInput(
+                                       inputId = "use_custom_pre_6",
+                                       label = "Use pre-event background period",
+                                       value = FALSE),
+                                     
+                                     checkboxInput(
+                                       inputId = "use_custom_post_6",
+                                       label = "Use post-event background period",
+                                       value = FALSE),
+                                     
+                 )),
                  
                ), width = 12),
                
                br(),
                
-               ## Sidebar Panels END ----
+             ## Sidebar Panels END ----
              )),
              
              ## Main Panel START ----
@@ -2744,6 +2735,9 @@ ui <- navbarPage(
                                  tabPanel("SEA", br(),
                                           
                                           h4("Superposed epoch analysis", style = "color: #094030;"),
+                                          
+                                          h6(textOutput("text_years6"), style = "color: #094030;"),
+                                          textOutput("years6"),
                                           
                                           br(),
                                           
@@ -2930,7 +2924,7 @@ ui <- navbarPage(
                                  placeholder = "No file selected"),
                        
                        div(id = "upload_example_v1",
-                           img(src = 'pics/regcor_user_example.jpg', id = "cor_user_example_v1", height = "150px", width = "150px"))
+                           img(src = 'pics/regcor_user_example.jpg', id = "cor_user_example_v1", height = "300px", width = "300px"))
                    )),
                  
                  #Choose a variable (USER)
@@ -3177,7 +3171,7 @@ ui <- navbarPage(
                                  placeholder = "No file selected"),
                        
                        div(id = "upload_example_v2",
-                           img(src = 'pics/regcor_user_example.jpg', id = "cor_user_example_v2", height = "150px", width = "150px")),
+                           img(src = 'pics/regcor_user_example.jpg', id = "cor_user_example_v2", height = "300px", width = "300px")),
                    )),
                  
                  #Choose a variable (USER)
@@ -3664,12 +3658,6 @@ ui <- navbarPage(
                                                                               value  = 11,
                                                                               min    = 3,
                                                                               max    = 30),
-                                                                 
-                                                                 #radioButtons(inputId   = "year_position_ts3",
-                                                                 #            label     = "Position for each year:"  ,
-                                                                 #           choices   = c("before", "on", "after"),
-                                                                 #          selected  = "on",
-                                                                 #         inline    = TRUE)
                                                              )),
                                                            
                                                        )),
@@ -3839,7 +3827,7 @@ ui <- navbarPage(
                                                                               max = 180))),
                                                            
                                                            radioButtons(inputId  = "axis_mode3",
-                                                                        label    = "Y-axis customization:",
+                                                                        label    = "Axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -3886,7 +3874,7 @@ ui <- navbarPage(
                                                                               min     = 1,
                                                                               max     = 40))),
                                                            
-                                                           br(),
+                                                           br(), hr(),
                                                            
                                                            h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_correlation_layers"))),
                                                            
@@ -3937,15 +3925,12 @@ ui <- navbarPage(
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput(inputId = "shpFile3",
-                                                                     label = "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
-                                                           actionButton(inputId = "reorderButton3",
-                                                                        label = "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
-                                                           pickerInput(inputId = "shpPickers3",
-                                                                       label = "Select Shapefiles to Display",
-                                                                       choices = NULL,
-                                                                       multiple = TRUE),
-                                                           uiOutput(outputId = "colorpickers3"),  # Dynamically generate color pickers for each shapefile
+                                                           fileInput(inputId = "shpFile3", label = "Upload Shapefile (ZIP)"),
+                                                           
+                                                           # Single sortable checkbox group input for selecting and ordering shapefiles
+                                                           uiOutput("shapefileSelector3"),
+                                                           
+                                                           uiOutput("colorpickers3")
                                                            
                                                        )),
                                               ),
@@ -4174,11 +4159,7 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("fad_map3",
-                                                                                brush = brushOpts(
-                                                                                  id = "brush_fad3",
-                                                                                  resetOnNew = TRUE
-                                                                                )), 
+                                            withSpinner(ui_element = plotOutput("fad_map3", height = "auto", brush = brushOpts(id = "brush_fad3", resetOnNew = TRUE)), 
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -4211,8 +4192,8 @@ ui <- navbarPage(
              ## Main Panel END ----
              ), width = 8)
              
-             # Correlation END ----  
-           )),
+  # Correlation END ----  
+  )),
   
   # Regression START ----
   tabPanel("Regression", value = "tab4",
@@ -4250,7 +4231,7 @@ ui <- navbarPage(
                                  placeholder = "No file selected"),
                        
                        div(id = "upload_example_iv",
-                           img(src = 'pics/regcor_user_example.jpg', id = "reg_user_example_iv", height = "150px", width = "150px"))
+                           img(src = 'pics/regcor_user_example.jpg', id = "reg_user_example_iv", height = "300px", width = "300px"))
                    )),
                  
                  #Choose a variable (USER)
@@ -4473,7 +4454,7 @@ ui <- navbarPage(
                                  placeholder = "No file selected"),
                        
                        div(id = "upload_example_dv",
-                           img(src = 'pics/regcor_user_example.jpg', id = "reg_user_example_dv", height = "150px", width = "150px")),
+                           img(src = 'pics/regcor_user_example.jpg', id = "reg_user_example_dv", height = "300px", width = "300px")),
                    )),
                  
                  #Choose a variable (USER)
@@ -4984,7 +4965,17 @@ ui <- navbarPage(
                                                             image.width = spinner_width,
                                                             image.height = spinner_height)
                                               )
-                                            )
+                                            ),
+                                            
+                                            br(),
+                                            
+                                            # Upload Meta data 
+                                            h4(helpText("Metadata")),
+                                            fluidRow(
+                                              column(3, downloadButton(outputId = "download_metadata_ts4", label = "Download metadata")),
+                                              column(4, fileInput(inputId= "upload_metadata_ts4", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                              column(2, actionButton(inputId = "update_metadata_ts4", label = "Update upload inputs")),
+                                            ),
                                    ),
                                    
                                    ### Regression coefficients ----
@@ -5036,7 +5027,7 @@ ui <- navbarPage(
                                                                               max = 180))),
                                                            
                                                            radioButtons(inputId  = "axis_mode_reg_coeff",
-                                                                        label    = "Y-axis customization:",
+                                                                        label    = "Axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -5078,7 +5069,7 @@ ui <- navbarPage(
                                                                               min     = 1,
                                                                               max     = 40))),
                                                            
-                                                           br(),
+                                                           br(), hr(),
                                                            
                                                            h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_anomalies_layers"))),
                                                            
@@ -5129,15 +5120,12 @@ ui <- navbarPage(
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput(inputId = "shpFile_reg_coeff",
-                                                                     label = "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
-                                                           actionButton(inputId = "reorderButton_reg_coeff",
-                                                                        label = "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
-                                                           pickerInput(inputId = "shpPickers_reg_coeff",
-                                                                       label = "Select Shapefiles to Display",
-                                                                       choices = NULL,
-                                                                       multiple = TRUE),
-                                                           uiOutput(outputId = "colorpickers_reg_coeff"),  # Dynamically generate color pickers for each shapefile
+                                                           fileInput(inputId = "shpFile_reg_coeff", label = "Upload Shapefile (ZIP)"),
+                                                           
+                                                           # Single sortable checkbox group input for selecting and ordering shapefiles
+                                                           uiOutput("shapefileSelector_reg_coeff"),
+                                                           
+                                                           uiOutput("colorpickers_reg_coeff")
                                                            
                                                        )),
                                               ),
@@ -5359,7 +5347,7 @@ ui <- navbarPage(
                                                                               max = 180))),
                                                            
                                                            radioButtons(inputId  = "axis_mode_reg_pval",
-                                                                        label    = "Y-axis customization:",
+                                                                        label    = "Axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -5404,7 +5392,7 @@ ui <- navbarPage(
                                                            
                                                            
                                                            
-                                                           br(),
+                                                           br(), hr(),
                                                            
                                                            h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_anomalies_layers"))),
                                                            
@@ -5455,15 +5443,12 @@ ui <- navbarPage(
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput(inputId = "shpFile_reg_pval",
-                                                                     label = "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
-                                                           actionButton(inputId = "reorderButton_reg_pval",
-                                                                        label = "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
-                                                           pickerInput(inputId = "shpPickers_reg_pval",
-                                                                       label = "Select Shapefiles to Display",
-                                                                       choices = NULL,
-                                                                       multiple = TRUE),
-                                                           uiOutput(outputId = "colorpickers_reg_pval"),  # Dynamically generate color pickers for each shapefile
+                                                           fileInput(inputId = "shpFile_reg_pval", label = "Upload Shapefile (ZIP)"),
+                                                           
+                                                           # Single sortable checkbox group input for selecting and ordering shapefiles
+                                                           uiOutput("shapefileSelector_reg_pval"),
+                                                           
+                                                           uiOutput("colorpickers_reg_pval")
                                                            
                                                        )),
                                               ),
@@ -5687,7 +5672,7 @@ ui <- navbarPage(
                                                                               max = 180))),
                                                            
                                                            radioButtons(inputId  = "axis_mode_reg_res",
-                                                                        label    = "Y-axis customization:",
+                                                                        label    = "Axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
                                                                         selected = "Automatic" , inline = TRUE),
                                                            
@@ -5730,7 +5715,7 @@ ui <- navbarPage(
                                                                               min     = 1,
                                                                               max     = 40))),
                                                            
-                                                           br(),
+                                                           br(), hr(),
                                                            
                                                            h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_anomalies_layers"))),
                                                            
@@ -5777,15 +5762,12 @@ ui <- navbarPage(
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput(inputId = "shpFile_reg_res",
-                                                                     label = "Upload Shapefile (ZIP)"),  # File input to upload ZIP file
-                                                           actionButton(inputId = "reorderButton_reg_res",
-                                                                        label = "Select Plotting Order of Shapefiles"), #Select Plotting Order of Shape Files
-                                                           pickerInput(inputId = "shpPickers_reg_res",
-                                                                       label = "Select Shapefiles to Display",
-                                                                       choices = NULL,
-                                                                       multiple = TRUE),
-                                                           uiOutput(outputId = "colorpickers_reg_res"),  # Dynamically generate color pickers for each shapefile
+                                                           fileInput(inputId = "shpFile_reg_res", label = "Upload Shapefile (ZIP)"),
+                                                           
+                                                           # Single sortable checkbox group input for selecting and ordering shapefiles
+                                                           uiOutput("shapefileSelector_reg_res"),
+                                                           
+                                                           uiOutput("colorpickers_reg_res")
                                                        )),
                                               ),
                                               
@@ -5980,11 +5962,7 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("fad_map4",
-                                                                                brush = brushOpts(
-                                                                                  id = "brush_fad4",
-                                                                                  resetOnNew = TRUE
-                                                                                )), 
+                                            withSpinner(ui_element = plotOutput("fad_map4", height = "auto", brush = brushOpts(id = "brush_fad4", resetOnNew = TRUE)), 
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -6437,7 +6415,7 @@ ui <- navbarPage(
                                                                  textInput(inputId = "line_position_ts5", 
                                                                            label   = "Position:",
                                                                            value   = "",
-                                                                           placeholder = "1830, 1832"),
+                                                                           placeholder = "Click on plot"),
                                                                  
                                                                  colourInput(inputId = "line_colour_ts5", 
                                                                              label   = "Line colour:",
@@ -6486,6 +6464,14 @@ ui <- navbarPage(
                                               column(3, downloadButton(outputId = "download_timeseries5", label = "Download timeseries"))
                                             ),
                                             
+                                            # Upload Meta data 
+                                            h4(helpText("Metadata")),
+                                            fluidRow(
+                                              column(3, downloadButton(outputId = "download_metadata_ts5", label = "Download metadata")),
+                                              column(4, fileInput(inputId= "upload_metadata_ts5", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                              column(2, actionButton(inputId = "update_metadata_ts5", label = "Update upload inputs")),
+                                            ),
+                                            
                                    ### TS plot END ----       
                                    ),
                                    
@@ -6526,11 +6512,7 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("fad_map5",
-                                                                                brush = brushOpts(
-                                                                                  id = "brush_fad5",
-                                                                                  resetOnNew = TRUE
-                                                                                )), 
+                                            withSpinner(ui_element = plotOutput("fad_map5", height = "auto", brush = brushOpts(id = "brush_fad5", resetOnNew = TRUE)), 
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -6557,7 +6539,7 @@ ui <- navbarPage(
                                               # Download data
                                               column(2,radioButtons(inputId = "data_file_type_fad5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
                                               column(3,downloadButton(outputId = "download_fad_data5", label = "Download Map Data"))
-                                            )
+                                            ),
                                    )       
                                    
              ## Main Panel END ----
@@ -6601,7 +6583,8 @@ ui <- navbarPage(
                     #Modera Time Series
                     h4("Total sources", style = "color: #094030;", sourcesandobservations_popover("pop_sourcesandobservation")),
                     
-                    numericRangeInput("year_range_sources", "Select Year Range:", 
+                    numericRangeInput(inputId = "year_range_sources",
+                                      label = "Select Year Range:", 
                                       value = c(1421, 2009), 
                                       min = 1421, max = 2009, step = 1)
              ),

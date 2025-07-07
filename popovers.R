@@ -706,6 +706,20 @@ sea_options_popover = function(popover_ID){
   ) 
 }
 
+## SEA Background Period
+## popover_IDs = pop_sea_background
+
+sea_background_popover = function(popover_ID){
+  popover(
+    HTML("<i class='fas fa-question-circle fa-2xs'></i></sup>"), style = "color: #094030; margin-left: 11px;",
+    "In your uploaded file, you can specify a custom pre-event and post-event background period for each event year.", br(),
+    strong("Pre-event background:"), "In the second column, enter a year. Any years closer to the event - after this year - will be excluded from the analysis. This helps you avoid including years that may already be affected by nearby events.", br(),
+    strong("Post-event background:"), "In the third column, enter a year. Any years after this year will be excluded from the analysis, helping you avoid the influence of other events that occur soon after.",
+    id = popover_ID,
+    placement = "right",
+  ) 
+}
+
 ## SEA Customization
 ## popover_IDs = pop_sea_custime
 

@@ -1,5 +1,4 @@
 # Helper Functions of ClimeApp 
-
 #### Internal Functions ####
 # (Functions used ONLY by other functions)
 
@@ -7,7 +6,6 @@
 ## data input = month_range
 
 generate_title_months = function(MR){
-  print(MR)
   if (!is.null(MR) && length(MR) >= 2 && !any(is.na(MR)) && MR[1] == 1 && MR[2] == 12){
     title_months = "Annual"
   } else if (!is.null(MR) && length(MR) >= 2 && !any(is.na(MR))) {
@@ -480,26 +478,25 @@ create_yearly_subset = function(data_input,
                                 month_range){
   # Check for preprocessed subset
   if (data_ID[1] != 0){
-    year_IDs = (year_range[1]-1420):(year_range[2]-1420) 
+    year_IDs = (year_range[1]-1420):(year_range[2]-1420)
     data_subset = data_input[,,year_IDs]
-  } 
+  }
   # Calculate subset from scratch
   else {
     dim_data = dim(data_input)
     years = year_range[1]:year_range[2]
-    
+
     data_subset = array(NA,dim=c(dim_data[1],dim_data[2], length(years)))
-    
+
     for (i in 1:length(years)){
       Y = years[i]
-      M1 = ((12*(Y-1421))+month_range[1]) ; M2 = ((12*(Y-1421))+month_range[2]) 
+      M1 = ((12*(Y-1421))+month_range[1]) ; M2 = ((12*(Y-1421))+month_range[2])
       data_subset[,,i] = apply(data_input[,,M1:M2],c(1:2),mean)
     }
   }
-  
+
   return(data_subset)
 }
-
 
 ## (General) CONVERT ABSOLUTE YEARLY SUBSET TO ANOMALIES
 ##           data_input = any create_yearly_subset data
@@ -507,24 +504,23 @@ create_yearly_subset = function(data_input,
 
 convert_subset_to_anomalies = function(data_input,
                                        ref_data){
-  
+
   # find dimensions of the reference data
   dim_data = dim(data_input)
-  
+
   # Repeat ref data if year range > 1 year
-  if (length(dim_data) == 2){ 
+  if (length(dim_data) == 2){
     baseline_array = ref_data
   } else {
     # duplicate into an array
     baseline_array = array(ref_data,dim= c(dim_data[1],dim_data[2], dim_data[3]))
   }
-  
+
   # Take baseline data from absolute data to calculate anomalies
   anomaly_data = data_input-baseline_array
-  
+
   return(anomaly_data)
 }
-
 
 ## (General) GENERATE MAP,TS & FILE TITLES - creates a dataframe of map_title,
 ##                                           map_subtitle, ts_title, ts_axis,file_title,
@@ -772,8 +768,8 @@ plot_map <- function(data_input,
                      c_borders = TRUE,
                      white_ocean = FALSE,
                      white_land = FALSE,
+                     shpOrder = NULL,
                      plotOrder = NULL,
-                     shpPickers = NULL,
                      input = NULL,
                      plotType = "default",
                      projection = "UTM (default)",
@@ -786,9 +782,6 @@ plot_map <- function(data_input,
                      show_mountains = FALSE,
                      label_mountains = FALSE) {
 
-  # Define color picker prefix for shapefiles
-  color_picker_prefix <- plotType
-  
   # Define the color palette and unit based on the variable and mode
   if (!is.null(variable)) {  # Check if variable is not NULL
     if (variable == "Temperature") {
@@ -891,7 +884,13 @@ plot_map <- function(data_input,
       limits = axis_range,
       colors = v_col,
       n.breaks = 20,
-      nice.breaks = TRUE
+      nice.breaks = TRUE,
+      labels = function(breaks) {
+        labels <- as.character(round(breaks, 2))
+        labels[1] <- paste0("< ", labels[1])
+        labels[length(labels)] <- paste0("> ", labels[length(labels)])
+        return(labels)
+      }
     )
   }
   
@@ -955,29 +954,40 @@ plot_map <- function(data_input,
   }
   
   # Add shapefiles (if provided) based on plotOrder and shpPickers
-  for (file in plotOrder) {
-    file_name <- tools::file_path_sans_ext(basename(file))
-    if (file_name %in% shpPickers) {
-
-      shape <- st_read(file)
-
-      # Set or transform CRS to WGS84
-      if (is.na(st_crs(shape))) {
-        message(paste("CRS missing for", file_name, "- setting CRS to WGS84 (EPSG:4326)"))
-        shape <- st_set_crs(shape, st_crs(4326))
+  
+  # Define color picker prefix for shapefiles
+  color_picker_prefix <- plotType
+  
+  # Only run this block if both shpOrder and plotOrder are present and non-empty
+  if (!is.null(shpOrder) && !is.null(plotOrder) &&
+      length(shpOrder) > 0 && length(plotOrder) > 0) {
+    
+    # Get full paths of selected shapefiles in plotting order
+    selected_files <- plotOrder[match(shpOrder, tools::file_path_sans_ext(basename(plotOrder)))]
+    
+    for (file in selected_files) {
+      file_name <- tools::file_path_sans_ext(basename(file))
+      message(paste("Adding shapefile to plot:", file_name))
+      
+      shape <- sf::st_read(file, quiet = TRUE)
+      
+      # Ensure CRS is WGS84
+      if (is.na(sf::st_crs(shape))) {
+        shape <- sf::st_set_crs(shape, sf::st_crs(4326))
       } else {
-        shape <- st_transform(shape, crs = st_crs("+proj=longlat +datum=WGS84"))
+        shape <- sf::st_transform(shape, crs = sf::st_crs(4326))
       }
       
-      # Plot based on geometry type
-      geom_type <- st_geometry_type(shape)
+      # Get color from color picker input (created with prefix "shp_colour_")
       color <- input[[paste0(color_picker_prefix, file_name)]]
       
-      if ("POLYGON" %in% geom_type || "MULTIPOLYGON" %in% geom_type) {
+      geom_type <- sf::st_geometry_type(shape)
+      
+      if (any(geom_type %in% c("POLYGON", "MULTIPOLYGON"))) {
         p <- p + geom_sf(data = shape, fill = NA, color = color, size = 0.5, inherit.aes = FALSE)
-      } else if ("LINESTRING" %in% geom_type || "MULTILINESTRING" %in% geom_type) {
+      } else if (any(geom_type %in% c("LINESTRING", "MULTILINESTRING"))) {
         p <- p + geom_sf(data = shape, color = color, size = 0.5, inherit.aes = FALSE)
-      } else if ("POINT" %in% geom_type || "MULTIPOINT" %in% geom_type) {
+      } else if (any(geom_type %in% c("POINT", "MULTIPOINT"))) {
         p <- p + geom_sf(data = shape, color = color, size = 2, inherit.aes = FALSE)
       }
     }
@@ -1039,7 +1049,6 @@ plot_map <- function(data_input,
     filtered_stat_highlights_data <- subset(stat_highlights_data, criteria_vals == 1) # if criteria_vals == 0, the point is not added to the map
     
     if (nrow(filtered_stat_highlights_data) > 0) {
-      print(filtered_stat_highlights_data)
       p <- p + 
         geom_point(data = filtered_stat_highlights_data, aes(x = x_vals, y = y_vals), size = 1, shape=20, show.legend = FALSE)
     }
@@ -1086,17 +1095,17 @@ plot_map <- function(data_input,
 create_map_datatable = function(data_input,
                                 subset_lon_IDs,
                                 subset_lat_IDs){
-  
+
   # find x,y & z values
   x = lon[subset_lon_IDs]
   y = lat[subset_lat_IDs]
-  
+
   data_mean = apply(data_input,c(1:2),mean) # finds mean of input data
   z = data_mean[,rev(1:length(y))]
-  
+
   # Transpose and rotate z
   map_data =t(z)[order(ncol(z):1),]
-  
+
   # Add degree symbols and cardinal directions for longitude and latitude
   x_labels = ifelse(x >= 0,
                     paste(x, "\u00B0E", sep = ""),
@@ -1104,14 +1113,13 @@ create_map_datatable = function(data_input,
   y_labels = ifelse(y >= 0,
                     paste(round(y, digits = 3), "\u00B0N", sep = ""),
                     paste(abs(round(y, digits = 3)), "\u00B0S", sep = ""))
-  
+
   # Apply labels to map data
   colnames(map_data) = x_labels
   rownames(map_data) = y_labels
-  
+
   return(map_data)
 }
-
 
 ## (General) CREATE BASIC TIMESERIES DATATABLE
 ##           data_input = same as data_input for create_map_datatable
@@ -1434,8 +1442,6 @@ plot_timeseries <- function(type,
   lines_data = rbind(lines_data,new_line)
   lID = lID+1
   
-  print("Error1")
-  
   # Add custom lines to data:
   if (!is.null(lines) && nrow(lines) > 0) {
     
@@ -1728,7 +1734,7 @@ plot_timeseries <- function(type,
     }
     
   }
-  print("Error2")
+  
   # Plot data 
   p = ggplot()
   
@@ -1763,7 +1769,7 @@ plot_timeseries <- function(type,
       p = p + scale_fill_manual(values = setNames(fills_legend$fill,fills_legend$label))
     }
   }
-  print("Error2.2")
+  
   # Plot lines
   if (nrow(lines_data>0)){
     
@@ -1872,8 +1878,7 @@ plot_timeseries <- function(type,
     }
   }
   
-  print("Error3")
-
+  
   # Add theme
   p <- p + theme_bw(base_size = 18)
   
@@ -2023,7 +2028,6 @@ add_data_to_TS <- function(data,
       show.legend = show_key
     ))
   }
-  print(legend_label)
 }
 
 
@@ -2260,16 +2264,40 @@ plot_modera_sources = function(ME_source_data,
   named_shapes = setNames(shape_list,variable_list)
   
   # Plot
-  ggplot() + geom_polygon(data=world, aes(x=long, y=lat, group=group), fill="grey", color = "darkgrey") + 
-    geom_sf() + coord_sf(xlim = minmax_lonlat[c(1,2)], ylim = minmax_lonlat[c(3,4)], crs = st_crs(4326), expand = FALSE) +
-    geom_point(data=ME_source_data, aes(x=LON, y=LAT, color=TYPE, shape=VARIABLE), alpha=1, size = 1.5) +
-    labs(title = paste0("Assimilated Observations - ",season_title," ",yr),
-         subtitle = paste0("Total Sources = ", visible_sources), x = "", y = "") +
+  ggplot() + geom_polygon(
+    data = world,
+    aes(x = long, y = lat, group = group),
+    fill = "grey",
+    color = "darkgrey"
+  ) +
+    geom_sf() + coord_sf(
+      xlim = minmax_lonlat[c(1, 2)],
+      ylim = minmax_lonlat[c(3, 4)],
+      crs = st_crs(4326),
+      expand = FALSE
+    ) +
+    geom_point(
+      data = ME_source_data,
+      aes(
+        x = LON,
+        y = LAT,
+        color = TYPE,
+        shape = VARIABLE
+      ),
+      alpha = 1,
+      size = 1.5
+    ) +
+    labs(
+      title = paste0("Assimilated Observations - ", season_title, " ", yr),
+      subtitle = paste0("Total Sources = ", visible_sources),
+      x = "",
+      y = ""
+    ) +
     scale_shape_manual(values = named_shapes) +
     scale_colour_manual(values = named_colors) +
-    guides() + 
-    theme_classic()+
-    theme(panel.border = element_rect(colour = "black", fill=NA))  
+    guides() +
+    theme_classic(base_size = 18) +
+    theme(panel.border = element_rect(colour = "black", fill = NA))  
 }
 
 
@@ -2534,122 +2562,95 @@ generate_custom_netcdf = function(data_input,
 
 create_geotiff <- function(map_data,
                            output_file = NULL) {
-  
+
   # Extract longitudes and latitudes from column and row names and retaining original sign
   x <- as.numeric(gsub("°[EW]", "", colnames(map_data))) *
     ifelse(grepl("E", colnames(map_data)), 1, -1)
-  
-  y <- as.numeric(gsub("°[NS]", "", rownames(map_data))) * 
+
+  y <- as.numeric(gsub("°[NS]", "", rownames(map_data))) *
     ifelse(grepl("N", rownames(map_data)), 1, -1)
-  
+
   # Check if dimensions of the matrix match the lon/lat lengths
   if (ncol(map_data) != length(x) || nrow(map_data) != length(y)) {
     stop("Matrix dimensions do not match the provided longitude/latitude ranges")
   }
-  
+
   r <- rast(as.matrix(map_data))
   ext(r) <- ext(min(x), max(x), min(y), max(y)) # define raster extent
-  
+
   crs(r) <- "EPSG:4326"  # EPSG:4326 = WGS84
-  
+
   # Save the raster as a georeferenced TIFF file (terra package)
   # This option is only executed if the argument output_file is provided (used for the download)
   if(!is.null(output_file)) {
     writeRaster(r, output_file, filetype = "GTiff", overwrite = TRUE)
   }
-  
+
   return(r)
 }
 
-## (General) Load SDRATIO data
 
+## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS FOR ALL PLOT TYPES
+##           data input = All possible customization and plot generation fields
 
-## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR PLOT
-##           data input = Input form Plot Customization
-
-generate_metadata <- function(axis_mode,
-                              axis_input,
-                              hide_axis,
-                              title_mode,
-                              title1_input,
-                              title2_input, 
-                              custom_statistic,
-                              sd_ratio,
-                              hide_borders) {
+generate_metadata_all <- function(
   
-  # Adjust axis_input based on axis_mode
-  if (axis_mode == "Automatic") {
-    axis_input <- NA
-  } else if (length(axis_input) == 2) {
-    axis_input <- paste(axis_input, collapse = ",")
-  }
+  # Plot generation (sidebar) inputs
+  dataset = NA,
+  variable = NA,
+  range_years = NA,
+  select_sg_year = NA,
+  sg_year = NA,
+  season_sel = NA,
+  range_months = NA,
+  ref_period = NA,
+  select_sg_ref = NA,
+  sg_ref = NA,
+  lon_range = NA,
+  lat_range = NA,
+  lonlat_vals = NA,
   
-  # Create the metadata data frame with explicit column names
-  meta_input <- data.frame(
-    axis_mode, 
-    axis_input, 
-    hide_axis, 
-    title_mode, 
-    title1_input, 
+  # Common/field plot inputs
+  axis_mode = NA,
+  axis_input = NA,
+  hide_axis = NA,
+  title_mode = NA,
+  title1_input = NA,
+  title2_input = NA,
+  custom_statistic = NA,
+  sd_ratio = NA,
+  hide_borders = NA,
+  
+  # Time series (TS) plot inputs
+  title_mode_ts = NA,
+  title1_input_ts = NA,
+  show_key_ts = NA,
+  key_position_ts = NA,
+  show_ref_ts = NA,
+  custom_average_ts = NA,
+  year_moving_ts = NA,
+  percentile_ts = NA,
+  moving_percentile_ts = NA){
+  
+  meta <- data.frame(
+    axis_mode,
+    axis_input,
+    hide_axis,
+    title_mode,
+    title1_input,
     title2_input,
-    custom_statistic, 
-    sd_ratio, 
-    hide_borders
-  )
-  
-  return(meta_input)
-}
-
-## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR TS
-##           data input = Input form Plot Customization
-
-generate_metadata_ts <- function(title_mode_ts,
-                                 title1_input_ts,
-                                 show_key_ts,
-                                 key_position_ts,
-                                 show_ref_ts,
-                                 custom_average_ts,
-                                 year_moving_ts,
-                                 percentile_ts,
-                                 moving_percentile_ts) {
-  
-  
-  # Create the metadata data frame with explicit column names
-  meta_input_ts <- data.frame(
-    title_mode_ts, 
-    title1_input_ts, 
-    show_key_ts, 
-    key_position_ts, 
-    show_ref_ts, 
+    custom_statistic,
+    sd_ratio,
+    hide_borders,
+    title_mode_ts,
+    title1_input_ts,
+    show_key_ts,
+    key_position_ts,
+    show_ref_ts,
     custom_average_ts,
-    year_moving_ts, 
-    percentile_ts, 
-    moving_percentile_ts
-  )
-  
-  return(meta_input_ts)
-}
-
-
-## (General) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
-##           data input = Generation plot inputs from side bar
-
-generate_metadata_plot <- function(dataset,
-                                   variable,
-                                   range_years,
-                                   select_sg_year,
-                                   sg_year,
-                                   season_sel,
-                                   range_months,
-                                   ref_period,
-                                   select_sg_ref,
-                                   sg_ref,
-                                   lon_range,
-                                   lat_range,
-                                   lonlat_vals) {
-  
-  #Generate dataframe from plot inputs
-  plot_input <- data.frame(
+    year_moving_ts,
+    percentile_ts,
+    moving_percentile_ts,
     dataset,
     variable,
     range_years,
@@ -2662,12 +2663,118 @@ generate_metadata_plot <- function(dataset,
     sg_ref,
     lon_range,
     lat_range,
-    lonlat_vals
+    lonlat_vals,
+    stringsAsFactors = FALSE
   )
-  
-  return(plot_input)
-  
+  return(meta)
 }
+
+
+
+# ## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR PLOT
+# ##           data input = Input form Plot Customization
+# 
+# generate_metadata <- function(axis_mode,
+#                               axis_input,
+#                               hide_axis,
+#                               title_mode,
+#                               title1_input,
+#                               title2_input, 
+#                               custom_statistic,
+#                               sd_ratio,
+#                               hide_borders) {
+#   
+#   # Adjust axis_input based on axis_mode
+#   if (axis_mode == "Automatic") {
+#     axis_input <- NA
+#   } else if (length(axis_input) == 2) {
+#     axis_input <- paste(axis_input, collapse = ",")
+#   }
+#   
+#   # Create the metadata data frame with explicit column names
+#   meta_input <- data.frame(
+#     axis_mode, 
+#     axis_input, 
+#     hide_axis, 
+#     title_mode, 
+#     title1_input, 
+#     title2_input,
+#     custom_statistic, 
+#     sd_ratio, 
+#     hide_borders
+#   )
+#   
+#   return(meta_input)
+# }
+# 
+# ## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR TS
+# ##           data input = Input form Plot Customization
+# 
+# generate_metadata_ts <- function(title_mode_ts,
+#                                  title1_input_ts,
+#                                  show_key_ts,
+#                                  key_position_ts,
+#                                  show_ref_ts,
+#                                  custom_average_ts,
+#                                  year_moving_ts,
+#                                  percentile_ts,
+#                                  moving_percentile_ts) {
+#   
+#   
+#   # Create the metadata data frame with explicit column names
+#   meta_input_ts <- data.frame(
+#     title_mode_ts, 
+#     title1_input_ts, 
+#     show_key_ts, 
+#     key_position_ts, 
+#     show_ref_ts, 
+#     custom_average_ts,
+#     year_moving_ts, 
+#     percentile_ts, 
+#     moving_percentile_ts
+#   )
+#   
+#   return(meta_input_ts)
+# }
+# 
+# 
+# ## (General) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
+# ##           data input = Generation plot inputs from side bar
+# 
+# generate_metadata_plot <- function(dataset,
+#                                    variable,
+#                                    range_years,
+#                                    select_sg_year,
+#                                    sg_year,
+#                                    season_sel,
+#                                    range_months,
+#                                    ref_period,
+#                                    select_sg_ref,
+#                                    sg_ref,
+#                                    lon_range,
+#                                    lat_range,
+#                                    lonlat_vals) {
+#   
+#   #Generate dataframe from plot inputs
+#   plot_input <- data.frame(
+#     dataset,
+#     variable,
+#     range_years,
+#     select_sg_year,
+#     sg_year,
+#     season_sel,
+#     range_months,
+#     ref_period,
+#     select_sg_ref,
+#     sg_ref,
+#     lon_range,
+#     lat_range,
+#     lonlat_vals
+#   )
+#   
+#   return(plot_input)
+#   
+# }
 
 ## (General) UPDATES THE SELECTED VALUE OF A GROUP OF LINKED RADIO BUTTONS
 ##           selected_value = the value to be selected
@@ -2713,19 +2820,28 @@ create_sdratio_data = function(data_input,
                                year_range){
   
   # Change data_ID to identify data as preprocessed but not preloaded:
-  if (data_ID[1]==1){ data_ID[1]=2 } 
+  if (data_ID[1] == 1) { 
+    data_ID[1] = 2 
+  } 
   
   # Lat/lon subset:
-  SD_data1 = create_latlon_subset(data_input,data_ID,subset_lon_IDs, subset_lat_IDs)  
-  # Yearly subset:
-  if (tab == "general"){
-    SD_data2 = create_yearly_subset(SD_data1, data_ID, year_range, month_range)
+  SD_data1 = create_latlon_subset(data_input, data_ID, subset_lon_IDs, subset_lat_IDs)  
+  
+  # Yearly subset only if year_range is valid:
+  if (all(year_range >= 1422 & year_range <= 2008)) {
+    if (tab == "general") {
+      SD_data2 = create_yearly_subset(SD_data1, data_ID, year_range, month_range)
+    } else {
+      SD_data2 = create_yearly_subset_composite(SD_data1, data_ID, year_range, month_range)
+    }
   } else {
-    SD_data2 = create_yearly_subset_composite(SD_data1, data_ID, year_range, month_range)
+    stop(paste0("Invalid year range: ", paste(year_range, collapse = "–"), 
+                ". Valid years are between 1422 and 2008."))
   }
   
   return(SD_data2)
 }
+
 
 
 ## (Plot Features) CREATE STATISTICAL HIGHLIGHTS DATA - creates a dataframe for
@@ -2954,319 +3070,6 @@ add_correlation_timeseries = function(data_input1,
   # Reset original graphical parameters
   par(old.par)
   
-}
-
-
-
-
-
-## (Plot Features) ADD SHAPE FILE LAYERS TO STANDARD PLOTS
-##                  zipFile = input to the shpFile
-##                  plotOrder = reactive Value to store the plot Order
-##                  pickerInput = Layer Picker Input
-##                  reorderSelect = Modal Button
-##                  reorderAfter = Modal Button
-##                  input = Colour Input
-
-# Define a function to extract shapefile contents and update plot order (Anomaly)
-updatePlotOrder <- function(zipFile,
-                            plotOrder,
-                            pickerInput) {
-  # Create a unique temporary directory for this function
-  temp_dir <- tempfile(pattern = "anomaly_")
-  dir.create(temp_dir)
-  
-  # Unzip the shapefile
-  unzip(zipFile, exdir = temp_dir)
-  
-  # Find shapefiles in the temporary directory
-  shpFiles <- list.files(temp_dir, pattern = ".shp$", full.names = TRUE)
-  
-  # Update the plot order reactive value
-  plotOrder(shpFiles)
-  
-  # Update picker input choices
-  updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
-}
-
-# Define a function to extract shapefile contents and update plot order (Composite)
-updatePlotOrder2 <- function(zipFile,
-                             plotOrder,
-                             pickerInput) {
-  # Create a unique temporary directory for this function
-  temp_dir <- tempfile(pattern = "composite_")
-  dir.create(temp_dir)
-  
-  # Unzip the shapefile
-  unzip(zipFile, exdir = temp_dir)
-  
-  # Find shapefiles in the temporary directory
-  shpFiles <- list.files(temp_dir, pattern = ".shp$", full.names = TRUE)
-  
-  # Update the plot order reactive value
-  plotOrder(shpFiles)
-  
-  # Update picker input choices
-  updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
-}
-
-# Define a function to extract shapefile contents and update plot order (Correlation)
-updatePlotOrder3 <- function(zipFile,
-                             plotOrder,
-                             pickerInput) {
-  # Create a unique temporary directory for this function
-  temp_dir <- tempfile(pattern = "correlation_")
-  dir.create(temp_dir)
-  
-  # Unzip the shapefile
-  unzip(zipFile, exdir = temp_dir)
-  
-  # Find shapefiles in the temporary directory
-  shpFiles <- list.files(temp_dir, pattern = ".shp$", full.names = TRUE)
-  
-  # Update the plot order reactive value
-  plotOrder(shpFiles)
-  
-  # Update picker input choices
-  updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
-}
-
-# Define a function to extract shapefile contents and update plot order (Regression Coefficient)
-updatePlotOrder_reg_coeff <- function(zipFile,
-                                       plotOrder,
-                                       pickerInput) {
-  # Create a unique temporary directory for this function
-  temp_dir <- tempfile(pattern = "reg_coeff_")
-  dir.create(temp_dir)
-  
-  # Unzip the shapefile
-  unzip(zipFile, exdir = temp_dir)
-  
-  # Find shapefiles in the temporary directory
-  shpFiles <- list.files(temp_dir, pattern = ".shp$", full.names = TRUE)
-  
-  # Update the plot order reactive value
-  plotOrder(shpFiles)
-  
-  # Update picker input choices
-  updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
-}
-
-# Define a function to extract shapefile contents and update plot order (Regression P-Value)
-updatePlotOrder_reg_pval <- function(zipFile,
-                                       plotOrder,
-                                       pickerInput) {
-  # Create a unique temporary directory for this function
-  temp_dir <- tempfile(pattern = "reg_pval_")
-  dir.create(temp_dir)
-  
-  # Unzip the shapefile
-  unzip(zipFile, exdir = temp_dir)
-  
-  # Find shapefiles in the temporary directory
-  shpFiles <- list.files(temp_dir, pattern = ".shp$", full.names = TRUE)
-  
-  # Update the plot order reactive value
-  plotOrder(shpFiles)
-  
-  # Update picker input choices
-  updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
-}
-
-# Define a function to extract shapefile contents and update plot order (Regression Residual)
-updatePlotOrder_reg_res <- function(zipFile,
-                                     plotOrder,
-                                     pickerInput) {
-  # Create a unique temporary directory for this function
-  temp_dir <- tempfile(pattern = "reg_res_")
-  dir.create(temp_dir)
-  
-  # Unzip the shapefile
-  unzip(zipFile, exdir = temp_dir)
-  
-  # Find shapefiles in the temporary directory
-  shpFiles <- list.files(temp_dir, pattern = ".shp$", full.names = TRUE)
-  
-  # Update the plot order reactive value
-  plotOrder(shpFiles)
-  
-  # Update picker input choices
-  updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(shpFiles)))
-}
-
-# Function to generate color picker UI dynamically (Anomaly)
-createColorPickers <- function(plotOrder, shpFile) {
-  req(shpFile)
-  # Get the list of shapefiles from the reactive value
-  shp_files <- plotOrder
-  
-  # Create color pickers for each shapefile
-  colorpickers <- lapply(shp_files, function(file) {
-    file_name <- tools::file_path_sans_ext(basename(file))
-    colourpicker::colourInput(inputId = paste0("shp_colour_", file_name), 
-                              label   = paste("Border Color for", file_name),
-                              value = "black", # default color for the border
-                              showColour = "background",
-                              allowTransparent = TRUE,
-                              palette = "square")
-  })
-  
-  # Combine color pickers into a tag list
-  do.call(tagList, colorpickers)
-}
-
-# Function to generate color picker UI dynamically (Composite)
-createColorPickers2 <- function(plotOrder, shpFile) {
-  req(shpFile)
-  # Get the list of shapefiles from the reactive value
-  shp_files <- plotOrder
-  
-  # Create color pickers for each shapefile
-  colorpickers2 <- lapply(shp_files, function(file) {
-    file_name <- tools::file_path_sans_ext(basename(file))
-    colourpicker::colourInput(inputId = paste0("shp_colour2_", file_name), 
-                              label   = paste("Border Color for", file_name),
-                              value = "black", # default color for the border
-                              showColour = "background",
-                              allowTransparent = TRUE,
-                              palette = "square")
-  })
-  
-  # Combine color pickers into a tag list
-  do.call(tagList, colorpickers2)
-}
-
-# Function to generate color picker UI dynamically (Correlation)
-createColorPickers3 <- function(plotOrder, shpFile) {
-  req(shpFile)
-  # Get the list of shapefiles from the reactive value
-  shp_files <- plotOrder
-  
-  # Create color pickers for each shapefile
-  colorpickers3 <- lapply(shp_files, function(file) {
-    file_name <- tools::file_path_sans_ext(basename(file))
-    colourpicker::colourInput(inputId = paste0("shp_colour3_", file_name), 
-                              label   = paste("Border Color for", file_name),
-                              value = "black", # default color for the border
-                              showColour = "background",
-                              allowTransparent = TRUE,
-                              palette = "square")
-  })
-  
-  # Combine color pickers into a tag list
-  do.call(tagList, colorpickers3)
-}
-
-# Function to generate color picker UI dynamically (Reg. Coefficient)
-createColorPickers4a <- function(plotOrder, shpFile) {
-  req(shpFile)
-  # Get the list of shapefiles from the reactive value
-  shp_files <- plotOrder
-  
-  # Create color pickers for each shapefile
-  colorpickers4a <- lapply(shp_files, function(file) {
-    file_name <- tools::file_path_sans_ext(basename(file))
-    colourpicker::colourInput(inputId = paste0("shp_colour4a_", file_name), 
-                              label   = paste("Border Color for", file_name),
-                              value = "black", # default color for the border
-                              showColour = "background",
-                              allowTransparent = TRUE,
-                              palette = "square")
-  })
-  
-  # Combine color pickers into a tag list
-  do.call(tagList, colorpickers4a)
-}
-
-# Function to generate color picker UI dynamically (Reg. P-Value)
-createColorPickers4b <- function(plotOrder, shpFile) {
-  req(shpFile)
-  # Get the list of shapefiles from the reactive value
-  shp_files <- plotOrder
-  
-  # Create color pickers for each shapefile
-  colorpickers4b <- lapply(shp_files, function(file) {
-    file_name <- tools::file_path_sans_ext(basename(file))
-    colourpicker::colourInput(inputId = paste0("shp_colour4b_", file_name), 
-                              label   = paste("Border Color for", file_name),
-                              value = "black", # default color for the border
-                              showColour = "background",
-                              allowTransparent = TRUE,
-                              palette = "square")
-  })
-  
-  # Combine color pickers into a tag list
-  do.call(tagList, colorpickers4b)
-}
-
-# Function to generate color picker UI dynamically (Reg. Residual)
-createColorPickers4c <- function(plotOrder, shpFile) {
-  req(shpFile)
-  # Get the list of shapefiles from the reactive value
-  shp_files <- plotOrder
-  
-  # Create color pickers for each shapefile
-  colorpickers4c <- lapply(shp_files, function(file) {
-    file_name <- tools::file_path_sans_ext(basename(file))
-    colourpicker::colourInput(inputId = paste0("shp_colour4c_", file_name), 
-                              label   = paste("Border Color for", file_name),
-                              value = "black", # default color for the border
-                              showColour = "background",
-                              allowTransparent = TRUE,
-                              palette = "square")
-  })
-  
-  # Combine color pickers into a tag list
-  do.call(tagList, colorpickers4c)
-}
-
-#Create reorder modal
-createReorderModal <- function(plotOrder, shpFile) {
-  req(shpFile)
-  # Create the modal dialog
-  showModal(
-    modalDialog(
-      selectizeInput("reorderSelect", "Select Shapefile to Move", choices = basename(plotOrder), multiple = FALSE),
-      selectizeInput("reorderAfter", "Move After", choices = basename(plotOrder), multiple = FALSE),
-      footer = tagList(
-        actionButton("reorderConfirm", "Move"),
-        modalButton("Cancel")
-      )
-    ))
-}
-
-#Reorder shape file
-reorder_shapefiles <- function(plotOrder,
-                               reorderSelect,
-                               reorderAfter,
-                               pickerInput) {
-  
-  new_order <- plotOrder()
-  file_to_move_basename <- reorderSelect
-  move_after_basename <- reorderAfter
-  
-  # Check if file_to_move_basename and move_after_basename are the same
-  if (file_to_move_basename != move_after_basename) {
-    # Retrieve full paths
-    file_to_move <- new_order[grep(file_to_move_basename, new_order)]
-    move_after <- new_order[grep(move_after_basename, new_order)]
-    
-    if (length(file_to_move) > 0) {  # Ensure file_to_move is found in new_order
-      new_order <- new_order[new_order != file_to_move]
-      if (length(move_after) > 0)  # Ensure move_after is found in new_order
-        insert_index <- match(move_after, new_order) + 1
-      else
-        insert_index <- 1
-      new_order <- c(new_order[seq_len(insert_index - 1)], file_to_move, new_order[seq(insert_index, length(new_order))])
-      plotOrder(new_order)
-      updatePickerInput(inputId = pickerInput, choices = tools::file_path_sans_ext(basename(new_order)))
-      removeModal()
-    }
-  } else {
-    # If file_to_move_basename and move_after_basename are the same, do nothing
-    # Or you can add any specific handling for this case
-    message("file_to_move_basename and move_after_basename are the same.")
-  }
 }
 
 
@@ -3511,8 +3314,6 @@ read_regcomp_data = function(data_input_filepath) {
   
   user_data = replace(user_data, user_data == -999.9, NA)
   
-  print(summary(user_data)) ### REMOVE
-  
   return(user_data)
 }
 
@@ -3734,6 +3535,7 @@ generate_correlation_titles = function(variable1_source,
                                        map_custom_subtitle,
                                        ts_custom_title,
                                        title_size) {
+
   
   # Set values for variable 1:
   if (variable1_source=="User Data"){
@@ -4709,43 +4511,6 @@ create_regression_timeseries_datatable = function(dependent_variable_data,
   return(regression_ts_df)                               
 }
 
-## (Regression) PLOT REGRESSION TIMESERIES plots either original and trend timeseries
-##              OR residuals timeseries
-##              data_input = regression_timeseries_datatable 
-##              plot_type = "original_trend" or "residuals"
-
-# plot_regression_timeseries = function(data_input,plot_type,regression_titles,
-#                                       independent_variables,dependent_variable){
-#   
-#   # Generate title & axis label
-#   title_variables_i = paste(independent_variables,collapse = " ; ")
-#   title_main = paste("Regression Timeseries. ",
-#                      regression_titles$title_months_i,title_variables_i,
-#                      regression_titles$title_mode_i,regression_titles$title_lonlat_i," -> ",
-#                      regression_titles$title_months_d,dependent_variable,
-#                      regression_titles$title_mode_d,regression_titles$title_lonlat_d,
-#                      sep = "")
-#   title_axis = paste(dependent_variable,regression_titles$unit_d)
-#   
-#   # Plot original_trend timeseries
-#   if (plot_type == "original_trend"){
-#     plot(data_input[,1],data_input[,2],col = regression_titles$color_d, type = "l", xaxs="i",
-#          xlab = "Year", ylab = title_axis,lwd = 1.5)
-#     lines(data_input[,1],data_input[,3],lwd = 1.5)
-#     title(title_main, cex.main = 1.5,   font.main= 1, adj=0)
-#     legend('bottomright',legend=c("Original", "Trend"),
-#            col=c(regression_titles$color_d,"black"),lty = c(1,1),lwd=c(1.5,1.5))
-#   } 
-#   # Plot residuals timeseries
-#   else {
-#     plot(data_input[,1],data_input[,4],col = regression_titles$color_d, type = "l", xaxs="i",
-#          xlab = "Year", ylab = title_axis, lty = 2, lwd = 1.5)
-#     title(title_main, cex.main = 1.5,   font.main= 1, adj=0)
-#     legend('bottomright',legend=c("Residual"),
-#            col=c(regression_titles$color_d),lty = c(2),lwd=c(1.5))
-#   }
-# }
-
 
 #### Annual cycles Functions ----
 
@@ -5398,4 +5163,48 @@ set_sea_axis_values <- function(data_input) {
   range_val <- max_val - min_val
   padded <- c(min_val - 0.05 * range_val, max_val + 0.05 * range_val)
   return(signif(padded, digits = 3))
+}
+
+
+## (SEA) SEA EVENT DATA - creates a dataframe of event years with optional pre- and post-background years
+##       data_input_manual =   String of comma-separated years (e.g. "1815,1883,1783") if manual mode is used
+##       data_input_filepath = File path to CSV or Excel file containing events (and optional pre/post columns)
+##       year_input_mode =   "Manual" to use manual input, "Upload" to read from file
+##       data_source_sea =  If "ModE-", filters events to years 1422–2008
+
+read_sea_data <- function(data_input_manual,
+                          data_input_filepath,
+                          year_input_mode,
+                          data_source_sea) {
+  
+  if (year_input_mode == "Manual") {
+    year_vec <- as.integer(unlist(strsplit(data_input_manual, ",")))
+    df <- data.frame(Event = year_vec, Pre = NA_integer_, Post = NA_integer_)
+  } else if (is.null(data_input_filepath)) {
+    df <- data.frame(Event = c(1815, 1816), Pre = NA_integer_, Post = NA_integer_)
+  } else if (grepl(".csv", data_input_filepath, fixed = TRUE)) {
+    df <- read.csv(data_input_filepath)
+  } else {
+    df <- readxl::read_excel(data_input_filepath)
+  }
+  
+  # Ensure numeric types
+  for (i in seq_len(min(3, ncol(df)))) {
+    df[[i]] <- as.numeric(df[[i]])
+  }
+  
+  # Filter to ModE-RA range
+  if (data_source_sea == "ModE-") {
+    df <- df[df[[1]] >= 1422 & df[[1]] <= 2008, , drop = FALSE]
+  }
+  
+  # Pad to 3 columns
+  while (ncol(df) < 3) {
+    df[[ncol(df) + 1]] <- NA_integer_
+  }
+  
+  # Rename columns for consistency
+  colnames(df)[1:3] <- c("Event", "Pre", "Post")
+  
+  return(df)
 }

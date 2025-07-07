@@ -24,8 +24,8 @@ server <- function(input, output, session) {
   SDratio_data = reactiveVal()
   SDratio_data_id = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current SD data
   
-  #Preparations in the Server (Hidden options) ----
-  ## Easter Eggs ----
+  # Preparations in the Server (Hidden options) ----
+  ### Easter Eggs ----
   
   # Get the current month and day
   current_month_day <- format(Sys.Date(), "%m-%d")
@@ -87,7 +87,7 @@ server <- function(input, output, session) {
     logo_width <- "142px"
   }
   
-  ## Logos ----
+  ### Logos ----
   
   # Render the logo
   output$logo_output <- renderUI({
@@ -147,7 +147,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ## Panel Visibility ----
+  ### Panel Visibility ----
   
   # Add logic to toggle the visibility of the specific tabPanel (Correlation Map) based on radio button values ("Timeseries")
   observe({
@@ -271,8 +271,8 @@ server <- function(input, output, session) {
       ')
   })
   
-  ## Hiding, showing, enabling/unabling certain inputs ----
-  ### Anomalies ----
+  ### Hiding, showing, enabling/unabling certain inputs ----
+  ####### Anomalies ----
   
   # Side Bar Panel
   observe({shinyjs::toggle(id = "season",
@@ -324,7 +324,7 @@ server <- function(input, output, session) {
                            asis = FALSE)})
   
   # Customization
-  ## Anomalies Maps
+  ### Anomalies Maps
   
   observe({shinyjs::toggle(id = "hidden_custom_maps",
                            anim = TRUE,
@@ -408,7 +408,7 @@ server <- function(input, output, session) {
   
   
   
-  ## Anomalies TS
+  ### Anomalies TS
   
   observe({shinyjs::toggle(id = "hidden_custom_ts",
                            anim = TRUE,
@@ -539,7 +539,7 @@ server <- function(input, output, session) {
                            asis = FALSE)})
   
   
-  ### Composite ----
+  ####### Composite ----
   
   # Side Bar
   observe({shinyjs::toggle(id = "optional2a",
@@ -648,7 +648,7 @@ server <- function(input, output, session) {
                            asis = FALSE)})
   
   # Customization
-  ## Composites Maps
+  ### Composites Maps
   
   observe({shinyjs::toggle(id = "hidden_custom_maps2",
                            anim = TRUE,
@@ -746,7 +746,7 @@ server <- function(input, output, session) {
                            condition = input$custom_topo2 == TRUE,
                            asis = FALSE)})
   
-  ## Composites TS
+  ### Composites TS
   
   observe({shinyjs::toggle(id = "hidden_custom_ts2",
                            anim = TRUE,
@@ -869,9 +869,9 @@ server <- function(input, output, session) {
                            asis = FALSE)})
   
   
-  ### Correlation ----
+  ####### Correlation ----
   
-  ##Sidebar V1
+  ###Sidebar V1
   
   observe({shinyjs::toggle(id = "upload_forcings_v1",
                            anim = TRUE,
@@ -955,7 +955,7 @@ server <- function(input, output, session) {
   
   
   
-  ##Sidebar V2
+  ###Sidebar V2
   
   observe({shinyjs::toggle(id = "upload_forcings_v2",
                            anim = TRUE,
@@ -1105,7 +1105,7 @@ server <- function(input, output, session) {
   
   
   # Customization
-  ## Correlation Maps
+  ### Correlation Maps
   
   observe({shinyjs::toggle(id = "hidden_custom_maps3",
                            anim = TRUE,
@@ -1171,7 +1171,7 @@ server <- function(input, output, session) {
                            condition = input$custom_topo3 == TRUE,
                            asis = FALSE)})
   
-  ## Correlation TS
+  ### Correlation TS
   
   observe({shinyjs::toggle(id = "hidden_custom_ts3",
                            anim = TRUE,
@@ -1285,9 +1285,9 @@ server <- function(input, output, session) {
                            condition = input$show_ticks_ts3 == TRUE,
                            asis = FALSE)})
   
-  ### Regression ----
+  ####### Regression ----
   
-  ##Sidebar IV
+  ###Sidebar IV
   
   observe({shinyjs::toggle(id = "upload_forcings_iv",
                            anim = TRUE,
@@ -1369,7 +1369,7 @@ server <- function(input, output, session) {
                            condition = input$ref_single_year_iv == FALSE,
                            asis = FALSE)})
   
-  ##Sidebar DV
+  ###Sidebar DV
   
   observe({shinyjs::toggle(id = "upload_forcings_dv",
                            anim = TRUE,
@@ -1451,9 +1451,9 @@ server <- function(input, output, session) {
                            condition = input$ref_single_year_dv == FALSE,
                            asis = FALSE)})
   
-  ##Regression (Main Panel)
+  ###Regression (Main Panel)
   
-  ## Regression TS
+  ### Regression TS
   
   observe({shinyjs::toggle(id = "hidden_custom_ts4",
                            anim = TRUE,
@@ -1551,7 +1551,7 @@ server <- function(input, output, session) {
                            condition = input$show_ticks_ts4 == TRUE,
                            asis = FALSE)})
   
-  ## Regression Maps
+  ### Regression Maps
   # Hidden Customization and Download Regression Coefficients
   observe({shinyjs::toggle(id = "hidden_custom_map_reg_coeff",
                            anim = TRUE,
@@ -1781,7 +1781,7 @@ server <- function(input, output, session) {
                            condition = input$source_dv == "ModE-",
                            asis = FALSE)})
   
-  ### Annual cycles ----
+  ####### Annual cycles ----
   
   #Sidebar Panel
   
@@ -1898,9 +1898,9 @@ server <- function(input, output, session) {
                            condition = input$show_key_ts5 == TRUE,
                            asis = FALSE)})
   
-  ### SEA ----
+  ####### SEA ----
   
-  ##Sidebar Data
+  ###Sidebar Data
   
   observe({shinyjs::toggle(id = "upload_sea_data_6",
                            anim = TRUE,
@@ -2040,9 +2040,9 @@ server <- function(input, output, session) {
                            condition = input$axis_mode_6 == "Fixed",
                            asis = FALSE)})
   
-  ## ANOMALIES observe, update & interactive controls ----
+  ### ANOMALIES observe, update & interactive controls ----
   
-  ### Input updaters ----
+  ####### Input updaters ----
   
   # Set iniital lon/lat values on startup
   lonlat_vals = reactiveVal(c(initial_lon_values,initial_lat_values))
@@ -2382,7 +2382,7 @@ server <- function(input, output, session) {
         ))}
   })
   
-  ### Interactivity ----
+  ####### Interactivity ----
   
   # Input geo-coded locations
   observeEvent(input$search, {
@@ -2594,7 +2594,7 @@ server <- function(input, output, session) {
         value = round(c(input$ts_brush1[[3]],input$ts_brush1[[4]]), digits = 2))
     }
   })
-  ### Initialise and update custom points lines highlights ----
+  ####### Initialise and update custom points lines highlights ----
   
   map_points_data = reactiveVal(data.frame())
   map_highlights_data = reactiveVal(data.frame())
@@ -2690,7 +2690,7 @@ server <- function(input, output, session) {
     ts_lines_data(data.frame())
   })
   
-  ### Generate Metadata for map customization ----
+  ####### Generate Metadata for map customization ----
   
   #Download Plot data
   metadata_input <- reactive({
@@ -2955,33 +2955,71 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Generate Layer Options for customization ----
-  # Reactive value to store the plot order
-  plotOrder <- reactiveVal(character(0))
+  ####### Generate Layer Options for customization ----
   
-  # Usage example:
-  observeEvent(input$shpFile, {
-    updatePlotOrder(input$shpFile$datapath, plotOrder, "shpPickers")
-  })
-  
-  # Function to generate color picker UI dynamically
-  output$colorpickers <- renderUI({
-    createColorPickers(plotOrder(), input$shpFile)
-  })
-  
-  # Manually reorder shapefiles
-  observeEvent(input$reorderButton, {
-    createReorderModal(plotOrder(), input$shpFile)
+  ####### Reactive values
+  plotOrder <- reactiveVal(character(0))        # full paths
+  availableLayers <- reactiveVal(character(0))  # file names
+ 
+  ####### Helper: extract and load shapefiles
+  updatePlotOrder <- function(zipFile, plotOrder, availableLayers) {
+    temp_dir <- tempfile(pattern = "anomaly_")
+    dir.create(temp_dir)
+    unzip(zipFile, exdir = temp_dir)
     
+    shpFiles <- list.files(temp_dir, pattern = "\\.shp$", full.names = TRUE)
+    layer_names <- tools::file_path_sans_ext(basename(shpFiles))
+    
+    plotOrder(shpFiles)
+    availableLayers(layer_names)
+  }
+  
+  ####### Trigger update on file upload
+  observeEvent(input$shpFile, {
+    req(input$shpFile)
+    updatePlotOrder(
+      zipFile = input$shpFile$datapath,
+      plotOrder = plotOrder,
+      availableLayers = availableLayers
+    )
+  })
+
+  ####### Shape File Renderer
+  output$shapefileSelector <- renderUI({
+    req(availableLayers())
+    shinyjqui::sortableCheckboxGroupInput(
+      inputId = "shapes",
+      label = "Select and order shapefiles (drag & drop)",
+      choices = availableLayers()
+    )
   })
   
-  observeEvent(input$reorderConfirm, {
-    reorder_shapefiles(plotOrder, input$reorderSelect, input$reorderAfter, "shpPickers")
+ ####### Dynamic color pickers for selected shapefiles
+  output$colorpickers <- renderUI({
+    req(input$shapes, input$shapes_order, plotOrder())
+    selected_ordered <- input$shapes_order[input$shapes_order %in% input$shapes]
+    shp_files <- plotOrder()[match(selected_ordered, tools::file_path_sans_ext(basename(plotOrder())))]
+    
+    pickers <- lapply(shp_files, function(file) {
+      file_name <- tools::file_path_sans_ext(basename(file))
+      input_id <- paste0("shp_colour_", file_name)
+      last_val <- isolate(input[[input_id]])  # <-- Get the current color if set, otherwise NULL
+      colourInput(
+        inputId = input_id,
+        label   = paste("Border Color for", file_name),
+        value   = if (!is.null(last_val)) last_val else "black",
+        showColour = "background",
+        palette = "limited",
+        allowTransparent = FALSE
+      )
+    })
+    do.call(tagList, pickers)
   })
   
-  ## COMPOSITES observe, update & interactive controls ----
   
-  ### Input updaters ----
+  ### COMPOSITES observe, update & interactive controls ----
+  
+  ####### Input updaters ----
   
   # Set iniital lon/lat values on startup
   lonlat_vals2 = reactiveVal(c(initial_lon_values,initial_lat_values))
@@ -3327,7 +3365,7 @@ server <- function(input, output, session) {
   })
   
   
-  ### Interactivity ----
+  ####### Interactivity ----
   
   # Input geo-coded locations
   
@@ -3493,7 +3531,7 @@ server <- function(input, output, session) {
   })
   
   
-  ### Initialise and update custom points lines highlights ----
+  ####### Initialise and update custom points lines highlights ----
   
   map_points_data2 = reactiveVal(data.frame())
   map_highlights_data2 = reactiveVal(data.frame())
@@ -3589,7 +3627,7 @@ server <- function(input, output, session) {
     ts_lines_data2(data.frame())
   })
   
-  ### Generate Metadata for map customization ----
+  ####### Generate Metadata for map customization ----
   
   #Download Plot data 
   metadata_input2 <- reactive({
@@ -3849,32 +3887,94 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Generate Layer Options for customization ----
-  # Reactive value to store the plot order
-  plotOrder2 <- reactiveVal(character(0))
+  ####### Generate Layer Options for customization ----
   
-  # Usage example:
-  observeEvent(input$shpFile2, {
-    updatePlotOrder2(input$shpFile2$datapath, plotOrder2, "shpPickers2")
-  })
+  # # Reactive value to store the plot order
+  # plotOrder2 <- reactiveVal(character(0))
+  # 
+  # # Usage example:
+  # observeEvent(input$shpFile2, {
+  #   updatePlotOrder2(input$shpFile2$datapath, plotOrder2, "shpPickers2")
+  # })
+  # 
+  # # Function to generate color picker UI dynamically
+  # output$colorpickers2 <- renderUI({
+  #   createColorPickers2(plotOrder2(), input$shpFile2)
+  # })
+  # 
+  # # Manually reorder shapefiles
+  # observeEvent(input$reorderButton2, {
+  #   createReorderModal(plotOrder2(), input$shpFile2)
+  #   
+  # })
+  # 
+  # observeEvent(input$reorderConfirm, {
+  #   reorder_shapefiles(plotOrder2, input$reorderSelect, input$reorderAfter, "shpPickers2")
+  # })
   
-  # Function to generate color picker UI dynamically
-  output$colorpickers2 <- renderUI({
-    createColorPickers2(plotOrder2(), input$shpFile2)
-  })
+  ### Reactive values
+  plotOrder2 <- reactiveVal(character(0))        # full paths
+  availableLayers2 <- reactiveVal(character(0))  # file names
   
-  # Manually reorder shapefiles
-  observeEvent(input$reorderButton2, {
-    createReorderModal(plotOrder2(), input$shpFile2)
+  # Helper: extract and load shapefiles
+  updatePlotOrder2 <- function(zipFile2, plotOrder2, availableLayers2) {
+    temp_dir2 <- tempfile(pattern = "composite_")
+    dir.create(temp_dir2)
+    unzip(zipFile2, exdir = temp_dir2)
     
+    shpFiles2 <- list.files(temp_dir2, pattern = "\\.shp$", full.names = TRUE)
+    layer_names2 <- tools::file_path_sans_ext(basename(shpFiles2))
+    
+    plotOrder2(shpFiles2)
+    availableLayers2(layer_names2)
+  }
+  
+  # Trigger update on file upload
+  observeEvent(input$shpFile2, {
+    req(input$shpFile2)
+    updatePlotOrder2(
+      zipFile2 = input$shpFile2$datapath,
+      plotOrder2 = plotOrder2,
+      availableLayers2 = availableLayers2
+    )
   })
   
-  observeEvent(input$reorderConfirm, {
-    reorder_shapefiles(plotOrder2, input$reorderSelect, input$reorderAfter, "shpPickers2")
+  # Shape File Renderer
+  output$shapefileSelector2 <- renderUI({
+    req(availableLayers2())
+    shinyjqui::sortableCheckboxGroupInput(
+      inputId = "shapes2",
+      label = "Select and order shapefiles (drag & drop)",
+      choices = availableLayers2()
+    )
   })
-  ## CORRELATION observe, update & interactive controls ----
   
-  ### Input updaters ----
+  # Dynamic color pickers for selected shapefiles
+  output$colorpickers2 <- renderUI({
+    req(input$shapes2, input$shapes2_order, plotOrder2())
+    selected_ordered2 <- input$shapes2_order[input$shapes2_order %in% input$shapes2]
+    shp_files2 <- plotOrder2()[match(selected_ordered2, tools::file_path_sans_ext(basename(plotOrder2())))]
+    
+    pickers2 <- lapply(shp_files2, function(file2) {
+      file_name2 <- tools::file_path_sans_ext(basename(file2))
+      input_id2 <- paste0("shp_colour2_", file_name2)
+      last_val2 <- isolate(input[[input_id2]])
+      colourInput(
+        inputId = input_id2,
+        label   = paste("Border Color for", file_name2),
+        value   = if (!is.null(last_val2)) last_val2 else "black",
+        showColour = "background",
+        palette = "limited",
+        allowTransparent = FALSE
+      )
+    })
+    do.call(tagList, pickers2)
+  })
+  
+  
+  ### CORRELATION observe, update & interactive controls ----
+  
+  ####### Input updaters ----
   
   # Update variable selection
   observe({
@@ -4570,7 +4670,7 @@ server <- function(input, output, session) {
   })
   
   
-  ### Interactivity ----
+  ####### Interactivity ----
   
   # Input geo-coded locations
   
@@ -4670,14 +4770,14 @@ server <- function(input, output, session) {
       session = getDefaultReactiveDomain(),
       inputId = "point_location_x3",
       label = NULL,
-      value = as.character(round(x_dblclick3, digits = 2))
+      value = as.character(round(dblclick$x, digits = 2))
     )
     
     updateTextInput(
       session = getDefaultReactiveDomain(),
       inputId = "point_location_y3",
       label = NULL,
-      value = as.character(round(input$map_dblclick3$y, digits = 2))
+      value = as.character(round(dblclick$y, digits = 2))
     )
   })
   
@@ -4752,7 +4852,7 @@ server <- function(input, output, session) {
   })
   
   
-  ### Initialise and update custom points lines highlights ----
+  ####### Initialise and update custom points lines highlights ----
   
   map_points_data3 = reactiveVal(data.frame())
   map_highlights_data3 = reactiveVal(data.frame())
@@ -4840,7 +4940,7 @@ server <- function(input, output, session) {
     ts_lines_data3(data.frame())
   })
   
-  ### Generate Metadata for map customization ----
+  ####### Generate Metadata for map customization ----
   
   #Download Plot data 
   metadata_input3 <- reactive({
@@ -5170,32 +5270,71 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Generate Layer Options for customization ----
-  # Reactive value to store the plot order
-  plotOrder3 <- reactiveVal(character(0))
+  ####### Generate Layer Options for customization ----
   
-  # Usage example:
-  observeEvent(input$shpFile3, {
-    updatePlotOrder3(input$shpFile3$datapath, plotOrder3, "shpPickers3")
-  })
+  # Reactive values
+  plotOrder3 <- reactiveVal(character(0))        # full paths
+  availableLayers3 <- reactiveVal(character(0))  # file names
   
-  # Function to generate color picker UI dynamically
-  output$colorpickers3 <- renderUI({
-    createColorPickers3(plotOrder3(), input$shpFile3)
-  })
-  
-  # Manually reorder shapefiles
-  observeEvent(input$reorderButton3, {
-    createReorderModal(plotOrder3(), input$shpFile3)
+  # Helper: extract and load shapefiles
+  updatePlotOrder3 <- function(zipFile3, plotOrder3, availableLayers3) {
+    temp_dir3 <- tempfile(pattern = "correlation_")
+    dir.create(temp_dir3)
+    unzip(zipFile3, exdir = temp_dir3)
     
+    shpFiles3 <- list.files(temp_dir3, pattern = "\\.shp$", full.names = TRUE)
+    layer_names3 <- tools::file_path_sans_ext(basename(shpFiles3))
+    
+    plotOrder3(shpFiles3)
+    availableLayers3(layer_names3)
+  }
+  
+  # Trigger update on file upload
+  observeEvent(input$shpFile3, {
+    req(input$shpFile3)
+    updatePlotOrder3(
+      zipFile3 = input$shpFile3$datapath,
+      plotOrder3 = plotOrder3,
+      availableLayers3 = availableLayers3
+    )
   })
   
-  observeEvent(input$reorderConfirm, {
-    reorder_shapefiles(plotOrder3, input$reorderSelect, input$reorderAfter, "shpPickers3")
+  # Shape File Renderer for correlation set
+  output$shapefileSelector3 <- renderUI({
+    req(availableLayers3())
+    shinyjqui::sortableCheckboxGroupInput(
+      inputId = "shapes3",
+      label = "Select and order shapefiles for Correlation (drag & drop)",
+      choices = availableLayers3()
+    )
   })
-  ## REGRESSION observe, update & interactive controls ----
   
-  ### Input updaters ----
+  # Dynamic color pickers for selected correlation shapefiles
+  output$colorpickers3 <- renderUI({
+    req(input$shapes3, input$shapes3_order, plotOrder3())
+    selected_ordered3 <- input$shapes3_order[input$shapes3_order %in% input$shapes3]
+    shp_files3 <- plotOrder3()[match(selected_ordered3, tools::file_path_sans_ext(basename(plotOrder3())))]
+    
+    pickers3 <- lapply(shp_files3, function(file3) {
+      file_name3 <- tools::file_path_sans_ext(basename(file3))
+      input_id3 <- paste0("shp_colour3_", file_name3)
+      last_val3 <- isolate(input[[input_id3]])
+      colourInput(
+        inputId = input_id3,
+        label   = paste("Border Color for", file_name3),
+        value   = if (!is.null(last_val3)) last_val3 else "black",
+        showColour = "background",
+        palette = "limited",
+        allowTransparent = FALSE
+      )
+    })
+    do.call(tagList, pickers3)
+  })
+  
+  
+  ### REGRESSION observe, update & interactive controls ----
+  
+  ####### Input updaters ----
   
   # Update variable selection
   observe({
@@ -5813,7 +5952,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Interactivity ----
+  ####### Interactivity ----
   # Map custom points selector regression coefficient
   observeEvent(input$map_dblclick_reg_coeff, {
     dblclick <- input$map_dblclick_reg_coeff
@@ -6080,9 +6219,9 @@ server <- function(input, output, session) {
   })
   
   
-  ### Initialise and update custom points lines highlights ----
+  ####### Initialise and update custom points lines highlights ----
   
-  #### Regression TS (Trend (4a) / Residual (4b))
+  ######### Regression TS (Trend (4a) / Residual (4b))
   
   ts_points_data4a = reactiveVal(data.frame())
   ts_highlights_data4a = reactiveVal(data.frame())
@@ -6189,7 +6328,7 @@ server <- function(input, output, session) {
     ts_lines_data4b(data.frame())
   })
   
-  #### Regression Coefficient Map Plot
+  ######### Regression Coefficient Map Plot
   
   # Custom Features - Points
   map_points_data_reg_coeff = reactiveVal(data.frame())
@@ -6255,7 +6394,7 @@ server <- function(input, output, session) {
   
   
   
-  #### Regression P Value Map Plot
+  ######### Regression P Value Map Plot
   
   # Custom Features - Points
   map_points_data_reg_pval = reactiveVal(data.frame())
@@ -6324,7 +6463,7 @@ server <- function(input, output, session) {
     }
   })
   
-  #### Regression Residual Map Plot
+  ######### Regression Residual Map Plot
   
   # Custom Features - Points
   map_points_data_reg_res = reactiveVal(data.frame())
@@ -6392,7 +6531,7 @@ server <- function(input, output, session) {
   
   
   
-  ### Generate Metadata for map customization ----
+  ####### Generate Metadata for map customization ----
   
   # Generate metadata plot for IV
   plot_gen_input_iv <- reactive({
@@ -6431,7 +6570,7 @@ server <- function(input, output, session) {
   })
   
   
-  ## Coefficients
+  ### Coefficients
   # Generate metadata
   metadata_input_reg_coeff <- reactive({
     metadata_reg_coeff = generate_metadata_reg(input$axis_mode_reg_coeff,
@@ -6564,7 +6703,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ## P-Values
+  ### P-Values
   # Generate metadata
   metadata_input_reg_pval <- reactive({
     metadata_reg_pval = generate_metadata_reg(input$axis_mode_reg_pval,
@@ -6698,7 +6837,7 @@ server <- function(input, output, session) {
   })
   
   
-  ## Residuals
+  ### Residuals
   # Generate metadata
   metadata_input_reg_res <- reactive({
     metadata_reg_res = generate_metadata_reg(input$axis_mode_reg_res,
@@ -6831,84 +6970,191 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Generate Layer Options for customization ----
+  ####### Generate Layer Options for customization ----
   
-  ### Regression Coefficient
-  # Reactive value to store the plot order
-  plotOrder_reg_coeff <- reactiveVal(character(0))
+  ####### Regression Coefficient
+  # Reactive values
+  plotOrder_reg_coeff <- reactiveVal(character(0))        # full paths
+  availableLayers_reg_coeff <- reactiveVal(character(0))  # file names
   
-  # Usage example:
+  # Helper: extract and load shapefiles
+  updatePlotOrder_reg_coeff <- function(zipFile, plotOrder, availableLayers) {
+    temp_dir <- tempfile(pattern = "reg_coeff_")
+    dir.create(temp_dir)
+    unzip(zipFile, exdir = temp_dir)
+    
+    shpFiles <- list.files(temp_dir, pattern = "\\.shp$", full.names = TRUE)
+    layer_names <- tools::file_path_sans_ext(basename(shpFiles))
+    
+    plotOrder(shpFiles)
+    availableLayers(layer_names)
+  }
+  
+  # Trigger update on file upload
   observeEvent(input$shpFile_reg_coeff, {
-    updatePlotOrder_reg_coeff(input$shpFile_reg_coeff$datapath, plotOrder_reg_coeff, "shpPickers_reg_coeff")
+    req(input$shpFile_reg_coeff)
+    updatePlotOrder_reg_coeff(
+      zipFile = input$shpFile_reg_coeff$datapath,
+      plotOrder = plotOrder_reg_coeff,
+      availableLayers = availableLayers_reg_coeff
+    )
   })
   
-  # Function to generate color picker UI dynamically
+  # Shape File Renderer for regression coefficients
+  output$shapefileSelector_reg_coeff <- renderUI({
+    req(availableLayers_reg_coeff())
+    shinyjqui::sortableCheckboxGroupInput(
+      inputId = "shapes_reg_coeff",
+      label = "Select and order shapefiles for Regression Coefficients (drag & drop)",
+      choices = availableLayers_reg_coeff()
+    )
+  })
+  
+  # Dynamic color pickers for selected regression coefficient shapefiles
   output$colorpickers_reg_coeff <- renderUI({
-    createColorPickers4a(plotOrder_reg_coeff(), input$shpFile_reg_coeff)
-  })
-  
-  # Manually reorder shapefiles
-  observeEvent(input$reorderButton_reg_coeff, {
-    createReorderModal(plotOrder_reg_coeff(), input$shpFile_reg_coeff)
+    req(input$shapes_reg_coeff, input$shapes_reg_coeff_order, plotOrder_reg_coeff())
+    selected_ordered <- input$shapes_reg_coeff_order[input$shapes_reg_coeff_order %in% input$shapes_reg_coeff]
+    shp_files <- plotOrder_reg_coeff()[match(selected_ordered, tools::file_path_sans_ext(basename(plotOrder_reg_coeff())))]
     
+    pickers <- lapply(shp_files, function(file) {
+      file_name <- tools::file_path_sans_ext(basename(file))
+      input_id <- paste0("shp_colour_reg_coeff_", file_name)
+      last_val <- isolate(input[[input_id]])
+      colourInput(
+        inputId = input_id,
+        label   = paste("Border Color for", file_name),
+        value   = if (!is.null(last_val)) last_val else "black",
+        showColour = "background",
+        palette = "limited",
+        allowTransparent = FALSE
+      )
+    })
+    do.call(tagList, pickers)
   })
   
-  observeEvent(input$reorderConfirm, {
-    reorder_shapefiles(plotOrder_reg_coeff, input$reorderSelect, input$reorderAfter, "shpPickers_reg_coeff")
-  })
+  ####### Regression P-Value
+  # Reactive values
+  plotOrder_reg_pval <- reactiveVal(character(0))        # full paths
+  availableLayers_reg_pval <- reactiveVal(character(0))  # file names
   
+  # Helper: extract and load shapefiles
+  updatePlotOrder_reg_pval <- function(zipFile, plotOrder, availableLayers) {
+    temp_dir <- tempfile(pattern = "reg_pval_")
+    dir.create(temp_dir)
+    unzip(zipFile, exdir = temp_dir)
+    
+    shpFiles <- list.files(temp_dir, pattern = "\\.shp$", full.names = TRUE)
+    layer_names <- tools::file_path_sans_ext(basename(shpFiles))
+    
+    plotOrder(shpFiles)
+    availableLayers(layer_names)
+  }
   
-  ### Regression P-Value
-  # Reactive value to store the plot order
-  plotOrder_reg_pval <- reactiveVal(character(0))
-  
-  # Usage example:
+  # Trigger update on file upload
   observeEvent(input$shpFile_reg_pval, {
-    updatePlotOrder_reg_pval(input$shpFile_reg_pval$datapath, plotOrder_reg_pval, "shpPickers_reg_pval")
+    req(input$shpFile_reg_pval)
+    updatePlotOrder_reg_pval(
+      zipFile = input$shpFile_reg_pval$datapath,
+      plotOrder = plotOrder_reg_pval,
+      availableLayers = availableLayers_reg_pval
+    )
   })
   
-  # Function to generate color picker UI dynamically
+  # Shape File Renderer for regression p-values
+  output$shapefileSelector_reg_pval <- renderUI({
+    req(availableLayers_reg_pval())
+    shinyjqui::sortableCheckboxGroupInput(
+      inputId = "shapes_reg_pval",
+      label = "Select and order shapefiles for Regression p-values (drag & drop)",
+      choices = availableLayers_reg_pval()
+    )
+  })
+  
+  # Dynamic color pickers for selected regression p-value shapefiles
   output$colorpickers_reg_pval <- renderUI({
-    createColorPickers4b(plotOrder_reg_pval(), input$shpFile_reg_pval)
-  })
-  
-  # Manually reorder shapefiles
-  observeEvent(input$reorderButton_reg_pval, {
-    createReorderModal(plotOrder_reg_pval(), input$shpFile_reg_pval)
+    req(input$shapes_reg_pval, input$shapes_reg_pval_order, plotOrder_reg_pval())
+    selected_ordered <- input$shapes_reg_pval_order[input$shapes_reg_pval_order %in% input$shapes_reg_pval]
+    shp_files <- plotOrder_reg_pval()[match(selected_ordered, tools::file_path_sans_ext(basename(plotOrder_reg_pval())))]
     
+    pickers <- lapply(shp_files, function(file) {
+      file_name <- tools::file_path_sans_ext(basename(file))
+      input_id <- paste0("shp_colour_reg_pval_", file_name)
+      last_val <- isolate(input[[input_id]])
+      colourInput(
+        inputId = input_id,
+        label   = paste("Border Color for", file_name),
+        value   = if (!is.null(last_val)) last_val else "black",
+        showColour = "background",
+        palette = "limited",
+        allowTransparent = FALSE
+      )
+    })
+    do.call(tagList, pickers)
   })
   
-  observeEvent(input$reorderConfirm, {
-    reorder_shapefiles(plotOrder_reg_pval, input$reorderSelect, input$reorderAfter, "shpPickers_reg_pval")
-  })
+  ####### Regression Residual
+  # Reactive values
+  plotOrder_reg_res <- reactiveVal(character(0))        # full paths
+  availableLayers_reg_res <- reactiveVal(character(0))  # file names
   
+  # Helper: extract and load shapefiles
+  updatePlotOrder_reg_res <- function(zipFile, plotOrder, availableLayers) {
+    temp_dir <- tempfile(pattern = "reg_res_")
+    dir.create(temp_dir)
+    unzip(zipFile, exdir = temp_dir)
+    
+    shpFiles <- list.files(temp_dir, pattern = "\\.shp$", full.names = TRUE)
+    layer_names <- tools::file_path_sans_ext(basename(shpFiles))
+    
+    plotOrder(shpFiles)
+    availableLayers(layer_names)
+  }
   
-  ### Regression Residual
-  # Reactive value to store the plot order
-  plotOrder_reg_res <- reactiveVal(character(0))
-  
-  # Usage example:
+  # Trigger update on file upload
   observeEvent(input$shpFile_reg_res, {
-    updatePlotOrder_reg_res(input$shpFile_reg_res$datapath, plotOrder_reg_res, "shpPickers_reg_res")
+    req(input$shpFile_reg_res)
+    updatePlotOrder_reg_res(
+      zipFile = input$shpFile_reg_res$datapath,
+      plotOrder = plotOrder_reg_res,
+      availableLayers = availableLayers_reg_res
+    )
   })
   
-  # Function to generate color picker UI dynamically
+  # Shape File Renderer for regression residuals
+  output$shapefileSelector_reg_res <- renderUI({
+    req(availableLayers_reg_res())
+    shinyjqui::sortableCheckboxGroupInput(
+      inputId = "shapes_reg_res",
+      label = "Select and order shapefiles for Regression Residuals (drag & drop)",
+      choices = availableLayers_reg_res()
+    )
+  })
+  
+  # Dynamic color pickers for selected regression residual shapefiles
   output$colorpickers_reg_res <- renderUI({
-    createColorPickers4c(plotOrder_reg_res(), input$shpFile_reg_res)
-  })
-  
-  # Manually reorder shapefiles
-  observeEvent(input$reorderButton_reg_res, {
-    createReorderModal(plotOrder_reg_res(), input$shpFile_reg_res)
+    req(input$shapes_reg_res, input$shapes_reg_res_order, plotOrder_reg_res())
+    selected_ordered <- input$shapes_reg_res_order[input$shapes_reg_res_order %in% input$shapes_reg_res]
+    shp_files <- plotOrder_reg_res()[match(selected_ordered, tools::file_path_sans_ext(basename(plotOrder_reg_res())))]
     
+    pickers <- lapply(shp_files, function(file) {
+      file_name <- tools::file_path_sans_ext(basename(file))
+      input_id <- paste0("shp_colour_reg_res_", file_name)
+      last_val <- isolate(input[[input_id]])
+      colourInput(
+        inputId = input_id,
+        label   = paste("Border Color for", file_name),
+        value   = if (!is.null(last_val)) last_val else "black",
+        showColour = "background",
+        palette = "limited",
+        allowTransparent = FALSE
+      )
+    })
+    do.call(tagList, pickers)
   })
   
-  observeEvent(input$reorderConfirm, {
-    reorder_shapefiles(plotOrder_reg_res, input$reorderSelect, input$reorderAfter, "shpPickers_reg_res")
-  })
   
-  ## ANNUAL CYCLES observe, update & interactive controls----
-  ### Initialise and update timeseries dataframe ----
+  ### ANNUAL CYCLES observe, update & interactive controls----
+  ####### Initialise and update timeseries dataframe ----
   
   # Add in initial data
   monthly_ts_data = reactiveVal(monthly_ts_starter_data())
@@ -6997,7 +7243,7 @@ server <- function(input, output, session) {
   })
   
   
-  ### Input updaters ----
+  ####### Input updaters ----
   
   # Mode Updater (based on dataset0)
   observe({
@@ -7230,7 +7476,7 @@ server <- function(input, output, session) {
   })
   
   
-  ### Interactivity ----
+  ####### Interactivity ----
   
   # TS point/line setter
   observeEvent(input$ts_click5,{
@@ -7302,7 +7548,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Initialise and update custom points lines highlights ----
+  ####### Initialise and update custom points lines highlights ----
   
   ts_points_data5 = reactiveVal(data.frame())
   ts_highlights_data5 = reactiveVal(data.frame())
@@ -7370,8 +7616,9 @@ server <- function(input, output, session) {
     ts_lines_data5(data.frame())
   })
   
-  ## SEA observe, update & interactive controls----
-  ### Input updaters ----
+  
+  ### SEA observe, update & interactive controls----
+  ####### Input updaters ----
   
   # Update variable selection
   observe({
@@ -7648,7 +7895,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Generate Metadata for SEA ----
+  ####### Generate Metadata for SEA ----
   
   #Download Plot data 
   plot_gen_input_sea <- reactive({
@@ -7780,12 +8027,14 @@ server <- function(input, output, session) {
     }
   })
   
-  #Processing and Plotting ----
-  ## DATA PROCESSING ----  
+  
+  
+  # Processing and Plotting ----
+  ### DATA PROCESSING ----  
   # NOTE that "primary" refers to anomalies, composites, variable 1 and dependent
   # variable while "secondary" refers to variable 2 and independent variable
   
-  ### Month range ----
+  ####### Month range ----
   
   month_range_primary <- reactive({
     #Creating Numeric Vector for Month Range between 0 and 12
@@ -7811,7 +8060,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Subset lons & Subset lats ----
+  ####### Subset lons & Subset lats ----
   
   subset_lons_primary <- reactive({
     if (input$nav1 == "tab1"){   # Anomalies
@@ -7857,7 +8106,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Data ID ----
+  ####### Data ID ----
   # Generating data ID - c(pre-processed data?,dataset,variable,season)
   
   data_id_primary <- reactive({
@@ -7881,7 +8130,7 @@ server <- function(input, output, session) {
   })
   
   
-  ### Update custom_data ----
+  ####### Update custom_data ----
   
   # Update preprocessed and custom_data_primary (if required)
   
@@ -7942,7 +8191,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Geographic Subset ----
+  ####### Geographic Subset ----
   
   data_output1_primary <- reactive({
     req(data_id_primary(), subset_lons_primary(), subset_lats_primary())
@@ -7962,7 +8211,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Yearly subset ----
+  ####### Yearly subset ----
   
   data_output2_primary <- reactive({
     if (input$nav1 == "tab1"){   # Anomalies
@@ -7986,7 +8235,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Reference subset ----
+  ####### Reference subset ----
   # Create reference yearly subset & convert to mean
   
   data_output3_primary <- reactive({
@@ -8024,7 +8273,7 @@ server <- function(input, output, session) {
     return(processed_data4)
   })
   
-  ### Convert to anomalies ----
+  ####### Convert to anomalies ----
   
   data_output4_primary <- reactive({
     if (input$nav1 == "tab1"){   # Anomalies
@@ -8062,8 +8311,8 @@ server <- function(input, output, session) {
     }
   })
   
-  ## ANOMALIES Load SD ratio data, plotting & downloads ----  
-  ### SD ratio data ----
+  ### ANOMALIES Load SD ratio data, plotting & downloads ----  
+  ####### SD ratio data ----
   
   # Update SD ratio data when required
   observe({
@@ -8097,40 +8346,53 @@ server <- function(input, output, session) {
                         subset_lons_primary(),subset_lats_primary(),month_range_primary(),input$range_years)
   })
   
-  ### Plotting ----
-  
-  #Map customization (statistics and map titles)
+  ####### Plotting ----
+
+  # Map customization (statistics and map titles)
   
   plot_titles <- reactive({
-    req(input$nav1 == "tab1") # Only run code if in the current tab
-    
-    my_title <- generate_titles(
-      tab = "general",
-      dataset = input$dataset_selected,
-      variable = input$variable_selected,
-      mode = "Anomaly",
-      map_title_mode = input$title_mode,
-      ts_title_mode = input$title_mode_ts,
-      month_range = month_range_primary(),
-      year_range = input$range_years,
-      baseline_range = input$ref_period,
-      baseline_years_before = NA,
-      lon_range = lonlat_vals()[1:2],
-      lat_range = lonlat_vals()[3:4],
-      map_custom_title1 = input$title1_input,
-      map_custom_title2 = input$title2_input,
-      ts_custom_title1 = input$title1_input_ts,
-      ts_custom_title2 = NA,
-      map_title_size = input$title_size_input,
-      ts_title_size = input$title_size_input_ts,
-      ts_data = timeseries_data()
-    )
-    return(my_title)
+    req(input$nav1 == "tab1")
+    req(input$range_years)
+
+    # Validate year range
+    if (length(input$range_years) < 2 ||
+        any(is.na(input$range_years)) ||
+        input$range_years[1] > input$range_years[2]) {
+      return(NULL)
+    }
+
+    tryCatch({
+      generate_titles(
+        tab = "general",
+        dataset = input$dataset_selected,
+        variable = input$variable_selected,
+        mode = "Anomaly",
+        map_title_mode = input$title_mode,
+        ts_title_mode = input$title_mode_ts,
+        month_range = month_range_primary(),
+        year_range = input$range_years,
+        baseline_range = input$ref_period,
+        baseline_years_before = NA,
+        lon_range = lonlat_vals()[1:2],
+        lat_range = lonlat_vals()[3:4],
+        map_custom_title1 = input$title1_input,
+        map_custom_title2 = input$title2_input,
+        ts_custom_title1 = input$title1_input_ts,
+        ts_custom_title2 = NA,
+        map_title_size = input$title_size_input,
+        ts_title_size = input$title_size_input_ts,
+        ts_data = timeseries_data()
+      )
+    }, error = function(e) {
+      message("plot_titles() failed: ", e$message)
+      return(NULL)
+    })
   })
   
+  
   # Add value to custom title
-
-  # Step 1: Clear the inputs when switching to "Default"
+  
+  # Step 1: Clear inputs when switching to "Default"
   observeEvent(input$title_mode, {
     if (input$title_mode == "Default" || input$title_mode_ts == "Default") {
       updateTextInput(session, "title1_input", value = "")
@@ -8138,25 +8400,31 @@ server <- function(input, output, session) {
       updateTextInput(session, "title1_input_ts", value = "")
     }
   })
-  
-  # Step 2: Fill updated default values after a short delay (only in Default mode)
+
+  # Step 2: Fill updated default values after a short delay
   observeEvent({
     input$title_mode
-    plot_titles()
   }, {
     req(input$title_mode == "Default" || input$title_mode_ts == "Default")
-    req(plot_titles())
-    
-    # Short delay to ensure reset happens first
+
     invalidateLater(100, session)
-    
+
     isolate({
-      updateTextInput(session, "title1_input", value = plot_titles()$map_title)
-      updateTextInput(session, "title2_input", value = plot_titles()$map_subtitle)
-      updateTextInput(session, "title1_input_ts", value = plot_titles()$ts_title)
+      titles <- plot_titles()
+      if (is.null(titles)) {
+        showNotification("Could not generate default titles — check your year range.", type = "error")
+        updateTextInput(session, "title1_input", value = "Invalid Title")
+        updateTextInput(session, "title2_input", value = "")
+        updateTextInput(session, "title1_input_ts", value = "")
+      } else {
+        updateTextInput(session, "title1_input", value = titles$map_title)
+        updateTextInput(session, "title2_input", value = titles$map_subtitle)
+        updateTextInput(session, "title1_input_ts", value = titles$ts_title)
+      }
     })
   })
-
+  
+  # Anomalies Statistics
   map_statistics = reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
     my_stats = create_stat_highlights_data(data_output4_primary(),SDratio_subset(),
@@ -8166,10 +8434,12 @@ server <- function(input, output, session) {
   })
   
   #Plotting the Data (Maps)
-  map_data <- function(){create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
+  map_data <- function(){create_map_datatable(data_output4_primary(),
+                                              subset_lons_primary(),
+                                              subset_lats_primary())}
   
   final_map_data <- reactive({
-    req(input$value_type_map_data)  # Ensure input is available
+    # req(input$value_type_map_data)  # Ensure input is available
     
     option <- input$value_type_map_data
     
@@ -8195,6 +8465,19 @@ server <- function(input, output, session) {
   })
   
   map_plot <- function() {
+    
+    # Validate year range BEFORE anything else
+    if (is.null(input$range_years) ||
+        length(input$range_years) < 2 ||
+        any(is.na(input$range_years)) ||
+        input$range_years[1] > input$range_years[2] ||
+        input$range_years[1] < 1422 ||
+        input$range_years[2] > 2008) {
+      validate(
+        need(FALSE, "Please select a valid year range between 1422 and 2008.")
+      )
+    }
+    
     plot_map(
       data_input = create_geotiff(map_data()),
       lon_lat_range = lonlat_vals(),
@@ -8215,7 +8498,7 @@ server <- function(input, output, session) {
       white_land = input$white_land,
       
       plotOrder = plotOrder(),
-      shpPickers = input$shpPickers,
+      shpOrder = input$shapes_order[input$shapes_order %in% input$shapes],
       input = input,
       plotType = "shp_colour_",
       
@@ -8300,7 +8583,7 @@ server <- function(input, output, session) {
       white_land = input$white_land,
       
       plotOrder = plotOrder(),
-      shpPickers = input$shpPickers,
+      shpOrder = input$shapes_order[input$shapes_order %in% input$shapes],
       input = input,
       plotType = "shp_colour_",
       
@@ -8420,7 +8703,7 @@ server <- function(input, output, session) {
   
   output$timeseries <- renderPlot({timeseries_plot_anom()}, height = 400)
   
-  ### ModE-RA sources ----
+  ####### ModE-RA sources ----
   
   # Set up values and functions for plotting
   fad_zoom  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
@@ -8439,8 +8722,18 @@ server <- function(input, output, session) {
   # Plot map 
   fad_plot = function(){plot_modera_sources(fad_global_data(),input$fad_year, season_fad_short(),fad_zoom())}
   
+  fad_dimensions <- reactive({
+    req(input$nav1 == "tab1") # Only run code if in the current tab
+    m_d_f = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map_width, input$dimension[2], FALSE)
+    return(m_d_f)  
+  })
+  
   output$fad_map <- renderPlot({
     fad_plot()
+  }, width = function() {
+    fad_dimensions()[1]
+  }, height = function() {
+    fad_dimensions()[2]
   })
   
   # Set up data function
@@ -8489,7 +8782,7 @@ server <- function(input, output, session) {
   })
   
   
-  ### Downloads ----
+  ####### Downloads ----
   #Downloading General data
   output$download_map       <- downloadHandler(filename = function() {paste(plot_titles()$file_title, "-map.", input$file_type_map, sep = "")},
                                                content = function(file) {
@@ -8598,9 +8891,9 @@ server <- function(input, output, session) {
                                                           file.remove(paste("user_ncdf/netcdf_",netcdf_ID,".nc", sep=""))
                                                         })
   
-  ## COMPOSITE Year range,load SD ratio data, plotting & downloads ---- 
+  ### COMPOSITE Year range,load SD ratio data, plotting & downloads ---- 
   
-  ### Year Range ----
+  ####### Year Range ----
   
   #Creating a year set for composite
   year_set_comp <- reactive({
@@ -8612,7 +8905,7 @@ server <- function(input, output, session) {
     read_composite_data(input$range_years2a, input$upload_file2a$datapath, input$enter_upload2a)
   })
   
-  ### SD Ratio data ----
+  ####### SD Ratio data ----
   
   # Update SD ratio data when required
   observe({
@@ -8646,39 +8939,49 @@ server <- function(input, output, session) {
                         subset_lons_primary(),subset_lats_primary(),month_range_primary(),year_set_comp())
   })
   
-  ### Plotting ----
+  ####### Plotting ----
   
-  #Map customization (statistics and map titles)
+  # Map customization (composites)
   
   plot_titles_composites <- reactive({
-    req(input$nav1 == "tab2") # Only run code if in the current tab
+    req(input$nav1 == "tab2")
+    req(input$ref_period2)
+
+    # Validate year range
+    if (length(input$ref_period2) < 2 || any(is.na(input$ref_period2)) || input$ref_period2[1] > input$ref_period2[2]) {
+      return(NULL)
+    }
     
-    my_title <- generate_titles(
-      tab = "composites",
-      dataset = input$dataset_selected2,
-      variable = input$variable_selected2,
-      mode = input$mode_selected2,
-      map_title_mode = input$title_mode2,
-      ts_title_mode = input$title_mode_ts2,
-      month_range = month_range_primary(),
-      year_range = input$range_years2,
-      baseline_range = input$ref_period2,
-      baseline_years_before = input$prior_years2,
-      lon_range = lonlat_vals2()[1:2],
-      lat_range = lonlat_vals2()[3:4],
-      map_custom_title1 = input$title1_input2,
-      map_custom_title2 = input$title2_input2,
-      ts_custom_title1 = input$title1_input_ts2,
-      ts_custom_title2 = NA,
-      map_title_size = input$title_size_input2,
-      ts_data = timeseries_data_2()
-    )
-    
-    return(my_title)
+    tryCatch({
+      generate_titles(
+        tab = "composites",
+        dataset = input$dataset_selected2,
+        variable = input$variable_selected2,
+        mode = input$mode_selected2,
+        map_title_mode = input$title_mode2,
+        ts_title_mode = input$title_mode_ts2,
+        month_range = month_range_primary(),
+        year_range = input$range_years2,
+        baseline_range = input$ref_period2,
+        baseline_years_before = input$prior_years2,
+        lon_range = lonlat_vals2()[1:2],
+        lat_range = lonlat_vals2()[3:4],
+        map_custom_title1 = input$title1_input2,
+        map_custom_title2 = input$title2_input2,
+        ts_custom_title1 = input$title1_input_ts2,
+        ts_custom_title2 = NA,
+        map_title_size = input$title_size_input2,
+        ts_data = timeseries_data_2()
+      )
+    }, error = function(e) {
+      message("plot_titles_composites() failed: ", e$message)
+      return(NULL)
+    })
   })
   
-  # Add value to custom title
-  # Step 1: Clear the inputs when switching to "Default"
+  # Add value to custom title (composites)
+  
+  # Step 1: Clear inputs when switching to "Default"
   observeEvent(input$title_mode2, {
     if (input$title_mode2 == "Default" || input$title_mode_ts2 == "Default") {
       updateTextInput(session, "title1_input2", value = "")
@@ -8690,20 +8993,27 @@ server <- function(input, output, session) {
   # Step 2: After clearing, fill in updated values (in Default mode only)
   observeEvent({
     input$title_mode2
-    plot_titles_composites()
   }, {
     req(input$title_mode2 == "Default" || input$title_mode_ts2 == "Default")
-    req(plot_titles_composites())
     
     invalidateLater(100, session)
     
     isolate({
-      updateTextInput(session, "title1_input2", value = plot_titles_composites()$map_title)
-      updateTextInput(session, "title2_input2", value = plot_titles_composites()$map_subtitle)
-      updateTextInput(session, "title1_input_ts2", value = plot_titles_composites()$ts_title)
+      titles <- plot_titles_composites()
+      if (is.null(titles)) {
+        showNotification("⚠️ Could not generate composite titles — check your year range.", type = "error")
+        updateTextInput(session, "title1_input2", value = "Invalid Title")
+        updateTextInput(session, "title2_input2", value = "")
+        updateTextInput(session, "title1_input_ts2", value = "")
+      } else {
+        updateTextInput(session, "title1_input2", value = titles$map_title)
+        updateTextInput(session, "title2_input2", value = titles$map_subtitle)
+        updateTextInput(session, "title1_input_ts2", value = titles$ts_title)
+      }
     })
   })
   
+  # Composite statistics
   
   map_statistics_2 = reactive({
     
@@ -8734,8 +9044,6 @@ server <- function(input, output, session) {
     } else if (option == "SD Ratio") {
       req(SDratio_subset_2())
       create_map_datatable(SDratio_subset_2(), subset_lons_primary(), subset_lats_primary())
-    } else {
-      NULL  # fallback in case of unexpected input
     }
   })
   
@@ -8752,41 +9060,61 @@ server <- function(input, output, session) {
     return(m_d_2)
   })
   
-  map_plot_2 <- function(){plot_map(
-    data_input = create_geotiff(map_data_2()),
-    lon_lat_range = lonlat_vals2(),
-    variable = input$variable_selected2,
-    mode = input$mode_selected2,
-    titles = plot_titles_composites(),
-    axis_range = input$axis_input2,
-    hide_axis = input$hide_axis2,
+  map_plot_2 <- function() {
     
-    points_data = map_points_data2(),
-    highlights_data = map_highlights_data2(),
-    stat_highlights_data = map_statistics_2(),
-    
-    c_borders = input$hide_borders2,
-    white_ocean = input$white_ocean2,
-    white_land = input$white_land2,
-    
-    plotOrder = plotOrder2(),
-    shpPickers = input$shpPickers2,
-    input = input,
-    plotType = "shp_colour2_",
-    
-    projection = input$projection2,
-    center_lat = input$center_lat2,
-    center_lon = input$center_lon2,
-    
-    show_rivers = input$show_rivers2,
-    label_rivers = input$label_rivers2,
-    show_lakes = input$show_lakes2,
-    label_lakes = input$label_lakes2,
-    show_mountains = input$show_mountains2,
-    label_mountains = input$label_mountains2
-  )}
+    # Validate year range BEFORE anything else
+    if (is.null(input$ref_period2) ||
+        length(input$ref_period2) < 2 ||
+        any(is.na(input$ref_period2)) ||
+        input$ref_period2[1] > input$ref_period2[2] ||
+        input$ref_period2[1] < 1422 ||
+        input$ref_period2[2] > 2008) {
+      validate(need(FALSE, "Please select a valid year range between 1422 and 2008."))
+    }
+
+    plot_map(
+      data_input = create_geotiff(map_data_2()),
+      lon_lat_range = lonlat_vals2(),
+      variable = input$variable_selected2,
+      mode = input$mode_selected2,
+      titles = plot_titles_composites(),
+      axis_range = input$axis_input2,
+      hide_axis = input$hide_axis2,
+      
+      points_data = map_points_data2(),
+      highlights_data = map_highlights_data2(),
+      stat_highlights_data = map_statistics_2(),
+      
+      c_borders = input$hide_borders2,
+      white_ocean = input$white_ocean2,
+      white_land = input$white_land2,
+      
+      plotOrder = plotOrder2(),
+      shpOrder = input$shapes2_order[input$shapes2_order %in% input$shapes2],
+      input = input,
+      plotType = "shp_colour2_",
+      
+      projection = input$projection2,
+      center_lat = input$center_lat2,
+      center_lon = input$center_lon2,
+      
+      show_rivers = input$show_rivers2,
+      label_rivers = input$label_rivers2,
+      show_lakes = input$show_lakes2,
+      label_lakes = input$label_lakes2,
+      show_mountains = input$show_mountains2,
+      label_mountains = input$label_mountains2
+    )
+  }
   
-  output$map2 <- renderPlot({map_plot_2()},width = function(){map_dimensions_2()[1]},height = function(){map_dimensions_2()[2]})
+  output$map2 <- renderPlot({
+    map_plot_2()
+  }, width = function() {
+    map_dimensions_2()[1]
+  }, height = function() {
+    map_dimensions_2()[2]
+  })
+  
   # code line below sets height as a function of the ratio of lat/lon 
   
   
@@ -8850,7 +9178,7 @@ server <- function(input, output, session) {
              white_land = input$white_land2,
              
              plotOrder = plotOrder2(),
-             shpPickers = input$shpPickers2,
+             shpOrder = input$shapes2_order[input$shapes2_order %in% input$shapes2],
              input = input,
              plotType = "shp_colour2_", 
              
@@ -8992,7 +9320,7 @@ server <- function(input, output, session) {
   output$text_custom_years2b <- renderText("Chosen reference years:")
   output$custom_years2b      <- renderText({year_set_comp_ref()})
   
-  ### ModE-RA sources ----
+  ####### ModE-RA sources ----
   
   # Set up values and functions for plotting
   fad_zoom2  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
@@ -9011,7 +9339,19 @@ server <- function(input, output, session) {
   # Plot map 
   fad_plot2 = function(){plot_modera_sources(fad_global_data2(),input$fad_year2, season_fad_short2(),fad_zoom2())}
   
-  output$fad_map2 <- renderPlot({fad_plot2()})
+  fad_dimensions2 <- reactive({
+    req(input$nav1 == "tab2") # Only run code if in the current tab
+    m_d_f2 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map2_width, input$dimension[2], FALSE)
+    return(m_d_f2)  
+  })
+  
+  output$fad_map2 <- renderPlot({
+    fad_plot2()
+  }, width = function() {
+    fad_dimensions2()[1]
+  }, height = function() {
+    fad_dimensions2()[2]
+  })
   
   # Set up data function
   fad_data2 <- function() {
@@ -9059,7 +9399,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Downloads ----
+  ####### Downloads ----
   #Downloading General data
   output$download_map2            <- downloadHandler(filename = function() {paste(plot_titles_composites()$file_title, "-map.", input$file_type_map2, sep = "")},
                                                      content = function(file) {
@@ -9158,9 +9498,9 @@ server <- function(input, output, session) {
                                                                               row.names = FALSE)
                                                        }})
   
-  ## CORRELATION shared lonlat/year range, user data, plotting & downloads ----
+  ### CORRELATION shared lonlat/year range, user data, plotting & downloads ----
   
-  ### Shared lonlat/year_range ----
+  ####### Shared lonlat/year_range ----
   
   # Find shared lonlat
   
@@ -9182,11 +9522,7 @@ server <- function(input, output, session) {
         variable1_lag = input$lagyears_v1_cor,
         variable2_lag = input$lagyears_v2_cor
       )
-      
-      ### REMOVE
-      print("DEBUG: Extracted Year Range")
-      print(year_range)
-      
+
       return(year_range)
     }, error = function(e) {
       showModal(
@@ -9204,7 +9540,7 @@ server <- function(input, output, session) {
   
   
   
-  ### User data processing ----
+  ####### User data processing ----
   
   # Load in user data for variable 1
   user_data_v1 = reactive({
@@ -9213,13 +9549,7 @@ server <- function(input, output, session) {
     
     if (input$source_v1 == "User Data"){
       new_data1 = read_regcomp_data(input$user_file_v1$datapath)
-      
-      ### REMOVE
-      print("DEBUG: user_data_v1 loaded")
-      print(head(new_data1))
-      print(dim(new_data1))
-      
-      
+
       return(new_data1)
     }
     else{
@@ -9270,7 +9600,7 @@ server <- function(input, output, session) {
     return(usr_ss2)
   })
   
-  ### Generate plot data ---- 
+  ####### Generate plot data ---- 
   
   # for variable 1:
   #Map titles
@@ -9305,7 +9635,11 @@ server <- function(input, output, session) {
       lon_lat_range = lonlat_vals_v1(),
       variable = input$ME_variable_v1,
       mode = input$mode_selected_v1,
-      titles = plot_titles_v1()
+      titles = plot_titles_v1(),
+      shpOrder = NULL,
+      plotOrder = NULL,
+      input = NULL,
+      plotType = "default"
     )
   }
   
@@ -9380,7 +9714,11 @@ server <- function(input, output, session) {
       lon_lat_range = lonlat_vals_v2(),
       variable = input$ME_variable_v2,
       mode = input$mode_selected_v2,
-      titles = plot_titles_v2()
+      titles = plot_titles_v2(),
+      shpOrder = NULL,
+      plotOrder = NULL,
+      input = NULL,
+      plotType = "default"
     )
   }
   
@@ -9418,9 +9756,9 @@ server <- function(input, output, session) {
     return(p)
   }
   
-  ### Plotting ----
+  ####### Plotting ----
   
-  #### Plot v1/v2 plots
+  ######### Plot v1/v2 plots
   
   # Generate plot dimensions
   plot_dimensions_v1 <- reactive({
@@ -9486,7 +9824,7 @@ server <- function(input, output, session) {
   })  
   
   
-  #### Plot shared TS plot
+  ######### Plot shared TS plot
   
   # Generate correlation titles
   plot_titles_cor = reactive({
@@ -9667,7 +10005,7 @@ server <- function(input, output, session) {
   
   output$correlation_ts = renderPlot({timeseries_plot_corr()}, height = 400)
   
-  #### Correlation Scatter Plot
+  ######### Correlation Scatter Plot
   # Function
   scatter_plot_corr = function(){
     req(ts_data_v1(), ts_data_v2(), plot_titles_cor())
@@ -9816,7 +10154,7 @@ server <- function(input, output, session) {
     scatter_plot_corr()
   })
   
-  #### Plot correlation map
+  ######### Plot correlation map
   
   # Pick out relevant v1/v2 data:
   correlation_map_data_v1 = reactive({
@@ -9892,7 +10230,6 @@ server <- function(input, output, session) {
   axis_range_dynamic <- reactive({
     vals <- values(correlation_map_data_tiff())
     max_abs <- max(abs(vals), na.rm = TRUE)
-    print(paste("Max abs:", max_abs))
     c(-max_abs, max_abs)
   })
   
@@ -9950,9 +10287,9 @@ server <- function(input, output, session) {
         white_land = input$white_land3,
         
         plotOrder = plotOrder3(),
-        shpPickers = input$shpPickers3,
-        input=input,
-        plotType="shp_colour3_",
+        shpOrder = input$shapes3_order[input$shapes3_order %in% input$shapes3],
+        input = input,
+        plotType = "shp_colour3_",
         
         projection=input$projection3,
         center_lat=input$center_lat3,
@@ -9987,7 +10324,6 @@ server <- function(input, output, session) {
           axis.text = element_text(size = titles$map_title_size / 1.6),
         )
       }
-      print(width)
       return(p)
     }
   }
@@ -10002,7 +10338,7 @@ server <- function(input, output, session) {
   })
   
   
-  #### Data tables & Downloads 
+  ######### Data tables & Downloads 
   
   # Create output ts_data
   correlation_ts_datatable = reactive({
@@ -10053,7 +10389,7 @@ server <- function(input, output, session) {
   
   output$correlation_map_data <- renderTable({correlation_map_datatable()}, rownames = TRUE)
   
-  ### ModE-RA sources ----
+  ####### ModE-RA sources ----
   
   # Set up values and functions for plotting
   fad_zoom3  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
@@ -10072,7 +10408,19 @@ server <- function(input, output, session) {
   # Plot map 
   fad_plot3 = function(){plot_modera_sources(fad_global_data3(),input$fad_year3, season_fad_short3(),fad_zoom3())}
   
-  output$fad_map3 <- renderPlot({fad_plot3()})
+  fad_dimensions3 <- reactive({
+    req(input$nav1 == "tab3") # Only run code if in the current tab
+    m_d_f3 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map3_width, input$dimension[2], FALSE)
+    return(m_d_f3)  
+  })
+
+  output$fad_map3 <- renderPlot({
+    fad_plot3()
+  }, width = function() {
+    fad_dimensions3()[1]
+  }, height = function() {
+    fad_dimensions3()[2]
+  })
   
   # Set up data function
   fad_data3 <- function() {
@@ -10121,7 +10469,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Downloads ----
+  ####### Downloads ----
   # Downloads
   
   output$download_timeseries3      <- downloadHandler(filename = function(){paste(plot_titles_cor()$file_title,"-ts.",input$file_type_timeseries3, sep = "")},
@@ -10222,9 +10570,9 @@ server <- function(input, output, session) {
                                                        }})
   
   
-  ## REGRESSION year range, user data, plotting & downloads ----
+  ### REGRESSION year range, user data, plotting & downloads ----
   
-  ### User data processing ----
+  ####### User data processing ----
   
   # Extract Shared year range
   year_range_reg = reactive({
@@ -10236,11 +10584,7 @@ server <- function(input, output, session) {
         input$user_file_iv$datapath,
         input$user_file_dv$datapath
       )
-      
-      ### REMOVE
-      print("DEBUG: Extracted Year Range (Regression)")
-      print(res)
-      return(res)
+
     },
     error = function(e) {
       showModal(
@@ -10268,12 +10612,7 @@ server <- function(input, output, session) {
     if (input$source_iv == "User Data"){
 
       new_data1 = read_regcomp_data(input$user_file_iv$datapath)  
-      
-      ### REMOVE
-      print("DEBUG: user_data_v1 loaded")
-      print(head(new_data1))
-      print(dim(new_data1))
-      
+
       return(new_data1)
     }
     else{
@@ -10314,7 +10653,7 @@ server <- function(input, output, session) {
     return(usr_ss2)
   }) 
   
-  ### Prep plotting data ----
+  ####### Prep plotting data ----
   
   #Map titles
   plot_titles_dv <- reactive({
@@ -10371,7 +10710,11 @@ server <- function(input, output, session) {
     lon_lat_range = lonlat_vals_dv(),
     variable = input$ME_variable_dv,
     mode = input$mode_selected_dv,
-    titles = plot_titles_dv()
+    titles = plot_titles_dv(),
+    shpOrder = NULL,
+    plotOrder = NULL,
+    input = NULL,
+    plotType = "default"
   )}
   
   # Generate timeseries data & plotting function for iv
@@ -10417,7 +10760,7 @@ server <- function(input, output, session) {
   })
   
 
-  ### Plotting initial IV/DV ----
+  ####### Plotting initial IV/DV ----
   
   # Generate plot dimensions
   plot_dimensions_iv <- reactive({
@@ -10459,9 +10802,9 @@ server <- function(input, output, session) {
     plot_dimensions_dv()[2]
   })  
   
-  ### Generate plot data ----
+  ####### Generate plot data ----
 
-  ## Preparation
+  ### Preparation
   
   # Set independent variables:
   variables_iv = reactive({
@@ -10769,9 +11112,9 @@ server <- function(input, output, session) {
     return(p_d_r)
   })
 
-  ### Plotting ----
+  ####### Plotting ----
 
-  #### Regression timeseries plot 
+  ######### Regression timeseries plot 
   
   regression_ts_data = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
@@ -10835,7 +11178,7 @@ server <- function(input, output, session) {
     pagingType = "numbers"
   ))
   
-  ## Regression Summary data 
+  ### Regression Summary data 
   
   regression_summary_data = reactive({
     
@@ -10852,7 +11195,7 @@ server <- function(input, output, session) {
   
   output$regression_summary_data = renderPrint({reg_sd()})  
   
-  #### Regression coefficient plot
+  ######### Regression coefficient plot
   
   regression_coeff_data = reactive({
     
@@ -10887,9 +11230,9 @@ server <- function(input, output, session) {
       highlights_data = map_highlights_data_reg_coeff(),
       
       plotOrder = plotOrder_reg_coeff(),
-      shpPickers = input$shpPickers_reg_coeff,
-      input=input,
-      plotType="shp_colour4a_",
+      shpOrder = input$shapes_reg_coeff_order[input$shapes_reg_coeff_order %in% input$shapes_reg_coeff],
+      input = input,   # always just 'input'
+      plotType = "shp_colour_reg_coeff_",
       
       c_borders = input$hide_borders_reg_coeff,
       white_ocean = input$white_ocean_reg_coeff,
@@ -10926,7 +11269,7 @@ server <- function(input, output, session) {
   output$data_reg_coeff = renderTable({reg_coef_table()}, rownames = TRUE)
   
   
-  #### Regression pvalue plot
+  ######### Regression pvalue plot
   
   regression_pvalue_data = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
@@ -10957,9 +11300,9 @@ server <- function(input, output, session) {
       highlights_data = map_highlights_data_reg_pval(),
       
       plotOrder = plotOrder_reg_pval(),
-      shpPickers = input$shpPickers_reg_pval,
-      input=input,
-      plotType="shp_colour4b_",
+      shpOrder = input$shapes_reg_pval_order[input$shapes_reg_pval_order %in% input$shapes_reg_pval],
+      input = input,
+      plotType = "shp_colour_reg_pval_",
       
       c_borders = input$hide_borders_reg_pval,
       white_ocean = input$white_ocean_reg_pval,
@@ -10978,7 +11321,9 @@ server <- function(input, output, session) {
     )
   }
   
-  output$plot_reg_pval = renderPlot({reg_pval_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
+  output$plot_reg_pval = renderPlot({
+    reg_pval_map()
+  }, width = function(){plot_dimensions_reg()[1]}, height = function(){plot_dimensions_reg()[2]})
   
   reg_pval_table = function(){
     req(input$pvalue_variable)
@@ -10996,7 +11341,7 @@ server <- function(input, output, session) {
   output$data_reg_pval = renderTable({reg_pval_table()},rownames = TRUE)
 
   
-  #### Regression residuals plot
+  ######### Regression residuals plot
   
   regression_residuals_data = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
@@ -11035,9 +11380,9 @@ server <- function(input, output, session) {
       highlights_data = map_highlights_data_reg_res(),
       
       plotOrder = plotOrder_reg_res(),
-      shpPickers = input$shpPickers_reg_res,
-      input=input,
-      plotType="shp_colour4c_",
+      shpOrder = input$shapes_reg_res_order[input$shapes_reg_res_order %in% input$shapes_reg_res],
+      input = input,
+      plotType = "shp_colour_reg_res_",
       
       c_borders = input$hide_borders_reg_res,
       white_ocean = input$white_ocean_reg_res,
@@ -11056,7 +11401,13 @@ server <- function(input, output, session) {
     )
   }
   
-  output$plot_reg_resi = renderPlot({reg_res_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
+  output$plot_reg_resi = renderPlot({
+    reg_res_map()
+  }, width = function() {
+    plot_dimensions_reg()[1]
+  }, height = function() {
+    plot_dimensions_reg()[2]
+  })
   
   reg_res_table = function(){
     # Find ID of year selected
@@ -11068,7 +11419,7 @@ server <- function(input, output, session) {
   
   output$data_reg_res = renderTable({reg_res_table()},rownames = TRUE)
 
-  ### ModE-RA sources ----
+  ####### ModE-RA sources ----
   
   # Set up values and functions for plotting
   fad_zoom4  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
@@ -11087,7 +11438,19 @@ server <- function(input, output, session) {
   # Plot map 
   fad_plot4 = function(){plot_modera_sources(fad_global_data4(),input$fad_year4, season_fad_short4(),fad_zoom4())}
   
-  output$fad_map4 <- renderPlot({fad_plot4()})
+  fad_dimensions4 <- reactive({
+    req(input$nav1 == "tab4") # Only run code if in the current tab
+    m_d_f4 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map4_width, input$dimension[2], FALSE)
+    return(m_d_f4)  
+  })
+  
+  output$fad_map4 <- renderPlot({
+    fad_plot4()
+  }, width = function() {
+    fad_dimensions4()[1]
+  }, height = function() {
+    fad_dimensions4()[2]
+  })
   
   # Set up data function
   fad_data4 <- function() {
@@ -11136,7 +11499,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Downloads ----
+  ####### Downloads ----
   
   output$download_reg_ts_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg_ts()$file_title, "-ts.",input$reg_ts_plot_type, sep = "")},
                                                       content  = function(file) {
@@ -11303,8 +11666,8 @@ server <- function(input, output, session) {
   
   
   
-  ## ANNUAL CYCLES data processing and plotting ----
-  ### Plot timeseries & data ----
+  ### ANNUAL CYCLES data processing and plotting ----
+  ####### Plot timeseries & data ----
   
   # Plot Timeseries
   monthly_ts_titles = reactive({
@@ -11354,7 +11717,7 @@ server <- function(input, output, session) {
 
   
   
-  ### ModE-RA sources ----
+  ####### ModE-RA sources ----
   
   # Set up values and functions for plotting
   fad_zoom5  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
@@ -11373,7 +11736,19 @@ server <- function(input, output, session) {
   # Plot map 
   fad_plot5 = function(){plot_modera_sources(fad_global_data5(),input$fad_year5, season_fad_short5(),fad_zoom5())}
   
-  output$fad_map5 <- renderPlot({fad_plot5()})
+  fad_dimensions5 <- reactive({
+    req(input$nav1 == "tab5") # Only run code if in the current tab
+    m_d_f5 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map5_width, input$dimension[2], FALSE)
+    return(m_d_f5)  
+  })
+  
+  output$fad_map5 <- renderPlot({
+    fad_plot5()
+  }, width = function() {
+    fad_dimensions5()[1]
+  }, height = function() {
+    fad_dimensions5()[2]
+  })
   
   # Set up data function
   fad_data5 <- function() {
@@ -11404,7 +11779,7 @@ server <- function(input, output, session) {
     fad_zoom5(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
   })
   
-  ### Downloading Annual cycles data ----
+  ####### Downloading Annual cycles data ----
   
   output$download_timeseries5      <- downloadHandler(filename = function(){paste("annual-cycle_plot.",input$file_type_timeseries5, sep = "")},
                                                       content  = function(file) {
@@ -11459,8 +11834,8 @@ server <- function(input, output, session) {
                                                                               row.names = FALSE)
                                                        }})
   
-  ## MODE-RA SOURCES data procession and plotting ----
-  ### Plotting (for download)----
+  ### MODE-RA SOURCES data procession and plotting ----
+  ####### Plotting (for download)----
   
   season_MES_short <- reactive({
     switch(input$season_MES,
@@ -11480,7 +11855,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ### Leaflet Map ----
+  ####### Leaflet Map ----
   
   output$MES_leaflet <- renderLeaflet({
     data <- MES_global_data()
@@ -11575,7 +11950,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ## Download Preparation for Data (CSV/XLSX)
+  ### Download Preparation for Data (CSV/XLSX)
   # Set up values and functions for plotting
   fad_zoom_MES  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
   
@@ -11605,8 +11980,8 @@ server <- function(input, output, session) {
                                                                              row.names = FALSE)
                                                       }})
   
-  ### TS Sources and Observation Map ----
-  ## Timeseries plot for ModE-ra sources and observations
+  ####### TS Sources and Observation Map ----
+  ### Timeseries plot for ModE-ra sources and observations
   
   # File path and data parameters
   file_path_sources <- "data/feedback_archive_fin/Info/total_sources_observations.xlsx"
@@ -11639,9 +12014,9 @@ server <- function(input, output, session) {
                            x_ticks_every = 20,
                            year_range = year_range)
   })
-  
-  ## SEA Superposed epoch analysis ----
-  ### User Data Processing ----
+
+  ### SEA Superposed epoch analysis ----
+  ####### User Data Processing ----
   
   # Load in user data for SEA
   user_data_6 = reactive({
@@ -11675,12 +12050,12 @@ server <- function(input, output, session) {
     return(ts_us_sub)
   })
   
-  #Creating a year set for composite
+  #Creating a year set for sea
   year_set_sea <- reactive({
-    read_composite_data(input$event_years_6, input$upload_file_6b$datapath, input$enter_upload_6)
+    read_sea_data(input$event_years_6, input$upload_file_6b$datapath, input$enter_upload_6, input$source_sea_6)
   })
   
-  ### ModE-Data Processing ----
+  ####### ModE-Data Processing ----
   
   #Using the time series data as input
   timeseries_data_sea <- reactive({
@@ -11704,7 +12079,7 @@ server <- function(input, output, session) {
     return(ts_sub)
   })
   
-  ### SEA Processing ----
+  ####### SEA Processing ----
   
   # Extract years, title & y label based on selected data source
   years = reactive({
@@ -11724,7 +12099,7 @@ server <- function(input, output, session) {
       } else {
         return(paste(colnames(user_subset_6())[2]))
       }
-
+      
     } else {
       if (input$y_label_6 != "" && input$title_mode_6 == "Custom"){
         return(input$y_label_6)
@@ -11752,8 +12127,8 @@ server <- function(input, output, session) {
   
   
   # # Add value to custom title
-
-    # Step 1: When switching to Default, reset the inputs to blank
+  
+  # Step 1: When switching to Default, reset the inputs to blank
   observeEvent(input$title_mode_6, {
     if (input$title_mode_6 != "Custom") {
       updateTextInput(session, "title1_input_6", value = "")
@@ -11795,47 +12170,157 @@ server <- function(input, output, session) {
   
   # Cut event years based on the data
   event_years_cut <- reactive({
-    # Choose source of event years based on input$enter_upload_6
     if (input$enter_upload_6 == "Manual") {
       v_years <- as.integer(unlist(strsplit(input$event_years_6, split = ",")))
     } else if (input$enter_upload_6 == "Upload") {
-      v_years <- year_set_sea()
+      df <- year_set_sea()
+      v_years <- df$Event  # Use first column only
     } else {
-      return(NULL)  # or handle error/default case
+      return(NULL)
     }
     
-    # Filter event years based on lag
-    v_years_cut <- subset(v_years, (v_years > (min(years()) - input$lag_years_6[1])) &
-                            (v_years < (max(years()) - input$lag_years_6[2])))
-    
+    v_years_cut <- subset(v_years, v_years > (min(years()) - input$lag_years_6[1]) &
+                            v_years < (max(years()) - input$lag_years_6[2]))
     return(v_years_cut)
   })
   
   # Calculate SEA data
   SEA_data = reactive({
-    original_SEA = burnr::sea(ts_data(),event_years_cut(),nbefore = abs(input$lag_years_6[1]),
-                              nafter=input$lag_years_6[2],n_iter=input$sample_size_6)
-    # Replace mean and CIs with stats from NA-replaced data (if required)
-    if(sum(is.na(ts_data()))>0){
-      ts_data_random_filled = ts_data()
-      
-      # Extract the non-NA values from the column
-      non_na_values <- as.vector(ts_data_random_filled[!is.na(ts_data_random_filled)])
-      
-      # Replace NAs with random values from non-NA values
-      ts_data_random_filled[is.na(ts_data_random_filled)] <- sample(non_na_values, sum(is.na(ts_data_random_filled)), replace = TRUE)
-      
-      #Perform new SEA
-      new_SEA = burnr::sea(ts_data_random_filled,event_years_cut(),nbefore = abs(input$lag_years_6[1]),
-                           nafter=input$lag_years_6[2],n_iter=input$sample_size_6)
-      #Replace values
-      original_SEA$random$mean = new_SEA$random$mean
-      original_SEA$random$lower_95 = new_SEA$random$lower_95
-      original_SEA$random$upper_95 = new_SEA$random$upper_95
-      original_SEA$random$lower_99 = new_SEA$random$lower_99
-      original_SEA$random$upper_99 = new_SEA$random$upper_99
+    ts <- ts_data()
+    
+    # Helper: fill NAs in ts_data for random resampling
+    fill_na_random <- function(ts_input) {
+      ts_copy <- ts_input
+      if (sum(is.na(ts_copy)) > 0) {
+        non_na_vals <- ts_copy[!is.na(ts_copy)]
+        ts_copy[is.na(ts_copy)] <- sample(non_na_vals, sum(is.na(ts_copy)), replace = TRUE)
+      }
+      return(ts_copy)
     }
-    return(original_SEA)
+    
+    # Case 1: Use event-specific windows from uploaded file
+    if (input$enter_upload_6 == "Upload" &&
+        (input$use_custom_pre_6 || input$use_custom_post_6)) {
+      
+      df_event_years <- year_set_sea()
+      ts_range <- as.numeric(rownames(ts))
+      
+      # Prepare per-event lag-adjusted window
+      lag_range <- seq(-abs(input$lag_years_6[1]), input$lag_years_6[2])
+      obs_matrix <- matrix(NA, nrow = 0, ncol = length(lag_range))
+      colnames(obs_matrix) <- lag_range
+      used_events <- c()
+      
+      for (i in 1:nrow(df_event_years)) {
+        event    <- as.integer(df_event_years[i, 1])
+        pre_end  <- as.integer(df_event_years[i, 2])
+        post_end <- as.integer(df_event_years[i, 3])
+        
+        lag_before <- abs(input$lag_years_6[1])
+        lag_after  <- input$lag_years_6[2]
+        
+        # --- Pre-event years ---
+        pre_years <- seq(event - 1, event - lag_before, by = -1)
+        if (input$use_custom_pre_6 && !is.na(pre_end)) {
+          pre_years <- pre_years[pre_years <= pre_end]
+        }
+        pre_years <- sort(pre_years) # Optional: ascending order
+        
+        # --- Post-event years ---
+        post_years <- seq(event + 1, event + lag_after, by = 1)
+        if (input$use_custom_post_6 && !is.na(post_end)) {
+          post_years <- post_years[post_years <= post_end]
+        }
+        
+        # Combine pre, event, post (include event if you wish)
+        years_window <- c(pre_years, event, post_years)
+        relative_lags <- years_window - event
+        values <- ts[as.character(years_window), 1]
+        
+        row_vals <- rep(NA, length(lag_range))
+        match_index <- match(relative_lags, lag_range)
+        row_vals[match_index[!is.na(match_index)]] <- values[!is.na(match_index)]
+        
+        obs_matrix <- rbind(obs_matrix, row_vals)
+        used_events <- c(used_events, event)
+      }
+      
+      # Calculate observed mean
+      obs_mean <- colMeans(obs_matrix, na.rm = TRUE)
+      
+      # Optional: fill NAs and recompute random sample for CI bands
+      ts_filled <- fill_na_random(ts)
+      rand_matrix <- matrix(NA, nrow = input$sample_size_6, ncol = length(lag_range))
+      
+      for (j in 1:input$sample_size_6) {
+        rand_events <- sample(as.numeric(rownames(ts_filled)),
+                              length(used_events), replace = TRUE)
+        tmp_obs <- matrix(NA, nrow = length(rand_events), ncol = length(lag_range))
+        
+        for (k in seq_along(rand_events)) {
+          event <- rand_events[k]
+          years_window <- seq(event - abs(input$lag_years_6[1]), event + input$lag_years_6[2])
+          relative_lags <- years_window - event
+          values <- ts_filled[as.character(years_window), 1]
+          
+          row_vals <- rep(NA, length(lag_range))
+          match_index <- match(relative_lags, lag_range)
+          row_vals[match_index[!is.na(match_index)]] <- values[!is.na(match_index)]
+          
+          tmp_obs[k, ] <- row_vals
+        }
+        rand_matrix[j, ] <- colMeans(tmp_obs, na.rm = TRUE)
+      }
+      
+      # Confidence intervals
+      lower_95 <- apply(rand_matrix, 2, quantile, probs = 0.025, na.rm = TRUE)
+      upper_95 <- apply(rand_matrix, 2, quantile, probs = 0.975, na.rm = TRUE)
+      lower_99 <- apply(rand_matrix, 2, quantile, probs = 0.005, na.rm = TRUE)
+      upper_99 <- apply(rand_matrix, 2, quantile, probs = 0.995, na.rm = TRUE)
+      rand_mean <- colMeans(rand_matrix, na.rm = TRUE)
+      
+      return(list(
+        actual = list(
+          lag = lag_range,
+          mean = obs_mean
+        ),
+        observed = obs_matrix,
+        event_years = used_events,
+        random = list(
+          mean = rand_mean,
+          lower_95 = lower_95,
+          upper_95 = upper_95,
+          lower_99 = lower_99,
+          upper_99 = upper_99,
+          lag = lag_range
+        )
+      ))
+    }
+    
+    # Case 2: Standard SEA with global lags using burnr::sea()
+    else {
+      original_SEA <- burnr::sea(ts_data(), event_years_cut(),
+                                 nbefore = abs(input$lag_years_6[1]),
+                                 nafter  = input$lag_years_6[2],
+                                 n_iter  = input$sample_size_6)
+      
+      # Optional NA random fill
+      if (sum(is.na(ts_data())) > 0) {
+        ts_filled <- fill_na_random(ts_data())
+        new_SEA <- burnr::sea(ts_filled, event_years_cut(),
+                              nbefore = abs(input$lag_years_6[1]),
+                              nafter  = input$lag_years_6[2],
+                              n_iter  = input$sample_size_6)
+        
+        original_SEA$random$mean <- new_SEA$random$mean
+        original_SEA$random$lower_95 <- new_SEA$random$lower_95
+        original_SEA$random$upper_95 <- new_SEA$random$upper_95
+        original_SEA$random$lower_99 <- new_SEA$random$lower_99
+        original_SEA$random$upper_99 <- new_SEA$random$upper_99
+      }
+      
+      return(original_SEA)
+    }
   })
   
   # Create SEA datatable
@@ -12016,7 +12501,7 @@ server <- function(input, output, session) {
     SEA_plotfunction()
   })
   
-  ### Downloads ----
+  ####### Downloads ----
   output$download_timeseries6      <- downloadHandler(filename = function(){paste(ts_title(),"-sea.",input$file_type_timeseries6, sep = "")},
                                                       content  = function(file) {
                                                         if (input$file_type_timeseries6 == "png"){
@@ -12044,16 +12529,16 @@ server <- function(input, output, session) {
                                                                                 row.names = FALSE)
                                                          }})
   
-  ## Concerning all modes (mainly updating Ui) ----
+  ### Concerning all modes (mainly updating Ui) ----
   
   #Updates Values outside of min / max (numericInput)
   
   updateNumericInputRange1 <- function(inputId, minValue, maxValue) {
     observe({
       input_values <- input[[inputId]]
-      
+
       delay(3000, {
-        if (is.null(input_values) || is.na(input_values)) {         
+        if (is.null(input_values) || is.na(input_values)) {
         } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = inputId, value = minValue)
         } else {
@@ -12064,27 +12549,53 @@ server <- function(input, output, session) {
               updateNumericInput(inputId = inputId, value = maxValue)
             }
           }
-          
+
           update_value(input_values)
         }
       })
     })
   }
-  
+
   # Call the function for each input
   updateNumericInputRange1("point_size", 1, 10)
   updateNumericInputRange1("point_size2", 1, 10)
   updateNumericInputRange1("point_size3", 1, 10)
-  updateNumericInputRange1("point_size_ts", 1, 10)
-  updateNumericInputRange1("point_size_ts2", 1, 10)
-  updateNumericInputRange1("point_size_ts3", 1, 10)
-  updateNumericInputRange1("percentage_sign_match", 1, 100)
+  updateNumericInputRange1("point_size_reg_coeff", 1, 10)
+  updateNumericInputRange1("point_size_reg_pval", 1, 10)
+  updateNumericInputRange1("point_size_reg_res", 1, 10)  
+  
+  updateNumericInputRange1("point_size_ts", 4, 20)
+  updateNumericInputRange1("point_size_ts2", 4, 20)
+  updateNumericInputRange1("point_size_ts3", 4, 20)
+  updateNumericInputRange1("point_size_ts4", 4, 20)
+  updateNumericInputRange1("point_size_ts5", 4, 20)
+  
+  
+  updateNumericInputRange1("title_size_input", 1, 40)
+  updateNumericInputRange1("title_size_input_ts", 1, 40)
+  updateNumericInputRange1("title_size_input2", 1, 40)
+  updateNumericInputRange1("title_size_input3", 1, 40)
+  updateNumericInputRange1("title_size_input_reg_coeff", 1, 40)
+  updateNumericInputRange1("title_size_input_reg_pval", 1, 40)
+  updateNumericInputRange1("title_size_input_reg_res", 1, 40)
+  
+  updateNumericInputRange1("prior_years2", 1, 50)
   updateNumericInputRange1("percentage_sign_match2", 1, 100)
-  updateNumericInputRange1("hidden_SD_ratio", 0, 1)
-  updateNumericInputRange1("hidden_SD_ratio2", 0, 1)
+  updateNumericInputRange1("sample_size_6", 100, 100000000000)
+  
+  updateNumericInputRange1("sd_ratio", 0, 1)
+  updateNumericInputRange1("sd_ratio2", 0, 1)
+  updateNumericInputRange1("sd_input_ref_ts3", 1, 10)
+  updateNumericInputRange1("trend_sd_input_ref_ts3", 1, 10)
+  
   updateNumericInputRange1("year_moving_ts", 3, 30)
   updateNumericInputRange1("year_moving_ts3", 3, 30)
-  updateNumericInputRange1("prior_years2", 1, 50)
+  
+  updateNumericInputRange1("xaxis_numeric_interval_ts", 1, 500)
+  updateNumericInputRange1("xaxis_numeric_interval_ts2", 1, 500)
+  updateNumericInputRange1("xaxis_numeric_interval_ts3", 1, 500)
+  updateNumericInputRange1("xaxis_numeric_interval_ts4", 1, 500)
+  
   updateNumericInputRange1("center_lat", -90, 90)
   updateNumericInputRange1("center_lon", -180, 180)
   updateNumericInputRange1("center_lat2", -90, 90)
@@ -12097,13 +12608,15 @@ server <- function(input, output, session) {
   updateNumericInputRange1("center_lon_reg_pval", -180, 180)
   updateNumericInputRange1("center_lat_reg_res", -90, 90)
   updateNumericInputRange1("center_lon_reg_res", -180, 180)
-  updateNumericInputRange1("fad_year_a", 1422, 2008)
-  updateNumericInputRange1("fad_year_a2", 1422, 2008)
-  updateNumericInputRange1("fad_year_a3a", 1422, 2008)
-  updateNumericInputRange1("fad_year_a3b", 1422, 2008)
-  updateNumericInputRange1("fad_year_a4a", 1422, 2008)
-  updateNumericInputRange1("fad_year_a4b", 1422, 2008)
-  updateNumericInputRange1("fad_year_a5", 1422, 2008)
+  
+  updateNumericInputRange1("lagyears_v1_cor", -100, 100)
+  updateNumericInputRange1("lagyears_v2_cor", -100, 100)
+  
+  updateNumericInputRange1("fad_year", 1422, 2008)
+  updateNumericInputRange1("fad_year2", 1422, 2008)
+  updateNumericInputRange1("fad_year3", 1422, 2008)
+  updateNumericInputRange1("fad_year4", 1422, 2008)
+  updateNumericInputRange1("fad_year5", 1422, 2008)
   updateNumericInputRange1("reg_resi_year", 1422, 2008)
   updateNumericInputRange1("range_years_sg", 1422, 2008)
   updateNumericInputRange1("ref_period_sg", 1422, 2008)
@@ -12113,20 +12626,21 @@ server <- function(input, output, session) {
   updateNumericInputRange1("ref_period_sg_iv", 1422, 2008)
   updateNumericInputRange1("ref_period_sg_dv", 1422, 2008)
   updateNumericInputRange1("ref_period_sg5", 1422, 2008)
+  updateNumericInputRange1("ref_period_sg6", 1422, 2008)
   updateNumericInputRange1("year_MES", 1422, 2008)
   
   
   #Updates Values outside of min / max (numericRangeInput)
-  
+   
   # observe({
-  #   input_ids <- c("range_years", "range_years3", "range_years4", 
-  #                  "ref_period", "ref_period2", "ref_period_v1", 
-  #                  "ref_period_v2", "ref_period_iv", "ref_period_dv", 
+  #   input_ids <- c("range_years", "range_years3", "range_years4",
+  #                  "ref_period", "ref_period2", "ref_period_v1",
+  #                  "ref_period_v2", "ref_period_iv", "ref_period_dv",
   #                  "ref_period5")
-  #   
+  # 
   #   for (input_id in input_ids) {
   #     range_values <- input[[input_id]]
-  #     
+  # 
   #     update_values <- function(left, right) {
   #       if (!is.numeric(left) || is.na(left) || left < 1422) {
   #         updateNumericRangeInput(inputId = input_id,
@@ -12135,7 +12649,7 @@ server <- function(input, output, session) {
   #         updateNumericRangeInput(inputId = input_id,
   #                                 value = c(1422, range_values[2]))
   #       }
-  #       
+  # 
   #       if (!is.numeric(right) || is.na(right) || right < 1422) {
   #         updateNumericRangeInput(inputId = input_id,
   #                                 value = c(range_values[1], 2008))
@@ -12144,72 +12658,153 @@ server <- function(input, output, session) {
   #                                 value = c(range_values[1], 2008))
   #       }
   #     }
+  # 
+  #     update_values(range_values[1], range_values[2])
+  #   }
+  # })
+  # 
+  # observe({
+  #   input_ids <- c(
+  #     "range_longitude",
+  #     "range_longitude2",
+  #     "range_longitude_v1",
+  #     "range_longitude_v2",
+  #     "range_longitude_iv",
+  #     "range_longitude_dv",
+  #     "range_longitude5",
+  #     "fad_longitude_a5"
+  #   )
+  #   
+  #   for (input_id in input_ids) {
+  #     range_values <- input[[input_id]]
+  #     
+  #     update_values <- function(left, right) {
+  #       if (!is.numeric(left) || is.na(left) || left < -180) {
+  #         updateNumericRangeInput(inputId = input_id,
+  #                                 value = c(-180, range_values[2]))
+  #       } else if (left > 180) {
+  #         updateNumericRangeInput(inputId = input_id,
+  #                                 value = c(-180, range_values[2]))
+  #       }
+  #       
+  #       if (!is.numeric(right) || is.na(right) || right < -180) {
+  #         updateNumericRangeInput(inputId = input_id,
+  #                                 value = c(range_values[1], 180))
+  #       } else if (right > 180) {
+  #         updateNumericRangeInput(inputId = input_id,
+  #                                 value = c(range_values[1], 180))
+  #       }
+  #     }
+  #     
+  #     update_values(range_values[1], range_values[2])
+  #   }
+  # })
+  # 
+  # observe({
+  #   input_ids <- c("range_latitude", "range_latitude_v1", "range_latitude_v2", "range_latitude_iv", "range_latitude_dv", "range_latitude5", "fad_latitude_a5")
+  #   
+  #   for (input_id in input_ids) {
+  #     range_values <- input[[input_id]]
+  #     
+  #     update_values <- function(left, right) {
+  #       if (!is.numeric(left) || is.na(left) || left < -90) {
+  #         updateNumericRangeInput(inputId = input_id, value = c(-90, range_values[2]))
+  #       } else if (left > 90) {
+  #         updateNumericRangeInput(inputId = input_id, value = c(-90, range_values[2]))
+  #       }
+  #       
+  #       if (!is.numeric(right) || is.na(right) || right < -90) {
+  #         updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 90))
+  #       } else if (right > 90) {
+  #         updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 90))
+  #       }
+  #     }
   #     
   #     update_values(range_values[1], range_values[2])
   #   }
   # })
   
-  observe({
-    input_ids <- c(
-      "range_longitude",
-      "range_longitude2",
-      "range_longitude_v1",
-      "range_longitude_v2",
-      "range_longitude_iv",
-      "range_longitude_dv",
-      "range_longitude5",
-      "fad_longitude_a5"
-    )
-    
-    for (input_id in input_ids) {
-      range_values <- input[[input_id]]
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -180) {
-          updateNumericRangeInput(inputId = input_id,
-                                  value = c(-180, range_values[2]))
-        } else if (left > 180) {
-          updateNumericRangeInput(inputId = input_id,
-                                  value = c(-180, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -180) {
-          updateNumericRangeInput(inputId = input_id,
-                                  value = c(range_values[1], 180))
-        } else if (right > 180) {
-          updateNumericRangeInput(inputId = input_id,
-                                  value = c(range_values[1], 180))
-        }
+  updateNumericRangeInputSafe <- function(inputId, minValue, maxValue, skip_if = NULL) {
+    observe({
+      if (!is.null(skip_if) && skip_if()) return()
+
+      range_values <- input[[inputId]]
+      if (is.null(range_values) || length(range_values) != 2) return()
+
+      left <- range_values[1]
+      right <- range_values[2]
+
+      new_left <- if (!is.numeric(left) || is.na(left) || left < minValue || left > maxValue) minValue else left
+      new_right <- if (!is.numeric(right) || is.na(right) || right < minValue || right > maxValue) maxValue else right
+
+      if (!identical(c(left, right), c(new_left, new_right))) {
+        updateNumericRangeInput(inputId = inputId, value = c(new_left, new_right))
       }
-      
-      update_values(range_values[1], range_values[2])
-    }
+    })
+  }
+
+  updateNumericRangeInputSafe("range_years3", 1422, 2008, skip_if = function() {
+    input$source_v1 == "User Data" && input$source_v2 == "User Data"
   })
-  
-  observe({
-    input_ids <- c("range_latitude", "range_latitude_v1", "range_latitude_v2", "range_latitude_iv", "range_latitude_dv", "range_latitude5", "fad_latitude_a5")
-    
-    for (input_id in input_ids) {
-      range_values <- input[[input_id]]
-      
-      update_values <- function(left, right) {
-        if (!is.numeric(left) || is.na(left) || left < -90) {
-          updateNumericRangeInput(inputId = input_id, value = c(-90, range_values[2]))
-        } else if (left > 90) {
-          updateNumericRangeInput(inputId = input_id, value = c(-90, range_values[2]))
-        }
-        
-        if (!is.numeric(right) || is.na(right) || right < -90) {
-          updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 90))
-        } else if (right > 90) {
-          updateNumericRangeInput(inputId = input_id, value = c(range_values[1], 90))
-        }
-      }
-      
-      update_values(range_values[1], range_values[2])
-    }
+
+  updateNumericRangeInputSafe("range_years4", 1422, 2008, skip_if = function() {
+    input$source_dv == "User Data" && input$source_iv == "User Data"
   })
+
+  updateNumericRangeInputSafe("range_years", 1422, 2008)
+  updateNumericRangeInputSafe("ref_period", 1422, 2008)
+  updateNumericRangeInputSafe("ref_period2", 1422, 2008)
+  updateNumericRangeInputSafe("ref_period_v1", 1422, 2008)
+  updateNumericRangeInputSafe("ref_period_v2", 1422, 2008)
+  updateNumericRangeInputSafe("ref_period_iv", 1422, 2008)
+  updateNumericRangeInputSafe("ref_period_dv", 1422, 2008)
+  updateNumericRangeInputSafe("ref_period5", 1422, 2008)
+  updateNumericRangeInputSafe("ref_period_6", 1422, 2008)
+
+  updateNumericRangeInputSafe("range_longitude", -180, 180)
+  updateNumericRangeInputSafe("range_longitude2", -180, 180)
+  updateNumericRangeInputSafe("range_longitude_v1", -180, 180)
+  updateNumericRangeInputSafe("range_longitude_v2", -180, 180)
+  updateNumericRangeInputSafe("range_longitude_iv", -180, 180)
+  updateNumericRangeInputSafe("range_longitude_dv", -180, 180)
+  updateNumericRangeInputSafe("range_longitude5", -180, 180)
+  updateNumericRangeInputSafe("range_longitude_6", -180, 180)
+  updateNumericRangeInputSafe("fad_longitude_a5", -180, 180)
+  updateNumericRangeInputSafe("highlight_x_values", -180, 180)
+  updateNumericRangeInputSafe("highlight_x_values2", -180, 180)
+  updateNumericRangeInputSafe("highlight_x_values3", -180, 180)
+  updateNumericRangeInputSafe("highlight_x_values_reg_coeff", -180, 180)
+  updateNumericRangeInputSafe("highlight_x_values_reg_pval", -180, 180)
+  updateNumericRangeInputSafe("highlight_x_values_reg_res", -180, 180)
+  updateNumericRangeInputSafe("highlight_x_values_ts", -180, 180)
+  updateNumericRangeInputSafe("highlight_x_values_ts2", -180, 180)
+  updateNumericRangeInputSafe("highlight_x_values_ts3", -180, 180)
+  updateNumericRangeInputSafe("highlight_x_values_ts4", -180, 180)
+  updateNumericRangeInputSafe("highlight_x_values_ts5", -180, 180)
   
+  updateNumericRangeInputSafe("range_latitude", -90, 90)
+  updateNumericRangeInputSafe("range_latitude2", -90, 90)
+  updateNumericRangeInputSafe("range_latitude_v1", -90, 90)
+  updateNumericRangeInputSafe("range_latitude_v2", -90, 90)
+  updateNumericRangeInputSafe("range_latitude_iv", -90, 90)
+  updateNumericRangeInputSafe("range_latitude_dv", -90, 90)
+  updateNumericRangeInputSafe("range_latitude5", -90, 90)
+  updateNumericRangeInputSafe("range_latitude_6", -90, 90)
+  updateNumericRangeInputSafe("fad_latitude_a5", -90, 90)
+  updateNumericRangeInputSafe("highlight_y_values", -90, 90)
+  updateNumericRangeInputSafe("highlight_y_values2", -90, 90)
+  updateNumericRangeInputSafe("highlight_y_values3", -90, 90)
+  updateNumericRangeInputSafe("highlight_y_values_reg_coeff", -90, 90)
+  updateNumericRangeInputSafe("highlight_y_values_reg_pval", -90, 90)
+  updateNumericRangeInputSafe("highlight_y_values_reg_res", -90, 90)
+  updateNumericRangeInputSafe("highlight_y_values_ts", -90, 90)
+  updateNumericRangeInputSafe("highlight_y_values_ts2", -90, 90)
+  updateNumericRangeInputSafe("highlight_y_values_ts3", -90, 90)
+  updateNumericRangeInputSafe("highlight_y_values_ts4", -90, 90)
+  updateNumericRangeInputSafe("highlight_y_values_ts5", -90, 90)
+  
+  updateNumericRangeInputSafe("lag_years_6", -100, 100)
+  updateNumericRangeInputSafe("year_range_sources", 1421, 2009)
   
   #Single Year inputs update
   observe({
@@ -12284,7 +12879,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ## Stop App on end of session ----
+  ### Stop App on end of session ----
   session$onSessionEnded(function() {
     stopApp()
   })
