@@ -2590,191 +2590,626 @@ create_geotiff <- function(map_data,
 }
 
 
-## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS FOR ALL PLOT TYPES
-##           data input = All possible customization and plot generation fields
+## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS FOR ANOMALIES PLOTS
+##           collects and flattens all relevant user inputs (shared, map, ts)
+##           for export or upload use in composite plot modules
+##           returns a single-row metadata dataframe
 
-generate_metadata_all <- function(
-  
-  # Plot generation (sidebar) inputs
-  dataset = NA,
-  variable = NA,
+generate_metadata_anomalies <- function(
+    
+  # Common / input data
   range_years = NA,
-  select_sg_year = NA,
-  sg_year = NA,
-  season_sel = NA,
+  dataset_selected = NA,
+  range_latitude = NA,
+  range_longitude = NA,
   range_months = NA,
+  ref_period_sg = NA,
   ref_period = NA,
-  select_sg_ref = NA,
-  sg_ref = NA,
-  lon_range = NA,
-  lat_range = NA,
-  lonlat_vals = NA,
-  
-  # Common/field plot inputs
-  axis_mode = NA,
+  ref_single_year = NA,
+  season_selected = NA,
+  variable_selected = NA,
+  single_year = NA,
+  range_years_sg = NA,
   axis_input = NA,
+  axis_mode = NA,
+  
+  # Map settings
+  center_lat = NA,
+  center_lon = NA,
+  custom_map = NA,
+  custom_topo = NA,
+  download_options = NA,
+  file_type_map_sec = NA,
+  file_type_map = NA,
   hide_axis = NA,
+  hide_borders = NA,
+  label_lakes = NA,
+  label_mountains = NA,
+  label_rivers = NA,
+  projection = NA,
+  ref_map_mode = NA,
+  sd_ratio = NA,
+  show_lakes = NA,
+  show_mountains = NA,
+  show_rivers = NA,
   title_mode = NA,
+  title_size_input = NA,
   title1_input = NA,
   title2_input = NA,
+  white_land = NA,
+  white_ocean = NA,
   custom_statistic = NA,
-  sd_ratio = NA,
-  hide_borders = NA,
+  enable_custom_statistics = NA,
   
-  # Time series (TS) plot inputs
-  title_mode_ts = NA,
-  title1_input_ts = NA,
-  show_key_ts = NA,
+  # Time series plot inputs
+  axis_input_ts = NA,
+  axis_mode_ts = NA,
+  custom_ts = NA,
+  download_options_ts = NA,
+  enable_custom_statistics_ts = NA,
+  file_type_timeseries = NA,
   key_position_ts = NA,
+  show_key_ts = NA,
+  show_ticks_ts = NA,
+  title_mode_ts = NA,
+  title_size_input_ts = NA,
+  title1_input_ts = NA,
+  xaxis_numeric_interval_ts = NA,
+  custom_percentile_ts = NA,
+  percentile_ts = NA,
   show_ref_ts = NA,
   custom_average_ts = NA,
+  moving_percentile_ts = NA,
   year_moving_ts = NA,
-  percentile_ts = NA,
-  moving_percentile_ts = NA){
+  
+  # Reactive Values / DFs
+  ts_points_data = NA,
+  ts_highlights_data = NA,
+  ts_lines_data = NA,
+  
+  map_points_data = NA,
+  map_highlights_data = NA,
+  
+  plotOrder = NA,
+  availableLayers = NA,
+  
+  lonlat_vals = NA
+) {
+  # Helper to flatten all variable-length inputs
+  collapse_or_na <- function(x) {
+    if (is.null(x) || length(x) == 0) return(NA)
+    paste(as.character(x), collapse = ", ")
+  }
   
   meta <- data.frame(
-    axis_mode,
-    axis_input,
-    hide_axis,
-    title_mode,
-    title1_input,
-    title2_input,
-    custom_statistic,
-    sd_ratio,
-    hide_borders,
-    title_mode_ts,
-    title1_input_ts,
-    show_key_ts,
-    key_position_ts,
-    show_ref_ts,
-    custom_average_ts,
-    year_moving_ts,
-    percentile_ts,
-    moving_percentile_ts,
-    dataset,
-    variable,
-    range_years,
-    select_sg_year,
-    sg_year,
-    season_sel,
-    range_months,
-    ref_period,
-    select_sg_ref,
-    sg_ref,
-    lon_range,
-    lat_range,
-    lonlat_vals,
+    
+    # Common / input data
+    range_years       = collapse_or_na(range_years),
+    dataset_selected  = dataset_selected,
+    range_latitude    = collapse_or_na(range_latitude),
+    range_longitude   = collapse_or_na(range_longitude),
+    range_months      = collapse_or_na(range_months),
+    ref_period_sg     = ref_period_sg,
+    ref_period        = collapse_or_na(ref_period),
+    ref_single_year   = ref_single_year,
+    season_selected   = season_selected,
+    variable_selected = variable_selected,
+    single_year       = single_year,
+    range_years_sg    = range_years_sg,
+    axis_input        = collapse_or_na(axis_input),
+    axis_mode         = axis_mode,
+    
+    # Map settings
+    center_lat              = center_lat,
+    center_lon              = center_lon,
+    custom_map              = custom_map,
+    custom_topo             = custom_topo,
+    download_options        = download_options,
+    file_type_map_sec       = file_type_map_sec,
+    file_type_map           = file_type_map,
+    hide_axis               = hide_axis,
+    hide_borders            = hide_borders,
+    label_lakes             = label_lakes,
+    label_mountains         = label_mountains,
+    label_rivers            = label_rivers,
+    projection              = projection,
+    ref_map_mode            = ref_map_mode,
+    sd_ratio                = sd_ratio,
+    show_lakes              = show_lakes,
+    show_mountains          = show_mountains,
+    show_rivers             = show_rivers,
+    title_mode              = title_mode,
+    title_size_input        = title_size_input,
+    title1_input            = title1_input,
+    title2_input            = title2_input,
+    white_land              = white_land,
+    white_ocean             = white_ocean,
+    custom_statistic        = custom_statistic,
+    enable_custom_statistics = enable_custom_statistics,
+    
+    # Time series
+    axis_input_ts           = collapse_or_na(axis_input_ts),
+    axis_mode_ts            = axis_mode_ts,
+    custom_ts               = custom_ts,
+    download_options_ts     = download_options_ts,
+    enable_custom_statistics_ts = enable_custom_statistics_ts,
+    file_type_timeseries    = file_type_timeseries,
+    key_position_ts         = key_position_ts,
+    show_key_ts             = show_key_ts,
+    show_ticks_ts           = show_ticks_ts,
+    title_mode_ts           = title_mode_ts,
+    title_size_input_ts     = title_size_input_ts,
+    title1_input_ts         = title1_input_ts,
+    xaxis_numeric_interval_ts = xaxis_numeric_interval_ts,
+    custom_percentile_ts    = collapse_or_na(custom_percentile_ts),
+    percentile_ts           = collapse_or_na(percentile_ts),
+    show_ref_ts             = show_ref_ts,
+    custom_average_ts       = custom_average_ts,
+    moving_percentile_ts    = moving_percentile_ts,
+    year_moving_ts          = year_moving_ts,
+    
+    # Reactive values
+    lonlat_vals     = collapse_or_na(as.vector(lonlat_vals)),
+    plotOrder       = collapse_or_na(plotOrder),
+    availableLayers = collapse_or_na(availableLayers),
+    
     stringsAsFactors = FALSE
   )
+  
   return(meta)
 }
 
 
+## (General) PROCESS UPLOADED METADATA FOR MAP/TS VISUALIZATION
+##           reads metadata and optional data frames from Excel file
+##           updates relevant Shiny inputs and reactiveVals based on plot mode
+##           mode = "map" or "ts";
+##           metadata_sheet = name of meta sheet
 
-# ## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR PLOT
-# ##           data input = Input form Plot Customization
-# 
-# generate_metadata <- function(axis_mode,
-#                               axis_input,
-#                               hide_axis,
-#                               title_mode,
-#                               title1_input,
-#                               title2_input, 
-#                               custom_statistic,
-#                               sd_ratio,
-#                               hide_borders) {
-#   
-#   # Adjust axis_input based on axis_mode
-#   if (axis_mode == "Automatic") {
-#     axis_input <- NA
-#   } else if (length(axis_input) == 2) {
-#     axis_input <- paste(axis_input, collapse = ",")
-#   }
-#   
-#   # Create the metadata data frame with explicit column names
-#   meta_input <- data.frame(
-#     axis_mode, 
-#     axis_input, 
-#     hide_axis, 
-#     title_mode, 
-#     title1_input, 
-#     title2_input,
-#     custom_statistic, 
-#     sd_ratio, 
-#     hide_borders
-#   )
-#   
-#   return(meta_input)
-# }
-# 
-# ## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS TO SAVE FOR LATER USE FOR TS
-# ##           data input = Input form Plot Customization
-# 
-# generate_metadata_ts <- function(title_mode_ts,
-#                                  title1_input_ts,
-#                                  show_key_ts,
-#                                  key_position_ts,
-#                                  show_ref_ts,
-#                                  custom_average_ts,
-#                                  year_moving_ts,
-#                                  percentile_ts,
-#                                  moving_percentile_ts) {
-#   
-#   
-#   # Create the metadata data frame with explicit column names
-#   meta_input_ts <- data.frame(
-#     title_mode_ts, 
-#     title1_input_ts, 
-#     show_key_ts, 
-#     key_position_ts, 
-#     show_ref_ts, 
-#     custom_average_ts,
-#     year_moving_ts, 
-#     percentile_ts, 
-#     moving_percentile_ts
-#   )
-#   
-#   return(meta_input_ts)
-# }
-# 
-# 
-# ## (General) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
-# ##           data input = Generation plot inputs from side bar
-# 
-# generate_metadata_plot <- function(dataset,
-#                                    variable,
-#                                    range_years,
-#                                    select_sg_year,
-#                                    sg_year,
-#                                    season_sel,
-#                                    range_months,
-#                                    ref_period,
-#                                    select_sg_ref,
-#                                    sg_ref,
-#                                    lon_range,
-#                                    lat_range,
-#                                    lonlat_vals) {
-#   
-#   #Generate dataframe from plot inputs
-#   plot_input <- data.frame(
-#     dataset,
-#     variable,
-#     range_years,
-#     select_sg_year,
-#     sg_year,
-#     season_sel,
-#     range_months,
-#     ref_period,
-#     select_sg_ref,
-#     sg_ref,
-#     lon_range,
-#     lat_range,
-#     lonlat_vals
-#   )
-#   
-#   return(plot_input)
-#   
-# }
+process_uploaded_metadata <- function(
+    file_path,
+    mode = c("map", "ts"),
+    metadata_sheet = "custom_meta",
+    df_ts_points = NULL,
+    df_ts_highlights = NULL,
+    df_ts_lines = NULL,
+    df_map_points = NULL,
+    df_map_highlights = NULL,
+    rv_plotOrder = NULL,
+    rv_availableLayers = NULL,
+    rv_lonlat_vals = NULL,
+    map_points_data = NULL,
+    map_highlights_data = NULL,
+    ts_points_data = NULL,
+    ts_highlights_data = NULL,
+    ts_lines_data = NULL
+) {
+  mode <- match.arg(mode)
+  meta <- openxlsx::read.xlsx(file_path, sheet = metadata_sheet)
+  session <- getDefaultReactiveDomain()
+  
+  # Helpers
+  split_numeric_range <- function(value) as.numeric(strsplit(value, ",\\s*")[[1]])
+  split_text_vector   <- function(value) strsplit(value, ",\\s*")[[1]]
+  
+  # === Shared Inputs ===
+  updateSelectInput(session, "dataset_selected", selected = meta[1, "dataset_selected"])
+  updateSelectInput(session, "variable_selected", selected = meta[1, "variable_selected"])
+  updateNumericRangeInput(session, "range_years", value = split_numeric_range(meta[1, "range_years"]))
+  updateNumericRangeInput(session, "range_latitude", value = split_numeric_range(meta[1, "range_latitude"]))
+  updateNumericRangeInput(session, "range_longitude", value = split_numeric_range(meta[1, "range_longitude"]))
+  updateSliderTextInput(session, "range_months", selected = split_text_vector(meta[1, "range_months"]))
+  updateNumericInput(session, "ref_period_sg", value = meta[1, "ref_period_sg"])
+  updateNumericRangeInput(session, "ref_period", value = split_numeric_range(meta[1, "ref_period"]))
+  updateCheckboxInput(session, "ref_single_year", value = as.logical(meta[1, "ref_single_year"]))
+  updateRadioButtons(session, "season_selected", selected = meta[1, "season_selected"])
+  updateCheckboxInput(session, "single_year", value = as.logical(meta[1, "single_year"]))
+  updateNumericInput(session, "range_years_sg", value = meta[1, "range_years_sg"])
+  
+  # === Map Only ===
+  if (mode == "map") {
+
+    updateRadioButtons(session, "axis_mode", selected = meta[1, "axis_mode"])
+    updateNumericRangeInput(session, "axis_input", value = split_numeric_range(meta[1, "axis_input"]))
+    updateCheckboxInput(session, "hide_axis", value = as.logical(meta[1, "hide_axis"]))
+    updateRadioButtons(session, "title_mode", selected = meta[1, "title_mode"])
+    updateTextInput(session, "title1_input", value = meta[1, "title1_input"])
+    updateTextInput(session, "title2_input", value = meta[1, "title2_input"])
+    updateNumericInput(session, "title_size_input", value = meta[1, "title_size_input"])
+    updateRadioButtons(session, "custom_statistic", selected = meta[1, "custom_statistic"])
+    updateNumericInput(session, "sd_ratio", value = meta[1, "sd_ratio"])
+    updateCheckboxInput(session, "hide_borders", value = as.logical(meta[1, "hide_borders"]))
+    updateCheckboxInput(session, "white_ocean", value = as.logical(meta[1, "white_ocean"]))
+    updateCheckboxInput(session, "white_land", value = as.logical(meta[1, "white_land"]))
+    
+    updateNumericInput(session, "center_lat", value = meta[1, "center_lat"])
+    updateNumericInput(session, "center_lon", value = meta[1, "center_lon"])
+    updateCheckboxInput(session, "custom_map", value = as.logical(meta[1, "custom_map"]))
+    updateCheckboxInput(session, "custom_topo", value = as.logical(meta[1, "custom_topo"]))
+    updateCheckboxInput(session, "download_options", value = as.logical(meta[1, "download_options"]))
+    updateRadioButtons(session, "file_type_map", selected = meta[1, "file_type_map"])
+    updateRadioButtons(session, "file_type_map_sec", selected = meta[1, "file_type_map_sec"])
+    updateCheckboxInput(session, "label_lakes", value = as.logical(meta[1, "label_lakes"]))
+    updateCheckboxInput(session, "label_rivers", value = as.logical(meta[1, "label_rivers"]))
+    updateCheckboxInput(session, "label_mountains", value = as.logical(meta[1, "label_mountains"]))
+    updateCheckboxInput(session, "show_lakes", value = as.logical(meta[1, "show_lakes"]))
+    updateCheckboxInput(session, "show_rivers", value = as.logical(meta[1, "show_rivers"]))
+    updateCheckboxInput(session, "show_mountains", value = as.logical(meta[1, "show_mountains"]))
+    updateSelectInput(session, "projection", selected = meta[1, "projection"])
+    updateRadioButtons(session, "ref_map_mode", selected = meta[1, "ref_map_mode"])
+    updateCheckboxInput(session, "enable_custom_statistics", value = as.logical(meta[1, "enable_custom_statistics"]))
+    
+    # === Update Map DataFrames ===
+    if (!is.null(df_map_points)) {
+      points_df <- openxlsx::read.xlsx(file_path, sheet = df_map_points)
+      if (nrow(points_df) > 0) map_points_data(points_df)
+    }
+    if (!is.null(df_map_highlights)) {
+      highlights_df <- openxlsx::read.xlsx(file_path, sheet = df_map_highlights)
+      if (nrow(highlights_df) > 0) map_highlights_data(highlights_df)
+    }
+  }
+  
+  # === TS Only ===
+  if (mode == "ts") {
+    updateNumericRangeInput(session, "axis_input_ts", value = split_numeric_range(meta[1, "axis_input_ts"]))
+    updateRadioButtons(session, "axis_mode_ts", selected = meta[1, "axis_mode_ts"])
+    updateCheckboxInput(session, "custom_ts", value = as.logical(meta[1, "custom_ts"]))
+    updateCheckboxInput(session, "download_options_ts", value = as.logical(meta[1, "download_options_ts"]))
+    updateCheckboxInput(session, "enable_custom_statistics_ts", value = as.logical(meta[1, "enable_custom_statistics_ts"]))
+    updateRadioButtons(session, "file_type_timeseries", selected = meta[1, "file_type_timeseries"])
+    updateRadioButtons(session, "key_position_ts", selected = meta[1, "key_position_ts"])
+    updateCheckboxInput(session, "show_key_ts", value = as.logical(meta[1, "show_key_ts"]))
+    updateCheckboxInput(session, "show_ticks_ts", value = as.logical(meta[1, "show_ticks_ts"]))
+    updateRadioButtons(session, "title_mode_ts", selected = meta[1, "title_mode_ts"])
+    updateNumericInput(session, "title_size_input_ts", value = meta[1, "title_size_input_ts"])
+    updateTextInput(session, "title1_input_ts", value = meta[1, "title1_input_ts"])
+    updateNumericInput(session, "xaxis_numeric_interval_ts", value = meta[1, "xaxis_numeric_interval_ts"])
+    updateCheckboxInput(session, "custom_percentile_ts", value = as.logical(meta[1, "custom_percentile_ts"]))
+    updateRadioButtons(session, "percentile_ts", selected = meta[1, "percentile_ts"])
+    updateCheckboxInput(session, "show_ref_ts", value = as.logical(meta[1, "show_ref_ts"]))
+    updateCheckboxInput(session, "custom_average_ts", value = as.logical(meta[1, "custom_average_ts"]))
+    updateCheckboxInput(session, "moving_percentile_ts", value = as.logical(meta[1, "moving_percentile_ts"]))
+    updateNumericInput(session, "year_moving_ts", value = meta[1, "year_moving_ts"])
+    
+    # === Update TS DataFrames ===
+    if (!is.null(df_ts_points)) {
+      ts_points_df <- openxlsx::read.xlsx(file_path, sheet = df_ts_points)
+      if (nrow(ts_points_df) > 0) ts_points_data(ts_points_df)
+    }
+    if (!is.null(df_ts_highlights)) {
+      ts_highlights_df <- openxlsx::read.xlsx(file_path, sheet = df_ts_highlights)
+      if (nrow(ts_highlights_df) > 0) ts_highlights_data(ts_highlights_df)
+    }
+    if (!is.null(df_ts_lines)) {
+      ts_lines_df <- openxlsx::read.xlsx(file_path, sheet = df_ts_lines)
+      if (nrow(ts_lines_df) > 0) ts_lines_data(ts_lines_df)
+    }
+  }
+  
+  # === ReactiveVals ===
+  if (!is.null(rv_lonlat_vals)) {
+    lon_vals <- suppressWarnings(as.numeric(strsplit(meta[1, "lonlat_vals"], ",\\s*")[[1]]))
+    if (!anyNA(lon_vals)) rv_lonlat_vals(lon_vals)
+  }
+  if (!is.null(rv_plotOrder)) {
+    rv_plotOrder(character(0))
+  }
+  
+  if (!is.null(rv_availableLayers)) {
+    rv_availableLayers(character(0))
+  }
+}
+
+
+## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS FOR COMPOSITE PLOTS
+##           collects and flattens all relevant user inputs (shared, map, ts)
+##           for export or upload use in composite plot modules
+##           returns a single-row metadata dataframe
+
+generate_metadata_composite <- function(
+    
+    # Common / input data
+    range_years2 = NA,
+    range_years2a = NA,
+    dataset_selected2 = NA,
+    range_latitude2 = NA,
+    range_longitude2 = NA,
+    range_months2 = NA,
+    ref_period_sg2 = NA,
+    ref_period2 = NA,
+    ref_single_year2 = NA,
+    season_selected2 = NA,
+    variable_selected2 = NA,
+    enter_upload2 = NA,
+    enter_upload2a = NA,
+    mode_selected2 = NA,
+    prior_years2 = NA,
+    
+    # Map settings
+    axis_input2 = NA,
+    axis_mode2 = NA,
+    center_lat2 = NA,
+    center_lon2 = NA,
+    custom_map2 = NA,
+    custom_statistic2 = NA,
+    custom_topo2 = NA,
+    download_options2 = NA,
+    enable_custom_statistics2 = NA,
+    file_type_map_sec2 = NA,
+    file_type_map2 = NA,
+    hide_axis2 = NA,
+    hide_borders2 = NA,
+    label_lakes2 = NA,
+    label_mountains2 = NA,
+    label_rivers2 = NA,
+    percentage_sign_match2 = NA,
+    projection2 = NA,
+    ref_map_mode2 = NA,
+    sd_ratio2 = NA,
+    show_lakes2 = NA,
+    show_mountains2 = NA,
+    show_rivers2 = NA,
+    title_mode2 = NA,
+    title_size_input2 = NA,
+    title1_input2 = NA,
+    title2_input2 = NA,
+    white_land2 = NA,
+    white_ocean2 = NA,
+    
+    # TS settings
+    axis_input_ts2 = NA,
+    axis_mode_ts2 = NA,
+    custom_percentile_ts2 = NA,
+    custom_ts2 = NA,
+    download_options_ts2 = NA,
+    enable_custom_statistics_ts2 = NA,
+    file_type_timeseries2 = NA,
+    key_position_ts2 = NA,
+    percentile_ts2 = NA,
+    show_key_ts2 = NA,
+    show_ref_ts2 = NA,
+    show_ticks_ts2 = NA,
+    title_mode_ts2 = NA,
+    title_size_input_ts2 = NA,
+    title1_input_ts2 = NA,
+    xaxis_numeric_interval_ts2 = NA,
+    
+    # Reactive values
+    ts_points_data = NA,
+    ts_highlights_data = NA,
+    ts_lines_data = NA,
+    
+    map_points_data = NA,
+    map_highlights_data = NA,
+    
+    plotOrder = NA,
+    availableLayers = NA,
+    
+    lonlat_vals = NA
+) {
+  collapse_or_na <- function(x) {
+    if (is.null(x) || length(x) == 0) return(NA)
+    paste(as.character(x), collapse = ", ")
+  }
+  
+  meta <- data.frame(
+    
+    # Common / input data
+    range_years2 = collapse_or_na(range_years2),
+    range_years2a = collapse_or_na(range_years2a),
+    dataset_selected2 = dataset_selected2,
+    range_latitude2 = collapse_or_na(range_latitude2),
+    range_longitude2 = collapse_or_na(range_longitude2),
+    range_months2 = collapse_or_na(range_months2),
+    ref_period_sg2 = ref_period_sg2,
+    ref_period2 = collapse_or_na(ref_period2),
+    ref_single_year2 = ref_single_year2,
+    season_selected2 = season_selected2,
+    variable_selected2 = variable_selected2,
+    enter_upload2 = enter_upload2,
+    enter_upload2a = enter_upload2a,
+    mode_selected2 = mode_selected2,
+    prior_years2 = prior_years2,
+    
+    # Map settings
+    axis_input2 = collapse_or_na(axis_input2),
+    axis_mode2 = axis_mode2,
+    center_lat2 = center_lat2,
+    center_lon2 = center_lon2,
+    custom_map2 = custom_map2,
+    custom_statistic2 = custom_statistic2,
+    custom_topo2 = custom_topo2,
+    download_options2 = download_options2,
+    enable_custom_statistics2 = enable_custom_statistics2,
+    file_type_map_sec2 = file_type_map_sec2,
+    file_type_map2 = file_type_map2,
+    hide_axis2 = hide_axis2,
+    hide_borders2 = hide_borders2,
+    label_lakes2 = label_lakes2,
+    label_mountains2 = label_mountains2,
+    label_rivers2 = label_rivers2,
+    percentage_sign_match2 = percentage_sign_match2,
+    projection2 = projection2,
+    ref_map_mode2 = ref_map_mode2,
+    sd_ratio2 = sd_ratio2,
+    show_lakes2 = show_lakes2,
+    show_mountains2 = show_mountains2,
+    show_rivers2 = show_rivers2,
+    title_mode2 = title_mode2,
+    title_size_input2 = title_size_input2,
+    title1_input2 = title1_input2,
+    title2_input2 = title2_input2,
+    white_land2 = white_land2,
+    white_ocean2 = white_ocean2,
+    
+    # TS settings
+    axis_input_ts2 = collapse_or_na(axis_input_ts2),
+    axis_mode_ts2 = axis_mode_ts2,
+    custom_percentile_ts2 = custom_percentile_ts2,
+    custom_ts2 = custom_ts2,
+    download_options_ts2 = download_options_ts2,
+    enable_custom_statistics_ts2 = enable_custom_statistics_ts2,
+    file_type_timeseries2 = file_type_timeseries2,
+    key_position_ts2 = key_position_ts2,
+    percentile_ts2 = collapse_or_na(percentile_ts2),
+    show_key_ts2 = show_key_ts2,
+    show_ref_ts2 = show_ref_ts2,
+    show_ticks_ts2 = show_ticks_ts2,
+    title_mode_ts2 = title_mode_ts2,
+    title_size_input_ts2 = title_size_input_ts2,
+    title1_input_ts2 = title1_input_ts2,
+    xaxis_numeric_interval_ts2 = xaxis_numeric_interval_ts2,
+    
+    # Reactive values
+    lonlat_vals = collapse_or_na(as.vector(lonlat_vals)),
+    plotOrder = collapse_or_na(plotOrder),
+    availableLayers = collapse_or_na(availableLayers),
+    
+    stringsAsFactors = FALSE
+  )
+  
+  return(meta)
+}
+
+## (General) PROCESS UPLOADED METADATA FOR COMPOSITE VISUALIZATION
+##           reads composite metadata and optional data frames from Excel file
+##           updates all relevant Shiny UI inputs and reactiveVals for composite plots
+##           expects composite-style input IDs (e.g. *_2, *_ts2)
+
+process_uploaded_metadata_composite <- function(
+    file_path,
+    mode = c("map", "ts"),
+    metadata_sheet = "custom_meta",
+    df_ts_points = NULL,
+    df_ts_highlights = NULL,
+    df_ts_lines = NULL,
+    df_map_points = NULL,
+    df_map_highlights = NULL,
+    rv_plotOrder = NULL,
+    rv_availableLayers = NULL,
+    rv_lonlat_vals = NULL,
+    map_points_data = NULL,
+    map_highlights_data = NULL,
+    ts_points_data = NULL,
+    ts_highlights_data = NULL,
+    ts_lines_data = NULL
+) {
+  mode <- match.arg(mode)
+  meta <- openxlsx::read.xlsx(file_path, sheet = metadata_sheet)
+  session <- getDefaultReactiveDomain()
+  
+  # Helpers
+  split_numeric_range <- function(value) as.numeric(strsplit(value, ",\\s*")[[1]])
+  split_text_vector   <- function(value) strsplit(value, ",\\s*")[[1]]
+  
+  # === Shared Inputs ===
+  updateTextInput(session, "range_years2", value = meta[1, "range_years2"])
+  updateTextInput(session, "range_years2a", value = meta[1, "range_years2a"])
+  updateSelectInput(session, "dataset_selected2", selected = meta[1, "dataset_selected2"])
+  updateNumericRangeInput(session, "range_latitude2", value = split_numeric_range(meta[1, "range_latitude2"]))
+  updateNumericRangeInput(session, "range_longitude2", value = split_numeric_range(meta[1, "range_longitude2"]))
+  updateSliderTextInput(session, "range_months2", selected = split_text_vector(meta[1, "range_months2"]))
+  updateNumericInput(session, "ref_period_sg2", value = meta[1, "ref_period_sg2"])
+  updateNumericRangeInput(session, "ref_period2", value = split_numeric_range(meta[1, "ref_period2"]))
+  updateCheckboxInput(session, "ref_single_year2", value = as.logical(meta[1, "ref_single_year2"]))
+  updateRadioButtons(session, "season_selected2", selected = meta[1, "season_selected2"])
+  updateSelectInput(session, "variable_selected2", selected = meta[1, "variable_selected2"])
+  updateRadioButtons(session, "enter_upload2", selected = meta[1, "enter_upload2"])
+  updateRadioButtons(session, "enter_upload2a", selected = meta[1, "enter_upload2a"])
+  updateRadioButtons(session, "mode_selected2", selected = meta[1, "mode_selected2"])
+  updateNumericInput(session, "prior_years2", value = meta[1, "prior_years2"])
+  
+  if (mode == "map") {
+    # === Map UI ===
+    updateRadioButtons(session, "axis_mode2", selected = meta[1, "axis_mode2"])
+    updateNumericRangeInput(session, "axis_input2", value = split_numeric_range(meta[1, "axis_input2"]))
+    updateNumericInput(session, "center_lat2", value = meta[1, "center_lat2"])
+    updateNumericInput(session, "center_lon2", value = meta[1, "center_lon2"])
+    updateCheckboxInput(session, "custom_map2", value = as.logical(meta[1, "custom_map2"]))
+    updateRadioButtons(session, "custom_statistic2", selected = meta[1, "custom_statistic2"])
+    updateCheckboxInput(session, "custom_topo2", value = as.logical(meta[1, "custom_topo2"]))
+    updateCheckboxInput(session, "download_options2", value = as.logical(meta[1, "download_options2"]))
+    updateCheckboxInput(session, "enable_custom_statistics2", value = as.logical(meta[1, "enable_custom_statistics2"]))
+    updateRadioButtons(session, "file_type_map_sec2", selected = meta[1, "file_type_map_sec2"])
+    updateRadioButtons(session, "file_type_map2", selected = meta[1, "file_type_map2"])
+    updateCheckboxInput(session, "hide_axis2", value = as.logical(meta[1, "hide_axis2"]))
+    updateCheckboxInput(session, "hide_borders2", value = as.logical(meta[1, "hide_borders2"]))
+    updateCheckboxInput(session, "label_lakes2", value = as.logical(meta[1, "label_lakes2"]))
+    updateCheckboxInput(session, "label_mountains2", value = as.logical(meta[1, "label_mountains2"]))
+    updateCheckboxInput(session, "label_rivers2", value = as.logical(meta[1, "label_rivers2"]))
+    updateNumericInput(session, "percentage_sign_match2", value = meta[1, "percentage_sign_match2"])
+    updateSelectInput(session, "projection2", selected = meta[1, "projection2"])
+    updateRadioButtons(session, "ref_map_mode2", selected = meta[1, "ref_map_mode2"])
+    updateNumericInput(session, "sd_ratio2", value = meta[1, "sd_ratio2"])
+    updateCheckboxInput(session, "show_lakes2", value = as.logical(meta[1, "show_lakes2"]))
+    updateCheckboxInput(session, "show_mountains2", value = as.logical(meta[1, "show_mountains2"]))
+    updateCheckboxInput(session, "show_rivers2", value = as.logical(meta[1, "show_rivers2"]))
+    updateRadioButtons(session, "title_mode2", selected = meta[1, "title_mode2"])
+    updateNumericInput(session, "title_size_input2", value = meta[1, "title_size_input2"])
+    updateTextInput(session, "title1_input2", value = meta[1, "title1_input2"])
+    updateTextInput(session, "title2_input2", value = meta[1, "title2_input2"])
+    updateCheckboxInput(session, "white_land2", value = as.logical(meta[1, "white_land2"]))
+    updateCheckboxInput(session, "white_ocean2", value = as.logical(meta[1, "white_ocean2"]))
+    
+    # === Update Map DataFrames ===
+    if (!is.null(df_map_points)) {
+      df <- openxlsx::read.xlsx(file_path, sheet = df_map_points)
+      if (nrow(df) > 0) map_points_data(df)
+    }
+    if (!is.null(df_map_highlights)) {
+      df <- openxlsx::read.xlsx(file_path, sheet = df_map_highlights)
+      if (nrow(df) > 0) map_highlights_data(df)
+    }
+  }
+  
+  if (mode == "ts") {
+    # === TS UI ===
+    updateNumericRangeInput(session, "axis_input_ts2", value = split_numeric_range(meta[1, "axis_input_ts2"]))
+    updateRadioButtons(session, "axis_mode_ts2", selected = meta[1, "axis_mode_ts2"])
+    updateCheckboxInput(session, "custom_percentile_ts2", value = as.logical(meta[1, "custom_percentile_ts2"]))
+    updateCheckboxInput(session, "custom_ts2", value = as.logical(meta[1, "custom_ts2"]))
+    updateCheckboxInput(session, "download_options_ts2", value = as.logical(meta[1, "download_options_ts2"]))
+    updateRadioButtons(session, "file_type_timeseries2", selected = meta[1, "file_type_timeseries2"])
+    updateCheckboxInput(session, "enable_custom_statistics_ts2", value = as.logical(meta[1, "enable_custom_statistics_ts2"]))
+    updateRadioButtons(session, "key_position_ts2", selected = meta[1, "key_position_ts2"])
+    updateRadioButtons(session, "percentile_ts2", selected = meta[1, "percentile_ts2"])
+    updateCheckboxInput(session, "show_key_ts2", value = as.logical(meta[1, "show_key_ts2"]))
+    updateCheckboxInput(session, "show_ref_ts2", value = as.logical(meta[1, "show_ref_ts2"]))
+    updateCheckboxInput(session, "show_ticks_ts2", value = as.logical(meta[1, "show_ticks_ts2"]))
+    updateRadioButtons(session, "title_mode_ts2", selected = meta[1, "title_mode_ts2"])
+    updateNumericInput(session, "title_size_input_ts2", value = meta[1, "title_size_input_ts2"])
+    updateTextInput(session, "title1_input_ts2", value = meta[1, "title1_input_ts2"])
+    updateNumericInput(session, "xaxis_numeric_interval_ts2", value = meta[1, "xaxis_numeric_interval_ts2"])
+    
+    # === Update TS DataFrames ===
+    if (!is.null(df_ts_points)) {
+      df <- openxlsx::read.xlsx(file_path, sheet = df_ts_points)
+      if (nrow(df) > 0) ts_points_data(df)
+    }
+    if (!is.null(df_ts_highlights)) {
+      df <- openxlsx::read.xlsx(file_path, sheet = df_ts_highlights)
+      if (nrow(df) > 0) ts_highlights_data(df)
+    }
+    if (!is.null(df_ts_lines)) {
+      df <- openxlsx::read.xlsx(file_path, sheet = df_ts_lines)
+      if (nrow(df) > 0) ts_lines_data(df)
+    }
+  }
+  
+  # === ReactiveVals ===
+  if (!is.null(rv_lonlat_vals)) {
+    lon_vals <- suppressWarnings(as.numeric(strsplit(meta[1, "lonlat_vals"], ",\\s*")[[1]]))
+    if (!anyNA(lon_vals)) rv_lonlat_vals(lon_vals)
+  }
+  if (!is.null(rv_plotOrder)) {
+    rv_plotOrder(character(0))
+  }
+  if (!is.null(rv_availableLayers)) {
+    rv_availableLayers(character(0))
+  }
+}
+
 
 ## (General) UPDATES THE SELECTED VALUE OF A GROUP OF LINKED RADIO BUTTONS
 ##           selected_value = the value to be selected
@@ -3534,7 +3969,8 @@ generate_correlation_titles = function(variable1_source,
                                        map_custom_title,
                                        map_custom_subtitle,
                                        ts_custom_title,
-                                       title_size) {
+                                       map_title_size,
+                                       ts_title_size) {
 
   
   # Set values for variable 1:
@@ -3676,8 +4112,8 @@ generate_correlation_titles = function(variable1_source,
   file_title = iconv(tf2, from = 'UTF-8', to = 'ASCII//TRANSLIT')
 
   # Title font size
-  map_title_size = ifelse(map_title_mode == "Custom", title_size, 18)
-  ts_title_size = title_size
+  map_title_size = map_title_size
+  ts_title_size = ts_title_size
   
   cor_titles = data.frame(
     map_title,
@@ -4240,7 +4676,7 @@ generate_regression_titles_ts = function(independent_source,
                                          map_title_mode,
                                          map_custom_title,
                                          map_custom_subtitle,
-                                         title_size = 18
+                                         title_size
 ){
   
   # Create Independent variable titles
@@ -4362,7 +4798,7 @@ generate_regression_titles_ts = function(independent_source,
                         title_mode_d, sep = "")
   }
   
-  ts_title_size = 18
+  ts_title_size = title_size
   
   # Combine all titles into a dataframe
   titles_df = data.frame(
