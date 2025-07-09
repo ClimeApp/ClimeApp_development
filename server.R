@@ -2660,10 +2660,17 @@ server <- function(input, output, session) {
   
   # timeseries Highlights
   observeEvent(input$add_highlight_ts, {
-    ts_highlights_data(rbind(ts_highlights_data(),
-                             create_new_highlights_data(input$highlight_x_values_ts,input$highlight_y_values_ts,
-                                                        input$highlight_colour_ts,input$highlight_type_ts,
-                                                        input$show_highlight_on_legend_ts,input$highlight_label_ts)))
+    ts_highlights_data(rbind(
+      ts_highlights_data(),
+      create_new_highlights_data(
+        input$highlight_x_values_ts,
+        input$highlight_y_values_ts,
+        input$highlight_colour_ts,
+        input$highlight_type_ts,
+        input$show_highlight_on_legend_ts,
+        input$highlight_label_ts
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_highlight_ts, {
@@ -3597,10 +3604,17 @@ server <- function(input, output, session) {
   
   # timeseries Highlights
   observeEvent(input$add_highlight_ts2, {
-    ts_highlights_data2(rbind(ts_highlights_data2(),
-                              create_new_highlights_data(input$highlight_x_values_ts2,input$highlight_y_values_ts2,
-                                                         input$highlight_colour_ts2,input$highlight_type_ts2,
-                                                         input$show_highlight_on_legend_ts2,input$highlight_label_ts2)))
+    ts_highlights_data2(rbind(
+      ts_highlights_data2(),
+      create_new_highlights_data(
+        input$highlight_x_values_ts2,
+        input$highlight_y_values_ts2,
+        input$highlight_colour_ts2,
+        input$highlight_type_ts2,
+        input$show_highlight_on_legend_ts2,
+        input$highlight_label_ts2
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_highlight_ts2, {
@@ -8720,7 +8734,14 @@ server <- function(input, output, session) {
   })
   
   # Plot map 
-  fad_plot = function(){plot_modera_sources(fad_global_data(),input$fad_year, season_fad_short(),fad_zoom())}
+  fad_plot = function(base_size = 18) {
+    plot_modera_sources(fad_global_data(),
+                        input$fad_year,
+                        season_fad_short(),
+                        fad_zoom(),
+                        base_size = base_size)
+  }
+  
   
   fad_dimensions <- reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
@@ -8852,25 +8873,36 @@ server <- function(input, output, session) {
                                                                                row.names = FALSE,
                                                                                col.names = TRUE)
                                                         }})
+
   
-  output$download_fad            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season),"_",input$fad_year,".",input$file_type_fad, sep = "")},
-                                                    content  = function(file) {
-                                                      
-                                                      mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map_width, input$dimension[2], FALSE)
-                                                      
-                                                      if (input$file_type_fad == "png"){
-                                                        png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
-                                                        print(fad_plot())
-                                                        dev.off()
-                                                      } else if (input$file_type_fad == "jpeg"){
-                                                        jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
-                                                        print(fad_plot()) 
-                                                        dev.off()
-                                                      } else {
-                                                        pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
-                                                        print(fad_plot())
-                                                        dev.off()
-                                                      }})
+  output$download_fad <- downloadHandler(
+    filename = function()
+    {paste("Assimilated Observations_", gsub(" ", "", input$fad_season), "_", input$fad_year, ".", input$file_type_fad, sep = "")},
+    
+    content = function(file) {
+      mmd = generate_map_dimensions(
+        subset_lons_primary(),
+        subset_lats_primary(),
+        session$clientData$output_fad_map_width,
+        input$dimension[2],
+        FALSE
+      )
+      if (input$file_type_fad == "png") {
+        png(file, width = mmd[3], height = mmd[4], res = 400, bg = "transparent")
+        print(fad_plot(base_size = 9))
+        dev.off()
+      } else if (input$file_type_fad == "jpeg") {
+        jpeg(file, width = mmd[3], height = mmd[4], res = 400,bg = "white")
+        print(fad_plot(base_size = 9))
+        dev.off()
+      } else {
+        pdf(file, width = mmd[3] / 400, height = mmd[4] / 400, bg = "transparent")
+        print(fad_plot(base_size = 9))
+        dev.off()
+      }
+    }
+  )
+  
   
   output$download_fad_data       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season),"_",input$fad_year,"_data.",input$data_file_type_fad, sep = "")},
                                                     content  = function(file) {
@@ -9337,12 +9369,24 @@ server <- function(input, output, session) {
   })
   
   # Plot map 
-  fad_plot2 = function(){plot_modera_sources(fad_global_data2(),input$fad_year2, season_fad_short2(),fad_zoom2())}
+  fad_plot2 = function(base_size = 18) {
+    plot_modera_sources(fad_global_data2(),
+                        input$fad_year2,
+                        season_fad_short2(),
+                        fad_zoom2(),
+                        base_size = base_size)
+  }
   
   fad_dimensions2 <- reactive({
     req(input$nav1 == "tab2") # Only run code if in the current tab
-    m_d_f2 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map2_width, input$dimension[2], FALSE)
-    return(m_d_f2)  
+    m_d_f2 = generate_map_dimensions(
+      subset_lons_primary(),
+      subset_lats_primary(),
+      session$clientData$output_fad_map2_width,
+      input$dimension[2],
+      FALSE
+    )
+    return(m_d_f2)
   })
   
   output$fad_map2 <- renderPlot({
@@ -9427,18 +9471,40 @@ server <- function(input, output, session) {
                                                        dev.off()}
   )
   
-  output$download_timeseries2      <- downloadHandler(filename = function(){paste(plot_titles_composites()$file_title,"-ts.",input$file_type_timeseries2, sep = "")},
-                                                      content  = function(file) {
-                                                        if (input$file_type_timeseries2 == "png"){
-                                                          png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
-                                                        } else if (input$file_type_timeseries2 == "jpeg"){
-                                                          jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
-                                                        } else {
-                                                          pdf(file, width = 14, height = 6, bg = "transparent") 
-                                                        }
-                                                        timeseries_plot_comp()
-                                                        dev.off()
-                                                      }) 
+  output$download_timeseries2      <- downloadHandler(
+    filename = function() {
+      paste(plot_titles_composites()$file_title,
+            "-ts.",
+            input$file_type_timeseries2,
+            sep = "")
+    },
+    content  = function(file) {
+      if (input$file_type_timeseries2 == "png") {
+        png(
+          file,
+          width = 3000,
+          height = 1285,
+          res = 200,
+          bg = "transparent"
+        )
+      } else if (input$file_type_timeseries2 == "jpeg") {
+        jpeg(
+          file,
+          width = 3000,
+          height = 1285,
+          res = 200,
+          bg = "white"
+        )
+      } else {
+        pdf(file,
+            width = 14,
+            height = 6,
+            bg = "transparent")
+      }
+      print(timeseries_plot_comp())
+      dev.off()
+    }
+  ) 
   
   output$download_map_data2        <- downloadHandler(filename = function(){paste(plot_titles_composites()$file_title, "-mapdata.",input$file_type_map_data2, sep = "")},
                                                       content  = function(file) {
@@ -9468,24 +9534,33 @@ server <- function(input, output, session) {
                                                                                 col.names = TRUE)
                                                          }})
   
-  output$download_fad2            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season2),"_",input$fad_year2,".",input$file_type_fad2, sep = "")},
-                                                     content  = function(file) {
-                                                       
-                                                       mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map2_width, input$dimension[2], FALSE)
-                                                       
-                                                       if (input$file_type_fad2 == "png"){
-                                                         png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
-                                                         print(fad_plot2())
-                                                         dev.off()
-                                                       } else if (input$file_type_fad2 == "jpeg"){
-                                                         jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
-                                                         print(fad_plot2()) 
-                                                         dev.off()
-                                                       } else {
-                                                         pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
-                                                         print(fad_plot2())
-                                                         dev.off()
-                                                       }})
+  output$download_fad2 <- downloadHandler(
+    filename = function()
+      {paste("Assimilated Observations_", gsub(" ", "", input$fad_season2), "_", input$fad_year2, ".", input$file_type_fad2, sep = "")},
+    
+    content = function(file) {
+      mmd = generate_map_dimensions(
+        subset_lons_primary(),
+        subset_lats_primary(),
+        session$clientData$output_fad_map2_width,
+        input$dimension[2],
+        FALSE
+      )
+      if (input$file_type_fad2 == "png") {
+        png(file, width = mmd[3], height = mmd[4], res = 400, bg = "transparent")
+        print(fad_plot2(base_size = 9))
+        dev.off()
+      } else if (input$file_type_fad2 == "jpeg") {
+        jpeg(file, width = mmd[3], height = mmd[4], res = 400,bg = "white")
+        print(fad_plot2(base_size = 9))
+        dev.off()
+      } else {
+        pdf(file, width = mmd[3] / 400, height = mmd[4] / 400, bg = "transparent")
+        print(fad_plot2(base_size = 9))
+        dev.off()
+      }
+    }
+  )
   
   output$download_fad_data2       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season2),"_",input$fad_year2,"_data.",input$data_file_type_fad2, sep = "")},
                                                      content  = function(file) {
@@ -10406,14 +10481,20 @@ server <- function(input, output, session) {
   })
   
   # Plot map 
-  fad_plot3 = function(){plot_modera_sources(fad_global_data3(),input$fad_year3, season_fad_short3(),fad_zoom3())}
+  fad_plot3 = function(base_size = 18) {
+    plot_modera_sources(fad_global_data3(),
+                        input$fad_year3,
+                        season_fad_short3(),
+                        fad_zoom3(),
+                        base_size = base_size)
+  }
   
   fad_dimensions3 <- reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
     m_d_f3 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map3_width, input$dimension[2], FALSE)
     return(m_d_f3)  
   })
-
+  
   output$fad_map3 <- renderPlot({
     fad_plot3()
   }, width = function() {
@@ -10472,18 +10553,40 @@ server <- function(input, output, session) {
   ####### Downloads ----
   # Downloads
   
-  output$download_timeseries3      <- downloadHandler(filename = function(){paste(plot_titles_cor()$file_title,"-ts.",input$file_type_timeseries3, sep = "")},
-                                                      content  = function(file) {
-                                                        if (input$file_type_timeseries3 == "png"){
-                                                          png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
-                                                        } else if (input$file_type_timeseries3 == "jpeg"){
-                                                          jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
-                                                        } else {
-                                                          pdf(file, width = 14, height = 6, bg = "transparent") 
-                                                        }
-                                                        timeseries_plot_corr()
-                                                        dev.off()
-                                                      })
+  output$download_timeseries3      <- downloadHandler(
+    filename = function() {
+      paste(plot_titles_cor()$file_title,
+            "-ts.",
+            input$file_type_timeseries3,
+            sep = "")
+    },
+    content  = function(file) {
+      if (input$file_type_timeseries3 == "png") {
+        png(
+          file,
+          width = 3000,
+          height = 1285,
+          res = 200,
+          bg = "transparent"
+        )
+      } else if (input$file_type_timeseries3 == "jpeg") {
+        jpeg(
+          file,
+          width = 3000,
+          height = 1285,
+          res = 200,
+          bg = "white"
+        )
+      } else {
+        pdf(file,
+            width = 14,
+            height = 6,
+            bg = "transparent")
+      }
+      print(timeseries_plot_corr())
+      dev.off()
+    }
+  )
   
   output$download_map_sec3      <- downloadHandler(filename = function(){paste("Corr_Scatter_plot.",input$file_type_map_sec3, sep = "")},
                                                    content  = function(file) {
@@ -10538,25 +10641,53 @@ server <- function(input, output, session) {
                                                         } else if (input$file_type_map_data3 == "GeoTIFF") {
                                                           create_geotiff(correlation_map_datatable(), file)
                                                         }})
+  # REMOVE
+  # output$download_fad3            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season3),"_",input$fad_year3,".",input$file_type_fad3, sep = "")},
+  #                                                    content  = function(file) {
+  #                                                      
+  #                                                      mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map3_width, input$dimension[2], FALSE)
+  #                                                      
+  #                                                      if (input$file_type_fad3 == "png"){
+  #                                                        png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
+  #                                                        print(fad_plot3())
+  #                                                        dev.off()
+  #                                                      } else if (input$file_type_fad3 == "jpeg"){
+  #                                                        jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
+  #                                                        print(fad_plot3()) 
+  #                                                        dev.off()
+  #                                                      } else {
+  #                                                        pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
+  #                                                        print(fad_plot3())
+  #                                                        dev.off()
+  #                                                      }})
   
-  output$download_fad3            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season3),"_",input$fad_year3,".",input$file_type_fad3, sep = "")},
-                                                     content  = function(file) {
-                                                       
-                                                       mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map3_width, input$dimension[2], FALSE)
-                                                       
-                                                       if (input$file_type_fad3 == "png"){
-                                                         png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
-                                                         print(fad_plot3())
-                                                         dev.off()
-                                                       } else if (input$file_type_fad3 == "jpeg"){
-                                                         jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
-                                                         print(fad_plot3()) 
-                                                         dev.off()
-                                                       } else {
-                                                         pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
-                                                         print(fad_plot3())
-                                                         dev.off()
-                                                       }})
+  output$download_fad3 <- downloadHandler(
+    filename = function()
+    {paste("Assimilated Observations_", gsub(" ", "", input$fad_season3), "_", input$fad_year3, ".", input$file_type_fad3, sep = "")},
+    
+    content = function(file) {
+      mmd = generate_map_dimensions(
+        subset_lons_primary(),
+        subset_lats_primary(),
+        session$clientData$output_fad_map3_width,
+        input$dimension[2],
+        FALSE
+      )
+      if (input$file_type_fad3 == "png") {
+        png(file, width = mmd[3], height = mmd[4], res = 400, bg = "transparent")
+        print(fad_plot3(base_size = 9))
+        dev.off()
+      } else if (input$file_type_fad3 == "jpeg") {
+        jpeg(file, width = mmd[3], height = mmd[4], res = 400,bg = "white")
+        print(fad_plot3(base_size = 9))
+        dev.off()
+      } else {
+        pdf(file, width = mmd[3] / 400, height = mmd[4] / 400, bg = "transparent")
+        print(fad_plot3(base_size = 9))
+        dev.off()
+      }
+    }
+  )
   
   output$download_fad_data3       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season3),"_",input$fad_year3,"_data.",input$data_file_type_fad3, sep = "")},
                                                      content  = function(file) {
@@ -11436,7 +11567,13 @@ server <- function(input, output, session) {
   })
   
   # Plot map 
-  fad_plot4 = function(){plot_modera_sources(fad_global_data4(),input$fad_year4, season_fad_short4(),fad_zoom4())}
+  fad_plot4 = function(base_size = 18) {
+    plot_modera_sources(fad_global_data4(),
+                        input$fad_year4,
+                        season_fad_short4(),
+                        fad_zoom4(),
+                        base_size = base_size)
+  }
   
   fad_dimensions4 <- reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
@@ -11636,22 +11773,36 @@ server <- function(input, output, session) {
                                                                 } else if (input$reg_res_plot_data_type == "GeoTIFF") {
                                                                   create_geotiff(reg_res_table(), file)
                                                                 }})
+
   
-  output$download_fad4            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season4),"_",input$fad_year4,".",input$file_type_fad4, sep = "")},
-                                                     content  = function(file) {
-                                                       
-                                                       mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map4_width, input$dimension[2], FALSE)
-                                                       
-                                                       if (input$file_type_fad4 == "png"){
-                                                         png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
-                                                       } else if (input$file_type_fad4 == "jpeg"){
-                                                         jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
-                                                       } else {
-                                                         pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
-                                                       }
-                                                       print(fad_plot4())
-                                                       dev.off()
-                                                     })
+  output$download_fad4 <- downloadHandler(
+    filename = function()
+    {paste("Assimilated Observations_", gsub(" ", "", input$fad_season4), "_", input$fad_year4, ".", input$file_type_fad4, sep = "")},
+    
+    content = function(file) {
+      mmd = generate_map_dimensions(
+        subset_lons_primary(),
+        subset_lats_primary(),
+        session$clientData$output_fad_map4_width,
+        input$dimension[2],
+        FALSE
+      )
+      if (input$file_type_fad4 == "png") {
+        png(file, width = mmd[3], height = mmd[4], res = 400, bg = "transparent")
+        print(fad_plot4(base_size = 9))
+        dev.off()
+      } else if (input$file_type_fad4 == "jpeg") {
+        jpeg(file, width = mmd[3], height = mmd[4], res = 400,bg = "white")
+        print(fad_plot4(base_size = 9))
+        dev.off()
+      } else {
+        pdf(file, width = mmd[3] / 400, height = mmd[4] / 400, bg = "transparent")
+        print(fad_plot4(base_size = 9))
+        dev.off()
+      }
+    }
+  )
+  
   
   output$download_fad_data4       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season4),"_",input$fad_year4,"_data.",input$data_file_type_fad4, sep = "")},
                                                      content  = function(file) {
@@ -11734,7 +11885,13 @@ server <- function(input, output, session) {
   })
   
   # Plot map 
-  fad_plot5 = function(){plot_modera_sources(fad_global_data5(),input$fad_year5, season_fad_short5(),fad_zoom5())}
+  fad_plot5 = function(base_size = 18) {
+    plot_modera_sources(fad_global_data5(),
+                        input$fad_year5,
+                        season_fad_short5(),
+                        fad_zoom5(),
+                        base_size = base_size)
+  }
   
   fad_dimensions5 <- reactive({
     req(input$nav1 == "tab5") # Only run code if in the current tab
@@ -11806,22 +11963,35 @@ server <- function(input, output, session) {
                                                                                 row.names = FALSE,
                                                                                 col.names = TRUE)
                                                          }})
+
   
-  output$download_fad5            <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season5),"_",input$fad_year5,".",input$file_type_fad5, sep = "")},
-                                                     content  = function(file) {
-                                                       
-                                                       mmd = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map5_width, input$dimension[2], FALSE)
-                                                       
-                                                       if (input$file_type_fad5 == "png"){
-                                                         png(file, width = mmd[3] , height = mmd[4], res = 400, bg = "transparent")  
-                                                       } else if (input$file_type_fad5 == "jpeg"){
-                                                         jpeg(file, width = mmd[3] , height = mmd[4], res = 400, bg = "white") 
-                                                       } else {
-                                                         pdf(file, width = mmd[3]/400 , height = mmd[4]/400, bg = "transparent") 
-                                                       }
-                                                       print(fad_plot5())
-                                                       dev.off()
-                                                     })
+  output$download_fad5 <- downloadHandler(
+    filename = function()
+    {paste("Assimilated Observations_", gsub(" ", "", input$fad_season5), "_", input$fad_year5, ".", input$file_type_fad5, sep = "")},
+    
+    content = function(file) {
+      mmd = generate_map_dimensions(
+        subset_lons_primary(),
+        subset_lats_primary(),
+        session$clientData$output_fad_map5_width,
+        input$dimension[2],
+        FALSE
+      )
+      if (input$file_type_fad5 == "png") {
+        png(file, width = mmd[3], height = mmd[4], res = 400, bg = "transparent")
+        print(fad_plot5(base_size = 9))
+        dev.off()
+      } else if (input$file_type_fad5 == "jpeg") {
+        jpeg(file, width = mmd[3], height = mmd[4], res = 400,bg = "white")
+        print(fad_plot5(base_size = 9))
+        dev.off()
+      } else {
+        pdf(file, width = mmd[3] / 400, height = mmd[4] / 400, bg = "transparent")
+        print(fad_plot5(base_size = 9))
+        dev.off()
+      }
+    }
+  )
   
   output$download_fad_data5       <- downloadHandler(filename = function(){paste("Assimilated Observations_",gsub(" ", "", input$fad_season5),"_",input$fad_year5,"_data.",input$data_file_type_fad5, sep = "")},
                                                      content  = function(file) {
@@ -12770,17 +12940,17 @@ server <- function(input, output, session) {
   updateNumericRangeInputSafe("range_longitude5", -180, 180)
   updateNumericRangeInputSafe("range_longitude_6", -180, 180)
   updateNumericRangeInputSafe("fad_longitude_a5", -180, 180)
-  updateNumericRangeInputSafe("highlight_x_values", -180, 180)
-  updateNumericRangeInputSafe("highlight_x_values2", -180, 180)
-  updateNumericRangeInputSafe("highlight_x_values3", -180, 180)
-  updateNumericRangeInputSafe("highlight_x_values_reg_coeff", -180, 180)
-  updateNumericRangeInputSafe("highlight_x_values_reg_pval", -180, 180)
-  updateNumericRangeInputSafe("highlight_x_values_reg_res", -180, 180)
-  updateNumericRangeInputSafe("highlight_x_values_ts", -180, 180)
-  updateNumericRangeInputSafe("highlight_x_values_ts2", -180, 180)
-  updateNumericRangeInputSafe("highlight_x_values_ts3", -180, 180)
-  updateNumericRangeInputSafe("highlight_x_values_ts4", -180, 180)
-  updateNumericRangeInputSafe("highlight_x_values_ts5", -180, 180)
+  # updateNumericRangeInputSafe("highlight_x_values", -180, 180)
+  # updateNumericRangeInputSafe("highlight_x_values2", -180, 180)
+  # updateNumericRangeInputSafe("highlight_x_values3", -180, 180)
+  # updateNumericRangeInputSafe("highlight_x_values_reg_coeff", -180, 180)
+  # updateNumericRangeInputSafe("highlight_x_values_reg_pval", -180, 180)
+  # updateNumericRangeInputSafe("highlight_x_values_reg_res", -180, 180)
+  # updateNumericRangeInputSafe("highlight_x_values_ts", -180, 180)
+  # updateNumericRangeInputSafe("highlight_x_values_ts2", -180, 180)
+  # updateNumericRangeInputSafe("highlight_x_values_ts3", -180, 180)
+  # updateNumericRangeInputSafe("highlight_x_values_ts4", -180, 180)
+  # updateNumericRangeInputSafe("highlight_x_values_ts5", -180, 180)
   
   updateNumericRangeInputSafe("range_latitude", -90, 90)
   updateNumericRangeInputSafe("range_latitude2", -90, 90)
@@ -12791,17 +12961,17 @@ server <- function(input, output, session) {
   updateNumericRangeInputSafe("range_latitude5", -90, 90)
   updateNumericRangeInputSafe("range_latitude_6", -90, 90)
   updateNumericRangeInputSafe("fad_latitude_a5", -90, 90)
-  updateNumericRangeInputSafe("highlight_y_values", -90, 90)
-  updateNumericRangeInputSafe("highlight_y_values2", -90, 90)
-  updateNumericRangeInputSafe("highlight_y_values3", -90, 90)
-  updateNumericRangeInputSafe("highlight_y_values_reg_coeff", -90, 90)
-  updateNumericRangeInputSafe("highlight_y_values_reg_pval", -90, 90)
-  updateNumericRangeInputSafe("highlight_y_values_reg_res", -90, 90)
-  updateNumericRangeInputSafe("highlight_y_values_ts", -90, 90)
-  updateNumericRangeInputSafe("highlight_y_values_ts2", -90, 90)
-  updateNumericRangeInputSafe("highlight_y_values_ts3", -90, 90)
-  updateNumericRangeInputSafe("highlight_y_values_ts4", -90, 90)
-  updateNumericRangeInputSafe("highlight_y_values_ts5", -90, 90)
+  # updateNumericRangeInputSafe("highlight_y_values", -90, 90)
+  # updateNumericRangeInputSafe("highlight_y_values2", -90, 90)
+  # updateNumericRangeInputSafe("highlight_y_values3", -90, 90)
+  # updateNumericRangeInputSafe("highlight_y_values_reg_coeff", -90, 90)
+  # updateNumericRangeInputSafe("highlight_y_values_reg_pval", -90, 90)
+  # updateNumericRangeInputSafe("highlight_y_values_reg_res", -90, 90)
+  # updateNumericRangeInputSafe("highlight_y_values_ts", -90, 90)
+  # updateNumericRangeInputSafe("highlight_y_values_ts2", -90, 90)
+  # updateNumericRangeInputSafe("highlight_y_values_ts3", -90, 90)
+  # updateNumericRangeInputSafe("highlight_y_values_ts4", -90, 90)
+  # updateNumericRangeInputSafe("highlight_y_values_ts5", -90, 90)
   
   updateNumericRangeInputSafe("lag_years_6", -100, 100)
   updateNumericRangeInputSafe("year_range_sources", 1421, 2009)
