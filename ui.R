@@ -965,6 +965,8 @@ ui <- navbarPage(
                                                                   column(3, downloadButton(outputId = "download_map", label = "Download map")),
                                                                 ),
                                                                 
+                                                                hr(),
+                                                                
                                                                 # Upload Meta data
                                                                 h4(helpText("Metadata")),
                                                                 fluidRow(
@@ -1038,7 +1040,8 @@ ui <- navbarPage(
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
-                                                                              max     = 40))),
+                                                                              max     = 40)
+                                                                 )),
                                                            
                                                            radioButtons(inputId  = "axis_mode_ts",
                                                                         label    = "Y-axis customization:",
@@ -1312,6 +1315,8 @@ ui <- navbarPage(
                                                                   column(2, radioButtons(inputId = "file_type_timeseries", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                                                                   column(3, downloadButton(outputId = "download_timeseries", label = "Download timeseries"))
                                                                 ),
+                                                                
+                                                                hr(),
                                                                 
                                                                 # Upload Meta data 
                                                                 h4(helpText("Metadata")),
@@ -2087,7 +2092,13 @@ ui <- navbarPage(
                                                                            label       = "Custom plot title:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title")
+                                                                           placeholder = "Custom title"),
+                                                                 
+                                                                 numericInput(inputId = "title_size_input_ts2",
+                                                                              label   = "Font size:",
+                                                                              value   = 18,
+                                                                              min     = 1,
+                                                                              max     = 40),
                                                              )),
                                                            
                                                            radioButtons(inputId  = "axis_mode_ts2",
@@ -2343,6 +2354,8 @@ ui <- navbarPage(
                                                                   column(2, radioButtons(inputId = "file_type_timeseries2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                                                                   column(3, downloadButton(outputId = "download_timeseries2", label = "Download timeseries"))
                                                                 ),
+                                                                
+                                                                hr(),
                                                                 
                                                                 #Upload Meta data
                                                                 h4(helpText("Metadata")),
@@ -2877,13 +2890,19 @@ ui <- navbarPage(
                                                           column(3, downloadButton(outputId = "download_timeseries_data6", label = "Download SEA data"))
                                                         ),
                                                         
-                                                        # Upload Meta data 
-                                                        h4(helpText("Metadata")),
-                                                        fluidRow(
-                                                          column(3, downloadButton(outputId = "download_metadata_6", label = "Download metadata")),
-                                                          column(4, fileInput(inputId= "upload_metadata_6", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
-                                                          column(2, actionButton(inputId = "update_metadata_6", label = "Update upload inputs")),
-                                                        ),
+                                                        shinyjs::hidden(div(id = "hidden_meta6",
+                                                        
+                                                              hr(),
+                                                              
+                                                              # Upload Meta data 
+                                                              h4(helpText("Metadata")),
+                                                              fluidRow(
+                                                                column(3, downloadButton(outputId = "download_metadata_6", label = "Download metadata")),
+                                                                column(4, fileInput(inputId= "upload_metadata_6", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                                                column(2, actionButton(inputId = "update_metadata_6", label = "Update upload inputs")),
+                                                              ),
+                                                        
+                                                        )),
                                     )),
                                  ### SEA END ----
                                  ),
@@ -3428,7 +3447,13 @@ ui <- navbarPage(
                                                                            label       = "Custom plot title:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title")
+                                                                           placeholder = "Custom title"),
+                                                                 
+                                                                 numericInput(inputId = "title_size_input_ts3",
+                                                                              label   = "Font size:",
+                                                                              value   = 18,
+                                                                              min     = 1,
+                                                                              max     = 40),
                                                              )),
                                                            
                                                            radioButtons(inputId  = "axis_mode_ts3",
@@ -3682,14 +3707,22 @@ ui <- navbarPage(
                                                                   column(3, downloadButton(outputId = "download_timeseries3", label = "Download timeseries"))
                                                                 ),
                                                                 
-                                                                # Upload Meta data 
-                                                                h4(helpText("Metadata")),
-                                                                fluidRow(
-                                                                  column(3, downloadButton(outputId = "download_metadata_ts3", label = "Download metadata")),
-                                                                  column(4, fileInput(inputId= "upload_metadata_ts3", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
-                                                                  column(2, actionButton(inputId = "update_metadata_ts3", label = "Update upload inputs")),
-                                                                ),
+                                                                shinyjs::hidden(div(id = "hidden_meta_ts3",
+                                                                
+                                                                      hr(),
+                                                                      
+                                                                      # Upload Meta data 
+                                                                      h4(helpText("Metadata")),
+                                                                      fluidRow(
+                                                                        column(3, downloadButton(outputId = "download_metadata_ts3", label = "Download metadata")),
+                                                                        column(4, fileInput(inputId= "upload_metadata_ts3", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                                                        column(2, actionButton(inputId = "update_metadata_ts3", label = "Update upload inputs")),
+                                                                      ),
+                                                                
+                                                                )),
                                             )),
+                                            
+                                            hr(),
                                             
                                             #### Scatter Plot START ----
                                             h4("Scatter plot", style = "color: #094030;", reference_map_popover("pop_correlation_refmap")), 
@@ -4081,13 +4114,19 @@ ui <- navbarPage(
                                                                   column(3, downloadButton(outputId = "download_map3", label = "Download map"))
                                                                 ),
                                                                 
-                                                                # Upload Meta data 
-                                                                h4(helpText("Metadata")),
-                                                                fluidRow(
-                                                                  column(3, downloadButton(outputId = "download_metadata3", label = "Download metadata")),
-                                                                  column(4, fileInput(inputId= "upload_metadata3", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
-                                                                  column(2, actionButton(inputId = "update_metadata3", label = "Update upload inputs")),
-                                                                ),
+                                                                shinyjs::hidden(div(id = "hidden_meta3",
+                                                                
+                                                                      hr(),
+                                                                      
+                                                                      # Upload Meta data 
+                                                                      h4(helpText("Metadata")),
+                                                                      fluidRow(
+                                                                        column(3, downloadButton(outputId = "download_metadata3", label = "Download metadata")),
+                                                                        column(4, fileInput(inputId= "upload_metadata3", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                                                        column(2, actionButton(inputId = "update_metadata3", label = "Update upload inputs")),
+                                                                      ),
+                                                                
+                                                                )),
                                             )),
                                             
                                    ### Map plot: END ----        
@@ -4707,7 +4746,13 @@ ui <- navbarPage(
                                                                            label       = "Custom plot subtitle:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom subtitle")
+                                                                           placeholder = "Custom subtitle"),
+                                                                 
+                                                                 numericInput(inputId = "title_size_input_ts4",
+                                                                              label   = "Font size:",
+                                                                              value   = 18,
+                                                                              min     = 1,
+                                                                              max     = 40),
                                                              )),
                                                            
                                                            radioButtons(inputId  = "axis_mode_ts4a",
@@ -4972,15 +5017,19 @@ ui <- navbarPage(
                                               )
                                             ),
                                             
-                                            br(),
+                                            shinyjs::hidden(div(id = "hidden_meta_ts4",
                                             
-                                            # Upload Meta data 
-                                            h4(helpText("Metadata")),
-                                            fluidRow(
-                                              column(3, downloadButton(outputId = "download_metadata_ts4", label = "Download metadata")),
-                                              column(4, fileInput(inputId= "upload_metadata_ts4", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
-                                              column(2, actionButton(inputId = "update_metadata_ts4", label = "Update upload inputs")),
-                                            ),
+                                                  br(), hr(),
+                                                  
+                                                  # Upload Meta data 
+                                                  h4(helpText("Metadata")),
+                                                  fluidRow(
+                                                    column(3, downloadButton(outputId = "download_metadata_ts4", label = "Download metadata")),
+                                                    column(4, fileInput(inputId= "upload_metadata_ts4", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                                    column(2, actionButton(inputId = "update_metadata_ts4", label = "Update upload inputs")),
+                                                  ),
+                                            
+                                            )),
                                    ),
                                    
                                    ### Regression coefficients ----
@@ -5281,16 +5330,23 @@ ui <- navbarPage(
                                                                   column(2,radioButtons(inputId = "reg_coe_plot_data_type", label = "Choose file type:", choices = c("csv", "xlsx", "GeoTIFF"), selected = "csv", inline = TRUE)),
                                                                   column(3, downloadButton(outputId = "download_reg_coe_plot_data", label = "Download map data")),
                                                                 ),
-                                                                # Download, upload and update metadata
-                                                                h4(helpText("Metadata")),
-                                                                fluidRow(
-                                                                  # Download metadata
-                                                                  column(3, downloadButton(outputId = "download_metadata_reg_coeff", label = "Download metadata")),
-                                                                  # Upload metadata
-                                                                  column(4, fileInput(inputId= "upload_metadata_reg_coeff", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
-                                                                  # Update metadata
-                                                                  column(2, actionButton(inputId = "update_metadata_reg_coeff", label = "Update upload inputs")),
-                                                                ),
+                                                                
+                                                                shinyjs::hidden(div(id = "hidden_meta_reg_coeff",
+                                                                
+                                                                      hr(),
+                                                                      
+                                                                      # Download, upload and update metadata
+                                                                      h4(helpText("Metadata")),
+                                                                      fluidRow(
+                                                                        # Download metadata
+                                                                        column(3, downloadButton(outputId = "download_metadata_reg_coeff", label = "Download metadata")),
+                                                                        # Upload metadata
+                                                                        column(4, fileInput(inputId= "upload_metadata_reg_coeff", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                                                        # Update metadata
+                                                                        column(2, actionButton(inputId = "update_metadata_reg_coeff", label = "Update upload inputs")),
+                                                                      ),
+                                                                
+                                                                )),
                                             )),
                                             br(),
                                             # Data table
@@ -5602,16 +5658,22 @@ ui <- navbarPage(
                                                                   column(3, downloadButton(outputId = "download_reg_pval_plot_data", label = "Download map data")),
                                                                 ),
                                                                 
-                                                                # Download, upload and update metadata
-                                                                h4(helpText("Metadata")),
-                                                                fluidRow(
-                                                                  # Download metadata
-                                                                  column(3, downloadButton(outputId = "download_metadata_reg_pval", label = "Download metadata")),
-                                                                  # Upload metadata
-                                                                  column(4, fileInput(inputId= "upload_metadata_reg_pval", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
-                                                                  # Update metadata
-                                                                  column(2, actionButton(inputId = "update_metadata_reg_pval", label = "Update upload inputs")),
-                                                                ),
+                                                                shinyjs::hidden(div(id = "hidden_meta_reg_pval",
+                                                                
+                                                                      hr(),
+                                                                      
+                                                                      # Download, upload and update metadata
+                                                                      h4(helpText("Metadata")),
+                                                                      fluidRow(
+                                                                        # Download metadata
+                                                                        column(3, downloadButton(outputId = "download_metadata_reg_pval", label = "Download metadata")),
+                                                                        # Upload metadata
+                                                                        column(4, fileInput(inputId= "upload_metadata_reg_pval", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                                                        # Update metadata
+                                                                        column(2, actionButton(inputId = "update_metadata_reg_pval", label = "Update upload inputs")),
+                                                                      ),
+                                                                
+                                                                )),
                                             )),
                                             br(),
                                             # Data table
@@ -5723,6 +5785,10 @@ ui <- navbarPage(
                                                            br(), hr(),
                                                            
                                                            h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_anomalies_layers"))),
+                                                           
+                                                           checkboxInput(inputId = "custom_topo_reg_res",
+                                                                         label   = "Topographical customization",
+                                                                         value   = FALSE),
                                                            
                                                            shinyjs::hidden(
                                                              div(id = "hidden_geo_options_reg_res",
@@ -5921,16 +5987,22 @@ ui <- navbarPage(
                                                                   column(3, downloadButton(outputId = "download_reg_res_plot_data", label = "Download map data")),
                                                                 ),
                                                                 
-                                                                # Download, upload and update metadata
-                                                                h4(helpText("Metadata")),
-                                                                fluidRow(
-                                                                  # Download metadata
-                                                                  column(3, downloadButton(outputId = "download_metadata_reg_res", label = "Download metadata")),
-                                                                  # Upload metadata
-                                                                  column(4, fileInput(inputId= "upload_metadata_reg_res", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
-                                                                  # Update metadata
-                                                                  column(2, actionButton(inputId = "update_metadata_reg_res", label = "Update upload inputs")),
-                                                                ),
+                                                                shinyjs::hidden(div(id = "hidden_meta_reg_res",
+                                                                
+                                                                      hr(),
+                                                                      
+                                                                      # Download, upload and update metadata
+                                                                      h4(helpText("Metadata")),
+                                                                      fluidRow(
+                                                                        # Download metadata
+                                                                        column(3, downloadButton(outputId = "download_metadata_reg_res", label = "Download metadata")),
+                                                                        # Upload metadata
+                                                                        column(4, fileInput(inputId= "upload_metadata_reg_res", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                                                        # Update metadata
+                                                                        column(2, actionButton(inputId = "update_metadata_reg_res", label = "Update upload inputs")),
+                                                                      ),
+                                                                
+                                                                )),
                                             )),
                                             br(),
                                             # Data table
@@ -6272,7 +6344,13 @@ ui <- navbarPage(
                                                                            label       = "Custom plot title:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title")
+                                                                           placeholder = "Custom title"),
+                                                                 
+                                                                 numericInput(inputId = "title_size_input_ts5",
+                                                                              label   = "Font size:",
+                                                                              value   = 18,
+                                                                              min     = 1,
+                                                                              max     = 40),
                                                              )),
                                                            
                                                            checkboxInput(inputId = "show_key_ts5",
@@ -6464,6 +6542,8 @@ ui <- navbarPage(
                                               column(2, radioButtons(inputId = "file_type_timeseries5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                                               column(3, downloadButton(outputId = "download_timeseries5", label = "Download timeseries"))
                                             ),
+                                            
+                                            hr(),
                                             
                                             # Upload Meta data 
                                             h4(helpText("Metadata")),

@@ -1103,6 +1103,24 @@ server <- function(input, output, session) {
                            condition = input$add_outliers_ref_ts3 == "Trend deviation",
                            asis = FALSE)})
   
+  observe({shinyjs::toggle(id = "hidden_meta_ts3",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$source_v1 == "ModE-" && input$source_v2 == "ModE-",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_meta3",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$source_v1 == "ModE-" && input$source_v2 == "ModE-",
+                           asis = FALSE)})
+  
+  
+  
   
   # Customization
   ### Correlation Maps
@@ -1551,6 +1569,14 @@ server <- function(input, output, session) {
                            condition = input$show_ticks_ts4 == TRUE,
                            asis = FALSE)})
   
+  observe({shinyjs::toggle(id = "hidden_meta_ts4",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$source_iv == "ModE-" && input$source_dv == "ModE-",
+                           asis = FALSE)})
+
   ### Regression Maps
   # Hidden Customization and Download Regression Coefficients
   observe({shinyjs::toggle(id = "hidden_custom_map_reg_coeff",
@@ -1615,6 +1641,14 @@ server <- function(input, output, session) {
                            time = 0.5,
                            selector = NULL,
                            condition = input$custom_topo_reg_coeff == TRUE,
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_meta_reg_coeff",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$source_iv == "ModE-" && input$source_dv == "ModE-",
                            asis = FALSE)})
   
   
@@ -1683,6 +1717,14 @@ server <- function(input, output, session) {
                            condition = input$custom_topo_reg_pval == TRUE,
                            asis = FALSE)})
   
+  observe({shinyjs::toggle(id = "hidden_meta_reg_pval",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$source_iv == "ModE-" && input$source_dv == "ModE-",
+                           asis = FALSE)})
+  
   
   # Hidden Customization and Download Regression Residuals
   observe({shinyjs::toggle(id = "hidden_custom_maps_reg_res",
@@ -1741,7 +1783,14 @@ server <- function(input, output, session) {
                            condition = input$custom_topo_reg_res == TRUE,
                            asis = FALSE)})
   
-  # Download Reg Res
+  observe({shinyjs::toggle(id = "hidden_meta_reg_res",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$source_iv == "ModE-" && input$source_dv == "ModE-",
+                           asis = FALSE)})
+  
   observe({shinyjs::toggle(id = "hidden_download_reg_res",
                            anim = TRUE,
                            animType = "slide",
@@ -1749,6 +1798,9 @@ server <- function(input, output, session) {
                            selector = NULL,
                            condition = input$download_options_reg_res == TRUE,
                            asis = FALSE)})
+  
+  
+  #Download FAD Plots
   observe({shinyjs::toggle(id = "hidden_iv_fad_download",
                            anim = TRUE,
                            animType = "slide",
@@ -2038,6 +2090,14 @@ server <- function(input, output, session) {
                            time = 0.5,
                            selector = NULL,
                            condition = input$axis_mode_6 == "Fixed",
+                           asis = FALSE)})
+  
+  observe({shinyjs::toggle(id = "hidden_meta6",
+                           anim = TRUE,
+                           animType = "slide",
+                           time = 0.5,
+                           selector = NULL,
+                           condition = input$source_sea_6 == "ModE-",
                            asis = FALSE)})
   
   ### ANOMALIES observe, update & interactive controls ----
@@ -2776,265 +2836,285 @@ server <- function(input, output, session) {
   
   ####### Generate Metadata for map customization ----
   
-  #Download Plot data
-  metadata_input <- reactive({
-    
-    metadata = generate_metadata(input$axis_mode,
-                                 input$axis_input,
-                                 input$hide_axis, 
-                                 input$title_mode,
-                                 input$title1_input,
-                                 input$title2_input,
-                                 input$title_size_input,
-                                 input$custom_statistic,
-                                 input$sd_ratio,
-                                 input$hide_borders,
-                                 input$white_ocean,
-                                 input$white_land)
-    
-    return(metadata)  
+  #Prepare Download MAP
+  
+  metadata_inputs <- reactive({
+    generate_metadata_anomalies(
+      
+      # Common / input data
+      range_years         = input$range_years,
+      dataset_selected    = input$dataset_selected,
+      range_latitude      = input$range_latitude,
+      range_longitude     = input$range_longitude,
+      range_months        = input$range_months,
+      ref_period_sg       = input$ref_period_sg,
+      ref_period          = input$ref_period,
+      ref_single_year     = input$ref_single_year,
+      season_selected     = input$season_selected,
+      variable_selected   = input$variable_selected,
+      single_year         = input$single_year,
+      range_years_sg      = input$range_years_sg,
+      axis_input          = input$axis_input,
+      axis_mode           = input$axis_mode,
+      
+      # Map settings
+      center_lat               = input$center_lat,
+      center_lon               = input$center_lon,
+      custom_map               = input$custom_map,
+      custom_topo              = input$custom_topo,
+      download_options         = input$download_options,
+      file_type_map_sec        = input$file_type_map_sec,
+      file_type_map            = input$file_type_map,
+      file_type_timeseries     = input$file_type_timeseries,
+      hide_axis                = input$hide_axis,
+      hide_borders             = input$hide_borders,
+      label_lakes              = input$label_lakes,
+      label_mountains          = input$label_mountains,
+      label_rivers             = input$label_rivers,
+      projection               = input$projection,
+      ref_map_mode             = input$ref_map_mode,
+      sd_ratio                 = input$sd_ratio,
+      show_lakes               = input$show_lakes,
+      show_mountains           = input$show_mountains,
+      show_rivers              = input$show_rivers,
+      title_mode               = input$title_mode,
+      title_size_input         = input$title_size_input,
+      title1_input             = input$title1_input,
+      title2_input             = input$title2_input,
+      white_land               = input$white_land,
+      white_ocean              = input$white_ocean,
+      custom_statistic         = input$custom_statistic,
+      enable_custom_statistics = input$enable_custom_statistics,
+      
+      # Time series plot inputs
+      axis_input_ts                = NA,
+      axis_mode_ts                = NA,
+      custom_ts                   = NA,
+      download_options_ts         = NA,
+      enable_custom_statistics_ts = NA,
+      key_position_ts             = NA,
+      show_key_ts                 = NA,
+      show_ticks_ts               = NA,
+      title_mode_ts               = NA,
+      title_size_input_ts         = NA,
+      title1_input_ts             = NA,
+      xaxis_numeric_interval_ts   = NA,
+      custom_percentile_ts        = NA,
+      percentile_ts               = NA,
+      show_ref_ts                 = NA,
+      custom_average_ts           = NA,
+      moving_percentile_ts        = NA,
+      year_moving_ts              = NA,
+      
+      # Reactive Values
+      plotOrder            = character(0),
+      availableLayers      = character(0),
+      lonlat_vals          = lonlat_vals()
+    )
   })
   
-  plot_gen_input <- reactive({
-    
-    plot_gen = generate_metadata_plot(input$dataset_selected,
-                                      input$variable_selected,
-                                      input$range_years,
-                                      input$single_year,
-                                      input$range_years_sg,
-                                      input$season_selected,
-                                      input$range_months,
-                                      input$ref_period,
-                                      input$ref_single_year,
-                                      input$ref_period_sg,
-                                      input$range_longitude,
-                                      input$range_latitude,
-                                      lonlat_vals())
-    
-    return(plot_gen)
-  })
-  
+  #Download MAP
   output$download_metadata <- downloadHandler(
     filename = function() {"metadata.xlsx"},
     
     content  = function(file) {
-      
       wb <- openxlsx::createWorkbook()
       
-      openxlsx::addWorksheet(wb, "custom_map")
+      openxlsx::addWorksheet(wb, "custom_meta")
       openxlsx::addWorksheet(wb, "custom_points")
       openxlsx::addWorksheet(wb, "custom_highlights")
-      openxlsx::addWorksheet(wb, "plot_gen")
-      openxlsx::writeData(wb, "custom_map", metadata_input())
-      openxlsx::writeData(wb, "custom_points", map_points_data())
-      openxlsx::writeData(wb, "custom_highlights", map_highlights_data())
-      openxlsx::writeData(wb, "plot_gen", plot_gen_input())
+      
+      meta <- isolate(metadata_inputs())
+      if (nrow(meta) > 0) openxlsx::writeData(wb, "custom_meta", meta)
+      
+      points <- map_points_data()
+      if (!is.null(points) && nrow(points) > 0) openxlsx::writeData(wb, "custom_points", points)
+      
+      highlights <- map_highlights_data()
+      if (!is.null(highlights) && nrow(highlights) > 0) openxlsx::writeData(wb, "custom_highlights", highlights)
+      
       openxlsx::saveWorkbook(wb, file)
     }
   )
   
-  #Upload plot data
-  
-  process_uploaded_file <- function() {
-    metadata <- openxlsx::read.xlsx(input$upload_metadata$datapath, sheet = "custom_map")
-    
-    # Update inputs based on metadata sheet custom_map
-    updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode", selected = metadata[1, "axis_mode"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input", value = metadata[1:2, "axis_input"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis", value = metadata[1, "hide_axis"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode", selected = metadata[1, "title_mode"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title1_input", value = metadata[1, "title1_input"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title2_input", value = metadata[1, "title2_input"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "title_size_input", value = metadata[1, "title_size_input"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "custom_statistic", selected = metadata[1, "custom_statistic"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "sd_ratio", value = metadata[1, "sd_ratio"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders", value = metadata[1, "hide_borders"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean", value = metadata[1, "white_ocean"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land", value = metadata[1, "white_land"])
-    
-    # Read metadata from "custom_points" sheet
-    metadata_points <- openxlsx::read.xlsx(input$upload_metadata$datapath, sheet = "custom_points")
-    
-    # Update map points data if metadata_points is not empty
-    if (!is.null(metadata_points) && nrow(metadata_points) > 0) {
-      map_points_data(metadata_points)
-    }
-    
-    # Read metadata from "custom_highlights" sheet
-    metadata_highlights <- openxlsx::read.xlsx(input$upload_metadata$datapath, sheet = "custom_highlights")
-    
-    # Update map highlights data if metadata_highlights is not empty
-    if (!is.null(metadata_highlights) && nrow(metadata_highlights) > 0) {
-      map_highlights_data(metadata_highlights)
-    }
-    
-    # Update plot generation
-    plot_data <- openxlsx::read.xlsx(input$upload_metadata$datapath, sheet = "plot_gen")
-    
-    # Update inputs based on metadata sheet plot_gen
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected", selected = plot_data[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected", selected = plot_data[1, "variable"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years", value = plot_data[1:2, "range_years"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "single_year", value = plot_data[1, "select_sg_year"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "range_years_sg", value = plot_data[1, "sg_year"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected", selected = plot_data[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months", selected = plot_data[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period", value = plot_data[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year", value = plot_data[1, "select_sg_ref"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg", value = plot_data[1, "sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude", value = plot_data[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude", value = plot_data[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals(plot_data[1:4, "lonlat_vals"])
-  }
-  
-  
-  # Event handler for upload button
+  # Upload MAP
   observeEvent(input$update_metadata, {
     req(input$upload_metadata)
+    
     file_path <- input$upload_metadata$datapath
+    file_name <- input$upload_metadata$name
     
-    # Read the first sheet name from the uploaded Excel file
-    first_sheet_name <- tryCatch({
-      available_sheets <- getSheetNames(file_path)
-      available_sheets[[1]]
-    }, error = function(e) {
-      NULL
-    })
-    
-    # Check if the correct first sheet name is present
-    if (!is.null(first_sheet_name) && first_sheet_name == "custom_map") {
-      # Correct first sheet name is present, proceed with processing the file
-      process_uploaded_file()
+    # Check that the uploaded file is named "metadata.xlsx"
+    if (!is.null(file_name) && tools::file_path_sans_ext(file_name) == "metadata") {
+      
+      process_uploaded_metadata(
+        file_path           = file_path,
+        mode                = "map",
+        metadata_sheet      = "custom_meta",
+        df_ts_points        = NULL,
+        df_ts_highlights    = NULL,
+        df_ts_lines         = NULL,
+        df_map_points       = "custom_points",
+        df_map_highlights   = "custom_highlights",
+        rv_plotOrder        = plotOrder,
+        rv_availableLayers  = availableLayers,
+        rv_lonlat_vals      = lonlat_vals,
+        map_points_data     = map_points_data,
+        map_highlights_data = map_highlights_data,
+        ts_points_data      = NULL,
+        ts_highlights_data  = NULL,
+        ts_lines_data       = NULL
+      )
+      
     } else {
-      # Incorrect or missing first sheet name, show an error message
       showModal(modalDialog(
         title = "Error",
+        "Please upload the correct file: 'metadata.xlsx'.",
         easyClose = TRUE,
-        size = "s",
-        "Please upload the correct Metadata!"
+        size = "s"
       ))
     }
   })
   
-  #Download TS data
-  metadata_input_ts <- reactive({
-    
-    metadata_ts = generate_metadata_ts(input$title_mode_ts,
-                                       input$title1_input_ts,
-                                       input$show_key_ts,
-                                       input$key_position_ts,
-                                       input$show_ref_ts,
-                                       input$custom_average_ts,
-                                       input$year_moving_ts,
-                                       input$percentile_ts,
-                                       input$moving_percentile_ts)
-    
-    return(metadata_ts)  
+  #Prepare Download TS
+  metadata_inputs_ts <- reactive({
+    generate_metadata_anomalies(
+      
+      # Common / input data
+      range_years         = input$range_years,
+      dataset_selected    = input$dataset_selected,
+      range_latitude      = input$range_latitude,
+      range_longitude     = input$range_longitude,
+      range_months        = input$range_months,
+      ref_period_sg       = input$ref_period_sg,
+      ref_period          = input$ref_period,
+      ref_single_year     = input$ref_single_year,
+      season_selected     = input$season_selected,
+      variable_selected   = input$variable_selected,
+      single_year         = input$single_year,
+      range_years_sg      = input$range_years_sg,
+      axis_input          = input$axis_input,
+      axis_mode           = input$axis_mode,
+      
+      # Map settings
+      center_lat               = NA,
+      center_lon               = NA,
+      custom_map               = NA,
+      custom_topo              = NA,
+      download_options         = NA,
+      file_type_map_sec        = NA,
+      file_type_map            = NA,
+      hide_axis                = NA,
+      hide_borders             = NA,
+      label_lakes              = NA,
+      label_mountains          = NA,
+      label_rivers             = NA,
+      projection               = NA,
+      ref_map_mode             = NA,
+      sd_ratio                 = NA,
+      show_lakes               = NA,
+      show_mountains           = NA,
+      show_rivers              = NA,
+      title_mode               = NA,
+      title_size_input         = NA,
+      title1_input             = NA,
+      title2_input             = NA,
+      white_land               = NA,
+      white_ocean              = NA,
+      custom_statistic         = NA,
+      enable_custom_statistics = NA,
+      
+      # Time series plot inputs
+      axis_input_ts              = input$axis_input_ts,
+      axis_mode_ts               = input$axis_mode_ts,
+      custom_ts                  = input$custom_ts,
+      download_options_ts        = input$download_options_ts,
+      enable_custom_statistics_ts = input$enable_custom_statistics_ts,
+      file_type_timeseries       = input$file_type_timeseries,
+      key_position_ts            = input$key_position_ts,
+      show_key_ts                = input$show_key_ts,
+      show_ticks_ts              = input$show_ticks_ts,
+      title_mode_ts              = input$title_mode_ts,
+      title_size_input_ts        = input$title_size_input_ts,
+      title1_input_ts            = input$title1_input_ts,
+      xaxis_numeric_interval_ts  = input$xaxis_numeric_interval_ts,
+      custom_percentile_ts       = input$custom_percentile_ts,
+      percentile_ts              = input$percentile_ts,
+      show_ref_ts                = input$show_ref_ts,
+      custom_average_ts          = input$custom_average_ts,
+      moving_percentile_ts       = input$moving_percentile_ts,
+      year_moving_ts             = input$year_moving_ts,
+      
+      # Reactive Values / DFs
+      plotOrder            = NA,
+      availableLayers      = NA,
+      lonlat_vals          = lonlat_vals()
+    )
   })
   
+  # Download TS Anomalies Metadata
   output$download_metadata_ts <- downloadHandler(
     filename = function() {"metadata_ts.xlsx"},
     content  = function(file) {
       wb <- openxlsx::createWorkbook()
-      openxlsx::addWorksheet(wb, "custom_map_ts")
-      openxlsx::addWorksheet(wb, "custom_points_ts")
-      openxlsx::addWorksheet(wb, "custom_highlights_ts")
-      openxlsx::addWorksheet(wb, "custom_lines_ts")
-      openxlsx::addWorksheet(wb, "plot_gen")
-      openxlsx::writeData(wb, "custom_map_ts", metadata_input_ts())
-      openxlsx::writeData(wb, "custom_points_ts", ts_points_data())
-      openxlsx::writeData(wb, "custom_highlights_ts", ts_highlights_data())
-      openxlsx::writeData(wb, "custom_lines_ts", ts_lines_data())
-      openxlsx::writeData(wb, "plot_gen", plot_gen_input())
+      
+      openxlsx::addWorksheet(wb, "custom_meta")
+      openxlsx::addWorksheet(wb, "custom_points")
+      openxlsx::addWorksheet(wb, "custom_highlights")
+      openxlsx::addWorksheet(wb, "custom_lines")
+      
+      meta <- isolate(metadata_inputs_ts())
+      if (nrow(meta) > 0) openxlsx::writeData(wb, "custom_meta", meta)
+      
+      points     <- ts_points_data()
+      if (!is.null(points) && nrow(points) > 0) openxlsx::writeData(wb, "custom_points", points)
+      
+      highlights <- ts_highlights_data()
+      if (!is.null(highlights) && nrow(highlights) > 0) openxlsx::writeData(wb, "custom_highlights", highlights)
+      
+      lines      <- ts_lines_data()
+      if (!is.null(lines) && nrow(lines) > 0) openxlsx::writeData(wb, "custom_lines", lines)
+      
       openxlsx::saveWorkbook(wb, file)
     }
   )
-  
-  #Upload TS data
-  process_uploaded_file_ts <- function() {
-    metadata_ts <- openxlsx::read.xlsx(input$upload_metadata_ts$datapath, sheet = "custom_map_ts")
-    
-    # Update inputs based on metadata_ts sheet custom_map_ts
-    updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_ts", selected = metadata_ts[1, "title_mode_ts"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title1_input_ts", value = metadata_ts[1, "title1_input_ts"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "show_key_ts", value = metadata_ts[1, "show_key_ts"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "key_position_ts", selected = metadata_ts[1, "key_position_ts"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "show_ref_ts", value = metadata_ts[1, "show_ref_ts"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "custom_average_ts", value = metadata_ts[1, "custom_average_ts"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "year_moving_ts", value = metadata_ts[1, "year_moving_ts"])
-    updateCheckboxGroupInput(session = getDefaultReactiveDomain(), "percentile_ts", selected = metadata_ts[1, "percentile_ts"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "moving_percentile_ts", value = metadata_ts[1, "moving_percentile_ts"])
-    
-    # Read metadata from "custom_points_ts" sheet
-    metadata_points_ts <- openxlsx::read.xlsx(input$upload_metadata_ts$datapath, sheet = "custom_points_ts")
-    
-    # Update map points data if metadata_points_ts is not empty
-    if (!is.null(metadata_points_ts) && nrow(metadata_points_ts) > 0) {
-      ts_points_data(metadata_points_ts)
-    }
-    
-    # Read metadata from "custom_highlights_ts" sheet
-    metadata_highlights_ts <- openxlsx::read.xlsx(input$upload_metadata_ts$datapath, sheet = "custom_highlights_ts")
-    
-    # Update map highlights data if metadata_highlights_ts is not empty
-    if (!is.null(metadata_highlights_ts) && nrow(metadata_highlights_ts) > 0) {
-      ts_highlights_data(metadata_highlights_ts)
-    }
-    
-    # Read metadata from "custom_lines_ts" sheet
-    metadata_lines_ts <- openxlsx::read.xlsx(input$upload_metadata_ts$datapath, sheet = "custom_lines_ts")
-    
-    # Update map lines data if metadata_lines_ts is not empty
-    if (!is.null(metadata_lines_ts) && nrow(metadata_lines_ts) > 0) {
-      ts_lines_data(metadata_lines_ts)
-    }
-    
-    # Update plot generation
-    plot_data <- openxlsx::read.xlsx(input$upload_metadata_ts$datapath, sheet = "plot_gen")
-    
-    # Update inputs based on metadata sheet plot_gen
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected", selected = plot_data[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected", selected = plot_data[1, "variable"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years", value = plot_data[1:2, "range_years"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "single_year", value = plot_data[1, "select_sg_year"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "range_years_sg", value = plot_data[1, "sg_year"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected", selected = plot_data[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months", selected = plot_data[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period", value = plot_data[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year", value = plot_data[1, "select_sg_ref"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg", value = plot_data[1, "sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude", value = plot_data[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude", value = plot_data[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals(plot_data[1:4, "lonlat_vals"])
-  }
-  
-  
-  # Event handler for upload button
+
+  # Upload TS Anomalies Metadata
   observeEvent(input$update_metadata_ts, {
     req(input$upload_metadata_ts)
+    
     file_path <- input$upload_metadata_ts$datapath
+    file_name <- input$upload_metadata_ts$name  # This gets the original uploaded file name
     
-    # Read the first sheet name from the uploaded Excel file
-    first_sheet_name <- tryCatch({
-      available_sheets <- getSheetNames(file_path)
-      available_sheets[[1]]
-    }, error = function(e) {
-      NULL
-    })
-    
-    # Check if the correct first sheet name is present
-    if (!is.null(first_sheet_name) && first_sheet_name == "custom_map_ts") {
-      # Correct first sheet name is present, proceed with processing the file
-      process_uploaded_file_ts()
+    # Check that the uploaded file name matches expectation
+    if (!is.null(file_name) && tools::file_path_sans_ext(file_name) == "metadata_ts") {
+      
+      # Proceed with processing
+      process_uploaded_metadata(
+        file_path           = file_path,
+        mode                = "ts",
+        metadata_sheet      = "custom_meta",
+        df_ts_points        = "custom_points",
+        df_ts_highlights    = "custom_highlights",
+        df_ts_lines         = "custom_lines",
+        df_map_points       = NULL,
+        df_map_highlights   = NULL,
+        rv_plotOrder        = NULL,
+        rv_availableLayers  = NULL,
+        rv_lonlat_vals      = lonlat_vals,
+        map_points_data     = NULL,
+        map_highlights_data = NULL,
+        ts_points_data      = ts_points_data,
+        ts_highlights_data  = ts_highlights_data,
+        ts_lines_data       = ts_lines_data
+      )
+      
     } else {
-      # Incorrect or missing first sheet name, show an error message
       showModal(modalDialog(
         title = "Error",
+        "Please upload the correct file: 'metadata_ts.xlsx'.",
         easyClose = TRUE,
-        size = "s",
-        "Please upload the correct Metadata!"
+        size = "s"
       ))
     }
   })
@@ -3720,288 +3800,280 @@ server <- function(input, output, session) {
   
   ####### Generate Metadata for map customization ----
   
-  #Download Plot data 
-  metadata_input2 <- reactive({
-    
-    metadata2 = generate_metadata_comp(input$axis_mode2,
-                                       input$axis_input2,
-                                       input$hide_axis2,
-                                       input$title_mode2,
-                                       input$title1_input2,
-                                       input$title2_input2,
-                                       input$title_size_input2,
-                                       input$custom_statistic2,
-                                       input$percentage_sign_match2,
-                                       input$sd_ratio2,
-                                       input$hide_borders2,
-                                       input$white_ocean2,
-                                       input$white_land2)
-    
-    return(metadata2)  
+  #Prepare Download
+  metadata_inputs_composite <- reactive({
+    generate_metadata_composite(
+      # Shared
+      range_years2         = input$range_years2,
+      range_years2a        = input$range_years2a,
+      dataset_selected2    = input$dataset_selected2,
+      range_latitude2      = input$range_latitude2,
+      range_longitude2     = input$range_longitude2,
+      range_months2        = input$range_months2,
+      ref_period_sg2       = input$ref_period_sg2,
+      ref_period2          = input$ref_period2,
+      ref_single_year2     = input$ref_single_year2,
+      season_selected2     = input$season_selected2,
+      variable_selected2   = input$variable_selected2,
+      enter_upload2        = input$enter_upload2,
+      enter_upload2a       = input$enter_upload2a,
+      mode_selected2       = input$mode_selected2,
+      prior_years2         = input$prior_years2,
+      
+      # Map settings
+      axis_input2               = input$axis_input2,
+      axis_mode2                = input$axis_mode2,
+      center_lat2               = input$center_lat2,
+      center_lon2               = input$center_lon2,
+      custom_map2               = input$custom_map2,
+      custom_statistic2         = input$custom_statistic2,
+      custom_topo2              = input$custom_topo2,
+      download_options2         = input$download_options2,
+      enable_custom_statistics2 = input$enable_custom_statistics2,
+      file_type_map_sec2        = input$file_type_map_sec2,
+      file_type_map2            = input$file_type_map2,
+      file_type_timeseries2     = input$file_type_timeseries2,
+      hide_axis2                = input$hide_axis2,
+      hide_borders2             = input$hide_borders2,
+      label_lakes2              = input$label_lakes2,
+      label_mountains2          = input$label_mountains2,
+      label_rivers2             = input$label_rivers2,
+      percentage_sign_match2    = input$percentage_sign_match2,
+      projection2               = input$projection2,
+      ref_map_mode2             = input$ref_map_mode2,
+      sd_ratio2                 = input$sd_ratio2,
+      show_lakes2               = input$show_lakes2,
+      show_mountains2           = input$show_mountains2,
+      show_rivers2              = input$show_rivers2,
+      title_mode2               = input$title_mode2,
+      title_size_input2         = input$title_size_input2,
+      title1_input2             = input$title1_input2,
+      title2_input2             = input$title2_input2,
+      white_land2               = input$white_land2,
+      white_ocean2              = input$white_ocean2,
+      
+      # TS section not needed here
+      axis_input_ts2                = NA,
+      axis_mode_ts2                = NA,
+      custom_percentile_ts2        = NA,
+      custom_ts2                   = NA,
+      download_options_ts2         = NA,
+      enable_custom_statistics_ts2 = NA,
+      key_position_ts2             = NA,
+      percentile_ts2               = NA,
+      show_key_ts2                 = NA,
+      show_ref_ts2                 = NA,
+      show_ticks_ts2               = NA,
+      title_mode_ts2               = NA,
+      title_size_input_ts2         = NA,
+      title1_input_ts2             = NA,
+      xaxis_numeric_interval_ts2   = NA,
+      
+      # Reac values
+      plotOrder            = character(0),
+      availableLayers      = character(0),
+      lonlat_vals          = lonlat_vals2()
+    )
   })
   
-  plot_gen_input2 <- reactive({
-    
-    plot_gen2 = generate_metadata_plot_comp(input$dataset_selected2,
-                                            input$variable_selected2,
-                                            input$range_years2,
-                                            input$season_selected2,
-                                            input$range_months2,
-                                            input$ref_period2,
-                                            input$ref_single_year2,
-                                            input$ref_period_sg2,
-                                            input$prior_years2,
-                                            input$range_years2a,
-                                            input$range_longitude2,
-                                            input$range_latitude2,
-                                            lonlat_vals2())
-    
-    return(plot_gen2)
-  })
-  
+  # Download Composite Map Metadata
   output$download_metadata2 <- downloadHandler(
-    filename = function() {"metadata_comp.xlsx"},
+    filename = function() {"metadata_composite.xlsx"},
     content  = function(file) {
       wb <- openxlsx::createWorkbook()
-      openxlsx::addWorksheet(wb, "custom_map2")
-      openxlsx::addWorksheet(wb, "custom_points2")
-      openxlsx::addWorksheet(wb, "custom_highlights2")
-      openxlsx::addWorksheet(wb, "plot_gen2")
-      openxlsx::writeData(wb, "custom_map2", metadata_input2())
-      openxlsx::writeData(wb, "custom_points2", map_points_data2())
-      openxlsx::writeData(wb, "custom_highlights2", map_highlights_data2())
-      openxlsx::writeData(wb, "plot_gen2", plot_gen_input2())
+      
+      openxlsx::addWorksheet(wb, "custom_meta")
+      openxlsx::addWorksheet(wb, "custom_points")
+      openxlsx::addWorksheet(wb, "custom_highlights")
+      
+      meta <- isolate(metadata_inputs_composite())
+      if (nrow(meta) > 0) openxlsx::writeData(wb, "custom_meta", meta)
+      
+      if (nrow(map_points_data2()) > 0) openxlsx::writeData(wb, "custom_points", map_points_data2())
+      if (nrow(map_highlights_data2()) > 0) openxlsx::writeData(wb, "custom_highlights", map_highlights_data2())
+      
       openxlsx::saveWorkbook(wb, file)
     }
   )
   
-  #Upload plot data
-  
-  process_uploaded_file2 <- function() {
-    metadata2 <- openxlsx::read.xlsx(input$upload_metadata2$datapath, sheet = "custom_map2")
-    
-    # Update inputs based on metadata2 sheet custom_map2
-    updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode2", selected = metadata2[1, "axis_mode2"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input2", value = metadata2[1:2, "axis_input2"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis2", value = metadata2[1, "hide_axis2"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode2", selected = metadata2[1, "title_mode2"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title1_input2", value = metadata2[1, "title1_input2"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title2_input2", value = metadata2[1, "title2_input2"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "title_size_input2", value = metadata2[1, "title_size_input2"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "custom_statistic2", selected = metadata2[1, "custom_statistic2"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "percentage_sign_match2", value = metadata2[1, "percentage_sign_match2"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "sd_ratio2", value = metadata2[1, "sd_ratio2"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders2", value = metadata2[1, "hide_borders2"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean2", value = metadata2[1, "white_ocean2"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land2", value = metadata2[1, "white_land2"])
-    
-    # Read metadata from "custom_points2" sheet
-    metadata_points2 <- openxlsx::read.xlsx(input$upload_metadata2$datapath, sheet = "custom_points2")
-    
-    # Update map points data if metadata_points2 is not empty
-    if (!is.null(metadata_points2) && nrow(metadata_points2) > 0) {
-      map_points_data2(metadata_points2)
-    }
-    
-    # Read metadata2 from "custom_highlights2" sheet
-    metadata_highlights2 <- openxlsx::read.xlsx(input$upload_metadata2$datapath, sheet = "custom_highlights2")
-    
-    # Update map highlights data if metadata_highlights2 is not empty
-    if (!is.null(metadata_highlights2) && nrow(metadata_highlights2) > 0) {
-      map_highlights_data2(metadata_highlights2)
-    }
-    
-    # Update plot generation
-    plot_data2 <- openxlsx::read.xlsx(input$upload_metadata2$datapath, sheet = "plot_gen2")
-    
-    # Update inputs based on metadata2 sheet plot_gen2
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected2", selected = plot_data2[1, "dataset2"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected2", selected = plot_data2[1, "variable2"])
-    updateTextInput(session = getDefaultReactiveDomain(), "range_years2", value = plot_data2[1, "range_years2"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected2", selected = plot_data2[1, "season_sel2"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months2", selected = plot_data2[1:2, "range_months2"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period2", value = plot_data2[1:2, "ref_period2"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year2", value = plot_data2[1, "select_sg_ref2"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg2", value = plot_data2[1, "sg_ref2"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "prior_years2", value = plot_data2[1, "prior_years2"])
-    updateTextInput(session = getDefaultReactiveDomain(), "range_years2a", value = plot_data2[1, "range_years2a"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude2", value = plot_data2[1:2, "lon_range2"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude2", value = plot_data2[1:2, "lat_range2"])
-    # Update Lon Lat Vals
-    lonlat_vals2(plot_data2[1:4, "lonlat_vals2"])
-  }
-  
-  
-  # Event handler for upload button
+  # Upload Composite Map Metadata
   observeEvent(input$update_metadata2, {
     req(input$upload_metadata2)
+    
     file_path <- input$upload_metadata2$datapath
+    file_name <- input$upload_metadata2$name
     
-    # Read the first sheet name from the uploaded Excel file
-    first_sheet_name <- tryCatch({
-      available_sheets <- getSheetNames(file_path)
-      available_sheets[[1]]
-    }, error = function(e) {
-      NULL
-    })
-    
-    # Check if the correct first sheet name is present
-    if (!is.null(first_sheet_name) && first_sheet_name == "custom_map2") {
-      # Correct first sheet name is present, proceed with processing the file
-      process_uploaded_file2()
+    # Check that the uploaded file is named "metadata_composite.xlsx"
+    if (!is.null(file_name) && tools::file_path_sans_ext(file_name) == "metadata_composite") {
+      
+      process_uploaded_metadata_composite(
+        file_path           = file_path,
+        metadata_sheet      = "custom_meta",
+        df_ts_points        = NULL,
+        df_ts_highlights    = NULL,
+        df_ts_lines         = NULL,
+        df_map_points       = "custom_points",
+        df_map_highlights   = "custom_highlights",
+        rv_plotOrder        = plotOrder2,
+        rv_availableLayers  = availableLayers2,
+        rv_lonlat_vals      = lonlat_vals2,
+        map_points_data     = map_points_data2,
+        map_highlights_data = map_highlights_data2,
+        ts_points_data      = NULL,
+        ts_highlights_data  = NULL,
+        ts_lines_data       = NULL
+      )
+      
     } else {
-      # Incorrect or missing first sheet name, show an error message
       showModal(modalDialog(
         title = "Error",
+        "Please upload the correct file: 'metadata_composite.xlsx'.",
         easyClose = TRUE,
-        size = "s",
-        "Please upload the correct Metadata!"
+        size = "s"
       ))
     }
   })
   
-  #Download TS data
-  metadata_input_ts2 <- reactive({
-    
-    metadata_ts2 = generate_metadata_ts_comp(input$title_mode_ts2,
-                                             input$title1_input_ts2,
-                                             input$show_key_ts2,
-                                             input$key_position_ts2,
-                                             input$show_ref_ts2,
-                                             input$custom_percentile_ts2,
-                                             input$percentile_ts2)
-    
-    return(metadata_ts2)  
+  
+  
+  #Prepare TS Download
+  metadata_inputs_composite_ts <- reactive({
+    generate_metadata_composite(
+      # Shared
+      range_years2         = input$range_years2,
+      range_years2a        = input$range_years2a,
+      dataset_selected2    = input$dataset_selected2,
+      range_latitude2      = input$range_latitude2,
+      range_longitude2     = input$range_longitude2,
+      range_months2        = input$range_months2,
+      ref_period_sg2       = input$ref_period_sg2,
+      ref_period2          = input$ref_period2,
+      ref_single_year2     = input$ref_single_year2,
+      season_selected2     = input$season_selected2,
+      variable_selected2   = input$variable_selected2,
+      enter_upload2        = input$enter_upload2,
+      enter_upload2a       = input$enter_upload2a,
+      mode_selected2       = input$mode_selected2,
+      prior_years2         = input$prior_years2,
+      
+      # Map section not needed here
+      axis_input2               = NA,
+      axis_mode2                = NA,
+      center_lat2               = NA,
+      center_lon2               = NA,
+      custom_map2               = NA,
+      custom_statistic2         = NA,
+      custom_topo2              = NA,
+      download_options2         = NA,
+      enable_custom_statistics2 = NA,
+      file_type_map_sec2        = NA,
+      file_type_map2            = NA,
+      file_type_timeseries2     = NA,
+      hide_axis2                = NA,
+      hide_borders2             = NA,
+      label_lakes2              = NA,
+      label_mountains2          = NA,
+      label_rivers2             = NA,
+      percentage_sign_match2    = NA,
+      projection2               = NA,
+      ref_map_mode2             = NA,
+      sd_ratio2                 = NA,
+      show_lakes2               = NA,
+      show_mountains2           = NA,
+      show_rivers2              = NA,
+      title_mode2               = NA,
+      title_size_input2         = NA,
+      title1_input2             = NA,
+      title2_input2             = NA,
+      white_land2               = NA,
+      white_ocean2              = NA,
+      
+      # TS inputs
+      axis_input_ts2                = input$axis_input_ts2,
+      axis_mode_ts2                = input$axis_mode_ts2,
+      custom_percentile_ts2        = input$custom_percentile_ts2,
+      custom_ts2                   = input$custom_ts2,
+      download_options_ts2         = input$download_options_ts2,
+      enable_custom_statistics_ts2 = input$enable_custom_statistics_ts2,
+      key_position_ts2             = input$key_position_ts2,
+      percentile_ts2               = input$percentile_ts2,
+      show_key_ts2                 = input$show_key_ts2,
+      show_ref_ts2                 = input$show_ref_ts2,
+      show_ticks_ts2               = input$show_ticks_ts2,
+      title_mode_ts2               = input$title_mode_ts2,
+      title_size_input_ts2         = input$title_size_input_ts2,
+      title1_input_ts2             = input$title1_input_ts2,
+      xaxis_numeric_interval_ts2   = input$xaxis_numeric_interval_ts2,
+      
+      # Reac values
+      plotOrder           = NULL,
+      availableLayers     = NULL,
+      lonlat_vals         = lonlat_vals2()
+    )
   })
   
+  # Download Composite TS Metadata
   output$download_metadata_ts2 <- downloadHandler(
-    filename = function() {"metadata_ts2.xlsx"},
+    filename = function() {"metadata_composite_ts.xlsx"},
     content  = function(file) {
       wb <- openxlsx::createWorkbook()
-      openxlsx::addWorksheet(wb, "custom_map_ts2")
-      openxlsx::addWorksheet(wb, "custom_points_ts2")
-      openxlsx::addWorksheet(wb, "custom_highlights_ts2")
-      openxlsx::addWorksheet(wb, "custom_lines_ts2")
-      openxlsx::addWorksheet(wb, "plot_gen2")
-      openxlsx::writeData(wb, "custom_map_ts2", metadata_input_ts2())
-      openxlsx::writeData(wb, "custom_points_ts2", ts_points_data2())
-      openxlsx::writeData(wb, "custom_highlights_ts2", ts_highlights_data2())
-      openxlsx::writeData(wb, "custom_lines_ts2", ts_lines_data2())
-      openxlsx::writeData(wb, "plot_gen2", plot_gen_input2())
+      
+      openxlsx::addWorksheet(wb, "custom_meta")
+      openxlsx::addWorksheet(wb, "custom_points")
+      openxlsx::addWorksheet(wb, "custom_highlights")
+      openxlsx::addWorksheet(wb, "custom_lines")
+      
+      meta <- isolate(metadata_inputs_composite_ts())
+      if (nrow(meta) > 0) openxlsx::writeData(wb, "custom_meta", meta)
+      
+      if (nrow(ts_points_data2()) > 0) openxlsx::writeData(wb, "custom_points", ts_points_data2())
+      if (nrow(ts_highlights_data2()) > 0) openxlsx::writeData(wb, "custom_highlights", ts_highlights_data2())
+      if (nrow(ts_lines_data2()) > 0) openxlsx::writeData(wb, "custom_lines", ts_lines_data2())
+      
       openxlsx::saveWorkbook(wb, file)
     }
   )
   
-  #Upload TS data
-  process_uploaded_file_ts2 <- function() {
-    metadata_ts2 <- openxlsx::read.xlsx(input$upload_metadata_ts2$datapath, sheet = "custom_map_ts2")
-    
-    # Update inputs based on metadata_ts2 sheet custom_map_ts2
-    updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_ts2", selected = metadata_ts2[1, "title_mode_ts2"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title1_input_ts2", value = metadata_ts2[1, "title1_input_ts2"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "show_key_ts2", value = metadata_ts2[1, "show_key_ts2"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "key_position_t2", selected = metadata_ts2[1, "key_position_ts2"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "show_ref_ts2", value = metadata_ts2[1, "show_ref_ts2"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "custom_percentile_ts2", value = metadata_ts2[1, "custom_percentile_ts2"])
-    updateCheckboxGroupInput(session = getDefaultReactiveDomain(), "percentile_ts2", selected = metadata_ts2[1, "percentile_ts2"])
-    
-    # Read metadata from "custom_points_ts2" sheet
-    metadata_points_ts2 <- openxlsx::read.xlsx(input$upload_metadata_ts2$datapath, sheet = "custom_points_ts2")
-    
-    # Update map points data if metadata_points_ts2 is not empty
-    if (!is.null(metadata_points_ts2) && nrow(metadata_points_ts2) > 0) {
-      ts_points_data2(metadata_points_ts2)
-    }
-    
-    # Read metadata from "custom_highlights_ts2" sheet
-    metadata_highlights_ts2 <- openxlsx::read.xlsx(input$upload_metadata_ts2$datapath, sheet = "custom_highlights_ts2")
-    
-    # Update map highlights data if metadata_highlights_ts2 is not empty
-    if (!is.null(metadata_highlights_ts2) && nrow(metadata_highlights_ts2) > 0) {
-      ts_highlights_data2(metadata_highlights_ts2)
-    }
-    
-    # Read metadata from "custom_lines_ts2" sheet
-    metadata_lines_ts2 <- openxlsx::read.xlsx(input$upload_metadata_ts2$datapath, sheet = "custom_lines_ts2")
-    
-    # Update map lines data if metadata_lines_ts2 is not empty
-    if (!is.null(metadata_lines_ts2) && nrow(metadata_lines_ts2) > 0) {
-      ts_lines_data2(metadata_lines_ts2)
-    }
-    
-    # Update plot generation
-    plot_data2 <- openxlsx::read.xlsx(input$upload_metadata2$datapath, sheet = "plot_gen2")
-    
-    # Update inputs based on metadata2 sheet plot_gen2
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected2", selected = plot_data2[1, "dataset2"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected2", selected = plot_data2[1, "variable2"])
-    updateTextInput(session = getDefaultReactiveDomain(), "range_years2", value = plot_data2$range_years2)
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected2", selected = plot_data2[1, "season_sel2"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months2", selected = plot_data2[1:2, "range_months2"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period2", value = plot_data2[1:2, "ref_period2"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year2", value = plot_data2[1, "select_sg_ref2"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg2", value = plot_data2[1, "sg_ref2"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "prior_years2", value = plot_data2[1, "prior_years2"])
-    updateTextInput(session = getDefaultReactiveDomain(), "range_years2a", value = plot_data2$range_years2a)
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude2", value = plot_data2[1:2, "lon_range2"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude2", value = plot_data2[1:2, "lat_range2"])
-    # Update Lon Lat Vals
-    lonlat_vals2(plot_data2[1:4, "lonlat_vals2"])
-  }
-  
-  
-  # Event handler for upload button
+  # Upload Composite TS Metadata
   observeEvent(input$update_metadata_ts2, {
     req(input$upload_metadata_ts2)
+    
     file_path <- input$upload_metadata_ts2$datapath
+    file_name <- input$upload_metadata_ts2$name
     
-    # Read the first sheet name from the uploaded Excel file
-    first_sheet_name <- tryCatch({
-      available_sheets <- getSheetNames(file_path)
-      available_sheets[[1]]
-    }, error = function(e) {
-      NULL
-    })
-    
-    # Check if the correct first sheet name is present
-    if (!is.null(first_sheet_name) && first_sheet_name == "custom_map_ts2") {
-      # Correct first sheet name is present, proceed with processing the file
-      process_uploaded_file_ts2()
+    # Check that the uploaded file is named "metadata_composite_ts.xlsx"
+    if (!is.null(file_name) && tools::file_path_sans_ext(file_name) == "metadata_composite_ts") {
+      
+      process_uploaded_metadata_composite(
+        file_path           = file_path,
+        metadata_sheet      = "custom_meta",
+        df_ts_points        = "custom_points",
+        df_ts_highlights    = "custom_highlights",
+        df_ts_lines         = "custom_lines",
+        df_map_points       = NULL,
+        df_map_highlights   = NULL,
+        rv_plotOrder        = NULL,
+        rv_availableLayers  = NULL,
+        rv_lonlat_vals      = lonlat_vals2,
+        map_points_data     = NULL,
+        map_highlights_data = NULL,
+        ts_points_data      = ts_points_data2,
+        ts_highlights_data  = ts_highlights_data2,
+        ts_lines_data       = ts_lines_data2
+      )
+      
     } else {
-      # Incorrect or missing first sheet name, show an error message
       showModal(modalDialog(
         title = "Error",
+        "Please upload the correct file: 'metadata_composite_ts.xlsx'.",
         easyClose = TRUE,
-        size = "s",
-        "Please upload the correct Metadata!"
+        size = "s"
       ))
     }
   })
   
-  ####### Generate Layer Options for customization ----
   
-  # # Reactive value to store the plot order
-  # plotOrder2 <- reactiveVal(character(0))
-  # 
-  # # Usage example:
-  # observeEvent(input$shpFile2, {
-  #   updatePlotOrder2(input$shpFile2$datapath, plotOrder2, "shpPickers2")
-  # })
-  # 
-  # # Function to generate color picker UI dynamically
-  # output$colorpickers2 <- renderUI({
-  #   createColorPickers2(plotOrder2(), input$shpFile2)
-  # })
-  # 
-  # # Manually reorder shapefiles
-  # observeEvent(input$reorderButton2, {
-  #   createReorderModal(plotOrder2(), input$shpFile2)
-  #   
-  # })
-  # 
-  # observeEvent(input$reorderConfirm, {
-  #   reorder_shapefiles(plotOrder2, input$reorderSelect, input$reorderAfter, "shpPickers2")
-  # })
+  ####### Generate Layer Options for customization ----
   
   ### Reactive values
   plotOrder2 <- reactiveVal(character(0))        # full paths
@@ -5032,331 +5104,308 @@ server <- function(input, output, session) {
   })
   
   ####### Generate Metadata for map customization ----
-  
-  #Download Plot data 
-  metadata_input3 <- reactive({
-    
-    metadata3 = generate_metadata_corr(input$axis_mode3,
-                                       input$axis_input3,
-                                       input$hide_axis3,
-                                       input$title_mode3,
-                                       input$title1_input3,
-                                       input$hide_borders3,
-                                       input$white_ocean3,
-                                       input$white_land3,
-                                       input$cor_method_map)
-    
-    return(metadata3)  
+
+  # Reactive metadata collector for Correlation Timeseries
+  metadata_inputs_correlation_ts <- reactive({
+    generate_metadata_correlation(
+      # Shared
+      range_years3         = input$range_years3,
+      dataset_selected_v1  = input$dataset_selected_v1,
+      dataset_selected_v2  = input$dataset_selected_v2,
+      ME_variable_v1       = input$ME_variable_v1,
+      ME_variable_v2       = input$ME_variable_v2,
+      coordinates_type_v1  = input$coordinates_type_v1,
+      coordinates_type_v2  = input$coordinates_type_v2,
+      mode_selected_v1     = input$mode_selected_v1,
+      mode_selected_v2     = input$mode_selected_v2,
+      season_selected_v1   = input$season_selected_v1,
+      season_selected_v2   = input$season_selected_v2,
+      range_months_v1      = input$range_months_v1,
+      range_months_v2      = input$range_months_v2,
+      range_latitude_v1    = input$range_latitude_v1,
+      range_latitude_v2    = input$range_latitude_v2,
+      range_longitude_v1   = input$range_longitude_v1,
+      range_longitude_v2   = input$range_longitude_v2,
+      ref_period_sg_v1     = input$ref_period_sg_v1,
+      ref_period_sg_v2     = input$ref_period_sg_v2,
+      ref_period_v1        = input$ref_period_v1,
+      ref_period_v2        = input$ref_period_v2,
+      ref_single_year_v1   = input$ref_single_year_v1,
+      ref_single_year_v2   = input$ref_single_year_v2,
+      source_v1            = input$source_v1,
+      source_v2            = input$source_v2,
+      type_v1              = input$type_v1,
+      type_v2              = input$type_v2,
+      lagyears_v1_cor      = input$lagyears_v1_cor,
+      lagyears_v2_cor      = input$lagyears_v2_cor,
+      
+      # Map section NA
+      axis_input3                = NA,
+      axis_mode3                 = NA,
+      center_lat3                = NA,
+      center_lon3                = NA,
+      custom_map3                = NA,
+      custom_topo3               = NA,
+      download_options3          = NA,
+      file_type_map3             = NA,
+      file_type_map_sec3         = NA,
+      hide_axis3                 = NA,
+      hide_borders3              = NA,
+      label_lakes3               = NA,
+      label_mountains3           = NA,
+      label_rivers3              = NA,
+      projection3                = NA,
+      ref_map_mode3              = NA,
+      cor_method_map             = NA,
+      cor_method_map_data        = NA,
+      show_lakes3                = NA,
+      show_mountains3            = NA,
+      show_rivers3               = NA,
+      title_mode3                = NA,
+      title_size_input3          = NA,
+      title1_input3              = NA,
+      title2_input3              = NA,
+      white_land3                = NA,
+      white_ocean3               = NA,
+      
+      # TS inputs
+      axis_input_ts3             = input$axis_input_ts3,
+      axis_mode_ts3             = input$axis_mode_ts3,
+      cor_method_ts             = input$cor_method_ts,
+      custom_ts3                = input$custom_ts3,
+      custom_ref_ts3            = input$custom_ref_ts3,
+      custom_average_ts3        = input$custom_average_ts3,
+      enable_custom_statistics_ts3 = input$enable_custom_statistics_ts3,
+      download_options_ts3      = input$download_options_ts3,
+      file_type_timeseries3     = input$file_type_timeseries3,
+      key_position_ts3          = input$key_position_ts3,
+      title_mode_ts3            = input$title_mode_ts3,
+      title_size_input_ts3      = input$title_size_input_ts3,
+      title1_input_ts3          = input$title1_input_ts3,
+      xaxis_numeric_interval_ts3 = input$xaxis_numeric_interval_ts3,
+      year_moving_ts3           = input$year_moving_ts3,
+      add_outliers_ref_ts3      = input$add_outliers_ref_ts3,
+      add_trend_ref_ts3         = input$add_trend_ref_ts3,
+      show_key_ts3              = input$show_key_ts3,
+      show_key_ref_ts3          = input$show_key_ref_ts3,
+      show_ticks_ts3            = input$show_ticks_ts3,
+      sd_input_ref_ts3          = input$sd_input_ref_ts3,
+      trend_sd_input_ref_ts3    = input$trend_sd_input_ref_ts3,
+      
+      # Reactive values
+      plotOrder       = NULL,
+      availableLayers = NULL,
+      lonlat_vals     = lonlat_vals3()
+    )
   })
   
-  plot_gen_input_v1 <- reactive({
-    
-    plot_gen_v1 = generate_metadata_plot_corr(input$dataset_selected_v1,
-                                              input$ME_variable_v1,
-                                              input$type_v1,
-                                              input$mode_selected_v1,
-                                              input$season_selected_v1,
-                                              input$range_months_v1,
-                                              input$ref_period_v1,
-                                              input$ref_single_year_v1,
-                                              input$ref_period_sg_v1,
-                                              input$range_longitude_v1,
-                                              input$range_latitude_v1,
-                                              lonlat_vals_v1())
-    
-    return(plot_gen_v1)
-  })
-  
-  plot_gen_input_v2 <- reactive({
-    
-    plot_gen_v2 = generate_metadata_plot_corr(input$dataset_selected_v2,
-                                              input$ME_variable_v2,
-                                              input$type_v2,
-                                              input$mode_selected_v2,
-                                              input$season_selected_v2,
-                                              input$range_months_v2,
-                                              input$ref_period_v2,
-                                              input$ref_single_year_v2,
-                                              input$ref_period_sg_v2,
-                                              input$range_longitude_v2,
-                                              input$range_latitude_v2,
-                                              lonlat_vals_v2())
-    
-    return(plot_gen_v2)
-  })
-  
-  metadata_yr3 <- reactive({
-    
-    year_range3 = generate_metadata_y_range_corr(input$range_years3)
-    
-    return(year_range3)
-  })
-  
-  output$download_metadata3 <- downloadHandler(
-    filename = function() {"metadata_corr.xlsx"},
-    content  = function(file) {
+  # Download Correlation TS Metadata
+  output$download_metadata_ts3 <- downloadHandler(
+    filename = function() { "metadata_correlation_ts.xlsx" },
+    content = function(file) {
       wb <- openxlsx::createWorkbook()
-      openxlsx::addWorksheet(wb, "custom_map3")
-      openxlsx::addWorksheet(wb, "custom_points3")
-      openxlsx::addWorksheet(wb, "custom_highlights3")
-      openxlsx::addWorksheet(wb, "plot_gen_v1")
-      openxlsx::addWorksheet(wb, "plot_gen_v2")
-      openxlsx::addWorksheet(wb, "plot_gen_3")
-      openxlsx::writeData(wb, "custom_map3", metadata_input3())
-      openxlsx::writeData(wb, "custom_points3", map_points_data3())
-      openxlsx::writeData(wb, "custom_highlights3", map_highlights_data3())
-      openxlsx::writeData(wb, "plot_gen_v1", plot_gen_input_v1())
-      openxlsx::writeData(wb, "plot_gen_v2", plot_gen_input_v2())
-      openxlsx::writeData(wb, "plot_gen_3", metadata_yr3())
+      
+      openxlsx::addWorksheet(wb, "custom_meta")
+      openxlsx::addWorksheet(wb, "custom_points")
+      openxlsx::addWorksheet(wb, "custom_highlights")
+      openxlsx::addWorksheet(wb, "custom_lines")
+      
+      meta <- isolate(metadata_inputs_correlation_ts())
+      if (nrow(meta) > 0) openxlsx::writeData(wb, "custom_meta", meta)
+      if (nrow(ts_points_data3()) > 0) openxlsx::writeData(wb, "custom_points", ts_points_data3())
+      if (nrow(ts_highlights_data3()) > 0) openxlsx::writeData(wb, "custom_highlights", ts_highlights_data3())
+      if (nrow(ts_lines_data3()) > 0) openxlsx::writeData(wb, "custom_lines", ts_lines_data3())
+      
       openxlsx::saveWorkbook(wb, file)
     }
   )
   
-  #Upload plot data
-  
-  process_uploaded_file3 <- function() {
-    metadata3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "custom_map3")
+  # Upload Correlation TS Metadata
+  observeEvent(input$update_metadata_ts3, {
+    req(input$upload_metadata_ts3)
     
-    # Update inputs based on metadata3 sheet custom_map3
-    updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode3", selected = metadata3[1, "axis_mode3"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input3", value = metadata3[1:2, "axis_input3"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis3", value = metadata3[1, "hide_axis3"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode3", selected = metadata3[1, "title_mode3"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title1_input3", value = metadata3[1, "title1_input3"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders3", value = metadata3[1, "hide_borders3"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean3", value = metadata3[1, "white_ocean3"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land3", value = metadata3[1, "white_land3"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "cor_method_map", value = metadata3[1, "cor_method_map3"])
+    file_path <- input$upload_metadata_ts3$datapath
+    file_name <- input$upload_metadata_ts3$name
     
-    # Read metadata from "custom_points3" sheet
-    metadata_points3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "custom_points3")
-    
-    # Update map points data if metadata_points3 is not empty
-    if (!is.null(metadata_points3) && nrow(metadata_points3) > 0) {
-      map_points_data3(metadata_points3)
-    }
-    
-    # Read metadata3 from "custom_highlights3" sheet
-    metadata_highlights3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "custom_highlights3")
-    
-    # Update map highlights data if metadata_highlights3 is not empty
-    if (!is.null(metadata_highlights3) && nrow(metadata_highlights3) > 0) {
-      map_highlights_data3(metadata_highlights3)
-    }
-    
-    # Update plot generation
-    plot_data_v1 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "plot_gen_v1")
-    
-    # Update inputs based on plot_data_v1 sheet plot_gen_v1
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_v1", selected = plot_data_v1[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected_v1", selected = plot_data_v1[1, "variable"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "type_v1", selected = plot_data_v1[1, "type"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_v1", selected = plot_data_v1[1, "mode"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_v1", selected = plot_data_v1[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_v1", selected = plot_data_v1[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_v1", value = plot_data_v1[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_v1", value = plot_data_v1[1, "select_sg_ref"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg_v1", value = plot_data_v1[1, "sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_v1", value = plot_data_v1[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_v1", value = plot_data_v1[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals_v1(plot_data_v1[1:4, "lonlat_vals"])
-    
-    # Update plot generation
-    plot_data_v2 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "plot_gen_v2")
-    
-    # Update inputs based on plot_data_v1 sheet plot_gen_v2
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_v2", selected = plot_data_v2[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected_v2", selected = plot_data_v2[1, "variable"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "type_v2", selected = plot_data_v2[1, "type"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_v2", selected = plot_data_v2[1, "mode"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_v2", selected = plot_data_v2[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_v2", selected = plot_data_v2[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_v2", value = plot_data_v2[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_v2", value = plot_data_v2[1, "select_sg_ref"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg_v2", value = plot_data_v2[1, "sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_v2", value = plot_data_v2[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_v2", value = plot_data_v2[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals_v2(plot_data_v2[1:4, "lonlat_vals"])
-    
-    # Update plot generation
-    plot_gen_3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "plot_gen_3")
-    
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years3", value = plot_gen_3[1:2, "range_years3"])
-    
-  }
-  
-  
-  # Event handler for upload button
-  observeEvent(input$update_metadata3, {
-    req(input$upload_metadata3)
-    file_path <- input$upload_metadata3$datapath
-    
-    # Read the first sheet name from the uploaded Excel file
-    first_sheet_name <- tryCatch({
-      available_sheets <- getSheetNames(file_path)
-      available_sheets[[1]]
-    }, error = function(e) {
-      NULL
-    })
-    
-    # Check if the correct first sheet name is present
-    if (!is.null(first_sheet_name) && first_sheet_name == "custom_map3") {
-      # Correct first sheet name is present, proceed with processing the file
-      process_uploaded_file3()
+    if (!is.null(file_name) && tools::file_path_sans_ext(file_name) == "metadata_correlation_ts") {
+      
+      process_uploaded_metadata_correlation(
+        file_path           = file_path,
+        mode                = "ts",
+        metadata_sheet      = "custom_meta",
+        df_ts_points        = "custom_points",
+        df_ts_highlights    = "custom_highlights",
+        df_ts_lines         = "custom_lines",
+        df_map_points       = NULL,
+        df_map_highlights   = NULL,
+        rv_plotOrder        = NULL,
+        rv_availableLayers  = NULL,
+        rv_lonlat_vals      = lonlat_vals3,
+        map_points_data     = NULL,
+        map_highlights_data = NULL,
+        ts_points_data      = ts_points_data3,
+        ts_highlights_data  = ts_highlights_data3,
+        ts_lines_data       = ts_lines_data3
+      )
+      
     } else {
-      # Incorrect or missing first sheet name, show an error message
       showModal(modalDialog(
         title = "Error",
+        "Please upload the correct file: 'metadata_correlation_ts.xlsx'.",
         easyClose = TRUE,
-        size = "s",
-        "Please upload the correct Metadata!"
+        size = "s"
       ))
     }
   })
   
-  #Download TS data
-  metadata_input_ts3 <- reactive({
-    
-    metadata_ts3 = generate_metadata_ts_corr(input$title_mode_ts3,
-                                             input$title1_input_ts3,
-                                             input$show_key_ts3,
-                                             input$key_position_ts3,
-                                             input$custom_average_ts3,
-                                             input$year_moving_ts3,
-                                             input$cor_method_ts)
-    
-    return(metadata_ts3)  
+  
+  # Reactive metadata collector for Correlation Timeseries
+  metadata_inputs_correlation <- reactive({
+    generate_metadata_correlation(
+      # Shared
+      range_years3         = input$range_years3,
+      dataset_selected_v1  = input$dataset_selected_v1,
+      dataset_selected_v2  = input$dataset_selected_v2,
+      ME_variable_v1       = input$ME_variable_v1,
+      ME_variable_v2       = input$ME_variable_v2,
+      coordinates_type_v1  = input$coordinates_type_v1,
+      coordinates_type_v2  = input$coordinates_type_v2,
+      mode_selected_v1     = input$mode_selected_v1,
+      mode_selected_v2     = input$mode_selected_v2,
+      season_selected_v1   = input$season_selected_v1,
+      season_selected_v2   = input$season_selected_v2,
+      range_months_v1      = input$range_months_v1,
+      range_months_v2      = input$range_months_v2,
+      range_latitude_v1    = input$range_latitude_v1,
+      range_latitude_v2    = input$range_latitude_v2,
+      range_longitude_v1   = input$range_longitude_v1,
+      range_longitude_v2   = input$range_longitude_v2,
+      ref_period_sg_v1     = input$ref_period_sg_v1,
+      ref_period_sg_v2     = input$ref_period_sg_v2,
+      ref_period_v1        = input$ref_period_v1,
+      ref_period_v2        = input$ref_period_v2,
+      ref_single_year_v1   = input$ref_single_year_v1,
+      ref_single_year_v2   = input$ref_single_year_v2,
+      source_v1            = input$source_v1,
+      source_v2            = input$source_v2,
+      type_v1              = input$type_v1,
+      type_v2              = input$type_v2,
+      lagyears_v1_cor      = input$lagyears_v1_cor,
+      lagyears_v2_cor      = input$lagyears_v2_cor,
+      
+      # TS section NA
+      axis_input_ts3              = NA,
+      axis_mode_ts3               = NA,
+      cor_method_ts               = NA,
+      custom_ts3                  = NA,
+      custom_ref_ts3              = NA,
+      custom_average_ts3          = NA,
+      enable_custom_statistics_ts3 = NA,
+      download_options_ts3        = NA,
+      file_type_timeseries3       = NA,
+      key_position_ts3            = NA,
+      title_mode_ts3              = NA,
+      title_size_input_ts3        = NA,
+      title1_input_ts3            = NA,
+      xaxis_numeric_interval_ts3  = NA,
+      year_moving_ts3             = NA,
+      add_outliers_ref_ts3        = NA,
+      add_trend_ref_ts3           = NA,
+      show_key_ts3                = NA,
+      show_key_ref_ts3            = NA,
+      show_ticks_ts3              = NA,
+      sd_input_ref_ts3            = NA,
+      trend_sd_input_ref_ts3      = NA,
+      
+      # Map inputs
+      axis_input3                 = input$axis_input3,
+      axis_mode3                  = input$axis_mode3,
+      center_lat3                 = input$center_lat3,
+      center_lon3                 = input$center_lon3,
+      custom_map3                 = input$custom_map3,
+      custom_topo3                = input$custom_topo3,
+      download_options3           = input$download_options3,
+      file_type_map3              = input$file_type_map3,
+      file_type_map_sec3          = input$file_type_map_sec3,
+      hide_axis3                  = input$hide_axis3,
+      hide_borders3               = input$hide_borders3,
+      label_lakes3                = input$label_lakes3,
+      label_mountains3            = input$label_mountains3,
+      label_rivers3               = input$label_rivers3,
+      projection3                 = input$projection3,
+      ref_map_mode3               = input$ref_map_mode3,
+      cor_method_map              = input$cor_method_map,
+      cor_method_map_data         = input$cor_method_map_data,
+      show_lakes3                 = input$show_lakes3,
+      show_mountains3             = input$show_mountains3,
+      show_rivers3                = input$show_rivers3,
+      title_mode3                 = input$title_mode3,
+      title_size_input3           = input$title_size_input3,
+      title1_input3               = input$title1_input3,
+      title2_input3               = input$title2_input3,
+      white_land3                 = input$white_land3,
+      white_ocean3                = input$white_ocean3,
+      
+      # Reactive values
+      plotOrder       = character(0),
+      availableLayers = character(0),
+      lonlat_vals     = lonlat_vals3()
+    )
   })
   
-  output$download_metadata_ts3 <- downloadHandler(
-    filename = function() {"metadata_ts3.xlsx"},
-    content  = function(file) {
+  # Download Correlation Map Metadata
+  output$download_metadata3 <- downloadHandler(
+    filename = function() { "metadata_correlation.xlsx" },
+    content = function(file) {
       wb <- openxlsx::createWorkbook()
-      openxlsx::addWorksheet(wb, "custom_map_ts3")
-      openxlsx::addWorksheet(wb, "custom_points_ts3")
-      openxlsx::addWorksheet(wb, "custom_highlights_ts3")
-      openxlsx::addWorksheet(wb, "custom_lines_ts3")
-      openxlsx::addWorksheet(wb, "plot_gen_v1")
-      openxlsx::addWorksheet(wb, "plot_gen_v2")
-      openxlsx::addWorksheet(wb, "plot_gen_3")
-      openxlsx::writeData(wb, "custom_map_ts3", metadata_input_ts3())
-      openxlsx::writeData(wb, "custom_points_ts3", ts_points_data3())
-      openxlsx::writeData(wb, "custom_highlights_ts3", ts_highlights_data3())
-      openxlsx::writeData(wb, "custom_lines_ts3", ts_lines_data3())
-      openxlsx::writeData(wb, "plot_gen_v1", plot_gen_input_v1())
-      openxlsx::writeData(wb, "plot_gen_v2", plot_gen_input_v2())
-      openxlsx::writeData(wb, "plot_gen_3", metadata_yr3())
+      
+      openxlsx::addWorksheet(wb, "custom_meta")
+      openxlsx::addWorksheet(wb, "custom_points")
+      openxlsx::addWorksheet(wb, "custom_highlights")
+      
+      meta <- isolate(metadata_inputs_correlation())
+      if (nrow(meta) > 0) openxlsx::writeData(wb, "custom_meta", meta)
+      if (nrow(map_points_data3()) > 0) openxlsx::writeData(wb, "custom_points", map_points_data3())
+      if (nrow(map_highlights_data3()) > 0) openxlsx::writeData(wb, "custom_highlights", map_highlights_data3())
+      
       openxlsx::saveWorkbook(wb, file)
     }
   )
   
-  #Upload TS data
-  process_uploaded_file_ts3 <- function() {
-    metadata_ts3 <- openxlsx::read.xlsx(input$upload_metadata_ts3$datapath, sheet = "custom_map_ts3")
+  # Upload Correlation Map Metadata
+  observeEvent(input$update_metadata3, {
+    req(input$upload_metadata3)
     
-    # Update inputs based on metadata_ts3 sheet custom_map_ts3
-    updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_ts3", selected = metadata_ts3[1, "title_mode_ts3"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title1_input_ts3", value = metadata_ts3[1, "title1_input_ts3"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "show_key_ts3", value = metadata_ts3[1, "show_key_ts3"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "key_position_t3", selected = metadata_ts3[1, "key_position_ts3"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "custom_average_ts3", value = metadata_ts3[1, "custom_percentile_ts3"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "year_moving_ts3", value = metadata_ts3[1, "year_moving_ts3"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "cor_method_ts", value = metadata_ts3[1, "cor_method_ts3"])
+    file_path <- input$upload_metadata3$datapath
+    file_name <- input$upload_metadata3$name
     
-    # Read metadata from "custom_points_ts3" sheet
-    metadata_points_ts3 <- openxlsx::read.xlsx(input$upload_metadata_ts3$datapath, sheet = "custom_points_ts3")
-    
-    # Update map points data if metadata_points_ts3 is not empty
-    if (!is.null(metadata_points_ts3) && nrow(metadata_points_ts3) > 0) {
-      ts_points_data3(metadata_points_ts3)
-    }
-    
-    # Read metadata from "custom_highlights_ts3" sheet
-    metadata_highlights_ts3 <- openxlsx::read.xlsx(input$upload_metadata_ts3$datapath, sheet = "custom_highlights_ts3")
-    
-    # Update map highlights data if metadata_highlights_ts3 is not empty
-    if (!is.null(metadata_highlights_ts3) && nrow(metadata_highlights_ts3) > 0) {
-      ts_highlights_data3(metadata_highlights_ts3)
-    }
-    
-    # Read metadata from "custom_lines_ts3" sheet
-    metadata_lines_ts3 <- openxlsx::read.xlsx(input$upload_metadata_ts3$datapath, sheet = "custom_lines_ts3")
-    
-    # Update map lines data if metadata_lines_ts3 is not empty
-    if (!is.null(metadata_lines_ts3) && nrow(metadata_lines_ts3) > 0) {
-      ts_lines_data3(metadata_lines_ts3)
-    }
-    
-    # Update plot generation
-    plot_data_v1 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "plot_gen_v1")
-    
-    # Update inputs based on plot_data_v1 sheet plot_gen_v1
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_v1", selected = plot_data_v1[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected_v1", selected = plot_data_v1[1, "variable"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "type_v1", selected = plot_data_v1[1, "type"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_v1", selected = plot_data_v1[1, "mode"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_v1", selected = plot_data_v1[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_v1", selected = plot_data_v1[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_v1", value = plot_data_v1[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_v1", value = plot_data_v1[1, "select_sg_ref"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg_v1", value = plot_data_v1[1, "sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_v1", value = plot_data_v1[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_v1", value = plot_data_v1[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals_v1(plot_data_v1[1:4, "lonlat_vals"])
-    
-    # Update plot generation
-    plot_data_v2 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "plot_gen_v2")
-    
-    # Update inputs based on plot_data_v1 sheet plot_gen_v2
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_v2", selected = plot_data_v2[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "variable_selected_v2", selected = plot_data_v2[1, "variable"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "type_v2", selected = plot_data_v2[1, "type"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_v2", selected = plot_data_v2[1, "mode"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_v2", selected = plot_data_v2[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_v2", selected = plot_data_v2[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_v2", value = plot_data_v2[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_v2", value = plot_data_v2[1, "select_sg_ref"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg_v2", value = plot_data_v2[1, "sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_v2", value = plot_data_v2[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_v2", value = plot_data_v2[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals_v2(plot_data_v2[1:4, "lonlat_vals"])
-    
-    # Update plot generation
-    plot_gen_3 <- openxlsx::read.xlsx(input$upload_metadata3$datapath, sheet = "plot_gen_3")
-    
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years3", value = plot_gen_3[1:2, "range_years3"])
-    
-  }
-  
-  
-  # Event handler for upload button
-  observeEvent(input$update_metadata_ts3, {
-    req(input$upload_metadata_ts3)
-    file_path <- input$upload_metadata_ts3$datapath
-    
-    # Read the first sheet name from the uploaded Excel file
-    first_sheet_name <- tryCatch({
-      available_sheets <- getSheetNames(file_path)
-      available_sheets[[1]]
-    }, error = function(e) {
-      NULL
-    })
-    
-    # Check if the correct first sheet name is present
-    if (!is.null(first_sheet_name) && first_sheet_name == "custom_map_ts3") {
-      # Correct first sheet name is present, proceed with processing the file
-      process_uploaded_file_ts3()
+    if (!is.null(file_name) && tools::file_path_sans_ext(file_name) == "metadata_correlation") {
+      
+      process_uploaded_metadata_correlation(
+        file_path           = file_path,
+        mode                = "map",
+        metadata_sheet      = "custom_meta",
+        df_ts_points        = NULL,
+        df_ts_highlights    = NULL,
+        df_ts_lines         = NULL,
+        df_map_points       = "custom_points",
+        df_map_highlights   = "custom_highlights",
+        rv_plotOrder        = plotOrder3,
+        rv_availableLayers  = availableLayers3,
+        rv_lonlat_vals      = lonlat_vals3,
+        map_points_data     = map_points_data3,
+        map_highlights_data = map_highlights_data3,
+        ts_points_data      = NULL,
+        ts_highlights_data  = NULL,
+        ts_lines_data       = NULL
+      )
+      
     } else {
-      # Incorrect or missing first sheet name, show an error message
       showModal(modalDialog(
         title = "Error",
+        "Please upload the correct file: 'metadata_correlation.xlsx'.",
         easyClose = TRUE,
-        size = "s",
-        "Please upload the correct Metadata!"
+        size = "s"
       ))
     }
   })
@@ -6624,442 +6673,443 @@ server <- function(input, output, session) {
   
   ####### Generate Metadata for map customization ----
   
-  # Generate metadata plot for IV
-  plot_gen_input_iv <- reactive({
-    plot_gen_iv = generate_metadata_plot_reg(input$dataset_selected_iv,
-                                             input$ME_variable_iv,
-                                             input$mode_selected_iv,
-                                             input$season_selected_iv,
-                                             input$range_months_iv,
-                                             input$ref_period_iv,
-                                             input$ref_single_year_iv,
-                                             input$range_longitude_iv,
-                                             input$range_latitude_iv,
-                                             lonlat_vals_iv())
-    return(plot_gen_iv)
-  })
   
-  # Generate metadata plot for DV
-  plot_gen_input_dv <- reactive({
-    plot_gen_dv = generate_metadata_plot_reg(input$dataset_selected_dv,
-                                             input$ME_variable_dv,
-                                             input$mode_selected_dv,
-                                             input$season_selected_dv,
-                                             input$range_months_dv,
-                                             input$ref_period_dv,
-                                             input$ref_single_year_dv,
-                                             input$range_longitude_dv,
-                                             input$range_latitude_dv,
-                                             lonlat_vals_dv())
-    return(plot_gen_dv)
-  })
-  
-  # Generate metadate year range
-  metadata_yr_reg <- reactive({
-    year_range_reg = generate_metadata_y_range_reg(input$range_years4)
-    return(year_range_reg)
-  })
-  
-  
-  ### Coefficients
-  # Generate metadata
-  metadata_input_reg_coeff <- reactive({
-    metadata_reg_coeff = generate_metadata_reg(input$axis_mode_reg_coeff,
-                                               input$axis_input_reg_coeff,
-                                               input$hide_axis_reg_coeff,
-                                               input$title_mode_reg_coeff,
-                                               input$title1_input_reg_coeff,
-                                               input$hide_borders_reg_coeff,
-                                               input$white_ocean_reg_coeff,
-                                               input$white_land_reg_coeff,
-                                               input$coeff_variable)
-    return(metadata_reg_coeff)})
-  
-  # Generate metadata excel
-  output$download_metadata_reg_coeff <- downloadHandler(
-    filename = function() {"metadata_reg_coeff.xlsx"},
-    content  = function(file) {
-      wb <- openxlsx::createWorkbook()
-      openxlsx::addWorksheet(wb, "custom_map_reg_coeff")
-      openxlsx::addWorksheet(wb, "custom_points_reg_coeff")
-      openxlsx::addWorksheet(wb, "custom_highlights_reg_coeff")
-      openxlsx::addWorksheet(wb, "plot_gen_iv")
-      openxlsx::addWorksheet(wb, "plot_gen_dv")
-      openxlsx::addWorksheet(wb, "plot_gen_reg_coeff")
-      openxlsx::writeData(wb, "custom_map_reg_coeff", metadata_input_reg_coeff())
-      openxlsx::writeData(wb, "custom_points_reg_coeff", map_points_data_reg_coeff())
-      openxlsx::writeData(wb, "custom_highlights_reg_coeff", map_highlights_data_reg_coeff())
-      openxlsx::writeData(wb, "plot_gen_iv", plot_gen_input_iv())
-      openxlsx::writeData(wb, "plot_gen_dv", plot_gen_input_dv())
-      openxlsx::writeData(wb, "plot_gen_reg_coeff", metadata_yr_reg())
-      openxlsx::saveWorkbook(wb, file)
-    }
-  )
-  
-  # Upload plot data
-  process_uploaded_file_reg_coeff <- function() {
-    metadata_reg_coeff <- openxlsx::read.xlsx(input$upload_metadata_reg_coeff$datapath, sheet = "custom_map_reg_coeff")
-    
-    # Update inputs based on metadata_reg_coeff sheet custom_map_reg_coeff
-    updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode_reg", selected = metadata_reg_coeff[1, "axis_mode_reg"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input_reg", value = metadata_reg_coeff[1:2, "axis_input_reg"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis_reg", value = metadata_reg_coeff[1, "hide_axis_reg"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_reg", selected = metadata_reg_coeff[1, "title_mode_reg_coeff"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title1_input_reg", value = metadata_reg_coeff[1, "title1_input_reg_coeff"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders_reg", value = metadata_reg_coeff[1, "hide_borders_reg_coeff"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean_reg", value = metadata_reg_coeff[1, "white_ocean_reg_coeff"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land_reg", value = metadata_reg_coeff[1, "white_land_reg_coeff"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "variable", value = metadata_reg_coeff[1, "variable"])
-    
-    # Read metadata from "custom_points_reg_coeff" sheet
-    metadata_points_reg_coeff <- openxlsx::read.xlsx(input$upload_metadata_reg_coeff$datapath, sheet = "custom_points_reg_coeff")
-    
-    # Update map points data if metadata_points_reg_coeff is not empty
-    if (!is.null(metadata_points_reg_coeff) && nrow(metadata_points_reg_coeff) > 0) {
-      map_points_data_reg_coeff(metadata_points_reg_coeff)
-    }
-    
-    # Read metadata3 from "custom_highlights_reg_coeff" sheet
-    metadata_highlights_reg_coeff <- openxlsx::read.xlsx(input$upload_metadata_reg_coeff$datapath, sheet = "custom_highlights_reg_coeff")
-    
-    # Update map highlights data if metadata_highlights_reg_coeff is not empty
-    if (!is.null(metadata_highlights_reg_coeff) && nrow(metadata_highlights_reg_coeff) > 0) {
-      map_highlights_data_reg_coeff(metadata_highlights_reg_coeff)
-    }
-    
-    # Update plot generation
-    plot_data_iv <- openxlsx::read.xlsx(input$upload_metadata_reg_coeff$datapath, sheet = "plot_gen_iv")
-    
-    # Update inputs based on plot_data_v1 sheet plot_gen_iv
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_iv", selected = plot_data_iv[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_iv", selected = plot_data_iv[1, "variable"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_iv", selected = plot_data_iv[1, "mode"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_iv", selected = plot_data_iv[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_iv", selected = plot_data_iv[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_iv", value = plot_data_iv[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_iv", value = plot_data_iv[1, "select_sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_iv", value = plot_data_iv[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_iv", value = plot_data_iv[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals_iv(plot_data_iv[1:4, "lonlat_vals"])
-    
-    # Update plot generation
-    plot_data_dv <- openxlsx::read.xlsx(input$upload_metadata_reg_coeff$datapath, sheet = "plot_gen_dv")
-    
-    # Update inputs based on plot_data_v1 sheet plot_gen_iv
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_dv", selected = plot_data_dv[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_dv", selected = plot_data_dv[1, "variable"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_dv", selected = plot_data_dv[1, "mode"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_dv", selected = plot_data_dv[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_dv", selected = plot_data_dv[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_dv", value = plot_data_dv[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_dv", value = plot_data_dv[1, "select_sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_dv", value = plot_data_dv[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_dv", value = plot_data_dv[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals_dv(plot_data_dv[1:4, "lonlat_vals"])
-    
-    # Update plot generation
-    plot_gen_reg_coeff <- openxlsx::read.xlsx(input$upload_metadata_reg_coeff$datapath, sheet = "plot_gen_reg_coeff")
-    
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years4", value = plot_gen_reg_coeff[1:2, "range_years_reg"])
-    
-  }
-  
-  # Event handler for upload button
-  observeEvent(input$update_metadata_reg_coeff, {
-    req(input$upload_metadata_reg_coeff)
-    file_path <- input$upload_metadata_reg_coeff$datapath
-    
-    # Read the first sheet name from the uploaded Excel file
-    first_sheet_name <- tryCatch({
-      available_sheets <- getSheetNames(file_path)
-      available_sheets[[1]]
-    }, error = function(e) {
-      NULL
-    })
-    
-    # Check if the correct first sheet name is present
-    if (!is.null(first_sheet_name) && first_sheet_name == "custom_map_reg_coeff") {
-      # Correct first sheet name is present, proceed with processing the file
-      process_uploaded_file_reg_coeff()
-    } else {
-      # Incorrect or missing first sheet name, show an error message
-      showModal(modalDialog(
-        title = "Error",
-        easyClose = TRUE,
-        size = "s",
-        "Please upload the correct Metadata!"
-      ))
-    }
-  })
-  
-  ### P-Values
-  # Generate metadata
-  metadata_input_reg_pval <- reactive({
-    metadata_reg_pval = generate_metadata_reg(input$axis_mode_reg_pval,
-                                              input$axis_input_reg_pval,
-                                              input$hide_axis_reg_pval,
-                                              input$title_mode_reg_pval,
-                                              input$title1_input_reg_pval,
-                                              input$hide_borders_reg_pval,
-                                              input$white_ocean_reg_pval,
-                                              input$white_land_reg_pval,
-                                              input$coeff_variable) # same variable for both windows (coeff and pval)
-    return(metadata_reg_pval)})
-  
-  # Generate metadata excel
-  output$download_metadata_reg_pval <- downloadHandler(
-    filename = function() {"metadata_reg_pval.xlsx"},
-    content  = function(file) {
-      wb <- openxlsx::createWorkbook()
-      openxlsx::addWorksheet(wb, "custom_map_reg_pval")
-      openxlsx::addWorksheet(wb, "custom_points_reg_pval")
-      openxlsx::addWorksheet(wb, "custom_highlights_reg_pval")
-      openxlsx::addWorksheet(wb, "plot_gen_iv")
-      openxlsx::addWorksheet(wb, "plot_gen_dv")
-      openxlsx::addWorksheet(wb, "plot_gen_reg_pval")
-      openxlsx::writeData(wb, "custom_map_reg_pval", metadata_input_reg_pval())
-      openxlsx::writeData(wb, "custom_points_reg_pval", map_points_data_reg_pval())
-      openxlsx::writeData(wb, "custom_highlights_reg_pval", map_highlights_data_reg_pval())
-      openxlsx::writeData(wb, "plot_gen_iv", plot_gen_input_iv())
-      openxlsx::writeData(wb, "plot_gen_dv", plot_gen_input_dv())
-      openxlsx::writeData(wb, "plot_gen_reg_pval", metadata_yr_reg())
-      openxlsx::saveWorkbook(wb, file)
-    }
-  )
-  
-  # Upload plot data
-  process_uploaded_file_reg_pval <- function() {
-    metadata_reg_pval <- openxlsx::read.xlsx(input$upload_metadata_reg_pval$datapath, sheet = "custom_map_reg_pval")
-    
-    # Update inputs based on metadata_reg_pval sheet custom_map_reg_pval
-    updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode_reg", selected = metadata_reg_pval[1, "axis_mode_reg"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input_reg", value = metadata_reg_pval[1:2, "axis_input_reg"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis_reg", value = metadata_reg_pval[1, "hide_axis_reg"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_reg", selected = metadata_reg_pval[1, "title_mode_reg"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title1_input_reg", value = metadata_reg_pval[1, "title1_input_reg"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders_reg", value = metadata_reg_pval[1, "hide_borders_reg"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean_reg", value = metadata_reg_pval[1, "white_ocean_reg"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land_reg", value = metadata_reg_pval[1, "white_land_reg"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "variable", value = metadata_reg_pval[1, "variable"])
-    
-    # Read metadata from "custom_points_reg_pval" sheet
-    metadata_points_reg_pval <- openxlsx::read.xlsx(input$upload_metadata_reg_pval$datapath, sheet = "custom_points_reg_pval")
-    
-    # Update map points data if metadata_points_reg_pval is not empty
-    if (!is.null(metadata_points_reg_pval) && nrow(metadata_points_reg_pval) > 0) {
-      map_points_data_reg_pval(metadata_points_reg_pval)
-    }
-    
-    # Read metadata3 from "custom_highlights_reg_pval" sheet
-    metadata_highlights_reg_pval <- openxlsx::read.xlsx(input$upload_metadata_reg_pval$datapath, sheet = "custom_highlights_reg_pval")
-    
-    # Update map highlights data if metadata_highlights_reg_pval is not empty
-    if (!is.null(metadata_highlights_reg_pval) && nrow(metadata_highlights_reg_pval) > 0) {
-      map_highlights_data_reg_pval(metadata_highlights_reg_pval)
-    }
-    
-    # Update plot generation
-    plot_data_iv <- openxlsx::read.xlsx(input$upload_metadata_reg_pval$datapath, sheet = "plot_gen_iv")
-    
-    # Update inputs based on plot_data_v1 sheet plot_gen_iv
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_iv", selected = plot_data_iv[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_iv", selected = plot_data_iv[1, "variable"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_iv", selected = plot_data_iv[1, "mode"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_iv", selected = plot_data_iv[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_iv", selected = plot_data_iv[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_iv", value = plot_data_iv[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_iv", value = plot_data_iv[1, "select_sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_iv", value = plot_data_iv[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_iv", value = plot_data_iv[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals_iv(plot_data_iv[1:4, "lonlat_vals"])
-    
-    # Update plot generation
-    plot_data_dv <- openxlsx::read.xlsx(input$upload_metadata_reg_pval$datapath, sheet = "plot_gen_dv")
-    
-    # Update inputs based on plot_data_v1 sheet plot_gen_iv
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_dv", selected = plot_data_dv[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_dv", selected = plot_data_dv[1, "variable"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_dv", selected = plot_data_dv[1, "mode"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_dv", selected = plot_data_dv[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_dv", selected = plot_data_dv[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_dv", value = plot_data_dv[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_dv", value = plot_data_dv[1, "select_sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_dv", value = plot_data_dv[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_dv", value = plot_data_dv[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals_dv(plot_data_dv[1:4, "lonlat_vals"])
-    
-    # Update plot generation
-    plot_gen_reg_pval <- openxlsx::read.xlsx(input$upload_metadata_reg_pval$datapath, sheet = "plot_gen_reg_pval")
-    
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years4", value = plot_gen_reg_pval[1:2, "range_years_reg"])
-    
-  }
-  
-  # Event handler for upload button
-  observeEvent(input$update_metadata_reg_pval, {
-    req(input$upload_metadata_reg_pval)
-    file_path <- input$upload_metadata_reg_pval$datapath
-    
-    # Read the first sheet name from the uploaded Excel file
-    first_sheet_name <- tryCatch({
-      available_sheets <- getSheetNames(file_path)
-      available_sheets[[1]]
-    }, error = function(e) {
-      NULL
-    })
-    
-    # Check if the correct first sheet name is present
-    if (!is.null(first_sheet_name) && first_sheet_name == "custom_map_reg_pval") {
-      # Correct first sheet name is present, proceed with processing the file
-      process_uploaded_file_reg_pval()
-    } else {
-      # Incorrect or missing first sheet name, show an error message
-      showModal(modalDialog(
-        title = "Error",
-        easyClose = TRUE,
-        size = "s",
-        "Please upload the correct Metadata!"
-      ))
-    }
-  })
-  
-  
-  ### Residuals
-  # Generate metadata
-  metadata_input_reg_res <- reactive({
-    metadata_reg_res = generate_metadata_reg(input$axis_mode_reg_res,
-                                             input$axis_input_reg_res,
-                                             input$hide_axis_reg_res,
-                                             input$title_mode_reg_res,
-                                             input$title1_input_reg_res,
-                                             input$hide_borders_reg_res,
-                                             input$white_ocean_reg_res,
-                                             input$white_land_reg_res,
-                                             input$reg_resi_year)
-    return(metadata_reg_res)})
-  
-  # Generate metadata excel
-  output$download_metadata_reg_res <- downloadHandler(
-    filename = function() {"metadata_reg_res.xlsx"},
-    content  = function(file) {
-      wb <- openxlsx::createWorkbook()
-      openxlsx::addWorksheet(wb, "custom_map_reg_res")
-      openxlsx::addWorksheet(wb, "custom_points_reg_res")
-      openxlsx::addWorksheet(wb, "custom_highlights_reg_res")
-      openxlsx::addWorksheet(wb, "plot_gen_iv")
-      openxlsx::addWorksheet(wb, "plot_gen_dv")
-      openxlsx::addWorksheet(wb, "plot_gen_reg_res")
-      openxlsx::writeData(wb, "custom_map_reg_res", metadata_input_reg_res())
-      openxlsx::writeData(wb, "custom_points_reg_res", map_points_data_reg_res())
-      openxlsx::writeData(wb, "custom_highlights_reg_res", map_highlights_data_reg_res())
-      openxlsx::writeData(wb, "plot_gen_iv", plot_gen_input_iv())
-      openxlsx::writeData(wb, "plot_gen_dv", plot_gen_input_dv())
-      openxlsx::writeData(wb, "plot_gen_reg_res", metadata_yr_reg())
-      openxlsx::saveWorkbook(wb, file)
-    }
-  )
-  
-  # Upload plot data
-  process_uploaded_file_reg_res <- function() {
-    metadata_reg_res <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "custom_map_reg_res")
-    
-    # Update inputs based on metadata_reg_res sheet custom_map_reg_res
-    updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode_reg_res", selected = metadata_reg_res[1, "axis_mode_reg_res"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input_reg", value = metadata_reg_res[1:2, "axis_input_reg_res"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis_reg_res", value = metadata_reg_res[1, "hide_axis_reg_res"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_reg_res", selected = metadata_reg_res[1, "title_mode_reg_res"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title1_input_reg_res", value = metadata_reg_res[1, "title1_input_reg_res"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders_reg_res", value = metadata_reg_res[1, "hide_borders_reg_res"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean_reg_res", value = metadata_reg_res[1, "white_ocean_reg_res"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land_reg_res", value = metadata_reg_res[1, "white_land_reg_res"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "reg_resi_year", value = metadata_reg_res[1, "variable"])
-    
-    # Read metadata from "custom_points_reg_res" sheet
-    metadata_points_reg_res <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "custom_points_reg_res")
-    
-    # Update map points data if metadata_points_reg_res is not empty
-    if (!is.null(metadata_points_reg_res) && nrow(metadata_points_reg_res) > 0) {
-      map_points_data_reg_res(metadata_points_reg_res)
-    }
-    
-    # Read metadata_reg_res from "custom_highlights_reg_res" sheet
-    metadata_highlights_reg_res <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "custom_highlights_reg_res")
-    
-    # Update map highlights data if metadata_highlights_reg_pval is not empty
-    if (!is.null(metadata_highlights_reg_res) && nrow(metadata_highlights_reg_res) > 0) {
-      map_highlights_data_reg_res(metadata_highlights_reg_res)
-    }
-    
-    # Update plot generation
-    plot_data_iv <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "plot_gen_iv")
-    
-    # Update inputs based on plot_data_v1 sheet plot_gen_iv
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_iv", selected = plot_data_iv[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_iv", selected = plot_data_iv[1, "variable"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_iv", selected = plot_data_iv[1, "mode"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_iv", selected = plot_data_iv[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_iv", selected = plot_data_iv[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_iv", value = plot_data_iv[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_iv", value = plot_data_iv[1, "select_sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_iv", value = plot_data_iv[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_iv", value = plot_data_iv[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals_iv(plot_data_iv[1:4, "lonlat_vals"])
-    
-    # Update plot generation
-    plot_data_dv <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "plot_gen_dv")
-    
-    # Update inputs based on plot_data_v1 sheet plot_gen_iv
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_dv", selected = plot_data_dv[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_dv", selected = plot_data_dv[1, "variable"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_dv", selected = plot_data_dv[1, "mode"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_dv", selected = plot_data_dv[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_dv", selected = plot_data_dv[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_dv", value = plot_data_dv[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_dv", value = plot_data_dv[1, "select_sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_dv", value = plot_data_dv[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_dv", value = plot_data_dv[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals_dv(plot_data_dv[1:4, "lonlat_vals"])
-    
-    # Update plot generation
-    plot_gen_reg_res <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "plot_gen_reg_res")
-    
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years4", value = plot_gen_reg_res[1:2, "range_years_reg"])
-    
-  }
-  
-  # Event handler for upload button
-  observeEvent(input$update_metadata_reg_res, {
-    req(input$upload_metadata_reg_res)
-    file_path <- input$upload_metadata_reg_res$datapath
-    
-    # Read the first sheet name from the uploaded Excel file
-    first_sheet_name <- tryCatch({
-      available_sheets <- getSheetNames(file_path)
-      available_sheets[[1]]
-    }, error = function(e) {
-      NULL
-    })
-    
-    # Check if the correct first sheet name is present
-    if (!is.null(first_sheet_name) && first_sheet_name == "custom_map_reg_res") {
-      # Correct first sheet name is present, proceed with processing the file
-      process_uploaded_file_reg_res()
-    } else {
-      # Incorrect or missing first sheet name, show an error message
-      showModal(modalDialog(
-        title = "Error",
-        easyClose = TRUE,
-        size = "s",
-        "Please upload the correct Metadata!"
-      ))
-    }
-  })
+  # # Generate metadata plot for IV
+  # plot_gen_input_iv <- reactive({
+  #   plot_gen_iv = generate_metadata_plot_reg(input$dataset_selected_iv,
+  #                                            input$ME_variable_iv,
+  #                                            input$mode_selected_iv,
+  #                                            input$season_selected_iv,
+  #                                            input$range_months_iv,
+  #                                            input$ref_period_iv,
+  #                                            input$ref_single_year_iv,
+  #                                            input$range_longitude_iv,
+  #                                            input$range_latitude_iv,
+  #                                            lonlat_vals_iv())
+  #   return(plot_gen_iv)
+  # })
+  # 
+  # # Generate metadata plot for DV
+  # plot_gen_input_dv <- reactive({
+  #   plot_gen_dv = generate_metadata_plot_reg(input$dataset_selected_dv,
+  #                                            input$ME_variable_dv,
+  #                                            input$mode_selected_dv,
+  #                                            input$season_selected_dv,
+  #                                            input$range_months_dv,
+  #                                            input$ref_period_dv,
+  #                                            input$ref_single_year_dv,
+  #                                            input$range_longitude_dv,
+  #                                            input$range_latitude_dv,
+  #                                            lonlat_vals_dv())
+  #   return(plot_gen_dv)
+  # })
+  # 
+  # # Generate metadate year range
+  # metadata_yr_reg <- reactive({
+  #   year_range_reg = generate_metadata_y_range_reg(input$range_years4)
+  #   return(year_range_reg)
+  # })
+  # 
+  # 
+  # ### Coefficients
+  # # Generate metadata
+  # metadata_input_reg_coeff <- reactive({
+  #   metadata_reg_coeff = generate_metadata_reg(input$axis_mode_reg_coeff,
+  #                                              input$axis_input_reg_coeff,
+  #                                              input$hide_axis_reg_coeff,
+  #                                              input$title_mode_reg_coeff,
+  #                                              input$title1_input_reg_coeff,
+  #                                              input$hide_borders_reg_coeff,
+  #                                              input$white_ocean_reg_coeff,
+  #                                              input$white_land_reg_coeff,
+  #                                              input$coeff_variable)
+  #   return(metadata_reg_coeff)})
+  # 
+  # # Generate metadata excel
+  # output$download_metadata_reg_coeff <- downloadHandler(
+  #   filename = function() {"metadata_reg_coeff.xlsx"},
+  #   content  = function(file) {
+  #     wb <- openxlsx::createWorkbook()
+  #     openxlsx::addWorksheet(wb, "custom_map_reg_coeff")
+  #     openxlsx::addWorksheet(wb, "custom_points_reg_coeff")
+  #     openxlsx::addWorksheet(wb, "custom_highlights_reg_coeff")
+  #     openxlsx::addWorksheet(wb, "plot_gen_iv")
+  #     openxlsx::addWorksheet(wb, "plot_gen_dv")
+  #     openxlsx::addWorksheet(wb, "plot_gen_reg_coeff")
+  #     openxlsx::writeData(wb, "custom_map_reg_coeff", metadata_input_reg_coeff())
+  #     openxlsx::writeData(wb, "custom_points_reg_coeff", map_points_data_reg_coeff())
+  #     openxlsx::writeData(wb, "custom_highlights_reg_coeff", map_highlights_data_reg_coeff())
+  #     openxlsx::writeData(wb, "plot_gen_iv", plot_gen_input_iv())
+  #     openxlsx::writeData(wb, "plot_gen_dv", plot_gen_input_dv())
+  #     openxlsx::writeData(wb, "plot_gen_reg_coeff", metadata_yr_reg())
+  #     openxlsx::saveWorkbook(wb, file)
+  #   }
+  # )
+  # 
+  # # Upload plot data
+  # process_uploaded_file_reg_coeff <- function() {
+  #   metadata_reg_coeff <- openxlsx::read.xlsx(input$upload_metadata_reg_coeff$datapath, sheet = "custom_map_reg_coeff")
+  #   
+  #   # Update inputs based on metadata_reg_coeff sheet custom_map_reg_coeff
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode_reg", selected = metadata_reg_coeff[1, "axis_mode_reg"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input_reg", value = metadata_reg_coeff[1:2, "axis_input_reg"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis_reg", value = metadata_reg_coeff[1, "hide_axis_reg"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_reg", selected = metadata_reg_coeff[1, "title_mode_reg_coeff"])
+  #   updateTextInput(session = getDefaultReactiveDomain(), "title1_input_reg", value = metadata_reg_coeff[1, "title1_input_reg_coeff"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders_reg", value = metadata_reg_coeff[1, "hide_borders_reg_coeff"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean_reg", value = metadata_reg_coeff[1, "white_ocean_reg_coeff"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land_reg", value = metadata_reg_coeff[1, "white_land_reg_coeff"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "variable", value = metadata_reg_coeff[1, "variable"])
+  #   
+  #   # Read metadata from "custom_points_reg_coeff" sheet
+  #   metadata_points_reg_coeff <- openxlsx::read.xlsx(input$upload_metadata_reg_coeff$datapath, sheet = "custom_points_reg_coeff")
+  #   
+  #   # Update map points data if metadata_points_reg_coeff is not empty
+  #   if (!is.null(metadata_points_reg_coeff) && nrow(metadata_points_reg_coeff) > 0) {
+  #     map_points_data_reg_coeff(metadata_points_reg_coeff)
+  #   }
+  #   
+  #   # Read metadata3 from "custom_highlights_reg_coeff" sheet
+  #   metadata_highlights_reg_coeff <- openxlsx::read.xlsx(input$upload_metadata_reg_coeff$datapath, sheet = "custom_highlights_reg_coeff")
+  #   
+  #   # Update map highlights data if metadata_highlights_reg_coeff is not empty
+  #   if (!is.null(metadata_highlights_reg_coeff) && nrow(metadata_highlights_reg_coeff) > 0) {
+  #     map_highlights_data_reg_coeff(metadata_highlights_reg_coeff)
+  #   }
+  #   
+  #   # Update plot generation
+  #   plot_data_iv <- openxlsx::read.xlsx(input$upload_metadata_reg_coeff$datapath, sheet = "plot_gen_iv")
+  #   
+  #   # Update inputs based on plot_data_v1 sheet plot_gen_iv
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_iv", selected = plot_data_iv[1, "dataset"])
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_iv", selected = plot_data_iv[1, "variable"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_iv", selected = plot_data_iv[1, "mode"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_iv", selected = plot_data_iv[1, "season_sel"])
+  #   updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_iv", selected = plot_data_iv[1:2, "range_months"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_iv", value = plot_data_iv[1:2, "ref_period"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_iv", value = plot_data_iv[1, "select_sg_ref"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_iv", value = plot_data_iv[1:2, "lon_range"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_iv", value = plot_data_iv[1:2, "lat_range"])
+  #   # Update Lon Lat Vals
+  #   lonlat_vals_iv(plot_data_iv[1:4, "lonlat_vals"])
+  #   
+  #   # Update plot generation
+  #   plot_data_dv <- openxlsx::read.xlsx(input$upload_metadata_reg_coeff$datapath, sheet = "plot_gen_dv")
+  #   
+  #   # Update inputs based on plot_data_v1 sheet plot_gen_iv
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_dv", selected = plot_data_dv[1, "dataset"])
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_dv", selected = plot_data_dv[1, "variable"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_dv", selected = plot_data_dv[1, "mode"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_dv", selected = plot_data_dv[1, "season_sel"])
+  #   updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_dv", selected = plot_data_dv[1:2, "range_months"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_dv", value = plot_data_dv[1:2, "ref_period"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_dv", value = plot_data_dv[1, "select_sg_ref"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_dv", value = plot_data_dv[1:2, "lon_range"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_dv", value = plot_data_dv[1:2, "lat_range"])
+  #   # Update Lon Lat Vals
+  #   lonlat_vals_dv(plot_data_dv[1:4, "lonlat_vals"])
+  #   
+  #   # Update plot generation
+  #   plot_gen_reg_coeff <- openxlsx::read.xlsx(input$upload_metadata_reg_coeff$datapath, sheet = "plot_gen_reg_coeff")
+  #   
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years4", value = plot_gen_reg_coeff[1:2, "range_years_reg"])
+  #   
+  # }
+  # 
+  # # Event handler for upload button
+  # observeEvent(input$update_metadata_reg_coeff, {
+  #   req(input$upload_metadata_reg_coeff)
+  #   file_path <- input$upload_metadata_reg_coeff$datapath
+  #   
+  #   # Read the first sheet name from the uploaded Excel file
+  #   first_sheet_name <- tryCatch({
+  #     available_sheets <- getSheetNames(file_path)
+  #     available_sheets[[1]]
+  #   }, error = function(e) {
+  #     NULL
+  #   })
+  #   
+  #   # Check if the correct first sheet name is present
+  #   if (!is.null(first_sheet_name) && first_sheet_name == "custom_map_reg_coeff") {
+  #     # Correct first sheet name is present, proceed with processing the file
+  #     process_uploaded_file_reg_coeff()
+  #   } else {
+  #     # Incorrect or missing first sheet name, show an error message
+  #     showModal(modalDialog(
+  #       title = "Error",
+  #       easyClose = TRUE,
+  #       size = "s",
+  #       "Please upload the correct Metadata!"
+  #     ))
+  #   }
+  # })
+  # 
+  # ### P-Values
+  # # Generate metadata
+  # metadata_input_reg_pval <- reactive({
+  #   metadata_reg_pval = generate_metadata_reg(input$axis_mode_reg_pval,
+  #                                             input$axis_input_reg_pval,
+  #                                             input$hide_axis_reg_pval,
+  #                                             input$title_mode_reg_pval,
+  #                                             input$title1_input_reg_pval,
+  #                                             input$hide_borders_reg_pval,
+  #                                             input$white_ocean_reg_pval,
+  #                                             input$white_land_reg_pval,
+  #                                             input$coeff_variable) # same variable for both windows (coeff and pval)
+  #   return(metadata_reg_pval)})
+  # 
+  # # Generate metadata excel
+  # output$download_metadata_reg_pval <- downloadHandler(
+  #   filename = function() {"metadata_reg_pval.xlsx"},
+  #   content  = function(file) {
+  #     wb <- openxlsx::createWorkbook()
+  #     openxlsx::addWorksheet(wb, "custom_map_reg_pval")
+  #     openxlsx::addWorksheet(wb, "custom_points_reg_pval")
+  #     openxlsx::addWorksheet(wb, "custom_highlights_reg_pval")
+  #     openxlsx::addWorksheet(wb, "plot_gen_iv")
+  #     openxlsx::addWorksheet(wb, "plot_gen_dv")
+  #     openxlsx::addWorksheet(wb, "plot_gen_reg_pval")
+  #     openxlsx::writeData(wb, "custom_map_reg_pval", metadata_input_reg_pval())
+  #     openxlsx::writeData(wb, "custom_points_reg_pval", map_points_data_reg_pval())
+  #     openxlsx::writeData(wb, "custom_highlights_reg_pval", map_highlights_data_reg_pval())
+  #     openxlsx::writeData(wb, "plot_gen_iv", plot_gen_input_iv())
+  #     openxlsx::writeData(wb, "plot_gen_dv", plot_gen_input_dv())
+  #     openxlsx::writeData(wb, "plot_gen_reg_pval", metadata_yr_reg())
+  #     openxlsx::saveWorkbook(wb, file)
+  #   }
+  # )
+  # 
+  # # Upload plot data
+  # process_uploaded_file_reg_pval <- function() {
+  #   metadata_reg_pval <- openxlsx::read.xlsx(input$upload_metadata_reg_pval$datapath, sheet = "custom_map_reg_pval")
+  #   
+  #   # Update inputs based on metadata_reg_pval sheet custom_map_reg_pval
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode_reg", selected = metadata_reg_pval[1, "axis_mode_reg"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input_reg", value = metadata_reg_pval[1:2, "axis_input_reg"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis_reg", value = metadata_reg_pval[1, "hide_axis_reg"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_reg", selected = metadata_reg_pval[1, "title_mode_reg"])
+  #   updateTextInput(session = getDefaultReactiveDomain(), "title1_input_reg", value = metadata_reg_pval[1, "title1_input_reg"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders_reg", value = metadata_reg_pval[1, "hide_borders_reg"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean_reg", value = metadata_reg_pval[1, "white_ocean_reg"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land_reg", value = metadata_reg_pval[1, "white_land_reg"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "variable", value = metadata_reg_pval[1, "variable"])
+  #   
+  #   # Read metadata from "custom_points_reg_pval" sheet
+  #   metadata_points_reg_pval <- openxlsx::read.xlsx(input$upload_metadata_reg_pval$datapath, sheet = "custom_points_reg_pval")
+  #   
+  #   # Update map points data if metadata_points_reg_pval is not empty
+  #   if (!is.null(metadata_points_reg_pval) && nrow(metadata_points_reg_pval) > 0) {
+  #     map_points_data_reg_pval(metadata_points_reg_pval)
+  #   }
+  #   
+  #   # Read metadata3 from "custom_highlights_reg_pval" sheet
+  #   metadata_highlights_reg_pval <- openxlsx::read.xlsx(input$upload_metadata_reg_pval$datapath, sheet = "custom_highlights_reg_pval")
+  #   
+  #   # Update map highlights data if metadata_highlights_reg_pval is not empty
+  #   if (!is.null(metadata_highlights_reg_pval) && nrow(metadata_highlights_reg_pval) > 0) {
+  #     map_highlights_data_reg_pval(metadata_highlights_reg_pval)
+  #   }
+  #   
+  #   # Update plot generation
+  #   plot_data_iv <- openxlsx::read.xlsx(input$upload_metadata_reg_pval$datapath, sheet = "plot_gen_iv")
+  #   
+  #   # Update inputs based on plot_data_v1 sheet plot_gen_iv
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_iv", selected = plot_data_iv[1, "dataset"])
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_iv", selected = plot_data_iv[1, "variable"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_iv", selected = plot_data_iv[1, "mode"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_iv", selected = plot_data_iv[1, "season_sel"])
+  #   updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_iv", selected = plot_data_iv[1:2, "range_months"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_iv", value = plot_data_iv[1:2, "ref_period"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_iv", value = plot_data_iv[1, "select_sg_ref"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_iv", value = plot_data_iv[1:2, "lon_range"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_iv", value = plot_data_iv[1:2, "lat_range"])
+  #   # Update Lon Lat Vals
+  #   lonlat_vals_iv(plot_data_iv[1:4, "lonlat_vals"])
+  #   
+  #   # Update plot generation
+  #   plot_data_dv <- openxlsx::read.xlsx(input$upload_metadata_reg_pval$datapath, sheet = "plot_gen_dv")
+  #   
+  #   # Update inputs based on plot_data_v1 sheet plot_gen_iv
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_dv", selected = plot_data_dv[1, "dataset"])
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_dv", selected = plot_data_dv[1, "variable"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_dv", selected = plot_data_dv[1, "mode"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_dv", selected = plot_data_dv[1, "season_sel"])
+  #   updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_dv", selected = plot_data_dv[1:2, "range_months"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_dv", value = plot_data_dv[1:2, "ref_period"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_dv", value = plot_data_dv[1, "select_sg_ref"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_dv", value = plot_data_dv[1:2, "lon_range"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_dv", value = plot_data_dv[1:2, "lat_range"])
+  #   # Update Lon Lat Vals
+  #   lonlat_vals_dv(plot_data_dv[1:4, "lonlat_vals"])
+  #   
+  #   # Update plot generation
+  #   plot_gen_reg_pval <- openxlsx::read.xlsx(input$upload_metadata_reg_pval$datapath, sheet = "plot_gen_reg_pval")
+  #   
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years4", value = plot_gen_reg_pval[1:2, "range_years_reg"])
+  #   
+  # }
+  # 
+  # # Event handler for upload button
+  # observeEvent(input$update_metadata_reg_pval, {
+  #   req(input$upload_metadata_reg_pval)
+  #   file_path <- input$upload_metadata_reg_pval$datapath
+  #   
+  #   # Read the first sheet name from the uploaded Excel file
+  #   first_sheet_name <- tryCatch({
+  #     available_sheets <- getSheetNames(file_path)
+  #     available_sheets[[1]]
+  #   }, error = function(e) {
+  #     NULL
+  #   })
+  #   
+  #   # Check if the correct first sheet name is present
+  #   if (!is.null(first_sheet_name) && first_sheet_name == "custom_map_reg_pval") {
+  #     # Correct first sheet name is present, proceed with processing the file
+  #     process_uploaded_file_reg_pval()
+  #   } else {
+  #     # Incorrect or missing first sheet name, show an error message
+  #     showModal(modalDialog(
+  #       title = "Error",
+  #       easyClose = TRUE,
+  #       size = "s",
+  #       "Please upload the correct Metadata!"
+  #     ))
+  #   }
+  # })
+  # 
+  # 
+  # ### Residuals
+  # # Generate metadata
+  # metadata_input_reg_res <- reactive({
+  #   metadata_reg_res = generate_metadata_reg(input$axis_mode_reg_res,
+  #                                            input$axis_input_reg_res,
+  #                                            input$hide_axis_reg_res,
+  #                                            input$title_mode_reg_res,
+  #                                            input$title1_input_reg_res,
+  #                                            input$hide_borders_reg_res,
+  #                                            input$white_ocean_reg_res,
+  #                                            input$white_land_reg_res,
+  #                                            input$reg_resi_year)
+  #   return(metadata_reg_res)})
+  # 
+  # # Generate metadata excel
+  # output$download_metadata_reg_res <- downloadHandler(
+  #   filename = function() {"metadata_reg_res.xlsx"},
+  #   content  = function(file) {
+  #     wb <- openxlsx::createWorkbook()
+  #     openxlsx::addWorksheet(wb, "custom_map_reg_res")
+  #     openxlsx::addWorksheet(wb, "custom_points_reg_res")
+  #     openxlsx::addWorksheet(wb, "custom_highlights_reg_res")
+  #     openxlsx::addWorksheet(wb, "plot_gen_iv")
+  #     openxlsx::addWorksheet(wb, "plot_gen_dv")
+  #     openxlsx::addWorksheet(wb, "plot_gen_reg_res")
+  #     openxlsx::writeData(wb, "custom_map_reg_res", metadata_input_reg_res())
+  #     openxlsx::writeData(wb, "custom_points_reg_res", map_points_data_reg_res())
+  #     openxlsx::writeData(wb, "custom_highlights_reg_res", map_highlights_data_reg_res())
+  #     openxlsx::writeData(wb, "plot_gen_iv", plot_gen_input_iv())
+  #     openxlsx::writeData(wb, "plot_gen_dv", plot_gen_input_dv())
+  #     openxlsx::writeData(wb, "plot_gen_reg_res", metadata_yr_reg())
+  #     openxlsx::saveWorkbook(wb, file)
+  #   }
+  # )
+  # 
+  # # Upload plot data
+  # process_uploaded_file_reg_res <- function() {
+  #   metadata_reg_res <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "custom_map_reg_res")
+  #   
+  #   # Update inputs based on metadata_reg_res sheet custom_map_reg_res
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "axis_mode_reg_res", selected = metadata_reg_res[1, "axis_mode_reg_res"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "axis_input_reg", value = metadata_reg_res[1:2, "axis_input_reg_res"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_axis_reg_res", value = metadata_reg_res[1, "hide_axis_reg_res"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_reg_res", selected = metadata_reg_res[1, "title_mode_reg_res"])
+  #   updateTextInput(session = getDefaultReactiveDomain(), "title1_input_reg_res", value = metadata_reg_res[1, "title1_input_reg_res"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "hide_borders_reg_res", value = metadata_reg_res[1, "hide_borders_reg_res"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "white_ocean_reg_res", value = metadata_reg_res[1, "white_ocean_reg_res"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "white_land_reg_res", value = metadata_reg_res[1, "white_land_reg_res"])
+  #   updateNumericInput(session = getDefaultReactiveDomain(), "reg_resi_year", value = metadata_reg_res[1, "variable"])
+  #   
+  #   # Read metadata from "custom_points_reg_res" sheet
+  #   metadata_points_reg_res <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "custom_points_reg_res")
+  #   
+  #   # Update map points data if metadata_points_reg_res is not empty
+  #   if (!is.null(metadata_points_reg_res) && nrow(metadata_points_reg_res) > 0) {
+  #     map_points_data_reg_res(metadata_points_reg_res)
+  #   }
+  #   
+  #   # Read metadata_reg_res from "custom_highlights_reg_res" sheet
+  #   metadata_highlights_reg_res <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "custom_highlights_reg_res")
+  #   
+  #   # Update map highlights data if metadata_highlights_reg_pval is not empty
+  #   if (!is.null(metadata_highlights_reg_res) && nrow(metadata_highlights_reg_res) > 0) {
+  #     map_highlights_data_reg_res(metadata_highlights_reg_res)
+  #   }
+  #   
+  #   # Update plot generation
+  #   plot_data_iv <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "plot_gen_iv")
+  #   
+  #   # Update inputs based on plot_data_v1 sheet plot_gen_iv
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_iv", selected = plot_data_iv[1, "dataset"])
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_iv", selected = plot_data_iv[1, "variable"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_iv", selected = plot_data_iv[1, "mode"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_iv", selected = plot_data_iv[1, "season_sel"])
+  #   updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_iv", selected = plot_data_iv[1:2, "range_months"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_iv", value = plot_data_iv[1:2, "ref_period"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_iv", value = plot_data_iv[1, "select_sg_ref"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_iv", value = plot_data_iv[1:2, "lon_range"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_iv", value = plot_data_iv[1:2, "lat_range"])
+  #   # Update Lon Lat Vals
+  #   lonlat_vals_iv(plot_data_iv[1:4, "lonlat_vals"])
+  #   
+  #   # Update plot generation
+  #   plot_data_dv <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "plot_gen_dv")
+  #   
+  #   # Update inputs based on plot_data_v1 sheet plot_gen_iv
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_dv", selected = plot_data_dv[1, "dataset"])
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_dv", selected = plot_data_dv[1, "variable"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "mode_selected_dv", selected = plot_data_dv[1, "mode"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_dv", selected = plot_data_dv[1, "season_sel"])
+  #   updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_dv", selected = plot_data_dv[1:2, "range_months"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_dv", value = plot_data_dv[1:2, "ref_period"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_dv", value = plot_data_dv[1, "select_sg_ref"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_dv", value = plot_data_dv[1:2, "lon_range"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_dv", value = plot_data_dv[1:2, "lat_range"])
+  #   # Update Lon Lat Vals
+  #   lonlat_vals_dv(plot_data_dv[1:4, "lonlat_vals"])
+  #   
+  #   # Update plot generation
+  #   plot_gen_reg_res <- openxlsx::read.xlsx(input$upload_metadata_reg_res$datapath, sheet = "plot_gen_reg_res")
+  #   
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_years4", value = plot_gen_reg_res[1:2, "range_years_reg"])
+  #   
+  # }
+  # 
+  # # Event handler for upload button
+  # observeEvent(input$update_metadata_reg_res, {
+  #   req(input$upload_metadata_reg_res)
+  #   file_path <- input$upload_metadata_reg_res$datapath
+  #   
+  #   # Read the first sheet name from the uploaded Excel file
+  #   first_sheet_name <- tryCatch({
+  #     available_sheets <- getSheetNames(file_path)
+  #     available_sheets[[1]]
+  #   }, error = function(e) {
+  #     NULL
+  #   })
+  #   
+  #   # Check if the correct first sheet name is present
+  #   if (!is.null(first_sheet_name) && first_sheet_name == "custom_map_reg_res") {
+  #     # Correct first sheet name is present, proceed with processing the file
+  #     process_uploaded_file_reg_res()
+  #   } else {
+  #     # Incorrect or missing first sheet name, show an error message
+  #     showModal(modalDialog(
+  #       title = "Error",
+  #       easyClose = TRUE,
+  #       size = "s",
+  #       "Please upload the correct Metadata!"
+  #     ))
+  #   }
+  # })
   
   ####### Generate Layer Options for customization ----
   
@@ -7988,137 +8038,218 @@ server <- function(input, output, session) {
   
   ####### Generate Metadata for SEA ----
   
-  #Download Plot data 
-  plot_gen_input_sea <- reactive({
-    
-    plot_gen_sea = generate_metadata_sea_plot(input$dataset_selected_6,
-                                              input$ME_variable_6,
-                                              input$ME_statistic_6,
-                                              input$season_selected_6,
-                                              input$range_months_6,
-                                              input$ref_period_6,
-                                              input$ref_single_year_6,
-                                              input$ref_period_sg_6,
-                                              input$range_longitude_6,
-                                              input$range_latitude_6,
-                                              lonlat_vals6())
-    
-    return(plot_gen_sea)
+  # === SEA Metadata Reactive ===
+  metadata_inputs_sea <- reactive({
+    generate_metadata_sea(
+      axis_input_6               = input$axis_input_6,
+      axis_mode_6                = input$axis_mode_6,
+      coordinates_type_6         = input$coordinates_type_6,
+      custom_6                   = input$custom_6,
+      dataset_selected_6         = input$dataset_selected_6,
+      download_options_6         = input$download_options_6,
+      enable_custom_statistics_6 = input$enable_custom_statistics_6,
+      enter_upload_6             = input$enter_upload_6,
+      event_years_6              = input$event_years_6,
+      file_type_timeseries6      = input$file_type_timeseries6,
+      lag_years_6                = input$lag_years_6,
+      ME_statistic_6             = input$ME_statistic_6,
+      ME_variable_6              = input$ME_variable_6,
+      range_latitude_6           = input$range_latitude_6,
+      range_longitude_6          = input$range_longitude_6,
+      range_months_6             = input$range_months_6,
+      ref_period_6               = input$ref_period_6,
+      ref_period_sg_6            = input$ref_period_sg_6,
+      ref_single_year_6          = input$ref_single_year_6,
+      sample_size_6              = input$sample_size_6,
+      season_selected_6          = input$season_selected_6,
+      show_confidence_bands_6    = input$show_confidence_bands_6,
+      show_key_6                 = input$show_key_6,
+      show_means_6               = input$show_means_6,
+      show_observations_6        = input$show_observations_6,
+      show_pvalues_6             = input$show_pvalues_6,
+      show_ticks_6               = input$show_ticks_6,
+      source_sea_6               = input$source_sea_6,
+      title_mode_6               = input$title_mode_6,
+      title1_input_6             = input$title1_input_6,
+      use_custom_post_6          = input$use_custom_post_6,
+      use_custom_pre_6           = input$use_custom_pre_6,
+      user_variable_6            = input$user_variable_6,
+      y_label_6                  = input$y_label_6,
+      
+      # Reactive val
+      lonlat_vals = lonlat_vals6()
+    )
   })
   
-  #Download Options data
-  plot_gen_side_input_sea <- reactive({
-    
-    plot_gen_side_sea = generate_metadata_sea_side_plot(input$lag_years_6,
-                                                        input$event_years_6)
-    
-    return(plot_gen_side_sea)
-  })
-  
-  #Download Custom SEA data
-  custom_map_input_sea <- reactive({
-    
-    custom_map_sea = generate_metadata_sea_ts(input$title_mode_6,
-                                              input$title1_input_6,
-                                              input$y_label_6,
-                                              input$show_observations_6,
-                                              input$show_pvalues_6,
-                                              input$show_ticks_6,
-                                              input$show_key_6,
-                                              input$sample_size_6,
-                                              input$show_means_6,
-                                              input$show_confidence_bands_6)
-    
-    return(custom_map_sea)
-  })
-  
-  #Download Metadata as Excel
+  # === SEA Metadata Download ===
   output$download_metadata_6 <- downloadHandler(
     filename = function() {"metadata_sea.xlsx"},
-    content  = function(file) {
+    content = function(file) {
       wb <- openxlsx::createWorkbook()
-      openxlsx::addWorksheet(wb, "plot_gen_sea")
-      openxlsx::addWorksheet(wb, "plot_gen_side_sea")
-      openxlsx::addWorksheet(wb, "custom_map_sea")
-      openxlsx::writeData(wb, "plot_gen_sea", plot_gen_input_sea())
-      openxlsx::writeData(wb, "plot_gen_side_sea", plot_gen_side_input_sea())
-      openxlsx::writeData(wb, "custom_map_sea", custom_map_input_sea())
+      openxlsx::addWorksheet(wb, "custom_meta")
+      
+      meta <- isolate(metadata_inputs_sea())
+      if (nrow(meta) > 0) openxlsx::writeData(wb, "custom_meta", meta)
+      
       openxlsx::saveWorkbook(wb, file)
     }
   )
   
-  #Upload SEA metadata
-  process_uploaded_file_sea <- function() {
-    
-    # Update plot generation
-    plot_data_sea <- openxlsx::read.xlsx(input$upload_metadata_6$datapath, sheet = "plot_gen_sea")
-    
-    # Update inputs based on plot_data_sea sheet plot_gen_sea
-    updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_6", selected = plot_data_sea[1, "dataset"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_6", selected = plot_data_sea[1, "variable"])
-    updateSelectInput(session = getDefaultReactiveDomain(), "ME_statistic_6", selected = plot_data_sea[1, "statistic"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_6", selected = plot_data_sea[1, "season_sel"])
-    updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_6", selected = plot_data_sea[1:2, "range_months"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_6", value = plot_data_sea[1:2, "ref_period"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_6", value = plot_data_sea[1, "select_sg_ref"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg_6", value = plot_data_sea[1, "sg_ref"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_6", value = plot_data_sea[1:2, "lon_range"])
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_6", value = plot_data_sea[1:2, "lat_range"])
-    # Update Lon Lat Vals
-    lonlat_vals6(plot_data_sea[1:4, "lonlat_vals"])
-    
-    
-    # Update plot generation
-    plot_data_side_sea <- openxlsx::read.xlsx(input$upload_metadata_6$datapath, sheet = "plot_gen_side_sea")
-    
-    # Update inputs based on plot_data_sea sheet plot_gen_sea
-    updateNumericRangeInput(session = getDefaultReactiveDomain(), "lag_years_6", value = plot_data_side_sea[1:2, "lag_years"])
-    updateTextInput(session = getDefaultReactiveDomain(), "event_years_6", value = plot_data_side_sea[1, "event_years"])
-    
-    # Update inputs based on metadata_sea sheet custom_map_sea
-    metadata_sea <- openxlsx::read.xlsx(input$upload_metadata_6$datapath, sheet = "custom_map_sea")
-    
-    updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_6", selected = metadata_sea[1, "title_mode_6"])
-    updateTextInput(session = getDefaultReactiveDomain(), "title1_input_6", value = metadata_sea[1, "title1_input_6"])
-    updateTextInput(session = getDefaultReactiveDomain(), "y_label_6", value = metadata_sea[1, "y_label_6"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "show_observations_6", value = metadata_sea[1, "show_observations_6"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "show_pvalues_6", value = metadata_sea[1, "show_pvalues_6"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "show_ticks_6", value = metadata_sea[1, "show_ticks_6"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "show_key_6", value = metadata_sea[1, "show_key_6"])
-    updateNumericInput(session = getDefaultReactiveDomain(), "sample_size_6", value = metadata_sea[1, "sample_size_6"])
-    updateCheckboxInput(session = getDefaultReactiveDomain(), "show_means_6", value = metadata_sea[1, "show_means_6"])
-    updateRadioButtons(session = getDefaultReactiveDomain(), "show_confidence_bands_6", selected = metadata_sea[1, "show_confidence_bands_6"])
-  }
-  
-  # Event handler for upload button
+  # === SEA Metadata Upload ===
   observeEvent(input$update_metadata_6, {
     req(input$upload_metadata_6)
+    
     file_path <- input$upload_metadata_6$datapath
+    file_name <- input$upload_metadata_6$name
     
-    # Read the first sheet name from the uploaded Excel file
-    first_sheet_name_sea <- tryCatch({
-      available_sheets <- getSheetNames(file_path)
-      available_sheets[[1]]
-    }, error = function(e) {
-      NULL
-    })
-    
-    # Check if the correct first sheet name is present
-    if (!is.null(first_sheet_name_sea) && first_sheet_name_sea == "plot_gen_sea") {
-      # Correct first sheet name is present, proceed with processing the file
-      process_uploaded_file_sea()
+    if (!is.null(file_name) && tools::file_path_sans_ext(file_name) == "metadata_sea") {
+      
+      process_uploaded_metadata_sea(
+        file_path        = file_path,
+        metadata_sheet   = "custom_meta",
+        rv_lonlat_vals   = lonlat_vals6
+      )
+      
     } else {
-      # Incorrect or missing first sheet name, show an error message
       showModal(modalDialog(
         title = "Error",
+        "Please upload the correct file: 'metadata_sea.xlsx'.",
         easyClose = TRUE,
-        size = "s",
-        "Please upload the correct Metadata!"
+        size = "s"
       ))
     }
   })
   
   
+  # #Download Plot data 
+  # plot_gen_input_sea <- reactive({
+  #   
+  #   plot_gen_sea = generate_metadata_sea_plot(input$dataset_selected_6,
+  #                                             input$ME_variable_6,
+  #                                             input$ME_statistic_6,
+  #                                             input$season_selected_6,
+  #                                             input$range_months_6,
+  #                                             input$ref_period_6,
+  #                                             input$ref_single_year_6,
+  #                                             input$ref_period_sg_6,
+  #                                             input$range_longitude_6,
+  #                                             input$range_latitude_6,
+  #                                             lonlat_vals6())
+  #   
+  #   return(plot_gen_sea)
+  # })
+  # 
+  # #Download Options data
+  # plot_gen_side_input_sea <- reactive({
+  #   
+  #   plot_gen_side_sea = generate_metadata_sea_side_plot(input$lag_years_6,
+  #                                                       input$event_years_6)
+  #   
+  #   return(plot_gen_side_sea)
+  # })
+  # 
+  # #Download Custom SEA data
+  # custom_map_input_sea <- reactive({
+  #   
+  #   custom_map_sea = generate_metadata_sea_ts(input$title_mode_6,
+  #                                             input$title1_input_6,
+  #                                             input$y_label_6,
+  #                                             input$show_observations_6,
+  #                                             input$show_pvalues_6,
+  #                                             input$show_ticks_6,
+  #                                             input$show_key_6,
+  #                                             input$sample_size_6,
+  #                                             input$show_means_6,
+  #                                             input$show_confidence_bands_6)
+  #   
+  #   return(custom_map_sea)
+  # })
+  # 
+  # #Download Metadata as Excel
+  # output$download_metadata_6 <- downloadHandler(
+  #   filename = function() {"metadata_sea.xlsx"},
+  #   content  = function(file) {
+  #     wb <- openxlsx::createWorkbook()
+  #     openxlsx::addWorksheet(wb, "plot_gen_sea")
+  #     openxlsx::addWorksheet(wb, "plot_gen_side_sea")
+  #     openxlsx::addWorksheet(wb, "custom_map_sea")
+  #     openxlsx::writeData(wb, "plot_gen_sea", plot_gen_input_sea())
+  #     openxlsx::writeData(wb, "plot_gen_side_sea", plot_gen_side_input_sea())
+  #     openxlsx::writeData(wb, "custom_map_sea", custom_map_input_sea())
+  #     openxlsx::saveWorkbook(wb, file)
+  #   }
+  # )
+  # 
+  # #Upload SEA metadata
+  # process_uploaded_file_sea <- function() {
+  #   
+  #   # Update plot generation
+  #   plot_data_sea <- openxlsx::read.xlsx(input$upload_metadata_6$datapath, sheet = "plot_gen_sea")
+  #   
+  #   # Update inputs based on plot_data_sea sheet plot_gen_sea
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "dataset_selected_6", selected = plot_data_sea[1, "dataset"])
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "ME_variable_6", selected = plot_data_sea[1, "variable"])
+  #   updateSelectInput(session = getDefaultReactiveDomain(), "ME_statistic_6", selected = plot_data_sea[1, "statistic"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "season_selected_6", selected = plot_data_sea[1, "season_sel"])
+  #   updateSliderTextInput(session = getDefaultReactiveDomain(), "range_months_6", selected = plot_data_sea[1:2, "range_months"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "ref_period_6", value = plot_data_sea[1:2, "ref_period"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "ref_single_year_6", value = plot_data_sea[1, "select_sg_ref"])
+  #   updateNumericInput(session = getDefaultReactiveDomain(), "ref_period_sg_6", value = plot_data_sea[1, "sg_ref"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_longitude_6", value = plot_data_sea[1:2, "lon_range"])
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "range_latitude_6", value = plot_data_sea[1:2, "lat_range"])
+  #   # Update Lon Lat Vals
+  #   lonlat_vals6(plot_data_sea[1:4, "lonlat_vals"])
+  #   
+  #   
+  #   # Update plot generation
+  #   plot_data_side_sea <- openxlsx::read.xlsx(input$upload_metadata_6$datapath, sheet = "plot_gen_side_sea")
+  #   
+  #   # Update inputs based on plot_data_sea sheet plot_gen_sea
+  #   updateNumericRangeInput(session = getDefaultReactiveDomain(), "lag_years_6", value = plot_data_side_sea[1:2, "lag_years"])
+  #   updateTextInput(session = getDefaultReactiveDomain(), "event_years_6", value = plot_data_side_sea[1, "event_years"])
+  #   
+  #   # Update inputs based on metadata_sea sheet custom_map_sea
+  #   metadata_sea <- openxlsx::read.xlsx(input$upload_metadata_6$datapath, sheet = "custom_map_sea")
+  #   
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "title_mode_6", selected = metadata_sea[1, "title_mode_6"])
+  #   updateTextInput(session = getDefaultReactiveDomain(), "title1_input_6", value = metadata_sea[1, "title1_input_6"])
+  #   updateTextInput(session = getDefaultReactiveDomain(), "y_label_6", value = metadata_sea[1, "y_label_6"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "show_observations_6", value = metadata_sea[1, "show_observations_6"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "show_pvalues_6", value = metadata_sea[1, "show_pvalues_6"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "show_ticks_6", value = metadata_sea[1, "show_ticks_6"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "show_key_6", value = metadata_sea[1, "show_key_6"])
+  #   updateNumericInput(session = getDefaultReactiveDomain(), "sample_size_6", value = metadata_sea[1, "sample_size_6"])
+  #   updateCheckboxInput(session = getDefaultReactiveDomain(), "show_means_6", value = metadata_sea[1, "show_means_6"])
+  #   updateRadioButtons(session = getDefaultReactiveDomain(), "show_confidence_bands_6", selected = metadata_sea[1, "show_confidence_bands_6"])
+  # }
+  # 
+  # # Event handler for upload button
+  # observeEvent(input$update_metadata_6, {
+  #   req(input$upload_metadata_6)
+  #   file_path <- input$upload_metadata_6$datapath
+  #   
+  #   # Read the first sheet name from the uploaded Excel file
+  #   first_sheet_name_sea <- tryCatch({
+  #     available_sheets <- getSheetNames(file_path)
+  #     available_sheets[[1]]
+  #   }, error = function(e) {
+  #     NULL
+  #   })
+  #   
+  #   # Check if the correct first sheet name is present
+  #   if (!is.null(first_sheet_name_sea) && first_sheet_name_sea == "plot_gen_sea") {
+  #     # Correct first sheet name is present, proceed with processing the file
+  #     process_uploaded_file_sea()
+  #   } else {
+  #     # Incorrect or missing first sheet name, show an error message
+  #     showModal(modalDialog(
+  #       title = "Error",
+  #       easyClose = TRUE,
+  #       size = "s",
+  #       "Please upload the correct Metadata!"
+  #     ))
+  #   }
+  # })
   
   # Processing and Plotting ----
   ### DATA PROCESSING ----  
@@ -9080,6 +9211,7 @@ server <- function(input, output, session) {
         ts_custom_title1 = input$title1_input_ts2,
         ts_custom_title2 = NA,
         map_title_size = input$title_size_input2,
+        ts_title_size = input$title_size_input_ts2,
         ts_data = timeseries_data_2()
       )
     }, error = function(e) {
@@ -9110,7 +9242,7 @@ server <- function(input, output, session) {
     isolate({
       titles <- plot_titles_composites()
       if (is.null(titles)) {
-        showNotification("⚠️ Could not generate composite titles — check your year range.", type = "error")
+        showNotification("Could not generate composite titles — check your year range.", type = "error")
         updateTextInput(session, "title1_input2", value = "Invalid Title")
         updateTextInput(session, "title2_input2", value = "")
         updateTextInput(session, "title1_input_ts2", value = "")
@@ -10018,7 +10150,8 @@ server <- function(input, output, session) {
       map_custom_title = input$title1_input3,
       map_custom_subtitle = input$title2_input3,
       ts_custom_title = input$title1_input_ts3,
-      title_size = input$title_size_input3
+      map_title_size = input$title_size_input3,
+      ts_title_size = input$title_size_input_ts3
     )
     return(ptc)
   }) 
@@ -11251,7 +11384,7 @@ server <- function(input, output, session) {
       map_title_mode = input$title_mode_ts4,
       map_custom_title = input$title1_input_ts4,
       map_custom_subtitle = input$title2_input_ts4,
-      title_size = 18
+      title_size = input$title_size_input_ts4
     )
     return(ptr)
   })
@@ -11927,7 +12060,7 @@ server <- function(input, output, session) {
       ts_title = "Monthly Timeseries"
     }
     ts_subtitle = NA
-    ts_title_size = 18
+    ts_title_size = input$title_size_input_ts5
     
     titles_df = data.frame(ts_title,ts_subtitle,ts_title_size)
     
@@ -12839,11 +12972,13 @@ server <- function(input, output, session) {
   updateNumericInputRange1("point_size_ts4", 4, 20)
   updateNumericInputRange1("point_size_ts5", 4, 20)
   
-  
   updateNumericInputRange1("title_size_input", 1, 40)
   updateNumericInputRange1("title_size_input_ts", 1, 40)
   updateNumericInputRange1("title_size_input2", 1, 40)
+  updateNumericInputRange1("title_size_input_ts2", 1, 40)
   updateNumericInputRange1("title_size_input3", 1, 40)
+  updateNumericInputRange1("title_size_input_ts3", 1, 40)
+  updateNumericInputRange1("title_size_input_ts4", 1, 40)
   updateNumericInputRange1("title_size_input_reg_coeff", 1, 40)
   updateNumericInputRange1("title_size_input_reg_pval", 1, 40)
   updateNumericInputRange1("title_size_input_reg_res", 1, 40)
