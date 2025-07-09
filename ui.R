@@ -367,17 +367,26 @@ ui <- navbarPage(
                                     tags$ul(
                                       tags$li("Fixed the depiction of Historical Proxies on ModE-RA source plots"),
                                       tags$li("Changed ModE-RA source plots to only show the number of sources"),
+                                      tags$li(a("View code on GitHub", 
+                                          href = "https://github.com/ClimeApp/ClimeApp_development/tree/ClimeApp_v1.3", 
+                                          target = "_blank")),
                                     ),
                                     br(),
                                     h5(strong("v1.2 (04.07.2024)", style = "color: #094030;")),
                                     tags$ul(
                                       tags$li("Preprocessed data for all datasets (Mode-Sim, Mode-R-Clim and Mode-RA) to speed loading time"),
                                       tags$li("Overhaul of Mode-RA source plots to allow exploration and access to detailed source data"),
+                                      tags$li(a("View code on GitHub", 
+                                                href = "https://github.com/ClimeApp/ClimeApp_development/tree/ClimeApp_v1.2", 
+                                                target = "_blank")),
                                     ),
                                     br(),
                                     h5(strong("v1.1 (04.04.2024)", style = "color: #094030;")),
                                     tags$ul(
                                       tags$li("Option to add GeoPackage-Layers (shape files) on top of field plots"),
+                                      tags$li(a("View code on GitHub", 
+                                                href = "https://github.com/ClimeApp/ClimeApp_development/tree/ClimeApp_v1.1", 
+                                                target = "_blank")),
                                     ),
                                     br(),
                                     h5(strong("v1.0 (11.03.2024)", style = "color: #094030;")),
@@ -385,6 +394,9 @@ ui <- navbarPage(
                                       tags$li("Download / Upload option for metadata"),
                                       tags$li("Information panel for ClimeApp functions"),
                                       tags$li("Helptext as popovers for UI elements"),
+                                      tags$li(a("View code on GitHub", 
+                                                href = "https://github.com/ClimeApp/ClimeApp_development/tree/ClimeApp_v1.0", 
+                                                target = "_blank")),
                                     ),
                                     br(),
                                     h5(strong("Beta v0.6 (15.02.2024)", style = "color: #094030;")),
@@ -892,8 +904,8 @@ ui <- navbarPage(
                                                                radioButtons(inputId      = "highlight_type",
                                                                             label        = "Type for highlight:",
                                                                             inline       = TRUE,
-                                                                            choiceNames  = c("Box \u25FB", "Hatched \u25A8"),
-                                                                            choiceValues = c("Box","Hatched")),
+                                                                            choiceNames  = c("Box \u25FB", "Filled \u25A0","Hatched \u25A8"),
+                                                                            choiceValues = c("Box","Filled","Hatched")),
                                                                
                                                                
                                                                column(width = 12,
@@ -1935,8 +1947,8 @@ ui <- navbarPage(
                                                                  radioButtons(inputId      = "highlight_type2",
                                                                               label        = "Type for highlight:",
                                                                               inline       = TRUE,
-                                                                              choiceNames  = c("Box \u25FB", "Hatched \u25A8"),
-                                                                              choiceValues = c("Box","Hatched")),
+                                                                              choiceNames  = c("Box \u25FB", "Filled \u25A0","Hatched \u25A8"),
+                                                                              choiceValues = c("Box","Filled","Hatched")),
                                                                  
                                                                  
                                                                  column(width = 12,
@@ -4043,8 +4055,8 @@ ui <- navbarPage(
                                                                  radioButtons(inputId      = "highlight_type3",
                                                                               label        = "Type for highlight:",
                                                                               inline       = TRUE,
-                                                                              choiceNames  = c("Box \u25FB", "Hatched \u25A8"),
-                                                                              choiceValues = c("Box","Hatched")),
+                                                                              choiceNames  = c("Box \u25FB", "Filled \u25A0","Hatched \u25A8"),
+                                                                              choiceValues = c("Box","Filled","Hatched")),
                                                                  
                                                                  
                                                                  column(width = 12,
@@ -5235,8 +5247,8 @@ ui <- navbarPage(
                                                                radioButtons(inputId      = "highlight_type_reg_coeff",
                                                                             label        = "Type for highlight:",
                                                                             inline       = TRUE,
-                                                                            choiceNames  = c("Box \u25FB", "Hatched \u25A8"),
-                                                                            choiceValues = c("Box","Hatched")),
+                                                                            choiceNames  = c("Box \u25FB", "Filled \u25A0","Hatched \u25A8"),
+                                                                            choiceValues = c("Box","Filled","Hatched")),
                                                                
                                                                
                                                                column(width = 12,
@@ -5558,8 +5570,8 @@ ui <- navbarPage(
                                                                radioButtons(inputId      = "highlight_type_reg_pval",
                                                                             label        = "Type for highlight:",
                                                                             inline       = TRUE,
-                                                                            choiceNames  = c("Box \u25FB", "Hatched \u25A8"),
-                                                                            choiceValues = c("Box","Hatched")),
+                                                                            choiceNames  = c("Box \u25FB", "Filled \u25A0","Hatched \u25A8"),
+                                                                            choiceValues = c("Box","Filled","Hatched")),
                                                                
                                                                
                                                                column(width = 12,
@@ -5877,8 +5889,8 @@ ui <- navbarPage(
                                                                radioButtons(inputId      = "highlight_type_reg_res",
                                                                             label        = "Type for highlight:",
                                                                             inline       = TRUE,
-                                                                            choiceNames  = c("Box \u25FB", "Hatched \u25A8"),
-                                                                            choiceValues = c("Box","Hatched")),
+                                                                            choiceNames  = c("Box \u25FB", "Filled \u25A0","Hatched \u25A8"),
+                                                                            choiceValues = c("Box","Filled","Hatched")),
                                                                
                                                                
                                                                column(width = 12,

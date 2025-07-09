@@ -1068,22 +1068,43 @@ plot_map <- function(data_input,
     # Boxes
     if (any(highlights_data$type == "Box")) {
       p <- p +
-        geom_rect(data = subset(highlights_data, type == "Box"),
-                  aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, color = color),
-                  fill = NA, size = 1, show.legend = FALSE) +
+        geom_rect(
+          data = subset(highlights_data, type == "Box"),
+          aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, color = color),
+          fill = NA,
+          size = 1,
+          show.legend = FALSE) +
         scale_color_identity()
+    }
+    
+    # Filled boxes
+    if (any(highlights_data$type == "Filled")) {
+      p <- p +
+        geom_rect(
+          data = subset(highlights_data, type == "Filled"),
+          aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, fill = color),
+          fill = subset(highlights_data, type == "Filled")$color,
+          color = NA,
+          alpha = 0.5,
+          show.legend = FALSE)
     }
     
     # Hatched boxes
     if (any(highlights_data$type == "Hatched")) {
       p <- p +
-        geom_rect(data = subset(highlights_data, type == "Hatched"),
-                  aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, fill = color),
-                  fill = subset(highlights_data, type == "Hatched")$color,
-                  color = NA, alpha = 0.5, show.legend = FALSE)
+        geom_rect_pattern(
+          data = subset(highlights_data, type == "Hatched"),
+          aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2),
+          pattern = "stripe",
+          pattern_fill = subset(highlights_data, type == "Hatched")$color,
+          pattern_spacing = 0.01,
+          pattern_size = 0.1,
+          pattern_colour = NA,
+          fill = NA,
+          colour = NA,
+          show.legend = FALSE)
     }
   }
-  
   return(p)
 }
 
