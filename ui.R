@@ -2885,15 +2885,19 @@ ui <- navbarPage(
                                                           column(3, downloadButton(outputId = "download_timeseries_data6", label = "Download SEA data"))
                                                         ),
                                                         
-                                                        hr(),
+                                                        shinyjs::hidden(div(id = "hidden_meta6",
                                                         
-                                                        # Upload Meta data 
-                                                        h4(helpText("Metadata")),
-                                                        fluidRow(
-                                                          column(3, downloadButton(outputId = "download_metadata_6", label = "Download metadata")),
-                                                          column(4, fileInput(inputId= "upload_metadata_6", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
-                                                          column(2, actionButton(inputId = "update_metadata_6", label = "Update upload inputs")),
-                                                        ),
+                                                              hr(),
+                                                              
+                                                              # Upload Meta data 
+                                                              h4(helpText("Metadata")),
+                                                              fluidRow(
+                                                                column(3, downloadButton(outputId = "download_metadata_6", label = "Download metadata")),
+                                                                column(4, fileInput(inputId= "upload_metadata_6", label = NULL, buttonLabel = "Upload metadata", width = "300px", accept = ".xlsx")),
+                                                                column(2, actionButton(inputId = "update_metadata_6", label = "Update upload inputs")),
+                                                              ),
+                                                        
+                                                        )),
                                     )),
                                  ### SEA END ----
                                  ),
