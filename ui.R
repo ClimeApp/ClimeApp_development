@@ -1165,15 +1165,11 @@ ui <- navbarPage(
                                                                  
                                                                  numericRangeInput(inputId = "highlight_x_values_ts",
                                                                                    label  = "X values:",
-                                                                                   value  = "",
-                                                                                   min    = -180,
-                                                                                   max    = 180),
+                                                                                   value  = ""),
                                                                  
                                                                  numericRangeInput(inputId = "highlight_y_values_ts",
                                                                                    label  = "Y values:",
-                                                                                   value  = "",
-                                                                                   min    = -90,
-                                                                                   max    = 90),
+                                                                                   value  = ""),
                                                                  
                                                                  colourInput(inputId = "highlight_colour_ts", 
                                                                              label   = "Highlight colour:",
@@ -2217,15 +2213,11 @@ ui <- navbarPage(
                                                                  
                                                                  numericRangeInput(inputId = "highlight_x_values_ts2",
                                                                                    label  = "X values:",
-                                                                                   value  = "",
-                                                                                   min    = -180,
-                                                                                   max    = 180),
+                                                                                   value  = ""),
                                                                  
                                                                  numericRangeInput(inputId = "highlight_y_values_ts2",
                                                                                    label  = "Y values:",
-                                                                                   value  = "",
-                                                                                   min    = -90,
-                                                                                   max    = 90),
+                                                                                   value  = ""),
                                                                  
                                                                  colourInput(inputId = "highlight_colour_ts2", 
                                                                              label   = "Highlight colour:",
@@ -3558,15 +3550,11 @@ ui <- navbarPage(
                                                                  
                                                                  numericRangeInput(inputId = "highlight_x_values_ts3",
                                                                                    label  = "X values:",
-                                                                                   value  = "",
-                                                                                   min    = -180,
-                                                                                   max    = 180),
+                                                                                   value  = ""),
                                                                  
                                                                  numericRangeInput(inputId = "highlight_y_values_ts3",
                                                                                    label  = "Y values:",
-                                                                                   value  = "",
-                                                                                   min    = -90,
-                                                                                   max    = 90),
+                                                                                   value  = ""),
                                                                  
                                                                  colourInput(inputId = "highlight_colour_ts3", 
                                                                              label   = "Highlight colour:",
@@ -4846,15 +4834,11 @@ ui <- navbarPage(
                                                                  
                                                                  numericRangeInput(inputId = "highlight_x_values_ts4",
                                                                                    label  = "X values:",
-                                                                                   value  = "",
-                                                                                   min    = -180,
-                                                                                   max    = 180),
+                                                                                   value  = ""),
                                                                  
                                                                  numericRangeInput(inputId = "highlight_y_values_ts4",
                                                                                    label  = "Y values:",
-                                                                                   value  = "",
-                                                                                   min    = -90,
-                                                                                   max    = 90),
+                                                                                   value  = ""),
                                                                  
                                                                  colourInput(inputId = "highlight_colour_ts4", 
                                                                              label   = "Highlight colour:",
@@ -6373,15 +6357,11 @@ ui <- navbarPage(
                                                                  
                                                                  numericRangeInput(inputId = "highlight_x_values_ts5",
                                                                                    label  = "X values:",
-                                                                                   value  = "",
-                                                                                   min    = -180,
-                                                                                   max    = 180),
+                                                                                   value  = ""),
                                                                  
                                                                  numericRangeInput(inputId = "highlight_y_values_ts5",
                                                                                    label  = "Y values:",
-                                                                                   value  = "",
-                                                                                   min    = -90,
-                                                                                   max    = 90),
+                                                                                   value  = ""),
                                                                  
                                                                  colourInput(inputId = "highlight_colour_ts5", 
                                                                              label   = "Highlight colour:",

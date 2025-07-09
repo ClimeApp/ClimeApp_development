@@ -1073,7 +1073,8 @@ plot_map <- function(data_input,
           aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, color = color),
           fill = NA,
           size = 1,
-          show.legend = FALSE) +
+          show.legend = FALSE
+        ) +
         scale_color_identity()
     }
     
@@ -1086,7 +1087,8 @@ plot_map <- function(data_input,
           fill = subset(highlights_data, type == "Filled")$color,
           color = NA,
           alpha = 0.5,
-          show.legend = FALSE)
+          show.legend = FALSE
+        )
     }
     
     # Hatched boxes
@@ -1102,9 +1104,10 @@ plot_map <- function(data_input,
           pattern_colour = NA,
           fill = NA,
           colour = NA,
-          show.legend = FALSE)
+          show.legend = FALSE
+        )
     }
-  }
+   }
   return(p)
 }
 
@@ -2244,7 +2247,8 @@ load_modera_source_data = function(year,
 plot_modera_sources = function(ME_source_data,
                                year,
                                season,
-                               minmax_lonlat){
+                               minmax_lonlat,
+                               base_size = NULL){
   
   # Load data
   world=map_data("world")
@@ -2317,7 +2321,7 @@ plot_modera_sources = function(ME_source_data,
     scale_shape_manual(values = named_shapes) +
     scale_colour_manual(values = named_colors) +
     guides() +
-    theme_classic(base_size = 18) +
+    theme_classic(base_size = ifelse(is.null(base_size), 11, base_size)) +
     theme(panel.border = element_rect(colour = "black", fill = NA))  
 }
 
