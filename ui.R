@@ -4658,14 +4658,22 @@ ui <- navbarPage(
                                             br(),
                                             regression_timeseries_popover("pop_regression_timeseries"),
                                             
-                                            withSpinner(ui_element = plotOutput("plot_reg_ts1"),
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height),
-                                            withSpinner(ui_element = plotOutput("plot_reg_ts2"),
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height),
+                                            withSpinner(
+                                              ui_element = plotOutput(
+                                                "plot_reg_ts1",
+                                                click = "ts_click4",
+                                                dblclick = "ts_dblclick4",
+                                                brush = brushOpts(id = "ts_brush4", resetOnNew = TRUE)
+                                              ),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height
+                                            ), withSpinner(
+                                              ui_element = plotOutput("plot_reg_ts2"),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height
+                                            ), 
                                             
                                             #### Customization panels START ----       
                                             fluidRow(

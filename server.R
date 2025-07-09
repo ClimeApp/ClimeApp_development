@@ -2594,6 +2594,83 @@ server <- function(input, output, session) {
         value = round(c(input$ts_brush1[[3]],input$ts_brush1[[4]]), digits = 2))
     }
   })
+  
+  
+  
+  
+  
+  
+  # REGRESSION TS point/line setter
+  observeEvent(input$ts_click4,{
+    if (input$custom_features_ts4 == TRUE){
+      if (input$feature_ts4 == "Point"){
+        updateTextInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "point_location_x_ts4",
+          label = NULL,
+          value = as.character(round(input$ts_click4$x, digits = 2))
+        )
+        
+        updateTextInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "point_location_y_ts4",
+          label = NULL,
+          value = as.character(round(input$ts_click4$y, digits = 2))
+        )
+      } 
+      else if (input$feature_ts4 == "Line"){
+        updateRadioButtons(
+          session = getDefaultReactiveDomain(),
+          inputId = "line_orientation_ts4",
+          label = NULL,
+          selected = "Vertical")
+        
+        updateTextInput(
+          session = getDefaultReactiveDomain(),
+          inputId = "line_position_ts4",
+          label = NULL,
+          value = as.character(round(input$ts_click4$x, digits = 2))
+        )
+      }
+    }
+  })
+  
+  observeEvent(input$ts_dblclick4,{
+    if (input$custom_features_ts4 == TRUE & input$feature_ts4 == "Line"){
+      updateRadioButtons(
+        session = getDefaultReactiveDomain(),
+        inputId = "line_orientation_ts4",
+        label = NULL,
+        selected = "Horizontal")
+      
+      updateTextInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "line_position_ts4",
+        label = NULL,
+        value = as.character(round(input$ts_dblclick4$y, digits = 2))
+      )
+    }
+  })
+  
+  # TS highlight setter
+  observeEvent(input$ts_brush4,{
+    if (input$custom_features_ts4 == TRUE & input$feature_ts4 == "Highlight"){
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "highlight_x_values_ts4",
+        label = NULL,
+        value = round(c(input$ts_brush4[[1]],input$ts_brush4[[2]]), digits = 2))
+      
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "highlight_y_values_ts4",
+        label = NULL,
+        value = round(c(input$ts_brush4[[3]],input$ts_brush4[[4]]), digits = 2))
+    }
+  })
+  
+  
   ####### Initialise and update custom points lines highlights ----
   
   map_points_data = reactiveVal(data.frame())
@@ -11638,18 +11715,40 @@ server <- function(input, output, session) {
   
   ####### Downloads ----
   
-  output$download_reg_ts_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg_ts()$file_title, "-ts.",input$reg_ts_plot_type, sep = "")},
-                                                      content  = function(file) {
-                                                        if (input$reg_ts_plot_type == "png"){
-                                                          png(file, width = 3000, height = 1285, res = 200, bg = "transparent") 
-                                                        } else if (input$reg_ts_plot_type == "jpeg"){
-                                                          jpeg(file, width = 3000, height = 1285, res = 200, bg = "white") 
-                                                        } else {
-                                                          pdf(file, width = 14, height = 6, bg = "transparent") 
-                                                        }                                                          
-                                                        print(timeseries_plot_reg1())
-                                                        dev.off()
-                                                      })
+  output$download_reg_ts_plot      <- downloadHandler(
+    filename = function() {
+      paste(plot_titles_reg_ts()$file_title,
+            "-ts.",
+            input$reg_ts_plot_type,
+            sep = "")
+    },
+    content  = function(file) {
+      if (input$reg_ts_plot_type == "png") {
+        png(
+          file,
+          width = 3000,
+          height = 1285,
+          res = 200,
+          bg = "transparent"
+        )
+      } else if (input$reg_ts_plot_type == "jpeg") {
+        jpeg(
+          file,
+          width = 3000,
+          height = 1285,
+          res = 200,
+          bg = "white"
+        )
+      } else {
+        pdf(file,
+            width = 14,
+            height = 6,
+            bg = "transparent")
+      }
+      print(timeseries_plot_reg1())
+      dev.off()
+    }
+  )
   
   output$download_reg_ts2_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg_ts()$file_title,"-ts.",input$reg_ts2_plot_type, sep = "")},
                                                        content  = function(file) {
