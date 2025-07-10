@@ -563,15 +563,30 @@ generate_titles = function(tab,
   
   # Create map_title & map_subtitle:
   # Averages and Anomalies titles
-  if (tab=="general"){
-    if (mode == "Absolute"){
-      map_title = paste(dataset," ",title_months," ",variable," ",year_range[1],"-",year_range[2], sep = "")
-      map_subtitle = ""
-    } else {
-      map_title = paste(dataset," ",title_months," ",variable," Anomaly ",year_range[1],"-",year_range[2], sep = "")
-      map_subtitle = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
-    } 
+  if (tab == "general") {
+    if (mode == "Absolute") {
+      if (length(year_range) == 1 || year_range[1] == year_range[2]) {
+        map_title <- paste(dataset, " ", title_months, " ", variable, " ", year_range[1], sep = "")
+      } else {
+        map_title <- paste(dataset, " ", title_months, " ", variable, " ", year_range[1], "-", year_range[2], sep = "")
+      }
+      map_subtitle <- ""
+    } else {  # Anomaly
+      if (length(year_range) == 1 || year_range[1] == year_range[2]) {
+        map_title <- paste(dataset, " ", title_months, " ", variable, " Anomaly ", year_range[1], sep = "")
+      } else {
+        map_title <- paste(dataset, " ", title_months, " ", variable, " Anomaly ", year_range[1], "-", year_range[2], sep = "")
+      }
+      
+      if (length(baseline_range) == 1 || baseline_range[1] == baseline_range[2]) {
+        map_subtitle <- paste("Ref. = ", baseline_range[1], sep = "")
+      } else {
+        map_subtitle <- paste("Ref. = ", baseline_range[1], "-", baseline_range[2], sep = "")
+      }
+    }
   }
+  
+  
   
   # Composites titles
   else if (tab=="composites"){
@@ -591,21 +606,29 @@ generate_titles = function(tab,
   }
   
   # Reference period titles
-  else if (tab=="reference"){
-    map_title = paste(dataset," ",title_months," ",variable," Absolute values (Reference years)", sep = "")
-    map_subtitle = ""
+  else if (tab == "reference") {
+    if (length(year_range) == 1 || year_range[1] == year_range[2]) {
+      map_title <- paste(dataset, " ", title_months, " ", variable, " ", year_range[1], " (Reference year)", sep = "")
+    } else {
+      map_title <- paste(dataset, " ", title_months, " ", variable, " ", year_range[1], "-", year_range[2], " (Reference years)", sep = "")
+    }
+    map_subtitle <- ""
   }
   
   # SD ratio titles
-  else if (tab=="sdratio"){
-    if (is.na(year_range[1])){
-      map_title = paste(dataset," ",title_months," SD Ratio (Composite years)", sep = "")
-      map_subtitle = ""
-    } else{
-      map_title = paste(dataset," ",title_months," SD Ratio ",year_range[1],"-",year_range[2], sep = "")
-      map_subtitle = "" 
+  else if (tab == "sdratio") {
+    if (is.na(year_range[1])) {
+      map_title <- paste(dataset, " ", title_months, " SD Ratio (Composite years)", sep = "")
+      map_subtitle <- ""
+    } else if (length(year_range) == 1 || year_range[1] == year_range[2]) {
+      map_title <- paste(dataset, " ", title_months, " SD Ratio ", year_range[1], sep = "")
+      map_subtitle <- ""
+    } else {
+      map_title <- paste(dataset, " ", title_months, " SD Ratio ", year_range[1], "-", year_range[2], sep = "")
+      map_subtitle <- ""
     }
   }
+  
   
   # Create Timeseries title, subtitle and axis titles
   if (tab=="composites"){

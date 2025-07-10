@@ -8767,11 +8767,14 @@ server <- function(input, output, session) {
   }    
   
   ref_map_titles = reactive({
-    
     req(input$nav1 == "tab1") # Only run code if in the current tab
     
     active_tab <- ifelse(input$ref_map_mode == "SD Ratio", "sdratio", "general")
-    years_or_ref <- ifelse(input$ref_map_mode == "Reference Values", input$ref_period, input$range_years)
+    years_or_ref <- if (input$ref_map_mode == "Reference Values") {
+      input$ref_period
+    } else {
+      input$range_years
+    }
     
     rm_title <- generate_titles(
       tab = active_tab,
@@ -8779,7 +8782,7 @@ server <- function(input, output, session) {
       variable = input$variable_selected,
       mode = "Absolute",
       map_title_mode = input$title_mode,
-      ts_title_mode = input$title_mode_ts, 
+      ts_title_mode = input$title_mode_ts,
       month_range = month_range_primary(),
       year_range = years_or_ref,
       lon_range = lonlat_vals()[1:2],
