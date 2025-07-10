@@ -120,7 +120,7 @@ generate_map_dimensions = function(subset_lon_IDs,
 ##           Creates a vector with the reference numbers for ModE data:
 ##           c(pre-processed data? (0 = NO, 1 = yes, preloaded, 2 = yes, not preloaded)
 ##             ,dataset,variable,season)
-##           data_set = "ModE-RA","ModE-Sim","ModE-RAclim" or "SD Ratio"
+##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim" or "SD Ratio"
 
 generate_data_ID = function(dataset,
                             variable,
@@ -5701,6 +5701,7 @@ create_monthly_TS_data = function(data_input,
 #' @param highlights data.frame. Data frame containing highlight information.
 #' @param lines data.frame. Data frame containing line information.
 #' @param points data.frame. Data frame containing point information.
+#' 
 #' @return A ggplot object.
 
 plot_monthly_timeseries <- function(data = NA,

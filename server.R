@@ -6078,7 +6078,7 @@ server <- function(input, output, session) {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts4a",
-        value = set_ts_axis_values(regression_ts_data()[,3])  # Trend
+        value = set_ts_axis_values(regression_ts_data()[,2])  # Original
       )
     }
   })
@@ -6657,10 +6657,7 @@ server <- function(input, output, session) {
       } else {
         shinyjs::show(id = "inv_location_reg_res")  # Show the "Invalid location" message
       }}})
-  
-  observeEvent(input$brush_fad5,{
-    brush = input$brush_fad5
-    fad_zoom5(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))})
+
   
   # Map Highlights
   observeEvent(input$add_highlight_reg_res, {
@@ -7546,6 +7543,9 @@ server <- function(input, output, session) {
     }
   })
   
+  # Set iniital lon/lat values on startup
+  lonlat_vals5 = reactiveVal(c(initial_lon_values,initial_lat_values))
+  
   # Continent buttons - updates range inputs and lonlat_values
   observeEvent(input$button_global5,{
     updateNumericRangeInput(
@@ -7559,6 +7559,8 @@ server <- function(input, output, session) {
       inputId = "range_latitude5",
       label = NULL,
       value = c(-90,90))
+    
+    lonlat_vals5(c(-180,180, -90,90))  # Global
   }) 
   
   observeEvent(input$button_europe5, {
@@ -7573,6 +7575,8 @@ server <- function(input, output, session) {
       inputId = "range_latitude5",
       label = NULL,
       value = c(30,75))
+    
+    lonlat_vals5(c(-30,40, 30,75))       # Europe
   })
   
   observeEvent(input$button_asia5, {
@@ -7587,6 +7591,8 @@ server <- function(input, output, session) {
       inputId = "range_latitude5",
       label = NULL,
       value = c(5,80))
+    
+    lonlat_vals5(c(25,170, 5,80))        # Asia
   })
   
   observeEvent(input$button_oceania5, {
@@ -7601,6 +7607,8 @@ server <- function(input, output, session) {
       inputId = "range_latitude5",
       label = NULL,
       value = c(-55,20))
+    
+    lonlat_vals5(c(90,180, -55,20))      # Oceania
   })
   
   observeEvent(input$button_africa5, {
@@ -7615,6 +7623,8 @@ server <- function(input, output, session) {
       inputId = "range_latitude5",
       label = NULL,
       value = c(-40,40))
+    
+    lonlat_vals5(c(-25,55, -40,40))      # Africa
   })
   
   observeEvent(input$button_n_america5, {
@@ -7629,6 +7639,8 @@ server <- function(input, output, session) {
       inputId = "range_latitude5",
       label = NULL,
       value = c(5,85))
+    
+    lonlat_vals5(c(-175,-10, 5,85))      # North America
   })
   
   observeEvent(input$button_s_america5, {
@@ -7643,6 +7655,8 @@ server <- function(input, output, session) {
       inputId = "range_latitude5",
       label = NULL,
       value = c(-60,15))
+    
+    lonlat_vals5(c(-90,-30, -60,15))     # South America
   })
   
   # observeEvent(input$button_coord5, {
@@ -8373,15 +8387,17 @@ server <- function(input, output, session) {
   ####### Subset lons & Subset lats ----
   
   subset_lons_primary <- reactive({
-    if (input$nav1 == "tab1"){   # Anomalies
+    if (input$nav1 == "tab1") {   # Anomalies
       create_subset_lon_IDs(lonlat_vals()[1:2])       
-    } else if (input$nav1 == "tab2"){   # Composites
+    } else if (input$nav1 == "tab2") {   # Composites
       create_subset_lon_IDs(lonlat_vals2()[1:2])
-    } else if (input$nav1 == "tab3"){   # Correlation
+    } else if (input$nav1 == "tab3") {   # Correlation
       create_subset_lon_IDs(lonlat_vals_v1()[1:2])
-    } else if (input$nav1 == "tab4"){   # Regression
+    } else if (input$nav1 == "tab4") {   # Regression
       create_subset_lon_IDs(lonlat_vals_dv()[1:2])
-    } else if (input$nav1 == "tab6"){   # SEA
+    } else if (input$nav1 == "tab5") {   # Annual Cycle
+      create_subset_lon_IDs(lonlat_vals5()[1:2])
+    } else if (input$nav1 == "tab6") {   # SEA
       create_subset_lon_IDs(lonlat_vals6()[1:2])
     }
   })
@@ -8403,6 +8419,8 @@ server <- function(input, output, session) {
       create_subset_lat_IDs(lonlat_vals_v1()[3:4])
     } else if (input$nav1 == "tab4"){   # Regression
       create_subset_lat_IDs(lonlat_vals_dv()[3:4])
+    } else if (input$nav1 == "tab5") {   # Annual Cycle
+      create_subset_lat_IDs(lonlat_vals5()[3:4])
     } else if (input$nav1 == "tab6"){   # SEA
       create_subset_lat_IDs(lonlat_vals6()[3:4])
     }
@@ -9044,8 +9062,14 @@ server <- function(input, output, session) {
   
   fad_dimensions <- reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
-    m_d_f = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map_width, input$dimension[2], FALSE)
-    return(m_d_f)  
+    m_d_f = generate_map_dimensions(
+      subset_lons_primary(),
+      subset_lats_primary(),
+      session$clientData$output_fad_map_width,
+      input$dimension[2],
+      FALSE
+    )
+    return(m_d_f)
   })
   
   output$fad_map <- renderPlot({
@@ -9072,6 +9096,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$brush_fad,{
     brush = input$brush_fad
+    req(brush)  # ensure brush is not NULL
     fad_zoom(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
   })
   
@@ -9714,6 +9739,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$brush_fad2,{
     brush = input$brush_fad2
+    req(brush)  # ensure brush is not NULL
     fad_zoom2(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
   })
   
@@ -10792,8 +10818,14 @@ server <- function(input, output, session) {
   
   fad_dimensions3 <- reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
-    m_d_f3 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map3_width, input$dimension[2], FALSE)
-    return(m_d_f3)  
+    m_d_f3 = generate_map_dimensions(
+      subset_lons_secondary(),
+      subset_lats_secondary(),
+      session$clientData$output_fad_map3_width,
+      input$dimension[2],
+      FALSE
+    )
+    return(m_d_f3)
   })
   
   output$fad_map3 <- renderPlot({
@@ -10816,12 +10848,13 @@ server <- function(input, output, session) {
     
   }
   
-  observeEvent(lonlat_vals3()|input$fad_reset_zoom3,{
-    fad_zoom3(lonlat_vals3())
+  observeEvent(lonlat_vals_v2()|input$fad_reset_zoom3,{
+    fad_zoom3(lonlat_vals_v2())
   })
   
   observeEvent(input$brush_fad3,{
     brush = input$brush_fad3
+    req(brush)  # ensure brush is not NULL
     fad_zoom3(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
   })
   
@@ -10949,8 +10982,8 @@ server <- function(input, output, session) {
     
     content = function(file) {
       mmd = generate_map_dimensions(
-        subset_lons_primary(),
-        subset_lats_primary(),
+        subset_lons_secondary(),
+        subset_lats_secondary(),
         session$clientData$output_fad_map3_width,
         input$dimension[2],
         FALSE
@@ -11859,8 +11892,14 @@ server <- function(input, output, session) {
   
   fad_dimensions4 <- reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
-    m_d_f4 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map4_width, input$dimension[2], FALSE)
-    return(m_d_f4)  
+    m_d_f4 = generate_map_dimensions(
+      subset_lons_primary(),
+      subset_lats_primary(),
+      session$clientData$output_fad_map4_width,
+      input$dimension[2],
+      FALSE
+    )
+    return(m_d_f4)
   })
   
   output$fad_map4 <- renderPlot({
@@ -11889,6 +11928,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$brush_fad4,{
     brush = input$brush_fad4
+    req(brush)  # ensure brush is not NULL
     fad_zoom4(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
   })
   
@@ -12199,8 +12239,14 @@ server <- function(input, output, session) {
   
   fad_dimensions5 <- reactive({
     req(input$nav1 == "tab5") # Only run code if in the current tab
-    m_d_f5 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_fad_map5_width, input$dimension[2], FALSE)
-    return(m_d_f5)  
+    m_d_f5 = generate_map_dimensions(
+      subset_lons_primary(),
+      subset_lats_primary(),
+      session$clientData$output_fad_map5_width,
+      input$dimension[2],
+      FALSE
+    )
+    return(m_d_f5)
   })
   
   output$fad_map5 <- renderPlot({
@@ -12224,19 +12270,16 @@ server <- function(input, output, session) {
   }
   
   # Update fad lonlat
-  
-  observe({
-    # Update zoom parameters based on range_longitude5 and range_latitude5 change
-    fad_zoom5(c(input$range_longitude5[1],input$range_longitude5[2],input$range_latitude5[1], input$range_latitude5[2]))
+
+  observeEvent(lonlat_vals5()|input$fad_reset_zoom5,{
+    fad_zoom5(lonlat_vals5())
   })
   
-  
-  observeEvent(input$fad_reset_zoom5,{
-    fad_zoom5(c(-180,180,-90,90))
-  })
-  
-  observeEvent(input$brush_fad5,{
-    brush = input$brush_fad5
+  observeEvent(input$brush_fad5, {
+    brush <- input$brush_fad5
+    req(brush)  # ensure brush is not NULL
+    
+    # Only update after brush is completed (i.e., after mouse released)
     fad_zoom5(c(brush$xmin, brush$xmax, brush$ymin, brush$ymax))
   })
   
