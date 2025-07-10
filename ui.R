@@ -655,7 +655,7 @@ ui <- navbarPage(
                                    tabPanel("Map", br(),
                                             h4("Anomalies map", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
+                                            withSpinner(ui_element = plotOutput("map", height = "auto", click = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -819,7 +819,7 @@ ui <- navbarPage(
                                                            div(id = "hidden_custom_points",
                                                                h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
                                                                
-                                                               h6(helpText("Enter location/coordinates or double click on map")),
+                                                               h6(helpText("Enter location/coordinates or click on map")),
                                                                
                                                                textInput(inputId = "location", 
                                                                          label   = "Enter a location:",
@@ -1694,7 +1694,7 @@ ui <- navbarPage(
                                                                 textOutput("custom_years2")
                                             )),
                                             
-                                            withSpinner(ui_element = plotOutput("map2",height = "auto", dblclick = "map_dblclick2", brush = brushOpts(id = "map_brush2",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("map2",height = "auto", click = "map_dblclick2", brush = brushOpts(id = "map_brush2",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),         
@@ -1862,7 +1862,7 @@ ui <- navbarPage(
                                                                  
                                                                  h4(helpText("Add custom points",map_points_popover("pop_composites_mappoint"))),
                                                                  
-                                                                 h6(helpText("Enter location/coordinates or double click on map")),
+                                                                 h6(helpText("Enter location/coordinates or click on map")),
                                                                  
                                                                  textInput(inputId = "location2", 
                                                                            label   = "Enter a location:",
@@ -3819,7 +3819,7 @@ ui <- navbarPage(
                                                          label    = "Choose a correlation method:",
                                                          choices  = c("pearson", "spearman"),
                                                          selected = "pearson" , inline = TRUE),
-                                            withSpinner(ui_element = plotOutput("correlation_map", height = "auto", dblclick = "map_dblclick3", brush = brushOpts(id = "map_brush3",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("correlation_map", height = "auto", click = "map_dblclick3", brush = brushOpts(id = "map_brush3",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -3990,7 +3990,7 @@ ui <- navbarPage(
                                                              div(id = "hidden_custom_points3",
                                                                  
                                                                  h4(helpText("Add custom points",map_points_popover("pop_correlation_mappoint"))),
-                                                                 h6(helpText("Enter location/coordinates or double click on map")),
+                                                                 h6(helpText("Enter location/coordinates or click on map")),
                                                                  
                                                                  textInput(inputId = "location3", 
                                                                            label   = "Enter a location:",
@@ -5041,7 +5041,7 @@ ui <- navbarPage(
                                                         label    = "Choose a variable:",
                                                         choices  = NULL,
                                                         selected = NULL),
-                                            withSpinner(ui_element = plotOutput("plot_reg_coeff", height = "auto",  dblclick = "map_dblclick_reg_coeff", brush = brushOpts(id = "map_brush_reg_coeff",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("plot_reg_coeff", height = "auto",  click = "map_dblclick_reg_coeff", brush = brushOpts(id = "map_brush_reg_coeff",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -5203,7 +5203,7 @@ ui <- navbarPage(
                                                            div(id = "hidden_custom_points_reg_coeff",
                                                                h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
                                                                
-                                                               h6(helpText("Enter location/coordinates or double click on map")),
+                                                               h6(helpText("Enter location/coordinates or click on map")),
                                                                
                                                                textInput(inputId = "location_reg_coeff",
                                                                          label   = "Enter a location:",
@@ -5368,7 +5368,7 @@ ui <- navbarPage(
                                                         label    = "Choose a variable:",
                                                         choices  = NULL,
                                                         selected = NULL),
-                                            withSpinner(ui_element = plotOutput("plot_reg_pval", height = "auto",  dblclick = "map_dblclick_reg_pval", brush = brushOpts(id = "map_brush_reg_pval",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("plot_reg_pval", height = "auto",  click = "map_dblclick_reg_pval", brush = brushOpts(id = "map_brush_reg_pval",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -5533,7 +5533,7 @@ ui <- navbarPage(
                                                            div(id = "hidden_custom_points_reg_pval",
                                                                h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
                                                                
-                                                               h6(helpText("Enter location/coordinates or double click on map")),
+                                                               h6(helpText("Enter location/coordinates or click on map")),
                                                                
                                                                textInput(inputId = "location_reg_pval",
                                                                          label   = "Enter a location:",
@@ -5699,7 +5699,7 @@ ui <- navbarPage(
                                                        min = 1422,
                                                        max = 2008)),
                                             ),
-                                            withSpinner(ui_element = plotOutput("plot_reg_resi", height = "auto",  dblclick = "map_dblclick_reg_res", brush = brushOpts(id = "map_brush_reg_res",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("plot_reg_resi", height = "auto",  click = "map_dblclick_reg_res", brush = brushOpts(id = "map_brush_reg_res",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -5862,7 +5862,7 @@ ui <- navbarPage(
                                                            div(id = "hidden_custom_points_reg_res",
                                                                h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
                                                                
-                                                               h6(helpText("Enter location/coordinates or double click on map")),
+                                                               h6(helpText("Enter location/coordinates or click on map")),
                                                                
                                                                textInput(inputId = "location_reg_res",
                                                                          label   = "Enter a location:",
@@ -5897,6 +5897,12 @@ ui <- navbarPage(
                                                                             label        = "Point shape:",
                                                                             inline       = TRUE,
                                                                             choices      = c("\u25CF", "\u25B2", "\u25A0")),
+                                                               
+                                                               # radioButtons(inputId      = "point_shape_reg_res",
+                                                               #              label        = "Point shape:",
+                                                               #              inline       = TRUE,
+                                                               #              choiceNames  = c("\u25CF", "\u25B2", "\u25A0"),
+                                                               #              choiceValues = c(16, 17, 15)),
                                                                
                                                                colourInput(inputId = "point_colour_reg_res",
                                                                            label   = "Point colour:",

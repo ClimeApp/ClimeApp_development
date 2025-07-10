@@ -563,15 +563,30 @@ generate_titles = function(tab,
   
   # Create map_title & map_subtitle:
   # Averages and Anomalies titles
-  if (tab=="general"){
-    if (mode == "Absolute"){
-      map_title = paste(dataset," ",title_months," ",variable," ",year_range[1],"-",year_range[2], sep = "")
-      map_subtitle = ""
-    } else {
-      map_title = paste(dataset," ",title_months," ",variable," Anomaly ",year_range[1],"-",year_range[2], sep = "")
-      map_subtitle = paste("Ref. = ",baseline_range[1],"-",baseline_range[2], sep = "") 
-    } 
+  if (tab == "general") {
+    if (mode == "Absolute") {
+      if (length(year_range) == 1 || year_range[1] == year_range[2]) {
+        map_title <- paste(dataset, " ", title_months, " ", variable, " ", year_range[1], sep = "")
+      } else {
+        map_title <- paste(dataset, " ", title_months, " ", variable, " ", year_range[1], "-", year_range[2], sep = "")
+      }
+      map_subtitle <- ""
+    } else {  # Anomaly
+      if (length(year_range) == 1 || year_range[1] == year_range[2]) {
+        map_title <- paste(dataset, " ", title_months, " ", variable, " Anomaly ", year_range[1], sep = "")
+      } else {
+        map_title <- paste(dataset, " ", title_months, " ", variable, " Anomaly ", year_range[1], "-", year_range[2], sep = "")
+      }
+      
+      if (length(baseline_range) == 1 || baseline_range[1] == baseline_range[2]) {
+        map_subtitle <- paste("Ref. = ", baseline_range[1], sep = "")
+      } else {
+        map_subtitle <- paste("Ref. = ", baseline_range[1], "-", baseline_range[2], sep = "")
+      }
+    }
   }
+  
+  
   
   # Composites titles
   else if (tab=="composites"){
@@ -591,21 +606,29 @@ generate_titles = function(tab,
   }
   
   # Reference period titles
-  else if (tab=="reference"){
-    map_title = paste(dataset," ",title_months," ",variable," Absolute values (Reference years)", sep = "")
-    map_subtitle = ""
+  else if (tab == "reference") {
+    if (length(year_range) == 1 || year_range[1] == year_range[2]) {
+      map_title <- paste(dataset, " ", title_months, " ", variable, " ", year_range[1], " (Reference year)", sep = "")
+    } else {
+      map_title <- paste(dataset, " ", title_months, " ", variable, " ", year_range[1], "-", year_range[2], " (Reference years)", sep = "")
+    }
+    map_subtitle <- ""
   }
   
   # SD ratio titles
-  else if (tab=="sdratio"){
-    if (is.na(year_range[1])){
-      map_title = paste(dataset," ",title_months," SD Ratio (Composite years)", sep = "")
-      map_subtitle = ""
-    } else{
-      map_title = paste(dataset," ",title_months," SD Ratio ",year_range[1],"-",year_range[2], sep = "")
-      map_subtitle = "" 
+  else if (tab == "sdratio") {
+    if (is.na(year_range[1])) {
+      map_title <- paste(dataset, " ", title_months, " SD Ratio (Composite years)", sep = "")
+      map_subtitle <- ""
+    } else if (length(year_range) == 1 || year_range[1] == year_range[2]) {
+      map_title <- paste(dataset, " ", title_months, " SD Ratio ", year_range[1], sep = "")
+      map_subtitle <- ""
+    } else {
+      map_title <- paste(dataset, " ", title_months, " SD Ratio ", year_range[1], "-", year_range[2], sep = "")
+      map_subtitle <- ""
     }
   }
+  
   
   # Create Timeseries title, subtitle and axis titles
   if (tab=="composites"){
@@ -1050,13 +1073,29 @@ plot_map <- function(data_input,
     
     if (nrow(filtered_stat_highlights_data) > 0) {
       p <- p + 
-        geom_point(data = filtered_stat_highlights_data, aes(x = x_vals, y = y_vals), size = 1, shape=20, show.legend = FALSE)
+        geom_point(
+          data = filtered_stat_highlights_data,
+          aes(x = x_vals, y = y_vals),
+          size = 1,
+          shape = 20,
+          show.legend = FALSE
+        )
     }
   }
   
   if (nrow(points_data) > 0 && all(c("x_value", "y_value", "color", "shape", "size", "label") %in% colnames(points_data))) {
     p <- p + 
-      geom_point(data = points_data, aes(x = x_value, y = y_value, color = color, shape = shape, size = size), show.legend = FALSE) +
+      geom_point(
+        data = points_data,
+        aes(
+          x = x_value,
+          y = y_value,
+          color = color,
+          shape = shape,
+          size = size
+        ),
+        show.legend = FALSE
+      ) +
       geom_text(data = points_data, aes(x = x_value, y = y_value, label = label), position = position_nudge(y = -0.5), show.legend = FALSE) +
       scale_color_identity() +
       scale_shape_identity() +
@@ -3174,15 +3213,20 @@ create_new_points_data = function(point_x_values,
   y_value = as.numeric(unlist(strsplit(point_y_values, ",")))
   # Repeat other values to match x/y length
   label = rep(point_label, length(x_value))
-  shape = rep(point_shape, length(x_value))
+  shape_unicode = rep(point_shape, length(x_value))
+  
+  # Convert Unicode to numeric shape codes
+  shape = dplyr::recode(shape_unicode,
+                        "\u25CF" = 16, # ●
+                        "\u25B2" = 17, # ▲
+                        "\u25A0" = 15) # ■
+  
   color = rep(point_color, length(x_value))
   size = rep(point_size, length(x_value))
   # Combine into a dataframe
   new_p_data = data.frame(x_value, y_value, label, shape, color, size)
 
-  
   return(new_p_data)
-  
 }
 
 
