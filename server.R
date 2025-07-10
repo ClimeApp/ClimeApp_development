@@ -2766,10 +2766,18 @@ server <- function(input, output, session) {
   
   # Map Highlights
   observeEvent(input$add_highlight, {
-    map_highlights_data(rbind(map_highlights_data(),
-                              create_new_highlights_data(input$highlight_x_values,input$highlight_y_values,
-                                                         input$highlight_colour,input$highlight_type,NA,NA)))
-  })  
+    map_highlights_data(rbind(
+      map_highlights_data(),
+      create_new_highlights_data(
+        input$highlight_x_values,
+        input$highlight_y_values,
+        input$highlight_colour,
+        input$highlight_type,
+        NA,
+        NA
+      )
+    ))
+  })
   
   observeEvent(input$remove_last_highlight, {
     map_highlights_data(map_highlights_data()[-nrow(map_highlights_data()),])
