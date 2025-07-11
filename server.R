@@ -3540,12 +3540,25 @@ server <- function(input, output, session) {
   ####### Interactivity ----
   
   # Input geo-coded locations
-  
   observeEvent(input$search2, {
     location2 <- input$location2
     if (!is.null(location2) && nchar(location2) > 0) {
       location_encoded2 <- URLencode(location2)
-      result <- geocode_OSM(location_encoded2)
+      
+      projection <- input$projection2
+      result <- NULL
+      
+      if (projection == "UTM (default)") {
+        result <- geocode_OSM(location_encoded2)
+      } else if (projection == "Robinson") {
+        result <- geocode_OSM(location_encoded2, projection = "+proj=robin")
+      } else if (projection == "Orthographic") {
+        result <- geocode_OSM(location_encoded2,
+                              projection = ortho_proj(input$center_lat2, input$center_lon2))
+      } else if (projection == "LAEA") {
+        result <- geocode_OSM(location_encoded2, projection = laea_proj)
+      }
+      
       if (!is.null(result$coords)) {
         longitude2 <- result$coords[1]
         latitude2 <- result$coords[2]
@@ -3704,7 +3717,6 @@ server <- function(input, output, session) {
   
   
   ####### Initialise and update custom points lines highlights ----
-  
   map_points_data2 = reactiveVal(data.frame())
   map_highlights_data2 = reactiveVal(data.frame())
   
@@ -3725,8 +3737,7 @@ server <- function(input, output, session) {
         input$point_size2
       )
     ))
-
-  })  
+  })
   
   observeEvent(input$remove_last_point2, {
     map_points_data2(map_points_data2()[-nrow(map_points_data2()),])

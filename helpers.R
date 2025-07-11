@@ -20,6 +20,47 @@ generate_title_months = function(MR){
 
 #### General Functions ####
 
+## Projections
+laea_proj = paste0("+proj=laea +lat_0=", 0, " +lon_0=", 0, " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
+
+ortho_proj <- function(center_lat, center_lon) {
+  paste0(
+    "+proj=ortho ",
+    "+lat_0=", center_lat, " ",
+    "+lon_0=", center_lon, " ",
+    "+x_0=4321000 ",
+    "+y_0=3210000 ",
+    "+ellps=GRS80 ",
+    "+units=m ",
+    "+no_defs"
+  )
+}
+
+transform_points_df <- function(df,
+                                xcol,
+                                ycol,
+                                projection,
+                                center_lat = 0,
+                                center_lon = 0) {
+  if (projection == "UTM (default)")
+    return(df)
+  
+  crs_target <- switch(
+    projection,
+    "Robinson" = st_crs("+proj=robin"),
+    "Orthographic" = st_crs(ortho_proj(center_lat, center_lon)),
+    "LAEA" = st_crs(laea_proj)
+  )
+  
+  sf_obj <- st_as_sf(df, coords = c(xcol, ycol), crs = 4326)
+  sf_trans <- st_transform(sf_obj, crs_target)
+  coords <- st_coordinates(sf_trans)
+  
+  df[[xcol]] <- coords[, 1]
+  df[[ycol]] <- coords[, 2]
+  return(df)
+}
+
 ## (General) Creating c(min,max) numeric Vector for range_months data input
 
 create_month_range = function(month_names_vector){
@@ -1019,6 +1060,7 @@ plot_map <- function(data_input,
   # Set projection
   if (projection == "Robinson") {
     p <- p + coord_sf(crs = st_crs("+proj=robin"))
+    
   } else if (projection == "Orthographic") {
     formula = paste0("+proj=ortho +lat_0=", center_lat, " +lon_0=", center_lon, " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
     p <- p + coord_sf(crs = st_crs(formula))
@@ -1051,6 +1093,20 @@ plot_map <- function(data_input,
     # Set limits of plot to lon_lat range 
     p <- p + coord_sf(xlim = lon_lat_range[1:2], ylim = lon_lat_range[3:4], expand = FALSE)
   }
+  
+  # # Transform point data
+  # if (projection != "UTM (default)" &&
+  #     nrow(points_data) > 0 &&
+  #     all(c("x_value", "y_value") %in% names(points_data))) {
+  #   points_data <- transform_points_df(
+  #     points_data,
+  #     xcol = "x_value",
+  #     ycol = "y_value",
+  #     projection = projection,
+  #     center_lat = center_lat,
+  #     center_lon = center_lon
+  #   )
+  # }
   
   # Add title and subtitle if provided
   if (!is.null(titles)) {
