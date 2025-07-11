@@ -2,8 +2,15 @@
 #### Internal Functions ####
 # (Functions used ONLY by other functions)
 
-## GENERATE TITLE MONTHS
-## data input = month_range
+#' GENERATE TITLE MONTHS
+#'
+#' This function generates a title string based on a specified month range.
+#' It returns "Annual" if the full year is selected (January to December),
+#' a concatenated string of month initials for a partial range, or "Invalid" if the input is not valid.
+#'
+#' @param MR Numeric vector. A month range, typically of the form c(start_month, end_month), where months are 1–12 (January–December). 
+#'
+#' @return A character string. "Annual" for a full-year selection, a string of month initials (e.g., "JFMAMJ") for partial ranges, or "Invalid" for invalid input.
 
 generate_title_months = function(MR){
   if (!is.null(MR) && length(MR) >= 2 && !any(is.na(MR)) && MR[1] == 1 && MR[2] == 12){
@@ -20,6 +27,7 @@ generate_title_months = function(MR){
 
 #### General Functions ####
 
+<<<<<<< HEAD
 ## Projections
 laea_proj = paste0("+proj=laea +lat_0=", 0, " +lon_0=", 0, " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
 
@@ -62,6 +70,21 @@ transform_points_df <- function(df,
 }
 
 ## (General) Creating c(min,max) numeric Vector for range_months data input
+=======
+#' (General) CREATE MONTH RANGE
+#'
+#' This function creates a numeric vector representing the minimum and maximum month indices
+#' based on a character vector of month names. It is typically used to derive a month range 
+#' for further filtering or plotting.
+#'
+#' @param month_names_vector Character vector. A vector of month names selected from the predefined list:
+#' "December (prev.)", "January", "February", "March", "April", "May", "June",
+#' "July", "August", "September", "October", "November", "December".
+#'
+#' @return A numeric vector of length 2 indicating the start and end months, where
+#' January = 1, February = 2, ..., December = 12, and "December (prev.)" = 0.
+
+>>>>>>> b7d9e67c659c9c18dd899e7d1a3c1d9961e4d322
 
 create_month_range = function(month_names_vector){
   month_names_list = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
@@ -72,9 +95,16 @@ create_month_range = function(month_names_vector){
 }
 
 
-## (General) Create a subset of longitude IDs for plotting, tables and reading in data
-##           UPDATE: Always creates a subset that is 1 grid point longer at either end
-##                   than the given lat/lon range (to allow for cutting)
+#' (General)CREATE SUBSET LONGITUDE IDs
+#'
+#' This function creates a subset of longitude indices (`IDs`) for use in plotting, 
+#' tables, or reading data. It extends the selected longitude range by one grid point 
+#' (±2.8125°) on either end to allow for smooth cutting and interpolation.
+#'
+#' @param lon_range Numeric vector of length 2. The minimum and maximum longitude values.
+#'
+#' @return A numeric vector of indices corresponding to the selected longitudes,
+#' including one grid point outside the specified range on both sides.
 
 create_subset_lon_IDs = function(lon_range){
   subset_lon_IDs = which((lon >= lon_range[1]-2.8125) & (lon <= lon_range[2]+2.8125))
@@ -82,7 +112,17 @@ create_subset_lon_IDs = function(lon_range){
 }
 
 
-## (General) Create a subset of latitude IDs for plotting, tables and reading in data
+#' (General) CREATE SUBSET LATITUDE IDs 
+#'
+#' This function creates a subset of latitude indices (`IDs`) for use in plotting, 
+#' tables, or reading data. It extends the selected latitude range by one grid point 
+#' (±2.774456°) on either end to allow for smooth cutting and interpolation.
+#'
+#' @param lat_range Numeric vector of length 2. The minimum and maximum latitude values.
+#'
+#' @return A numeric vector of indices corresponding to the selected latitudes,
+#' including one grid point outside the specified range on both sides.
+
 
 create_subset_lat_IDs = function(lat_range){
   subset_lat_IDs = which((lat >= lat_range[1]-2.774456) & (lat <= lat_range[2]+2.774456))
@@ -90,12 +130,27 @@ create_subset_lat_IDs = function(lat_range){
 }
 
 
-## (General) GENERATE MAP DIMENSIONS
-##           Creates a vector of dimensions for the on-screen map and downloads: 
-##           c(on screen width,on screen height, download width, download height, lon/lat)
-##           output_width = session$clientData$output_>>INSERT OUTPUT NAME <<_width
-##           output_height = session$clientData$output_>>INSERT OUTPUT NAME <<_height
-##           hide_axis = TRUE or FALSE
+#' (General) GENERATE MAP DIMENSIONS 
+#'
+#' This function calculates optimal on-screen and download dimensions for a map display 
+#' based on the selected longitude and latitude subsets, available screen space, 
+#' and whether axis labels are shown.
+#'
+#' The function returns a numeric vector containing:
+#' 1. On-screen width,
+#' 2. On-screen height,
+#' 3. Download width,
+#' 4. Download height,
+#' 5. Longitude-to-latitude aspect ratio.
+#'
+#' @param subset_lon_IDs Numeric vector. Longitude indices of the selected map region.
+#' @param subset_lat_IDs Numeric vector. Latitude indices of the selected map region.
+#' @param output_width Numeric. Width of the map output container (in pixels), usually from `session$clientData$output_<<outputId>>_width`.
+#' @param output_height Numeric. Height of the map output container (in pixels), usually from `session$clientData$output_<<outputId>>_height`.
+#' @param hide_axis Logical. Whether to hide axis labels and reduce margin space.
+#'
+#' @return A numeric vector of length 5: c(on-screen width, on-screen height, download width, download height, lon/lat aspect ratio).
+
 
 generate_map_dimensions = function(subset_lon_IDs,
                                    subset_lat_IDs,
@@ -157,11 +212,39 @@ generate_map_dimensions = function(subset_lon_IDs,
 }
 
 
-## (General) GENERATE DATA ID
-##           Creates a vector with the reference numbers for ModE data:
-##           c(pre-processed data? (0 = NO, 1 = yes, preloaded, 2 = yes, not preloaded)
-##             ,dataset,variable,season)
-##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim" or "SD Ratio"
+#' (General) GENERATE DATA ID
+#'
+#' Creates a reference vector for ModE data selections, encoding whether the data is 
+#' pre-processed, which dataset is used, the selected variable, and the seasonal period. 
+#' This is used internally to manage data access and plotting logic.
+#'
+#' The returned vector contains:
+#' 1. Pre-processed data flag:
+#'    - `0` = Not available
+#'    - `1` = Available and preloaded
+#'    - `2` = Available but needs to be loaded
+#' 2. Dataset code:
+#'    - `1` = "ModE-RA"
+#'    - `2` = "ModE-Sim"
+#'    - `3` = "ModE-RAclim"
+#'    - `4` = "SD Ratio"
+#' 3. Variable code:
+#'    - `1` = "Temperature"
+#'    - `2` = "Precipitation"
+#'    - `3` = "SLP"
+#'    - `4` = "Z500"
+#' 4. Season code:
+#'    - `1` = DJF (c(0, 2))
+#'    - `2` = MAM (c(3, 5))
+#'    - `3` = JJA (c(6, 8))
+#'    - `4` = SON (c(9, 11))
+#'    - `5` = Annual (c(1, 12))
+#'
+#' @param dataset Character. One of: "ModE-RA", "ModE-Sim", "ModE-RAclim", "SD Ratio".
+#' @param variable Character. One of: "Temperature", "Precipitation", "SLP", "Z500".
+#' @param month_range Numeric vector of length 2. Month range for seasonal selection.
+#'
+#' @return Numeric vector of length 4: c(pre-processing flag, dataset ID, variable ID, season ID).
 
 generate_data_ID = function(dataset,
                             variable,
@@ -240,9 +323,28 @@ generate_data_ID = function(dataset,
 }        
 
 
-## (General) LOAD FULL ModE DATA - load ModE-RA/sim/clim/SDratio data for a chosen variable
-##           and data source
-##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim","SD Ratio"
+#' (General) LOAD FULL ModE DATA
+#'
+#' Loads full ModE monthly data (ModE-RA, ModE-Sim, ModE-RAclim, or SD Ratio) for the selected variable.
+#' Automatically opens and processes the relevant NetCDF file and returns the complete 3D data array.
+#' Applies appropriate unit conversions depending on the variable.
+#'
+#' ## Supported Datasets:
+#' - `"ModE-RA"`: Absolute values (e.g., temperature in °C, precipitation in mm/month).
+#' - `"ModE-Sim"`: Absolute values; first year (1420) is removed.
+#' - `"ModE-RAclim"`: Anomalies relative to the 1901–2000 climatology.
+#' - `"SD Ratio"`: Standard deviation ratio of ModE-RA to climate reference.
+#'
+#' ## Supported Variables:
+#' - `"Temperature"`: Converted from Kelvin to Celsius.
+#' - `"Precipitation"`: Converted from kg/m²/s to mm/month using factor 2629756.8.
+#' - `"SLP"`: Converted from Pa to hPa.
+#' - `"Z500"`: Geopotential height at 500 hPa (no conversion).
+#'
+#' @param dataset Character. Name of dataset to load. One of `"ModE-RA"`, `"ModE-Sim"`, `"ModE-RAclim"`, `"SD Ratio"`.
+#' @param variable Character. Name of variable. One of `"Temperature"`, `"Precipitation"`, `"SLP"`, `"Z500"`.
+#'
+#' @return 3D numeric array (lon × lat × time) containing the full ModE dataset for the selected variable.
 
 load_ModE_data = function(dataset,
                           variable){
@@ -350,9 +452,13 @@ load_ModE_data = function(dataset,
 }
 
 
-## (General) LOAD PRE-PROCESSED ModE DATA - load ModE-RA/sim/clim/SDratio pp_data for a chosen variable
-##           and month range
-##           data_ID = as created by generate_data_ID
+#' (General) Load Pre-Processed ModE Data
+#'
+#' Loads pre-processed ModE climate data for a chosen variable and month range.
+#'
+#' @param data_ID Integer vector specifying dataset, variable, and month range.
+#' 
+#' @return A 3D numeric array (longitude x latitude x time) of the requested climate data.
 
 load_preprocessed_data = function(data_ID){
   
@@ -487,11 +593,16 @@ load_preprocessed_data = function(data_ID){
 }
 
 
-## (General) CREATE GEOGRAPHIC SUBSET - returns a new dataset with a reduced geographic area
-##           data_input = any ModE-RA variable (temp_data/prec_data/SlP_data etc.)
-##                        (this should already be assigned as "custom_data()")
-##                        OR
-##                        any preprocessed ModE-RA variable
+#' (General) Create Geographic Subset of ModE Data
+#'
+#' Subsets a ModE dataset to a reduced geographic area based on longitude and latitude indices.
+#'
+#' @param data_input Numeric array of climate data to subset.
+#' @param data_ID Integer vector specifying dataset details.
+#' @param subset_lon_IDs Integer vector of longitude indices to include.
+#' @param subset_lat_IDs Integer vector of latitude indices to include.
+#' 
+#' @return A numeric array subsetted by the specified longitude and latitude indices.
 
 create_latlon_subset = function(data_input,
                                 data_ID,
@@ -509,9 +620,16 @@ create_latlon_subset = function(data_input,
 }
 
 
-## (General) CREATE YEAR & MONTH SUBSET - returns a new dataset of mean yearly values 
-##                                        within a reduced time range
-##           data_input = any create_latlon_subset data
+#' (General) Create Year and Month Subset with Mean Yearly Values
+#'
+#' Returns a dataset of mean yearly values within a specified year and month range.
+#'
+#' @param data_input Numeric array of climate data.
+#' @param data_ID Integer vector specifying dataset details.
+#' @param year_range Integer vector of length 2 specifying start and end years.
+#' @param month_range Integer vector of length 2 specifying start and end months.
+#'
+#' @return A numeric array of mean yearly values for the specified time range.
 
 create_yearly_subset = function(data_input,
                                 data_ID,
@@ -539,9 +657,14 @@ create_yearly_subset = function(data_input,
   return(data_subset)
 }
 
-## (General) CONVERT ABSOLUTE YEARLY SUBSET TO ANOMALIES
-##           data_input = any create_yearly_subset data
-##           ref_data = averaged create_yearly_subset data for the ref period
+#' (General) Convert Absolute Yearly Subset to Anomalies
+#'
+#' Converts an absolute yearly subset dataset into anomalies relative to a reference dataset.
+#'
+#' @param data_input Numeric array of absolute yearly data.
+#' @param ref_data Numeric array of averaged data for the reference period.
+#'
+#' @return A numeric array of anomaly values.
 
 convert_subset_to_anomalies = function(data_input,
                                        ref_data){
@@ -563,20 +686,43 @@ convert_subset_to_anomalies = function(data_input,
   return(anomaly_data)
 }
 
-## (General) GENERATE MAP,TS & FILE TITLES - creates a dataframe of map_title,
-##                                           map_subtitle, ts_title, ts_axis,file_title,
-##                                           netcdf_title for Anomalies and Composites
-##           tab = "general" or "composites", "reference", or "sdratio"
-##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim"
-##           mode = "Absolute" or "Anomaly" for general tab
-##                  "Absolute", "Fixed reference" or ""X years prior"
-##                   for composites tab
-##           map/ts_title_mode = "Default" or "Custom"
-##           year_range,baseline_range,baseline_years_before 
-##                = set to NA if not relevant for selected tab
-##           map/ts_custom_title1/2 = user entered titles and subtitles
-##           map/ts_title_size = numeric value for the title font size, default = 18
-##           ts_data = timeseries data (numeric vector) for statistics (Mean, Range, SD) values displayed in TS subtitles
+#' (General) Generate Map, Timeseries, and File Titles
+#'
+#' Creates a dataframe containing titles and subtitles for maps, timeseries plots, file names, and NetCDF data based on input parameters.
+#'
+#' @param tab Character; type of title set to generate ("general", "composites", "reference", or "sdratio").
+#' @param dataset Character; dataset name (e.g., "ModE-RA", "ModE-Sim", "ModE-RAclim").
+#' @param variable Character; climate variable name.
+#' @param mode Character; data mode ("Absolute", "Anomaly", "Fixed reference", "X years prior", etc.).
+#' @param map_title_mode Character; either "Default" or "Custom" to select map title mode.
+#' @param ts_title_mode Character; either "Default" or "Custom" to select timeseries title mode.
+#' @param month_range Numeric vector; selected months.
+#' @param year_range Numeric vector; selected years.
+#' @param baseline_range Numeric vector or NA; baseline reference years if applicable.
+#' @param baseline_years_before Numeric or NA; baseline years prior if applicable.
+#' @param lon_range Numeric vector; longitude range.
+#' @param lat_range Numeric vector; latitude range.
+#' @param map_custom_title1 Character or NA; user-defined map title.
+#' @param map_custom_title2 Character or NA; user-defined map subtitle.
+#' @param ts_custom_title1 Character or NA; user-defined timeseries title.
+#' @param ts_custom_title2 Character or NA; user-defined timeseries subtitle.
+#' @param map_title_size Numeric; font size for map title.
+#' @param ts_title_size Numeric; font size for timeseries title.
+#' @param ts_data Numeric vector or dataframe; timeseries data for subtitle statistics.
+#'
+#' @return A dataframe with columns:
+#' \describe{
+#'   \item{map_title}{Character; main title for the map.}
+#'   \item{map_subtitle}{Character; subtitle for the map.}
+#'   \item{ts_title}{Character; title for the timeseries plot.}
+#'   \item{ts_subtitle}{Character; subtitle for the timeseries plot, including statistics if available.}
+#'   \item{ts_axis}{Character; label for the timeseries plot axis.}
+#'   \item{file_title}{Character; sanitized string suitable for filenames.}
+#'   \item{netcdf_title}{Character; title for NetCDF output files.}
+#'   \item{map_title_size}{Numeric; font size for the map title.}
+#'   \item{ts_title_size}{Numeric; font size for the timeseries title.}
+#'   \item{v_unit}{Character; variable unit string.}
+#' }
 
 generate_titles = function(tab,
                            dataset,
@@ -760,9 +906,13 @@ generate_titles = function(tab,
 }
 
 
-## (General) GENERATE STATISTICS TIMESERIES DATA - creates a dataframe of statistics from timeseries data
-##           data = timeseries data (numeric vector)
-##           returns a numeric vector of mean, sd, min, max
+#' (General) Generate Statistics from Timeseries Data
+#'
+#' Calculates basic statistics (mean, standard deviation, minimum, and maximum) from a numeric timeseries vector.
+#'
+#' @param data Numeric vector; timeseries data.
+#'
+#' @return A dataframe with columns:
 
 generate_stats_ts = function(data){
   
@@ -775,9 +925,12 @@ generate_stats_ts = function(data){
   return(ts_stats)
 }
 
-## (General) SET DEFAULT/CUSTOM AXIS VALUES
-##           data_input = same as data_input for mapping function
-##           mode = "Absolute" or "Anomalies"
+#' (General) SET DEFAULT/CUSTOM AXIS VALUES
+#' 
+#' @param data_input Numeric vector or array for mapping.
+#' @param mode Character string, either "Absolute" or "Anomalies".
+#' 
+#' @return Numeric vector of length 2 with axis min and max values.
 
 #For Map Plots
 set_axis_values = function(data_input,
@@ -795,28 +948,52 @@ set_axis_values = function(data_input,
   return(minmax)
 }
 
-#For TS Plots
+#' (General) SET DEFAULT TIME SERIES AXIS VALUES
+#' 
+#' @param data_input Numeric vector of timeseries data.
+#' 
+#' @return Numeric vector of length 2 with axis min and max values.
+
+#FOr TS Plots
 set_ts_axis_values = function(data_input) {
   minmax = range(data_input, na.rm = TRUE)
   return(signif(minmax, digits = 3))
 }
 
 
-## (General) ***DESCRIPTION WILL BE UPDATED *** DEFAULT MAP PLOTTING FUNCTION - including taking average of dataset
-##           data_input = map_datatable
-
-##           variable = modE variable OR "SD Ratio" OR NULL (default) if mode == "Correlation"
-##           mode = "Absolute", "Correlation", or ">any other text<" <- code will assume it's anomalies
-##           axis_range = as created by "set_axis_values" function
-##           hide_axis = TRUE or FALSE
-##           points/highlights/stat_highlights_data = as created by the 
-##                create_new..._data functions OR and empty dataframe if not 
-##                available/used
-##           c_borders = TRUE or FALSE depending on whether country borders are to be plotted
-##           plotOrder = vector of shapefile names in the order they should be plotted
-##           shpPickers = vector of shapefile names that have colour pickers (?)
-##           plotType = "shp_colour_" or "shp_colour2_" etc. depending on the Analysis (Anomalies, Composite etc.)
-##
+#' (General) Plot map with ggplot2, including averaging dataset if needed
+#'
+#' This function creates a map plot using ggplot2 based on provided spatial data,
+#' with options for different variables, modes, projections, and overlays.
+#'
+#' @param data_input Spatial raster data to plot.
+#' @param lon_lat_range Numeric vector defining longitude and latitude plotting limits.
+#' @param variable Character specifying the variable to plot (e.g., "Temperature", "Precipitation", "SLP", "Z500", "SD Ratio").
+#' @param mode Character specifying the mode of plotting ("Absolute", "Correlation", "Regression_coefficients", etc.).
+#' @param titles List containing titles and subtitle text and sizes.
+#' @param axis_range Numeric vector defining axis limits for color scales.
+#' @param hide_axis Logical, whether to hide the colorbar axis.
+#' @param points_data Data frame with points to add on the map.
+#' @param highlights_data Data frame with highlighted areas to add on the map.
+#' @param stat_highlights_data Data frame with statistical highlight points.
+#' @param c_borders Logical, whether to plot country borders.
+#' @param white_ocean Logical, whether to fill oceans with white/gray color.
+#' @param white_land Logical, whether to fill land with white/gray color.
+#' @param shpOrder Character vector of shapefile names to add to the plot.
+#' @param plotOrder Character vector defining the order of shapefiles to plot.
+#' @param input List of user inputs for shapefile colors.
+#' @param plotType Character prefix for shapefile color input IDs.
+#' @param projection Character specifying the map projection ("UTM (default)", "Robinson", "Orthographic", "LAEA").
+#' @param center_lat Numeric latitude for centered projections.
+#' @param center_lon Numeric longitude for centered projections.
+#' @param show_rivers Logical, whether to show rivers on the map.
+#' @param label_rivers Logical, whether to label rivers.
+#' @param show_lakes Logical, whether to show lakes on the map.
+#' @param label_lakes Logical, whether to label lakes.
+#' @param show_mountains Logical, whether to show mountains on the map.
+#' @param label_mountains Logical, whether to label mountains.
+#'
+#' @return A ggplot object representing the map.
 
 # Plot map with ggplot2
 plot_map <- function(data_input,
@@ -1218,8 +1395,16 @@ plot_map <- function(data_input,
 
 
 
-## (General) CREATE MAP DATATABLE
-##           data_input = yearly_subset or subset_to_anomalies data
+#' (General) CREATE MAP DATATABLE
+#' 
+#' Generates a labeled 2D matrix (longitude × latitude) of spatial means from a 3D climate dataset.
+#' Uses coordinate subsets and adds directional labels.
+#' 
+#' @param data_input 3D numeric array. Subset of climate data (e.g., yearly mean or anomaly) with dimensions [lon × lat × time].
+#' @param subset_lon_IDs Integer vector. Indices of longitudes to retain (e.g., for regional focus).
+#' @param subset_lat_IDs Integer vector. Indices of latitudes to retain.
+#'
+#' @return 2D labeled numeric matrix (latitude × longitude) with spatial means and coordinate labels for use in maps.
 
 create_map_datatable = function(data_input,
                                 subset_lon_IDs,
@@ -1250,11 +1435,20 @@ create_map_datatable = function(data_input,
   return(map_data)
 }
 
-## (General) CREATE BASIC TIMESERIES DATATABLE
-##           data_input = same as data_input for create_map_datatable
-##           year_input = either year_range or year_set (for composites)
-##           year_input_type = "range" (for general) or "set" (for composites)
-##           returns a dataframe of Year, Mean, Min, Max
+#' (General) CREATE BASIC TIMESERIES DATATABLE
+
+#' Generates a basic timeseries data frame (Year, Mean, Min, Max) from a 3D climate array.
+#' Handles both year ranges and discrete year sets.
+#' Assumes `latlon_weights`, `lat`, and `lon` are globally defined.
+#' Trims outer grid cells and applies area-weighted averaging.
+#'
+#' @param data_input 3D numeric array. Subset of climate data with dimensions [lon × lat × time].
+#' @param year_input Integer vector. Either a year range (start/end) or specific year set.
+#' @param year_input_type Character. Either `"range"` or `"set"` indicating type of `year_input`.
+#' @param subset_lon_IDs Integer vector. Indices of longitudes to include (excluding outer edge).
+#' @param subset_lat_IDs Integer vector. Indices of latitudes to include (excluding outer edge).
+#'
+#' @return Data frame with columns: `Year`, `Mean` (weighted mean), `Min`, and `Max` values for each time step.
 
 create_timeseries_datatable = function(data_input,
                                        year_input,
@@ -1299,15 +1493,21 @@ create_timeseries_datatable = function(data_input,
 }
 
 
-## (General) ADD STATISTICS COLUMNS TO TS DATATABLE - adds Moving_Average, Percentile
-##           and unit columns to TS datatable (if required) otherwise returns original
-##           data_input = output from create_timeseries_datatable
-##           add_moving_average = TRUE or FALSE
-##           moving_average_range = single number (3 to 33)
-##           moving_average_alignment = "before","center","right"
-##           add_percentiles = TRUE of FALSE
-##           percentiles = a vector of percentile values c(0.9,0.95 or 0.99)
-##           use_MA_percentiles = TRUE or FALSE
+#' (General) ADD STATISTICS COLUMNS TO TS DATATABLE
+#'
+#' Adds optional `Moving_Average` and percentile columns to a timeseries datatable.
+#' Supports static or moving percentile bands and allows flexible window/align settings.
+#' Assumes normality is tested for dynamic percentile calculation.
+#'
+#' @param data_input Data frame. Output from `create_timeseries_datatable()`.
+#' @param add_moving_average Logical. Whether to add a moving average column.
+#' @param moving_average_range Integer. Size of the moving average window (e.g., 5, 11, 21).
+#' @param moving_average_alignment Character. One of `"before"`, `"center"`, `"right"`.
+#' @param add_percentiles Logical. Whether to add percentile threshold columns.
+#' @param percentiles Numeric vector. One or more values among `0.9`, `0.95`, `0.99`.
+#' @param use_MA_percentiles Logical. If `TRUE`, percentile bands are centered on the moving average.
+#'
+#' @return Data frame including original timeseries plus added columns for `Moving_Average` and requested percentiles.
 
 add_stats_to_TS_datatable = function(data_input,
                                      add_moving_average,
