@@ -1227,16 +1227,25 @@ plot_map <- function(data_input,
   
   # Add title and subtitle if provided
   if (!is.null(titles)) {
-    if (titles$map_title != " ") {
-      p <- p + ggtitle(titles$map_title)
+    if (titles$map_title != " " || titles$map_subtitle != " ") {
+      p <- p + labs(
+        title = ifelse(titles$map_title != " ", titles$map_title, NULL),
+        subtitle = ifelse(titles$map_subtitle != " ", titles$map_subtitle, NULL)
+      )
     }
-    if (titles$map_subtitle != " ") {
-      p <- p + labs(subtitle = titles$map_subtitle)
-    }
+    
     p <- p + theme(
-      plot.title = element_text(size = titles$map_title_size, face = "bold"),
-      plot.subtitle = element_text(size = titles$map_title_size / 1.3, face = "plain"),
-      axis.text=element_text(size = titles$map_title_size / 1.6),
+      plot.title = ggtext::element_textbox_simple(
+        size = titles$map_title_size,
+        face = "bold",
+        margin = margin(5, 0, 5, 0)),
+      
+      plot.subtitle = ggtext::element_textbox_simple(
+        size = titles$map_title_size / 1.3,
+        face = "plain",
+        margin = margin(9, 0, 12, 0)),
+      
+      axis.text = element_text(size = titles$map_title_size / 1.6)
     )
   }
   
@@ -1245,14 +1254,15 @@ plot_map <- function(data_input,
     filtered_stat_highlights_data <- subset(stat_highlights_data, criteria_vals == 1) # if criteria_vals == 0, the point is not added to the map
     
     if (nrow(filtered_stat_highlights_data) > 0) {
-      p <- p + 
+      p <- p +
         geom_point(
           data = filtered_stat_highlights_data,
           aes(x = x_vals, y = y_vals),
           size = 1,
           shape = 20,
           show.legend = FALSE
-        )
+        ) +
+        labs(x = NULL, y = NULL)
     }
   }
   
