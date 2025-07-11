@@ -1407,10 +1407,21 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("fad_map", height = "auto", brush = brushOpts(id = "brush_fad", resetOnNew = TRUE)), 
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height),
+                                            withSpinner(
+                                              ui_element = plotOutput(
+                                                "fad_map",
+                                                height = "auto",
+                                                brush = brushOpts(
+                                                  id = "brush_fad",
+                                                  resetOnNew = TRUE,
+                                                  delay = 10000,
+                                                  # Delay in ms (adjust as needed)
+                                                  delayType = "debounce"      # Triggers only after releasing the mouse
+                                                )
+                                              ),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
                                             
                                             fluidRow(
                                               h6(helpText("Draw a box on the map to zoom in")),
@@ -2441,10 +2452,21 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("fad_map2", height = "auto", brush = brushOpts(id = "brush_fad2", resetOnNew = TRUE)), 
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height),
+                                            withSpinner(
+                                              ui_element = plotOutput(
+                                                "fad_map2",
+                                                height = "auto",
+                                                brush = brushOpts(
+                                                  id = "brush_fad2",
+                                                  resetOnNew = TRUE,
+                                                  delay = 10000,
+                                                  # Delay in ms (adjust as needed)
+                                                  delayType = "debounce"      # Triggers only after releasing the mouse
+                                                )
+                                              ),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
                                             
                                             fluidRow(
                                               h6(helpText("Draw a box on the map to zoom in")),
@@ -4213,10 +4235,21 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("fad_map3", height = "auto", brush = brushOpts(id = "brush_fad3", resetOnNew = TRUE)), 
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height),
+                                            withSpinner(
+                                              ui_element = plotOutput(
+                                                "fad_map3",
+                                                height = "auto",
+                                                brush = brushOpts(
+                                                  id = "brush_fad3",
+                                                  resetOnNew = TRUE,
+                                                  delay = 10000,
+                                                  # Delay in ms (adjust as needed)
+                                                  delayType = "debounce"      # Triggers only after releasing the mouse
+                                                )
+                                              ),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
                                             
                                             fluidRow(
                                               h6(helpText("Draw a box on the map to zoom in")),
@@ -6062,10 +6095,21 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("fad_map4", height = "auto", brush = brushOpts(id = "brush_fad4", resetOnNew = TRUE)), 
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height),
+                                            withSpinner(
+                                              ui_element = plotOutput(
+                                                "fad_map4",
+                                                height = "auto",
+                                                brush = brushOpts(
+                                                  id = "brush_fad4",
+                                                  resetOnNew = TRUE,
+                                                  delay = 10000,
+                                                  # Delay in ms (adjust as needed)
+                                                  delayType = "debounce"      # Triggers only after releasing the mouse
+                                                )
+                                              ),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
                                             
                                             fluidRow(
                                               h6(helpText("Draw a box on the map to zoom in")),
@@ -6619,10 +6663,21 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("fad_map5", height = "auto", brush = brushOpts(id = "brush_fad5", resetOnNew = TRUE)), 
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height),
+                                            withSpinner(
+                                              ui_element = plotOutput(
+                                                "fad_map5",
+                                                height = "auto",
+                                                brush = brushOpts(
+                                                  id = "brush_fad5",
+                                                  resetOnNew = TRUE,
+                                                  delay = 10000,
+                                                  # Delay in ms (adjust as needed)
+                                                  delayType = "debounce"      # Triggers only after releasing the mouse
+                                                )
+                                              ),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height),
                                             
                                             fluidRow(
                                               h6(helpText("Draw a box on the map to zoom in")),

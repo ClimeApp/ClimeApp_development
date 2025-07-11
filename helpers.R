@@ -120,7 +120,7 @@ generate_map_dimensions = function(subset_lon_IDs,
 ##           Creates a vector with the reference numbers for ModE data:
 ##           c(pre-processed data? (0 = NO, 1 = yes, preloaded, 2 = yes, not preloaded)
 ##             ,dataset,variable,season)
-##           data_set = "ModE-RA","ModE-Sim","ModE-RAclim" or "SD Ratio"
+##           dataset = "ModE-RA","ModE-Sim","ModE-RAclim" or "SD Ratio"
 
 generate_data_ID = function(dataset,
                             variable,
@@ -2300,10 +2300,9 @@ plot_modera_sources = function(ME_source_data,
                                base_size = NULL){
   
   # Load data
-  world=map_data("world")
+  world = map_data("world")
   
   # Sum total sources and observations
-  
   if (identical(minmax_lonlat, c(-180, 180, -90, 90))) {
     total_observations = sum(ME_source_data$Omitted_Duplicates) + nrow(ME_source_data)
     visible_sources = nrow(ME_source_data)
@@ -2322,29 +2321,45 @@ plot_modera_sources = function(ME_source_data,
     yr = year
   } else {
     season_title = "Oct. to Mar."
-    yr = paste0((year-1),"/",year)
+    yr = paste0((year - 1), "/", year)
   }
   
   # Set color scheme
-  type_list = c("ice_proxy","glacier_ice_proxy","lake_sediment_proxy","tree_proxy","coral_proxy","instrumental_data","documentary_proxy","speleothem_proxy","bivalve_proxy","other_proxy")
-  # Paul Tol's Muted Colour List for Colour Blind People
-  color_list = c('#88CCEE', '#332288', '#DDCC77', '#117733', '#CC6677', '#882255', '#44AA99', '#999933', '#AA4499', '#000000')
-  # color_list = brewer.pal(10,"Paired")
-  named_colors = setNames(color_list,type_list)
+  type_list = c("ice_proxy","glacier_ice_proxy","lake_sediment_proxy","tree_proxy",
+                "coral_proxy","instrumental_data","documentary_proxy","speleothem_proxy",
+                "bivalve_proxy","other_proxy")
+  color_list = c('#88CCEE', '#332288', '#DDCC77', '#117733', '#CC6677',
+                 '#882255', '#44AA99', '#999933', '#AA4499', '#000000')
+  named_colors = setNames(color_list, type_list)
+  
+  # Clean labels for TYPE
+  type_labels = setNames(
+    tools::toTitleCase(gsub("_", " ", type_list)),
+    type_list
+  )
   
   # Set shape scheme
-  variable_list = c("sea_level_pressure","no_of_rainy_days","pressure","precipitation","temperature","historical_proxy","natural_proxy")
+  variable_list = c("sea_level_pressure","no_of_rainy_days","pressure",
+                    "precipitation","temperature","historical_proxy","natural_proxy")
   shape_list = c(3,2,4,6,5,0,1)
-  named_shapes = setNames(shape_list,variable_list)
+  named_shapes = setNames(shape_list, variable_list)
+  
+  # Clean labels for VARIABLE
+  variable_labels = setNames(
+    tools::toTitleCase(gsub("_", " ", variable_list)),
+    variable_list
+  )
   
   # Plot
-  ggplot() + geom_polygon(
-    data = world,
-    aes(x = long, y = lat, group = group),
-    fill = "grey",
-    color = "darkgrey"
-  ) +
-    geom_sf() + coord_sf(
+  ggplot() +
+    geom_polygon(
+      data = world,
+      aes(x = long, y = lat, group = group),
+      fill = "grey",
+      color = "darkgrey"
+    ) +
+    geom_sf() +
+    coord_sf(
       xlim = minmax_lonlat[c(1, 2)],
       ylim = minmax_lonlat[c(3, 4)],
       crs = st_crs(4326),
@@ -2367,13 +2382,12 @@ plot_modera_sources = function(ME_source_data,
       x = "",
       y = ""
     ) +
-    scale_shape_manual(values = named_shapes) +
-    scale_colour_manual(values = named_colors) +
+    scale_colour_manual(values = named_colors, labels = type_labels) +
+    scale_shape_manual(values = named_shapes, labels = variable_labels) +
     guides() +
     theme_classic(base_size = ifelse(is.null(base_size), 11, base_size)) +
-    theme(panel.border = element_rect(colour = "black", fill = NA))  
+    theme(panel.border = element_rect(colour = "black", fill = NA))
 }
-
 
 ## (General) DOWNLOAD MODE-RA SOURCES DATA
 
@@ -5711,6 +5725,7 @@ create_monthly_TS_data = function(data_input,
 #' @param highlights data.frame. Data frame containing highlight information.
 #' @param lines data.frame. Data frame containing line information.
 #' @param points data.frame. Data frame containing point information.
+#' 
 #' @return A ggplot object.
 
 plot_monthly_timeseries <- function(data = NA,
