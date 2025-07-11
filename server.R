@@ -8737,9 +8737,15 @@ server <- function(input, output, session) {
   # Anomalies Statistics
   map_statistics = reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
-    my_stats = create_stat_highlights_data(data_output4_primary(),SDratio_subset(),
-                                           input$custom_statistic,input$sd_ratio,
-                                           NA,subset_lons_primary(),subset_lats_primary())
+    my_stats = create_stat_highlights_data(
+      data_output4_primary(),
+      SDratio_subset(),
+      input$custom_statistic,
+      input$sd_ratio,
+      NA,
+      subset_lons_primary(),
+      subset_lats_primary()
+    )
     return(my_stats)
   })
   
@@ -10611,8 +10617,8 @@ server <- function(input, output, session) {
   
   # Plot Correlation Map
   corr_m1 <- function() {
-    if ((input$type_v1 == "Field") | (input$type_v2 == "Field")) {
-      if (input$type_v1 == "Field" & input$type_v2 == "Field") {
+    if (any(input$type_v1 == "Field", input$type_v2 == "Field")) {
+      if (input$type_v1 == "Field" && input$type_v2 == "Field") {
         v1 <- lonlat_vals_v1()
         v2 <- lonlat_vals_v2()
         lonlat_vals <- c(max(v1[1], v2[1]), min(v1[2], v2[2]), max(v1[3], v2[3]), min(v1[4], v2[4]))
@@ -10678,28 +10684,65 @@ server <- function(input, output, session) {
         show_mountains = input$show_mountains3,
         label_mountains = input$label_mountains3
       )
-      
-      width <- correlation_map_dimensions()[1]
-      
-      if (width < 550) {
-        p <- p + theme(
-          plot.title = element_text(size = titles$map_title_size, face = "bold"),
-          plot.subtitle = ggtext::element_textbox_simple(
-            size = 12,
-            padding = margin(5, 0, 5, 0),
-            margin = margin(5, 0, 5, 0)
-          ),
-          axis.text = element_text(size = titles$map_title_size / 1.6)
-        )
+
+      # Adapt title for Europe–Asia combination  
+      if ((input$type_v1 == "Field") &&
+          (input$type_v2 == "Field") &&
+          # Europe
+          ((
+            input$range_longitude_v1[1] == -30 &&
+            input$range_longitude_v1[2] == 40 &&
+            input$range_latitude_v1[1] == 30 &&
+            input$range_latitude_v1[2] == 75
+          )
+          &&
+          # Asia
+          (
+            input$range_longitude_v2[1] == 25 &&
+            input$range_longitude_v2[2] == 170 &&
+            input$range_latitude_v2[1] == 5 &&
+            input$range_latitude_v2[2] == 80
+          )
+          )
+          ||
+          # Europe
+          ((
+            input$range_longitude_v2[1] == -30 &&
+            input$range_longitude_v2[2] == 40 &&
+            input$range_latitude_v2[1] == 30 &&
+            input$range_latitude_v2[2] == 75
+          )
+          &&
+          # Asia
+          (
+            input$range_longitude_v1[1] == 25 &&
+            input$range_longitude_v1[2] == 170 &&
+            input$range_latitude_v1[1] == 5 &&
+            input$range_latitude_v1[2] == 80
+          )
+          )) {
         
         
-      } else {
-        p <- p + theme(
-          plot.title = element_text(size = titles$map_title_size, face = "bold"),
-          plot.subtitle = element_text(size = titles$map_title_size / 1.3, face = "plain"),
-          axis.text = element_text(size = titles$map_title_size / 1.6),
+      p <- p + labs(title = NA, subtitle = NA) +
+        patchwork::plot_annotation(
+          title = ifelse(titles$map_title != " ", titles$map_title, NULL),
+          subtitle = ifelse(titles$map_subtitle != " ", titles$map_subtitle, NULL),
+          theme = theme(
+            plot.title = ggtext::element_textbox_simple(
+              size = titles$map_title_size,
+              face = "bold",
+              margin = margin(0, 0, 5, 0)
+            ),
+            plot.subtitle = ggtext::element_textbox_simple(
+              size = titles$map_title_size / 1.3,
+              face = "plain",
+              margin = margin(15, 0, 0, 0)
+            ),
+            axis.text = element_text(size = titles$map_title_size / 1.6)
+          )
         )
       }
+      
       return(p)
     }
   }
@@ -10712,6 +10755,12 @@ server <- function(input, output, session) {
   }, height = function() {
     correlation_map_dimensions()[2]
   })
+
+  
+  
+  
+  
+  
   
   
   ######### Data tables & Downloads 

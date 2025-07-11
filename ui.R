@@ -655,7 +655,7 @@ ui <- navbarPage(
                                    tabPanel("Map", br(),
                                             h4("Anomalies map", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("map", height = "auto", click = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
+                                            withSpinner(ui_element = plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -755,11 +755,11 @@ ui <- navbarPage(
                                                                              value   = TRUE),
                                                                
                                                                checkboxInput(inputId = "white_ocean",
-                                                                             label   = "White ocean",
+                                                                             label   = "Grey ocean",
                                                                              value   = FALSE),
                                                                
                                                                checkboxInput(inputId = "white_land",
-                                                                             label   = "White land",
+                                                                             label   = "Grey land",
                                                                              value   = FALSE),
                                                                
                                                                checkboxInput(inputId = "show_rivers",
@@ -819,7 +819,7 @@ ui <- navbarPage(
                                                            div(id = "hidden_custom_points",
                                                                h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
                                                                
-                                                               h6(helpText("Enter location/coordinates or click on map")),
+                                                               h6(helpText("Enter location/coordinates or double click on map")),
                                                                
                                                                textInput(inputId = "location", 
                                                                          label   = "Enter a location:",
@@ -858,8 +858,8 @@ ui <- navbarPage(
                                                                colourInput(inputId = "point_colour", 
                                                                            label   = "Point colour:",
                                                                            showColour = "background",
-                                                                           palette = "limited"),                          
-                                                               
+                                                                           value = "#27408B",
+                                                                           palette = "limited"),  
                                                                
                                                                numericInput(inputId = "point_size",
                                                                             label   = "Point size:",
@@ -899,12 +899,13 @@ ui <- navbarPage(
                                                                colourInput(inputId = "highlight_colour", 
                                                                            label   = "Highlight colour:",
                                                                            showColour = "background",
+                                                                           value = "#27408B",
                                                                            palette = "limited"),
                                                                
                                                                radioButtons(inputId      = "highlight_type",
                                                                             label        = "Type for highlight:",
                                                                             inline       = TRUE,
-                                                                            choiceNames  = c("Box \u25FB", "Filled \u25A0","Hatched \u25A8"),
+                                                                            choiceNames  = c("Box \u2610", "Filled \u25A0","Hatched \u25A8"),
                                                                             choiceValues = c("Box","Filled","Hatched")),
                                                                
                                                                
@@ -1140,6 +1141,7 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "point_colour_ts", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),                        
                                                                  
                                                                  
@@ -1177,12 +1179,13 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "highlight_colour_ts", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),
                                                                  
                                                                  radioButtons(inputId      = "highlight_type_ts",
                                                                               label        = "Type for highlight:",
                                                                               inline       = TRUE,
-                                                                              choiceNames  = c("Fill \u25FC", "Box \u25FB"),
+                                                                              choiceNames  = c("Fill \u25A0", "Box \u2610"),
                                                                               choiceValues = c("Fill","Box")),
                                                                  
                                                                  checkboxInput(inputId = "show_highlight_on_legend_ts",
@@ -1225,6 +1228,7 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "line_colour_ts", 
                                                                              label   = "Line colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),
                                                                  
                                                                  radioButtons(inputId      = "line_type_ts",
@@ -1694,7 +1698,7 @@ ui <- navbarPage(
                                                                 textOutput("custom_years2")
                                             )),
                                             
-                                            withSpinner(ui_element = plotOutput("map2",height = "auto", click = "map_dblclick2", brush = brushOpts(id = "map_brush2",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("map2",height = "auto", dblclick = "map_dblclick2", brush = brushOpts(id = "map_brush2",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),         
@@ -1795,11 +1799,11 @@ ui <- navbarPage(
                                                                                value   = TRUE),
                                                                  
                                                                  checkboxInput(inputId = "white_ocean2",
-                                                                               label   = "White ocean",
+                                                                               label   = "Grey ocean",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "white_land2",
-                                                                               label   = "White land",
+                                                                               label   = "Grey land",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_rivers2",
@@ -1862,7 +1866,7 @@ ui <- navbarPage(
                                                                  
                                                                  h4(helpText("Add custom points",map_points_popover("pop_composites_mappoint"))),
                                                                  
-                                                                 h6(helpText("Enter location/coordinates or click on map")),
+                                                                 h6(helpText("Enter location/coordinates or double click on map")),
                                                                  
                                                                  textInput(inputId = "location2", 
                                                                            label   = "Enter a location:",
@@ -1901,6 +1905,7 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "point_colour2", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),                       
                                                                  
                                                                  
@@ -1943,12 +1948,13 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "highlight_colour2", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),
                                                                  
                                                                  radioButtons(inputId      = "highlight_type2",
                                                                               label        = "Type for highlight:",
                                                                               inline       = TRUE,
-                                                                              choiceNames  = c("Box \u25FB", "Filled \u25A0","Hatched \u25A8"),
+                                                                              choiceNames  = c("Box \u2610", "Filled \u25A0","Hatched \u25A8"),
                                                                               choiceValues = c("Box","Filled","Hatched")),
                                                                  
                                                                  
@@ -2195,6 +2201,7 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "point_colour_ts2", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),                        
                                                                  
                                                                  
@@ -2233,12 +2240,13 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "highlight_colour_ts2", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),
                                                                  
                                                                  radioButtons(inputId      = "highlight_type_ts2",
                                                                               label        = "Type for highlight:",
                                                                               inline       = TRUE,
-                                                                              choiceNames  = c("Fill \u25FC", "Box \u25FB"),
+                                                                              choiceNames  = c("Fill \u25A0", "Box \u2610"),
                                                                               choiceValues = c("Fill","Box")),
                                                                  
                                                                  checkboxInput(inputId = "show_highlight_on_legend_ts2",
@@ -2282,6 +2290,7 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "line_colour_ts2", 
                                                                              label   = "Line colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),
                                                                  
                                                                  radioButtons(inputId      = "line_type_ts2",
@@ -3546,6 +3555,7 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "point_colour_ts3", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),                        
                                                                  
                                                                  
@@ -3584,12 +3594,13 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "highlight_colour_ts3", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),
                                                                  
                                                                  radioButtons(inputId      = "highlight_type_ts3",
                                                                               label        = "Type for highlight:",
                                                                               inline       = TRUE,
-                                                                              choiceNames  = c("Fill \u25FC", "Box \u25FB"),
+                                                                              choiceNames  = c("Fill \u25A0", "Box \u2610"),
                                                                               choiceValues = c("Fill","Box")),
                                                                  
                                                                  checkboxInput(inputId = "show_highlight_on_legend_ts3",
@@ -3633,6 +3644,7 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "line_colour_ts3", 
                                                                              label   = "Line colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),
                                                                  
                                                                  radioButtons(inputId      = "line_type_ts3",
@@ -3819,7 +3831,7 @@ ui <- navbarPage(
                                                          label    = "Choose a correlation method:",
                                                          choices  = c("pearson", "spearman"),
                                                          selected = "pearson" , inline = TRUE),
-                                            withSpinner(ui_element = plotOutput("correlation_map", height = "auto", click = "map_dblclick3", brush = brushOpts(id = "map_brush3",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("correlation_map", height = "auto", dblclick = "map_dblclick3", brush = brushOpts(id = "map_brush3",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -3924,11 +3936,11 @@ ui <- navbarPage(
                                                                                value   = TRUE),
                                                                  
                                                                  checkboxInput(inputId = "white_ocean3",
-                                                                               label   = "White ocean",
+                                                                               label   = "Grey ocean",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "white_land3",
-                                                                               label   = "White land",
+                                                                               label   = "Grey land",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_rivers3",
@@ -3990,7 +4002,7 @@ ui <- navbarPage(
                                                              div(id = "hidden_custom_points3",
                                                                  
                                                                  h4(helpText("Add custom points",map_points_popover("pop_correlation_mappoint"))),
-                                                                 h6(helpText("Enter location/coordinates or click on map")),
+                                                                 h6(helpText("Enter location/coordinates or double click on map")),
                                                                  
                                                                  textInput(inputId = "location3", 
                                                                            label   = "Enter a location:",
@@ -4029,6 +4041,7 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "point_colour3", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),                       
                                                                  
                                                                  
@@ -4071,12 +4084,13 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "highlight_colour3", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),
                                                                  
                                                                  radioButtons(inputId      = "highlight_type3",
                                                                               label        = "Type for highlight:",
                                                                               inline       = TRUE,
-                                                                              choiceNames  = c("Box \u25FB", "Filled \u25A0","Hatched \u25A8"),
+                                                                              choiceNames  = c("Box \u2610", "Filled \u25A0","Hatched \u25A8"),
                                                                               choiceValues = c("Box","Filled","Hatched")),
                                                                  
                                                                  
@@ -4858,6 +4872,7 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "point_colour_ts4", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),                        
                                                                  
                                                                  
@@ -4896,12 +4911,13 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "highlight_colour_ts4", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),
                                                                  
                                                                  radioButtons(inputId      = "highlight_type_ts4",
                                                                               label        = "Type for highlight:",
                                                                               inline       = TRUE,
-                                                                              choiceNames  = c("Fill \u25FC", "Box \u25FB"),
+                                                                              choiceNames  = c("Fill \u25A0", "Box \u2610"),
                                                                               choiceValues = c("Fill","Box")),
                                                                  
                                                                  checkboxInput(inputId = "show_highlight_on_legend_ts4",
@@ -4945,6 +4961,7 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "line_colour_ts4", 
                                                                              label   = "Line colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),
                                                                  
                                                                  radioButtons(inputId      = "line_type_ts4",
@@ -5041,7 +5058,7 @@ ui <- navbarPage(
                                                         label    = "Choose a variable:",
                                                         choices  = NULL,
                                                         selected = NULL),
-                                            withSpinner(ui_element = plotOutput("plot_reg_coeff", height = "auto",  click = "map_dblclick_reg_coeff", brush = brushOpts(id = "map_brush_reg_coeff",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("plot_reg_coeff", height = "auto",  dblclick = "map_dblclick_reg_coeff", brush = brushOpts(id = "map_brush_reg_coeff",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -5139,11 +5156,11 @@ ui <- navbarPage(
                                                                                value   = TRUE),
                                                                  
                                                                  checkboxInput(inputId = "white_ocean_reg_coeff",
-                                                                               label   = "White ocean",
+                                                                               label   = "Grey ocean",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "white_land_reg_coeff",
-                                                                               label   = "White land",
+                                                                               label   = "Grey land",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_rivers_reg_coeff",
@@ -5203,7 +5220,7 @@ ui <- navbarPage(
                                                            div(id = "hidden_custom_points_reg_coeff",
                                                                h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
                                                                
-                                                               h6(helpText("Enter location/coordinates or click on map")),
+                                                               h6(helpText("Enter location/coordinates or double click on map")),
                                                                
                                                                textInput(inputId = "location_reg_coeff",
                                                                          label   = "Enter a location:",
@@ -5242,6 +5259,7 @@ ui <- navbarPage(
                                                                colourInput(inputId = "point_colour_reg_coeff",
                                                                            label   = "Point colour:",
                                                                            showColour = "background",
+                                                                           value = "#27408B",
                                                                            palette = "limited"),
                                                                
                                                                
@@ -5283,12 +5301,13 @@ ui <- navbarPage(
                                                                colourInput(inputId = "highlight_colour_reg_coeff",
                                                                            label   = "Highlight colour:",
                                                                            showColour = "background",
+                                                                           value = "#27408B",
                                                                            palette = "limited"),
                                                                
                                                                radioButtons(inputId      = "highlight_type_reg_coeff",
                                                                             label        = "Type for highlight:",
                                                                             inline       = TRUE,
-                                                                            choiceNames  = c("Box \u25FB", "Filled \u25A0","Hatched \u25A8"),
+                                                                            choiceNames  = c("Box \u2610", "Filled \u25A0","Hatched \u25A8"),
                                                                             choiceValues = c("Box","Filled","Hatched")),
                                                                
                                                                
@@ -5368,7 +5387,7 @@ ui <- navbarPage(
                                                         label    = "Choose a variable:",
                                                         choices  = NULL,
                                                         selected = NULL),
-                                            withSpinner(ui_element = plotOutput("plot_reg_pval", height = "auto",  click = "map_dblclick_reg_pval", brush = brushOpts(id = "map_brush_reg_pval",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("plot_reg_pval", height = "auto",  dblclick = "map_dblclick_reg_pval", brush = brushOpts(id = "map_brush_reg_pval",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -5469,11 +5488,11 @@ ui <- navbarPage(
                                                                                value   = TRUE),
                                                                  
                                                                  checkboxInput(inputId = "white_ocean_reg_pval",
-                                                                               label   = "White ocean",
+                                                                               label   = "Grey ocean",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "white_land_reg_pval",
-                                                                               label   = "White land",
+                                                                               label   = "Grey land",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_rivers_reg_pval",
@@ -5533,7 +5552,7 @@ ui <- navbarPage(
                                                            div(id = "hidden_custom_points_reg_pval",
                                                                h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
                                                                
-                                                               h6(helpText("Enter location/coordinates or click on map")),
+                                                               h6(helpText("Enter location/coordinates or double click on map")),
                                                                
                                                                textInput(inputId = "location_reg_pval",
                                                                          label   = "Enter a location:",
@@ -5572,6 +5591,7 @@ ui <- navbarPage(
                                                                colourInput(inputId = "point_colour_reg_pval",
                                                                            label   = "Point colour:",
                                                                            showColour = "background",
+                                                                           value = "#27408B",
                                                                            palette = "limited"),
                                                                
                                                                
@@ -5613,12 +5633,13 @@ ui <- navbarPage(
                                                                colourInput(inputId = "highlight_colour_reg_pval",
                                                                            label   = "Highlight colour:",
                                                                            showColour = "background",
+                                                                           value = "#27408B",
                                                                            palette = "limited"),
                                                                
                                                                radioButtons(inputId      = "highlight_type_reg_pval",
                                                                             label        = "Type for highlight:",
                                                                             inline       = TRUE,
-                                                                            choiceNames  = c("Box \u25FB", "Filled \u25A0","Hatched \u25A8"),
+                                                                            choiceNames  = c("Box \u2610", "Filled \u25A0","Hatched \u25A8"),
                                                                             choiceValues = c("Box","Filled","Hatched")),
                                                                
                                                                
@@ -5699,7 +5720,7 @@ ui <- navbarPage(
                                                        min = 1422,
                                                        max = 2008)),
                                             ),
-                                            withSpinner(ui_element = plotOutput("plot_reg_resi", height = "auto",  click = "map_dblclick_reg_res", brush = brushOpts(id = "map_brush_reg_res",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("plot_reg_resi", height = "auto",  dblclick = "map_dblclick_reg_res", brush = brushOpts(id = "map_brush_reg_res",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -5798,11 +5819,11 @@ ui <- navbarPage(
                                                                                value   = TRUE),
                                                                  
                                                                  checkboxInput(inputId = "white_ocean_reg_res",
-                                                                               label   = "White ocean",
+                                                                               label   = "Grey ocean",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "white_land_reg_res",
-                                                                               label   = "White land",
+                                                                               label   = "Grey land",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_rivers_reg_res",
@@ -5862,7 +5883,7 @@ ui <- navbarPage(
                                                            div(id = "hidden_custom_points_reg_res",
                                                                h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
                                                                
-                                                               h6(helpText("Enter location/coordinates or click on map")),
+                                                               h6(helpText("Enter location/coordinates or double click on map")),
                                                                
                                                                textInput(inputId = "location_reg_res",
                                                                          label   = "Enter a location:",
@@ -5898,15 +5919,10 @@ ui <- navbarPage(
                                                                             inline       = TRUE,
                                                                             choices      = c("\u25CF", "\u25B2", "\u25A0")),
                                                                
-                                                               # radioButtons(inputId      = "point_shape_reg_res",
-                                                               #              label        = "Point shape:",
-                                                               #              inline       = TRUE,
-                                                               #              choiceNames  = c("\u25CF", "\u25B2", "\u25A0"),
-                                                               #              choiceValues = c(16, 17, 15)),
-                                                               
                                                                colourInput(inputId = "point_colour_reg_res",
                                                                            label   = "Point colour:",
                                                                            showColour = "background",
+                                                                           value = "#27408B",
                                                                            palette = "limited"),
                                                                
                                                                
@@ -5948,12 +5964,13 @@ ui <- navbarPage(
                                                                colourInput(inputId = "highlight_colour_reg_res",
                                                                            label   = "Highlight colour:",
                                                                            showColour = "background",
+                                                                           value = "#27408B",
                                                                            palette = "limited"),
                                                                
                                                                radioButtons(inputId      = "highlight_type_reg_res",
                                                                             label        = "Type for highlight:",
                                                                             inline       = TRUE,
-                                                                            choiceNames  = c("Box \u25FB", "Filled \u25A0","Hatched \u25A8"),
+                                                                            choiceNames  = c("Box \u2610", "Filled \u25A0","Hatched \u25A8"),
                                                                             choiceValues = c("Box","Filled","Hatched")),
                                                                
                                                                
@@ -6421,6 +6438,7 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "point_colour_ts5", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),                        
                                                                  
                                                                  
@@ -6458,12 +6476,13 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "highlight_colour_ts5", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),
                                                                  
                                                                  radioButtons(inputId      = "highlight_type_ts5",
                                                                               label        = "Type for highlight:",
                                                                               inline       = TRUE,
-                                                                              choiceNames  = c("Fill \u25FC", "Box \u25FB"),
+                                                                              choiceNames  = c("Fill \u25A0", "Box \u2610"),
                                                                               choiceValues = c("Fill","Box")),
                                                                  
                                                                  checkboxInput(inputId = "show_highlight_on_legend_ts5",
@@ -6505,6 +6524,7 @@ ui <- navbarPage(
                                                                  colourInput(inputId = "line_colour_ts5", 
                                                                              label   = "Line colour:",
                                                                              showColour = "background",
+                                                                             value = "#27408B",
                                                                              palette = "limited"),
                                                                  
                                                                  radioButtons(inputId      = "line_type_ts5",
