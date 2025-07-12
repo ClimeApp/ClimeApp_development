@@ -27,9 +27,18 @@ generate_title_months = function(MR){
 
 #### General Functions ####
 
-<<<<<<< HEAD
 ## Projections
 laea_proj = paste0("+proj=laea +lat_0=", 0, " +lon_0=", 0, " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
+
+#' Generate Orthographic Projection String
+#'
+#' Creates a PROJ.4-compatible string for an orthographic map projection centered on a given latitude and longitude.
+#' Useful for setting up spatial projections in mapping packages (e.g., `sf`, `rgdal`, `terra`).
+#'
+#' @param center_lat Numeric. Central latitude of the projection (in degrees).
+#' @param center_lon Numeric. Central longitude of the projection (in degrees).
+#'
+#' @return Character string. A complete PROJ.4 string for an orthographic projection centered at the specified location.
 
 ortho_proj <- function(center_lat, center_lon) {
   paste0(
@@ -44,33 +53,129 @@ ortho_proj <- function(center_lat, center_lon) {
   )
 }
 
+
+#' Transform Coordinates in a Data Frame
+#'
+#' Transforms point coordinates from one projection to another using PROJ.4 strings.
+#' Supports backward compatibility for named projections like `"Robinson"` or `"Orthographic"`.
+#' Used for reprojecting coordinate columns in a data frame.
+#'
+#' @param df Data frame. Input data containing point coordinates.
+#' @param xcol Character. Name of the column containing x (longitude) values.
+#' @param ycol Character. Name of the column containing y (latitude) values.
+#' @param projection_from Character. PROJ.4 string of the source projection (default is WGS84).
+#' @param projection_to Character. PROJ.4 string of the target projection (if known).
+#' @param projection Character. Optional named projection (`"Robinson"`, `"Orthographic"`, `"LAEA"`) for compatibility.
+#' @param center_lat Numeric. Central latitude for `"Orthographic"` projection (if used).
+#' @param center_lon Numeric. Central longitude for `"Orthographic"` projection (if used).
+#'
+#' @return Data frame. Same as input `df`, but with transformed coordinates in the `xcol` and `ycol` columns.
+
 transform_points_df <- function(df,
                                 xcol,
                                 ycol,
-                                projection,
+                                projection_from = "+proj=longlat +datum=WGS84",
+                                projection_to = NULL,
+                                projection = NULL,  # for backward compatibility
                                 center_lat = 0,
                                 center_lon = 0) {
-  if (projection == "UTM (default)")
-    return(df)
+  # Backward compatibility: if 'projection' is given and 'projection_to' is NULL
+  if (!is.null(projection) && is.null(projection_to)) {
+    if (projection == "UTM (default)")
+      return(df)
+    
+    projection_from <- "+proj=longlat +datum=WGS84"
+    projection_to <- switch(
+      projection,
+      "Robinson" = "+proj=robin",
+      "Orthographic" = ortho_proj(center_lat, center_lon),
+      "LAEA" = laea_proj
+    )
+  }
   
-  crs_target <- switch(
-    projection,
-    "Robinson" = st_crs("+proj=robin"),
-    "Orthographic" = st_crs(ortho_proj(center_lat, center_lon)),
-    "LAEA" = st_crs(laea_proj)
-  )
+  # Convert input to sf object using source CRS
+  sf_obj <- sf::st_as_sf(df, coords = c(xcol, ycol), crs = projection_from)
   
-  sf_obj <- st_as_sf(df, coords = c(xcol, ycol), crs = 4326)
-  sf_trans <- st_transform(sf_obj, crs_target)
-  coords <- st_coordinates(sf_trans)
+  # Transform to target CRS
+  sf_trans <- sf::st_transform(sf_obj, crs = projection_to)
+  coords <- sf::st_coordinates(sf_trans)
   
+  # Overwrite x/y columns
   df[[xcol]] <- coords[, 1]
   df[[ycol]] <- coords[, 2]
   return(df)
 }
 
-## (General) Creating c(min,max) numeric Vector for range_months data input
-=======
+
+#' Transform Bounding Box Coordinates in a Data Frame
+#'
+#' Transforms rectangular box coordinates (x1/y1 to x2/y2) between spatial projections.
+#' Supports named projections like `"Robinson"` and `"Orthographic"` for compatibility.
+#' Applies corner-wise transformation and updates each box's extent.
+#'
+#' @param df Data frame. Input containing bounding box coordinates.
+#' @param x1col Character. Name of column for left x-coordinate (default `"x1"`).
+#' @param x2col Character. Name of column for right x-coordinate (default `"x2"`).
+#' @param y1col Character. Name of column for bottom y-coordinate (default `"y1"`).
+#' @param y2col Character. Name of column for top y-coordinate (default `"y2"`).
+#' @param projection_from Character. PROJ.4 string of source projection (default is WGS84).
+#' @param projection_to Character. PROJ.4 string of target projection.
+#' @param projection Character. Optional named projection (`"Robinson"`, `"Orthographic"`, `"LAEA"`).
+#' @param center_lat Numeric. Central latitude for `"Orthographic"` projection (if used).
+#' @param center_lon Numeric. Central longitude for `"Orthographic"` projection (if used).
+#'
+#' @return Data frame. Same as input `df`, but with transformed box coordinates in `x1`, `x2`, `y1`, and `y2`.
+
+transform_box_df <- function(df,
+                             x1col = "x1",
+                             x2col = "x2",
+                             y1col = "y1",
+                             y2col = "y2",
+                             projection_from = "+proj=longlat +datum=WGS84",
+                             projection_to = NULL,
+                             projection = NULL,
+                             center_lat = 0,
+                             center_lon = 0) {
+  if (!is.null(projection) && is.null(projection_to)) {
+    if (projection == "UTM (default)")
+      return(df)
+    
+    projection_from <- "+proj=longlat +datum=WGS84"
+    projection_to <- switch(
+      projection,
+      "Robinson" = "+proj=robin",
+      "Orthographic" = ortho_proj(center_lat, center_lon),
+      "LAEA" = laea_proj
+    )
+  }
+  
+  # Construct a point matrix from each corner of the boxes
+  box_coords <- data.frame(
+    x = c(df[[x1col]], df[[x1col]], df[[x2col]], df[[x2col]]),
+    y = c(df[[y1col]], df[[y2col]], df[[y1col]], df[[y2col]]),
+    id = rep(seq_len(nrow(df)), 4)
+  )
+  
+  # Convert to sf and transform
+  sf_obj <- sf::st_as_sf(box_coords, coords = c("x", "y"), crs = projection_from)
+  sf_trans <- sf::st_transform(sf_obj, crs = projection_to)
+  coords <- sf::st_coordinates(sf_trans)
+  
+  # Extract transformed corners back into each row
+  for (i in seq_len(nrow(df))) {
+    idx <- which(box_coords$id == i)
+    x_vals <- coords[idx, 1]
+    y_vals <- coords[idx, 2]
+    df[[x1col]][i] <- min(x_vals)
+    df[[x2col]][i] <- max(x_vals)
+    df[[y1col]][i] <- min(y_vals)
+    df[[y2col]][i] <- max(y_vals)
+  }
+  
+  return(df)
+}
+
+
 #' (General) CREATE MONTH RANGE
 #'
 #' This function creates a numeric vector representing the minimum and maximum month indices
@@ -83,8 +188,6 @@ transform_points_df <- function(df,
 #'
 #' @return A numeric vector of length 2 indicating the start and end months, where
 #' January = 1, February = 2, ..., December = 12, and "December (prev.)" = 0.
-
->>>>>>> b7d9e67c659c9c18dd899e7d1a3c1d9961e4d322
 
 create_month_range = function(month_names_vector){
   month_names_list = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
@@ -150,7 +253,6 @@ create_subset_lat_IDs = function(lat_range){
 #' @param hide_axis Logical. Whether to hide axis labels and reduce margin space.
 #'
 #' @return A numeric vector of length 5: c(on-screen width, on-screen height, download width, download height, lon/lat aspect ratio).
-
 
 generate_map_dimensions = function(subset_lon_IDs,
                                    subset_lat_IDs,
@@ -657,6 +759,7 @@ create_yearly_subset = function(data_input,
   return(data_subset)
 }
 
+
 #' (General) Convert Absolute Yearly Subset to Anomalies
 #'
 #' Converts an absolute yearly subset dataset into anomalies relative to a reference dataset.
@@ -685,6 +788,7 @@ convert_subset_to_anomalies = function(data_input,
 
   return(anomaly_data)
 }
+
 
 #' (General) Generate Map, Timeseries, and File Titles
 #'
@@ -746,7 +850,7 @@ generate_titles = function(tab,
   
   
   # Generate title months
-  title_months = generate_title_months(month_range)
+  title_months = generate_title_months(MR = month_range)
   
   # Create map_title & map_subtitle:
   # Averages and Anomalies titles
@@ -925,6 +1029,7 @@ generate_stats_ts = function(data){
   return(ts_stats)
 }
 
+
 #' (General) SET DEFAULT/CUSTOM AXIS VALUES
 #' 
 #' @param data_input Numeric vector or array for mapping.
@@ -947,6 +1052,7 @@ set_axis_values = function(data_input,
   
   return(minmax)
 }
+
 
 #' (General) SET DEFAULT TIME SERIES AXIS VALUES
 #' 
@@ -1270,21 +1376,7 @@ plot_map <- function(data_input,
     # Set limits of plot to lon_lat range 
     p <- p + coord_sf(xlim = lon_lat_range[1:2], ylim = lon_lat_range[3:4], expand = FALSE)
   }
-  
-  # # Transform point data
-  # if (projection != "UTM (default)" &&
-  #     nrow(points_data) > 0 &&
-  #     all(c("x_value", "y_value") %in% names(points_data))) {
-  #   points_data <- transform_points_df(
-  #     points_data,
-  #     xcol = "x_value",
-  #     ycol = "y_value",
-  #     projection = projection,
-  #     center_lat = center_lat,
-  #     center_lon = center_lon
-  #   )
-  # }
-  
+
   # Add title and subtitle if provided
   if (!is.null(titles)) {
     if (titles$map_title != " " || titles$map_subtitle != " ") {
@@ -1309,6 +1401,21 @@ plot_map <- function(data_input,
     )
   }
   
+  # Transform statistical highlight points if projection is active
+  if (projection != "UTM (default)" &&
+      nrow(stat_highlights_data) > 0 &&
+      all(c("x_vals", "y_vals") %in% names(stat_highlights_data))) {
+    
+    stat_highlights_data <- transform_points_df(
+      df = stat_highlights_data,
+      xcol = "x_vals",
+      ycol = "y_vals",
+      projection = projection,
+      center_lat = center_lat,
+      center_lon = center_lon
+    )
+  }
+  
   # Add point and highlights (without legend)
   if (nrow(stat_highlights_data) > 0) {
     filtered_stat_highlights_data <- subset(stat_highlights_data, criteria_vals == 1) # if criteria_vals == 0, the point is not added to the map
@@ -1324,6 +1431,20 @@ plot_map <- function(data_input,
         ) +
         labs(x = NULL, y = NULL)
     }
+  }
+  
+  # Transform point data
+  if (projection != "UTM (default)" &&
+      nrow(points_data) > 0 &&
+      all(c("x_value", "y_value") %in% names(points_data))) {
+    points_data <- transform_points_df(
+      df = points_data,
+      xcol = "x_value",
+      ycol = "y_value",
+      projection = projection,
+      center_lat = center_lat,
+      center_lon = center_lon
+    )
   }
   
   if (nrow(points_data) > 0 && all(c("x_value", "y_value", "color", "shape", "size", "label") %in% colnames(points_data))) {
@@ -1343,6 +1464,22 @@ plot_map <- function(data_input,
       scale_color_identity() +
       scale_shape_identity() +
       labs(x = NULL, y = NULL)
+  }
+  
+  # Transform highlight box coordinates if necessary
+  if (projection != "UTM (default)" &&
+      nrow(highlights_data) > 0 &&
+      all(c("x1", "x2", "y1", "y2") %in% names(highlights_data))) {
+    highlights_data <- transform_box_df(
+      df = highlights_data,
+      x1col = "x1",
+      x2col = "x2",
+      y1col = "y1",
+      y2col = "y2",
+      projection = projection,
+      center_lat = center_lat,
+      center_lon = center_lon
+    )
   }
   
   if (nrow(highlights_data) > 0 && all(c("x1", "x2", "y1", "y2", "color", "type") %in% colnames(highlights_data))) {
@@ -1394,7 +1531,6 @@ plot_map <- function(data_input,
 }
 
 
-
 #' (General) CREATE MAP DATATABLE
 #' 
 #' Generates a labeled 2D matrix (longitude × latitude) of spatial means from a 3D climate dataset.
@@ -1434,6 +1570,7 @@ create_map_datatable = function(data_input,
 
   return(map_data)
 }
+
 
 #' (General) CREATE BASIC TIMESERIES DATATABLE
 
@@ -1842,7 +1979,7 @@ plot_timeseries <- function(type,
   if (type == "Anomaly" || type == "Monthly") {
     new_line = data.frame(
       ID = lID,
-      label = paste(generate_title_months(month_range_1), variable, type),
+      label = paste(generate_title_months(MR = month_range_1), variable, type),
       x = data$Year,
       y = data[,2],
       lcolor = get_variable_properties(variable)$color,
@@ -1869,7 +2006,7 @@ plot_timeseries <- function(type,
   } else if (type == "Composites") {
     new_point = data.frame(
       ID = pID,
-      label = paste(generate_title_months(month_range_1), variable, type),
+      label = paste(generate_title_months(MR = month_range_1), variable, type),
       x = as.double(data$Year),
       y = data[,2],
       pcolor = get_variable_properties(variable)$color,
@@ -2321,12 +2458,21 @@ plot_timeseries <- function(type,
 }
 
 
-## ADD DATA TO TS - Adds data to a ggplot timeseries. Either as a line or a point
-##          data = data to be added. dataframe with columns 'Year', 'Mean', 'Min', 'Max' (for anomalies), and 'Year', 'Original', 'Trend', 'Residuals' (for regression)
-##          variable = variable to be added (for regression: the DV)
-##          plottype = "Anomalies", "Correlation", "Regression", "Monthly"
-##          legend_label = string identifying the colors and linetype later added via scale_color_manual and scale_linetype_manual
-##          vcol = variable colour (only required for composites)
+#' (General) Add Data Layer to ggplot Timeseries
+#'
+#' Adds a line or point layer to a ggplot timeseries, depending on plot type.
+#' Supports anomalies, regression, correlation, or composite visualizations.
+#' Legend mapping is handled via `legend_label` for later scale customization.
+#'
+#' @param data Data frame. Timeseries data with required columns depending on `plottype`.
+#'             For anomalies: `Year`, `Mean`, `Min`, `Max`; for regression: `Year`, `Original`, `Trend`, `Residuals`.
+#' @param variable Character. Variable name to be plotted (used in regression context).
+#' @param plottype Character. One of `"Anomalies"`, `"Correlation"`, `"Regression"`, `"Monthly"`, or `"Composites"`.
+#' @param legend_label Character. Label used for color and linetype grouping in the legend.
+#' @param show_key Logical. Whether to include the layer in the legend.
+#' @param vcol Character. Color for points (only used if `plottype == "Composites"`).
+#'
+#' @return A `ggplot2` layer (`geom_line` or `geom_point`) to be added to a plot.
 
 add_data_to_TS <- function(data,
                            variable,
@@ -2360,12 +2506,27 @@ add_data_to_TS <- function(data,
 }
 
 
-## (General) ADD CUSTOM FEATURES TO TIMESERIES PLOT (Points, Lines, Highlights)
-##              p = ggplot object containing the timeseries plot
-##              highlights_data = dataframe with columns x1, x2, y1, y2, color, type
-##              lines_data = dataframe with columns location, color, type, orientation
-##              points_data = dataframe with columns x_value, y_value, color, shape, size, label
-##              labels, colors, linetypes = lists that track legend entries
+#' (General) ADD CUSTOM FEATURES TO TIMESERIES PLOT (Points, Lines, Highlights)
+#'
+#' Adds custom graphical elements to a ggplot timeseries, including lines, points, and highlight rectangles.
+#' Allows selective inclusion in the legend via ghost layers and tracks legend styling entries.
+#' Useful for overlaying reference lines, annotations, or visual emphasis.
+#'
+#' @param p ggplot object. The existing timeseries plot to modify.
+#' @param highlights_data Data frame (optional). Rectangles with columns: `x1`, `x2`, `y1`, `y2`, `color`, `type`.
+#' @param lines_data Data frame (optional). Lines with columns: `location`, `color`, `type`, `orientation`, `label`, `key_show`.
+#' @param points_data Data frame (optional). Points with columns: `x_value`, `y_value`, `color`, `shape`, `size`, `label`.
+#' @param labels Character vector. Legend labels accumulated so far (can be empty).
+#' @param colors Character vector. Color values to match `labels` (can be empty).
+#' @param linetypes Character vector. Linetypes to match `labels` (can be empty).
+#' @param year_range Numeric vector. Year range used for plotting ghost lines (e.g., `c(1901, 2000)`).
+#' @param data_mean Numeric. A representative y-value used to anchor ghost lines for legend display.
+#'
+#' @return List with updated ggplot object and updated `labels`, `colors`, and `linetypes` vectors:
+#'   - `p`: the modified ggplot object  
+#'   - `labels`: updated legend labels  
+#'   - `colors`: updated legend colors  
+#'   - `linetypes`: updated legend linetypes  
 
 add_timeseries_custom_features <- function(p,
                                            highlights_data = NULL,
@@ -2445,7 +2606,19 @@ add_timeseries_custom_features <- function(p,
 }
 
 
-## (General) GET VARIABLE PROPERTIES
+#' (General) GET VARIABLE PROPERTIES
+#'
+#' Returns display properties for a climate variable, including its unit and color.
+#' Supports alternate color schemes for secondary variables in correlation plots.
+#' Useful for consistent labeling and theming in plots.
+#'
+#' @param variable Character. Name of the variable (e.g., `"Temperature"`, `"Precipitation"`, `"SLP"`, `"Z500"`).
+#' @param secondary Logical. If `TRUE`, returns alternate color scheme for secondary variables (default `FALSE`).
+#'
+#' @return Named list with:
+#'   - `unit`: Character string (e.g., `"°C"`, `"mm/month"`).
+#'   - `color`: Character string with a base R color name.
+
 
 get_variable_properties <- function(variable,
                                     secondary = FALSE) {
@@ -2480,8 +2653,18 @@ get_variable_properties <- function(variable,
   return(list(unit = unit, color = color))
 }
 
-## (General) REWRITE MAPTABLE - rewrites maptable to get rid of degree symbols 
-##                              Set subset_lon/lat to NA for correlation/regression
+
+#' (General) REWRITE MAPTABLE
+#'
+#' Reformats a labeled map data table by stripping degree symbols and inserting numeric lat/lon values.
+#' Handles correlation/regression cases where subset IDs are `NA`.
+#' Used for exporting or post-processing tables for CSV or Excel.
+#'
+#' @param maptable Matrix or data frame. Output from `create_map_datatable()` with labeled row/column names.
+#' @param subset_lon_IDs Numeric vector or `NA`. Longitude indices used in the original subset. Set to `NA` for correlation/regression mode.
+#' @param subset_lat_IDs Numeric vector or `NA`. Latitude indices used in the original subset. Set to `NA` for correlation/regression mode.
+#'
+#' @return Matrix. Reformatted version of `maptable` with numeric lat/lon row and column headers.
 
 rewrite_maptable = function(maptable,
                             subset_lon_IDs,
@@ -2504,8 +2687,16 @@ rewrite_maptable = function(maptable,
 }
 
 
-## (General) REWRITE TS TABLE - rewites ts_datatable to round values and add units
-##                              to column headings 
+#' (General) REWRITE TS TABLE
+#'
+#' Reformats a timeseries datatable by rounding values and appending units to column headers.
+#' Variable-specific units are applied to all columns except the year.
+#' Intended for display or export of processed timeseries data.
+#'
+#' @param tstable Data frame. Output from `create_timeseries_datatable()` or similar.
+#' @param variable Character. Name of the variable (`"Temperature"`, `"Precipitation"`, `"SLP"`, `"Z500"`, or custom).
+#'
+#' @return Data frame. Rounded timeseries table with units included in column names.
 
 rewrite_tstable = function(tstable,
                            variable){
@@ -2530,10 +2721,16 @@ rewrite_tstable = function(tstable,
 }
 
 
-## (General) LOAD MODE-RA SOURCE DATA loads ModE-RA data sources for
-##           a given year and season
-##           year = a single user selected or default year
-##           season = "summer" or "winter"
+#' (General) LOAD MODE-RA SOURCE DATA
+#'
+#' Loads ModE-RA feedback source data for a given year and season.
+#' Assumes input files are stored in `data/feedback_archive_fin/` with filenames matching the pattern `season + year + .csv`.
+#'
+#' @param year Integer. The year of interest (e.g., `1972`).
+#' @param season Character. Either `"summer"` or `"winter"` (lowercase).
+#'
+#' @return Data frame. Contents of the source data CSV file for the selected year and season.
+
 
 load_modera_source_data = function(year,
                                    season){
@@ -2542,12 +2739,18 @@ load_modera_source_data = function(year,
 }
 
 
-## (General) PLOT MODE-RA SOURCES creates a plot of the ModE-RA data sources for
-##           a given year and season
-##           year = a single user selected or default year
-##           season = "summer" or "winter"
-##           minmax_lonlat = c(min_lon,max_lon,min_lat,max_lat) ->
-##                           c(-180,180,-90,90) for non-zoomed plot
+#' (General) PLOT MODE-RA SOURCES
+#'
+#' Creates a map of ModE-RA observation sources for a given year and season.
+#' Supports full-globe or zoomed plotting using a bounding box.
+#'
+#' @param ME_source_data Data frame. Source data loaded via `load_modera_source_data()`.
+#' @param year Integer. Year of interest (e.g., `1972`).
+#' @param season Character. Either `"summer"` or `"winter"`.
+#' @param minmax_lonlat Numeric vector of length 4. Bounding box: `c(min_lon, max_lon, min_lat, max_lat)`.
+#' @param base_size Numeric (optional). Base font size for plot theme.
+#'
+#' @return A `ggplot` object displaying ModE-RA sources by type and variable.
 
 plot_modera_sources = function(ME_source_data,
                                year,
@@ -2645,7 +2848,16 @@ plot_modera_sources = function(ME_source_data,
     theme(panel.border = element_rect(colour = "black", fill = NA))
 }
 
-## (General) DOWNLOAD MODE-RA SOURCES DATA
+
+#' (General) DOWNLOAD MODE-RA SOURCES DATA
+#'
+#' Extracts a spatial subset of ModE-RA source data based on longitude and latitude bounds.
+#'
+#' @param global_data Data frame. Full ModE-RA source dataset (e.g., from `load_modera_source_data()`).
+#' @param lon_range Numeric vector of length 2. Longitude bounds: `c(min_lon, max_lon)`.
+#' @param lat_range Numeric vector of length 2. Latitude bounds: `c(min_lat, max_lat)`.
+#'
+#' @return Data frame containing the subset of sources within the specified region.
 
 download_feedback_data = function(global_data,
                                   lon_range,
@@ -2656,21 +2868,35 @@ download_feedback_data = function(global_data,
                               (global_data$LAT > lat_range[1]) & (global_data$LAT < lat_range[2]), ]
 }
 
-## (General) PLOT MODE-RA SOURCES AS TIME SERIES in the new ModE-RA section
-##           data = The read and prepared data for the TS plot
-##           year_column = Name of the Column of the Years (X Axis, I think) = "Year"
-##           selected_columns = Input of the selected lines of the source plots (Set fix to all Columns)
-##           line_titles = Titles for the legend of the plot
-##           title = "Total Global Sources"
-##           x_label = "Year"
-##           y_label = "No. of Sources"
-##           x_ticks_every = 20
-##           year_range = Input of the Year Range of the Sources
 
-# Custom function for formatting y-axis labels with apostrophe for thousands separator
+#' (General) FORMAT Y-AXIS LABELS WITH APOSTROPHE
+#'
+#' Formats numeric values with apostrophes as thousands separators (e.g., 10'000).
+#'
+#' @param x Numeric vector. Values to format.
+#'
+#' @return Character vector with formatted numbers using apostrophes.
+
 comma_apostrophe <- function(x) {
   format(x, big.mark = "'", scientific = FALSE)
 }
+
+
+#' (General) PLOT MODE-RA SOURCES AS TIME SERIES
+#'
+#' Creates an interactive time series plot of ModE-RA source counts by season and total.
+#'
+#' @param data Data frame. Preprocessed data for plotting (must include year and source columns).
+#' @param year_column Character. Name of the year column (typically `"Year"`).
+#' @param selected_columns Character vector. Column names to plot as individual lines.
+#' @param line_titles Named list. Titles for the legend corresponding to `selected_columns`.
+#' @param title Character. Title for the plot.
+#' @param x_label Character. Label for the x-axis.
+#' @param y_label Character. Label for the y-axis.
+#' @param x_ticks_every Integer. Number of years between x-axis ticks.
+#' @param year_range Numeric vector of length 2. Min and max year to display on the x-axis.
+#'
+#' @return A `plotly` interactive line chart object displaying source counts over time.
 
 # Function to create the time series plot for selected lines with a legend
 plot_ts_modera_sources <- function(data,
@@ -2742,15 +2968,26 @@ plot_ts_modera_sources <- function(data,
   return(p)
 }
 
-## (General) GENERATE CUSTOM NETCDF
-##           data_input = map plotting data
-##           tab = "general" or "composites"
-##           ncdf_ID = randomly generated ID from ClimeApp
-##           user_nc_variables = a string with all ModE-RA variables to be 
-##                               included in the netcdf 
-##           mode = "Absolute","Anomalies","Anomaly_fixed" or "Anomaly_yrs_prior"
-##           year_range = year_range for general tab or year_set for composites 
-##           baseline_range,baseline_years_before = NA if not used
+
+#' (General) GENERATE CUSTOM NETCDF
+#'
+#' Creates a user-defined NetCDF file from selected ModE-RA data based on tab, variables, mode, and year/baseline ranges.
+#'
+#' @param data_input 3D array. Primary variable data to include in the NetCDF.
+#' @param tab Character. Either `"general"` or `"composites"` to determine processing mode.
+#' @param dataset Character. Dataset source for fallback loading of other variables.
+#' @param ncdf_ID Character. Unique identifier for naming the NetCDF file.
+#' @param variable Character. Name of the primary selected variable.
+#' @param user_nc_variables Character vector. List of ModE-RA variables to include (e.g., `c("Temperature", "SLP")`).
+#' @param mode Character. One of `"Absolute"`, `"Anomalies"`, `"Anomaly_fixed"`, `"Anomaly_yrs_prior"`.
+#' @param subset_lon_IDs Integer vector. Subset of longitude indices.
+#' @param subset_lat_IDs Integer vector. Subset of latitude indices.
+#' @param month_range Integer vector. Range of months used to create seasonal subsets.
+#' @param year_range Integer vector. Either a year range or specific year set, depending on `tab`.
+#' @param baseline_range Integer vector or NA. Reference period for anomaly calculation (for `"Anomalies"` and `"Anomaly_fixed"`).
+#' @param baseline_years_before Integer or NA. Number of years prior to event for baseline (used with `"Anomaly_yrs_prior"`).
+#'
+#' @return None. A NetCDF file is written to `user_ncdf/netcdf_<ncdf_ID>.nc`.
 
 generate_custom_netcdf = function(data_input,
                                   tab,dataset,
@@ -2900,9 +3137,15 @@ generate_custom_netcdf = function(data_input,
   nc_close(ncout)
 }
 
-## (General) CREATE A GEOREFERENCED TIFF RASTER FROM THE MAP DATATABLE WITH OPTION TO SAVE IT TO A FILE
-##           map_data = numeric 2d vector, output of create_map_datatable()
-##           output_file = where to write it
+
+#' (General) CREATE A GEOREFERENCED TIFF RASTER FROM THE MAP DATATABLE
+#'
+#' Converts a labeled map datatable into a georeferenced raster and optionally saves it as a GeoTIFF.
+#'
+#' @param map_data 2D numeric matrix. Output from `create_map_datatable()`, with coordinate-labeled rows and columns.
+#' @param output_file Character (optional). File path to save the raster as a `.tif` file. If `NULL`, the raster is not written to disk.
+#'
+#' @return A `SpatRaster` object (from the `terra` package) with WGS84 georeferencing.
 
 create_geotiff <- function(map_data,
                            output_file = NULL) {
@@ -2934,10 +3177,11 @@ create_geotiff <- function(map_data,
 }
 
 
-## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS FOR ANOMALIES PLOTS
-##           collects and flattens all relevant user inputs (shared, map, ts)
-##           for export or upload use in composite plot modules
-##           returns a single-row metadata dataframe
+#' (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS FOR ANOMALIES PLOTS
+#'
+#' Collects and flattens all relevant user inputs (shared, map, timeseries) into a single-row metadata table.
+#'
+#' @return Data frame. A single-row `data.frame` containing all selected customization inputs, formatted for export or upload to composite modules.
 
 generate_metadata_anomalies <- function(
     
@@ -3104,11 +3348,20 @@ generate_metadata_anomalies <- function(
 }
 
 
-## (General) PROCESS UPLOADED METADATA FOR MAP/TS VISUALIZATION
-##           reads metadata and optional data frames from Excel file
-##           updates relevant Shiny inputs and reactiveVals based on plot mode
-##           mode = "map" or "ts";
-##           metadata_sheet = name of meta sheet
+#' (General) PROCESS UPLOADED METADATA FOR MAP/TS VISUALIZATION
+#'
+#' Reads a metadata Excel file and updates Shiny inputs and reactiveVals for map or timeseries visualizations.
+#'
+#' @param file_path Character. Path to the uploaded `.xlsx` file containing metadata and optional data sheets.
+#' @param mode Character. Either `"map"` or `"ts"` to indicate the target visualization module.
+#' @param metadata_sheet Character. Name of the Excel sheet containing metadata (default `"custom_meta"`).
+#' @param df_ts_points, df_ts_highlights, df_ts_lines Character (optional). Sheet names for uploading TS-related data frames.
+#' @param df_map_points, df_map_highlights Character (optional). Sheet names for uploading map-related data frames.
+#' @param rv_plotOrder, rv_availableLayers, rv_lonlat_vals Reactive values (optional). Updated with uploaded values if present.
+#' @param map_points_data, map_highlights_data Reactive functions (optional). Updated with uploaded map data.
+#' @param ts_points_data, ts_highlights_data, ts_lines_data Reactive functions (optional). Updated with uploaded TS data.
+#'
+#' @return None. Function updates Shiny UI inputs and reactive values directly based on uploaded metadata.
 
 process_uploaded_metadata <- function(
     file_path,
@@ -3256,12 +3509,14 @@ process_uploaded_metadata <- function(
 }
 
 
-
-
-
-## (General) UPDATES THE SELECTED VALUE OF A GROUP OF LINKED RADIO BUTTONS
-##           selected_value = the value to be selected
-##           inputIds = a list of input IDs for the radio buttons to be updated
+#' (General) UPDATES THE SELECTED VALUE OF A GROUP OF LINKED RADIO BUTTONS
+#'
+#' Updates multiple radio button inputs simultaneously with a shared selected value.
+#'
+#' @param selected_value Character. The value to be set as selected across all target inputs.
+#' @param inputIds Character vector. List of input IDs for the radio buttons to be updated.
+#'
+#' @return None. The function directly updates radio button inputs within the active Shiny session.
 
 updateRadioButtonsGroup <- function(selected_value,
                                     inputIds) {
@@ -4248,7 +4503,7 @@ generate_correlation_titles = function(variable1_source,
     # If V1 = ModE-RA
   } else {
     # Generate ME title months and extension
-    title_months1 = generate_title_months(variable1_month_range)
+    title_months1 = generate_title_months(MR = variable1_month_range)
     if (variable1_mode == "Absolute"){
       variable1_mode = ""
     }
@@ -4299,7 +4554,7 @@ generate_correlation_titles = function(variable1_source,
     # If V2 = ModE-RA
   } else {
     # Generate ME title months and extension
-    title_months2 = generate_title_months(variable2_month_range)
+    title_months2 = generate_title_months(MR = variable2_month_range)
     if (variable2_mode == "Absolute"){
       variable2_mode = ""
     }
@@ -5043,7 +5298,7 @@ generate_regression_titles = function(independent_source,
     title_lonlat_i = ""
   } else {
     # Generate title months
-    title_months_i = paste(dataset_i," ",generate_title_months(month_range_i)," ",sep = "")
+    title_months_i = paste(dataset_i," ",generate_title_months(MR = month_range_i)," ",sep = "")
     
     # Generate title mode addition
     if (mode_i == "Absolute"){
@@ -5077,7 +5332,7 @@ generate_regression_titles = function(independent_source,
     unit_d = ""
   } else {
     # Generate title months
-    title_months_d = paste(dataset_d," ",generate_title_months(month_range_d)," ",sep = "")
+    title_months_d = paste(dataset_d," ",generate_title_months(MR = month_range_d)," ",sep = "")
     
     # Generate title mode addition
     if (mode_d == "Absolute"){
@@ -5214,7 +5469,7 @@ generate_regression_titles_ts = function(independent_source,
     title_lonlat_i = ""
   } else {
     # Generate title months
-    title_months_i = paste(dataset_i," ",generate_title_months(month_range_i)," ",sep = "")
+    title_months_i = paste(dataset_i," ",generate_title_months(MR = month_range_i)," ",sep = "")
     
     # Generate title mode addition
     if (mode_i == "Absolute"){
@@ -5248,7 +5503,7 @@ generate_regression_titles_ts = function(independent_source,
     unit_d = ""
   } else {
     # Generate title months
-    title_months_d = paste(dataset_d," ",generate_title_months(month_range_d)," ",sep = "")
+    title_months_d = paste(dataset_d," ",generate_title_months(MR = month_range_d)," ",sep = "")
     
     # Generate title mode addition
     if (mode_d == "Absolute"){

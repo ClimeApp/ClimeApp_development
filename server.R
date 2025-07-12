@@ -2742,17 +2742,31 @@ server <- function(input, output, session) {
   
   # Map Points
   observeEvent(input$add_point, {
-    map_points_data(rbind(
-      map_points_data(),
-      create_new_points_data(
-        input$point_location_x,
-        input$point_location_y,
-        input$point_label,
-        input$point_shape,
-        input$point_colour,
-        input$point_size
+    new_points <- create_new_points_data(
+      input$point_location_x,
+      input$point_location_y,
+      input$point_label,
+      input$point_shape,
+      input$point_colour,
+      input$point_size
+    )
+    
+    if (input$projection != "UTM (default)") {
+      new_points <- transform_points_df(
+        new_points,
+        xcol = "x_value",
+        ycol = "y_value",
+        projection_from = switch(
+          input$projection,
+          "Robinson" = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat, input$center_lon),
+          "LAEA" = laea_proj
+        ),
+        projection_to = "+proj=longlat +datum=WGS84"
       )
-    ))
+    }
+    
+    map_points_data(rbind(map_points_data(), new_points))
   })
   
   observeEvent(input$remove_last_point, {
@@ -2763,24 +2777,39 @@ server <- function(input, output, session) {
     map_points_data(data.frame())
   })
   
-  
   # Map Highlights
   observeEvent(input$add_highlight, {
-    map_highlights_data(rbind(
-      map_highlights_data(),
-      create_new_highlights_data(
-        input$highlight_x_values,
-        input$highlight_y_values,
-        input$highlight_colour,
-        input$highlight_type,
-        NA,
-        NA
+    new_highlight <- create_new_highlights_data(
+      input$highlight_x_values,
+      input$highlight_y_values,
+      input$highlight_colour,
+      input$highlight_type,
+      NA,
+      NA
+    )
+    
+    if (input$projection != "UTM (default)") {
+      new_highlight <- transform_box_df(
+        new_highlight,
+        x1col = "x1",
+        x2col = "x2",
+        y1col = "y1",
+        y2col = "y2",
+        projection_from = switch(
+          input$projection,
+          "Robinson" = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat, input$center_lon),
+          "LAEA" = laea_proj
+        ),
+        projection_to = "+proj=longlat +datum=WGS84"
       )
-    ))
+    }
+    
+    map_highlights_data(rbind(map_highlights_data(), new_highlight))
   })
   
   observeEvent(input$remove_last_highlight, {
-    map_highlights_data(map_highlights_data()[-nrow(map_highlights_data()),])
+    map_highlights_data(map_highlights_data()[-nrow(map_highlights_data()), ])
   })
   
   observeEvent(input$remove_all_highlights, {
@@ -3724,20 +3753,34 @@ server <- function(input, output, session) {
   ts_highlights_data2 = reactiveVal(data.frame())
   ts_lines_data2 = reactiveVal(data.frame())
   
-  # Map Points
   observeEvent(input$add_point2, {
-    map_points_data2(rbind(
-      map_points_data2(),
-      create_new_points_data(
-        input$point_location_x2,
-        input$point_location_y2,
-        input$point_label2,
-        input$point_shape2,
-        input$point_colour2,
-        input$point_size2
+    new_points <- create_new_points_data(
+      input$point_location_x2,
+      input$point_location_y2,
+      input$point_label2,
+      input$point_shape2,
+      input$point_colour2,
+      input$point_size2
+    )
+    
+    if (input$projection2 != "UTM (default)") {
+      new_points <- transform_points_df(
+        new_points,
+        xcol = "x_value",
+        ycol = "y_value",
+        projection_from = switch(
+          input$projection2,
+          "Robinson" = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat2, input$center_lon2),
+          "LAEA" = laea_proj
+        ),
+        projection_to = "+proj=longlat +datum=WGS84"
       )
-    ))
+    }
+    
+    map_points_data2(rbind(map_points_data2(), new_points))
   })
+  
   
   observeEvent(input$remove_last_point2, {
     map_points_data2(map_points_data2()[-nrow(map_points_data2()),])
@@ -3749,10 +3792,37 @@ server <- function(input, output, session) {
   
   # Map Highlights
   observeEvent(input$add_highlight2, {
-    map_highlights_data2(rbind(map_highlights_data2(),
-                               create_new_highlights_data(input$highlight_x_values2,input$highlight_y_values2,
-                                                          input$highlight_colour2,input$highlight_type2,NA,NA)))
-  })  
+    new_highlight <- create_new_highlights_data(
+      input$highlight_x_values2,
+      input$highlight_y_values2,
+      input$highlight_colour2,
+      input$highlight_type2,
+      NA,
+      NA
+    )
+    
+    print(new_highlight)  # check what coords and columns look like
+    
+    if (input$projection2 != "UTM (default)") {
+      new_highlight <- transform_box_df(
+        new_highlight,
+        x1col = "x1",
+        x2col = "x2",
+        y1col = "y1",
+        y2col = "y2",
+        projection_from = switch(
+          input$projection2,
+          "Robinson" = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat2, input$center_lon2),
+          "LAEA" = laea_proj
+        ),
+        projection_to = "+proj=longlat +datum=WGS84"
+      )
+    }
+    
+    map_highlights_data2(rbind(map_highlights_data2(), new_highlight))
+  })
+  
   
   observeEvent(input$remove_last_highlight2, {
     map_highlights_data2(map_highlights_data2()[-nrow(map_highlights_data2()),])
@@ -5043,31 +5113,76 @@ server <- function(input, output, session) {
   ts_highlights_data3 = reactiveVal(data.frame())
   ts_lines_data3 = reactiveVal(data.frame())
   
-  # Map Points
+  # Map Points 3
   observeEvent(input$add_point3, {
-    map_points_data3(rbind(map_points_data3(),
-                           create_new_points_data(input$point_location_x3,input$point_location_y3,
-                                                  input$point_label3,input$point_shape3,
-                                                  input$point_colour3,input$point_size3)))
-  })  
+    new_points <- create_new_points_data(
+      input$point_location_x3,
+      input$point_location_y3,
+      input$point_label3,
+      input$point_shape3,
+      input$point_colour3,
+      input$point_size3
+    )
+    
+    if (input$projection3 != "UTM (default)") {
+      new_points <- transform_points_df(
+        new_points,
+        xcol = "x_value",
+        ycol = "y_value",
+        projection_from = switch(
+          input$projection3,
+          "Robinson" = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat3, input$center_lon3),
+          "LAEA" = laea_proj
+        ),
+        projection_to = "+proj=longlat +datum=WGS84"
+      )
+    }
+    
+    map_points_data3(rbind(map_points_data3(), new_points))
+  })
   
   observeEvent(input$remove_last_point3, {
-    map_points_data3(map_points_data3()[-nrow(map_points_data3()),])
+    map_points_data3(map_points_data3()[-nrow(map_points_data3()), ])
   })
   
   observeEvent(input$remove_all_points3, {
     map_points_data3(data.frame())
   })
   
-  # Map Highlights
+  # Map Highlights 3
   observeEvent(input$add_highlight3, {
-    map_highlights_data3(rbind(map_highlights_data3(),
-                               create_new_highlights_data(input$highlight_x_values3,input$highlight_y_values3,
-                                                          input$highlight_colour3,input$highlight_type3,NA,NA)))
-  })  
+    new_highlight <- create_new_highlights_data(
+      input$highlight_x_values3,
+      input$highlight_y_values3,
+      input$highlight_colour3,
+      input$highlight_type3,
+      NA,
+      NA
+    )
+    
+    if (input$projection3 != "UTM (default)") {
+      new_highlight <- transform_box_df(
+        new_highlight,
+        x1col = "x1",
+        x2col = "x2",
+        y1col = "y1",
+        y2col = "y2",
+        projection_from = switch(
+          input$projection3,
+          "Robinson" = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat3, input$center_lon3),
+          "LAEA" = laea_proj
+        ),
+        projection_to = "+proj=longlat +datum=WGS84"
+      )
+    }
+    
+    map_highlights_data3(rbind(map_highlights_data3(), new_highlight))
+  })
   
   observeEvent(input$remove_last_highlight3, {
-    map_highlights_data3(map_highlights_data3()[-nrow(map_highlights_data3()),])
+    map_highlights_data3(map_highlights_data3()[-nrow(map_highlights_data3()), ])
   })
   
   observeEvent(input$remove_all_highlights3, {
@@ -6497,19 +6612,37 @@ server <- function(input, output, session) {
   map_points_data_reg_coeff = reactiveVal(data.frame())
   map_highlights_data_reg_coeff = reactiveVal(data.frame())
 
-  # Map Points
+  # Map Points - Regression Coefficients
   observeEvent(input$add_point_reg_coeff, {
-    map_points_data_reg_coeff(rbind(map_points_data_reg_coeff(),
-                                    create_new_points_data(input$point_location_x_reg_coeff,
-                                                           input$point_location_y_reg_coeff,
-                                                           input$point_label_reg_coeff,
-                                                           input$point_shape_reg_coeff,
-                                                           input$point_colour_reg_coeff,
-                                                           input$point_size_reg_coeff)))
-  })  
+    new_points <- create_new_points_data(
+      input$point_location_x_reg_coeff,
+      input$point_location_y_reg_coeff,
+      input$point_label_reg_coeff,
+      input$point_shape_reg_coeff,
+      input$point_colour_reg_coeff,
+      input$point_size_reg_coeff
+    )
+    
+    if (input$projection_reg_coeff != "UTM (default)") {
+      new_points <- transform_points_df(
+        new_points,
+        xcol = "x_value",
+        ycol = "y_value",
+        projection_from = switch(
+          input$projection_reg_coeff,
+          "Robinson" = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat_reg_coeff, input$center_lon_reg_coeff),
+          "LAEA" = laea_proj
+        ),
+        projection_to = "+proj=longlat +datum=WGS84"
+      )
+    }
+    
+    map_points_data_reg_coeff(rbind(map_points_data_reg_coeff(), new_points))
+  })
   
   observeEvent(input$remove_last_point_reg_coeff, {
-    map_points_data_reg_coeff(map_points_data_reg_coeff()[-nrow(map_points_data_reg_coeff()),])
+    map_points_data_reg_coeff(map_points_data_reg_coeff()[-nrow(map_points_data_reg_coeff()), ])
   })
   
   observeEvent(input$remove_all_points_reg_coeff, {
@@ -6536,25 +6669,44 @@ server <- function(input, output, session) {
     }
   })
   
-  # Map Highlights
+  # Map Highlights - Regression Coefficients
   observeEvent(input$add_highlight_reg_coeff, {
-    map_highlights_data_reg_coeff(rbind(map_highlights_data_reg_coeff(),
-                                        create_new_highlights_data(input$highlight_x_values_reg_coeff,
-                                                                   input$highlight_y_values_reg_coeff,
-                                                                   input$highlight_colour_reg_coeff,
-                                                                   input$highlight_type_reg_coeff,
-                                                                   NA,
-                                                                   NA)))
-  })  
+    new_highlight <- create_new_highlights_data(
+      input$highlight_x_values_reg_coeff,
+      input$highlight_y_values_reg_coeff,
+      input$highlight_colour_reg_coeff,
+      input$highlight_type_reg_coeff,
+      NA,
+      NA
+    )
+    
+    if (input$projection_reg_coeff != "UTM (default)") {
+      new_highlight <- transform_box_df(
+        new_highlight,
+        x1col = "x1",
+        x2col = "x2",
+        y1col = "y1",
+        y2col = "y2",
+        projection_from = switch(
+          input$projection_reg_coeff,
+          "Robinson" = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat_reg_coeff, input$center_lon_reg_coeff),
+          "LAEA" = laea_proj
+        ),
+        projection_to = "+proj=longlat +datum=WGS84"
+      )
+    }
+    
+    map_highlights_data_reg_coeff(rbind(map_highlights_data_reg_coeff(), new_highlight))
+  })
   
   observeEvent(input$remove_last_highlight_reg_coeff, {
-    map_highlights_data_reg_coeff(map_highlights_data_reg_coeff()[-nrow(map_highlights_data_reg_coeff()),])
+    map_highlights_data_reg_coeff(map_highlights_data_reg_coeff()[-nrow(map_highlights_data_reg_coeff()), ])
   })
   
   observeEvent(input$remove_all_highlights_reg_coeff, {
     map_highlights_data_reg_coeff(data.frame())
   })
-  
   
   
   ######### Regression P Value Map Plot
@@ -6563,43 +6715,82 @@ server <- function(input, output, session) {
   map_points_data_reg_pval = reactiveVal(data.frame())
   map_highlights_data_reg_pval = reactiveVal(data.frame())
   
-  # Map Points
+  # Map Points - Regression P-Values
   observeEvent(input$add_point_reg_pval, {
-    map_points_data_reg_pval(rbind(map_points_data_reg_pval(),
-                                   create_new_points_data(input$point_location_x_reg_pval,
-                                                          input$point_location_y_reg_pval,
-                                                          input$point_label_reg_pval,
-                                                          input$point_shape_reg_pval,
-                                                          input$point_colour_reg_pval,
-                                                          input$point_size_reg_pval)))
-  })  
+    new_points <- create_new_points_data(
+      input$point_location_x_reg_pval,
+      input$point_location_y_reg_pval,
+      input$point_label_reg_pval,
+      input$point_shape_reg_pval,
+      input$point_colour_reg_pval,
+      input$point_size_reg_pval
+    )
+    
+    if (input$projection_reg_pval != "UTM (default)") {
+      new_points <- transform_points_df(
+        new_points,
+        xcol = "x_value",
+        ycol = "y_value",
+        projection_from = switch(
+          input$projection_reg_pval,
+          "Robinson" = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat_reg_pval, input$center_lon_reg_pval),
+          "LAEA" = laea_proj
+        ),
+        projection_to = "+proj=longlat +datum=WGS84"
+      )
+    }
+    
+    map_points_data_reg_pval(rbind(map_points_data_reg_pval(), new_points))
+  })
   
   observeEvent(input$remove_last_point_reg_pval, {
-    map_points_data_reg_pval(map_points_data_reg_pval()[-nrow(map_points_data_reg_pval()),])
+    map_points_data_reg_pval(map_points_data_reg_pval()[-nrow(map_points_data_reg_pval()), ])
   })
   
   observeEvent(input$remove_all_points_reg_pval, {
     map_points_data_reg_pval(data.frame())
   })
   
-  # Map Highlights
+  # Map Highlights - Regression P-Values
   observeEvent(input$add_highlight_reg_pval, {
-    map_highlights_data_reg_pval(rbind(map_highlights_data_reg_pval(),
-                                       create_new_highlights_data(input$highlight_x_values_reg_pval,
-                                                                  input$highlight_y_values_reg_pval,
-                                                                  input$highlight_colour_reg_pval,
-                                                                  input$highlight_type_reg_pval,
-                                                                  NA,
-                                                                  NA)))
-  })  
+    new_highlight <- create_new_highlights_data(
+      input$highlight_x_values_reg_pval,
+      input$highlight_y_values_reg_pval,
+      input$highlight_colour_reg_pval,
+      input$highlight_type_reg_pval,
+      NA,
+      NA
+    )
+    
+    if (input$projection_reg_pval != "UTM (default)") {
+      new_highlight <- transform_box_df(
+        new_highlight,
+        x1col = "x1",
+        x2col = "x2",
+        y1col = "y1",
+        y2col = "y2",
+        projection_from = switch(
+          input$projection_reg_pval,
+          "Robinson" = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat_reg_pval, input$center_lon_reg_pval),
+          "LAEA" = laea_proj
+        ),
+        projection_to = "+proj=longlat +datum=WGS84"
+      )
+    }
+    
+    map_highlights_data_reg_pval(rbind(map_highlights_data_reg_pval(), new_highlight))
+  })
   
   observeEvent(input$remove_last_highlight_reg_pval, {
-    map_highlights_data_reg_pval(map_highlights_data_reg_pval()[-nrow(map_highlights_data_reg_pval()),])
+    map_highlights_data_reg_pval(map_highlights_data_reg_pval()[-nrow(map_highlights_data_reg_pval()), ])
   })
   
   observeEvent(input$remove_all_highlights_reg_pval, {
     map_highlights_data_reg_pval(data.frame())
   })
+  
   
   # Input geo-coded locations
   observeEvent(input$search_reg_pval, {
@@ -6633,25 +6824,42 @@ server <- function(input, output, session) {
   map_highlights_data_reg_res = reactiveVal(data.frame())
   
 
-  # Map Points
+  # Map Points - Regression Residuals
   observeEvent(input$add_point_reg_res, {
-    map_points_data_reg_res(rbind(map_points_data_reg_res(),
-                                  create_new_points_data(input$point_location_x_reg_res,
-                                                         input$point_location_y_reg_res,
-                                                         input$point_label_reg_res,
-                                                         input$point_shape_reg_res,
-                                                         input$point_colour_reg_res,
-                                                         input$point_size_reg_res)))
-  })  
+    new_points <- create_new_points_data(
+      input$point_location_x_reg_res,
+      input$point_location_y_reg_res,
+      input$point_label_reg_res,
+      input$point_shape_reg_res,
+      input$point_colour_reg_res,
+      input$point_size_reg_res
+    )
+    
+    if (input$projection_reg_res != "UTM (default)") {
+      new_points <- transform_points_df(
+        new_points,
+        xcol = "x_value",
+        ycol = "y_value",
+        projection_from = switch(
+          input$projection_reg_res,
+          "Robinson" = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat_reg_res, input$center_lon_reg_res),
+          "LAEA" = laea_proj
+        ),
+        projection_to = "+proj=longlat +datum=WGS84"
+      )
+    }
+    
+    map_points_data_reg_res(rbind(map_points_data_reg_res(), new_points))
+  })
   
   observeEvent(input$remove_last_point_reg_res, {
-    map_points_data_reg_res(map_points_data_reg_res()[-nrow(map_points_data_reg_res()),])
+    map_points_data_reg_res(map_points_data_reg_res()[-nrow(map_points_data_reg_res()), ])
   })
   
   observeEvent(input$remove_all_points_reg_res, {
     map_points_data_reg_res(data.frame())
   })
-  
   
   # Input geo-coded locations
   observeEvent(input$search_reg_res, {
@@ -6669,26 +6877,44 @@ server <- function(input, output, session) {
         shinyjs::show(id = "inv_location_reg_res")  # Show the "Invalid location" message
       }}})
 
-  
-  # Map Highlights
+  # Map Highlights - Regression Residuals
   observeEvent(input$add_highlight_reg_res, {
-    map_highlights_data_reg_res(rbind(map_highlights_data_reg_res(),
-                                      create_new_highlights_data(input$highlight_x_values_reg_res,
-                                                                 input$highlight_y_values_reg_res,
-                                                                 input$highlight_colour_reg_res,
-                                                                 input$highlight_type_reg_res,
-                                                                 NA,
-                                                                 NA)))
-  })  
+    new_highlight <- create_new_highlights_data(
+      input$highlight_x_values_reg_res,
+      input$highlight_y_values_reg_res,
+      input$highlight_colour_reg_res,
+      input$highlight_type_reg_res,
+      NA,
+      NA
+    )
+    
+    if (input$projection_reg_res != "UTM (default)") {
+      new_highlight <- transform_box_df(
+        new_highlight,
+        x1col = "x1",
+        x2col = "x2",
+        y1col = "y1",
+        y2col = "y2",
+        projection_from = switch(
+          input$projection_reg_res,
+          "Robinson" = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat_reg_res, input$center_lon_reg_res),
+          "LAEA" = laea_proj
+        ),
+        projection_to = "+proj=longlat +datum=WGS84"
+      )
+    }
+    
+    map_highlights_data_reg_res(rbind(map_highlights_data_reg_res(), new_highlight))
+  })
   
   observeEvent(input$remove_last_highlight_reg_res, {
-    map_highlights_data_reg_res(map_highlights_data_reg_res()[-nrow(map_highlights_data_reg_res()),])
+    map_highlights_data_reg_res(map_highlights_data_reg_res()[-nrow(map_highlights_data_reg_res()), ])
   })
   
   observeEvent(input$remove_all_highlights_reg_res, {
     map_highlights_data_reg_res(data.frame())
   })
-  
   
   
   ####### Generate Metadata for map customization ----
