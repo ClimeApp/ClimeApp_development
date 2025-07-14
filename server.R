@@ -2367,11 +2367,12 @@ server <- function(input, output, session) {
   })
   
   observe({
-    if (input$axis_mode == "Fixed" & is.null(input$axis_input)){
+    if (input$axis_mode == "Fixed" & is.null(input$axis_input)) {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input",
-        value = set_axis_values(final_map_data(), "Anomaly"))
+        value = set_axis_values(data_input = final_map_data(), mode = "Anomaly")
+      )
     }
   })
   
@@ -2390,7 +2391,7 @@ server <- function(input, output, session) {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts",
-        value = set_ts_axis_values(timeseries_data()$Mean))
+        value = set_ts_axis_values(data_input = timeseries_data()$Mean))
     }
   })
   
@@ -2753,7 +2754,7 @@ server <- function(input, output, session) {
     
     if (input$projection != "UTM (default)") {
       new_points <- transform_points_df(
-        new_points,
+        df = new_points,
         xcol = "x_value",
         ycol = "y_value",
         projection_from = switch(
@@ -2790,7 +2791,7 @@ server <- function(input, output, session) {
     
     if (input$projection != "UTM (default)") {
       new_highlight <- transform_box_df(
-        new_highlight,
+        df = new_highlight,
         x1col = "x1",
         x2col = "x2",
         y1col = "y1",
@@ -3489,7 +3490,7 @@ server <- function(input, output, session) {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input2",
-        value = set_axis_values(map_data_2(), input$mode_selected2))
+        value = set_axis_values(data_input = map_data_2(), mode = input$mode_selected2))
     }
   })
   
@@ -3508,7 +3509,7 @@ server <- function(input, output, session) {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts2",
-        value = set_ts_axis_values(timeseries_data_2()$Mean))
+        value = set_ts_axis_values(data_input = timeseries_data_2()$Mean))
     }
   })
   
@@ -3765,7 +3766,7 @@ server <- function(input, output, session) {
     
     if (input$projection2 != "UTM (default)") {
       new_points <- transform_points_df(
-        new_points,
+        df = new_points,
         xcol = "x_value",
         ycol = "y_value",
         projection_from = switch(
@@ -3805,7 +3806,7 @@ server <- function(input, output, session) {
     
     if (input$projection2 != "UTM (default)") {
       new_highlight <- transform_box_df(
-        new_highlight,
+        df = new_highlight,
         x1col = "x1",
         x2col = "x2",
         y1col = "y1",
@@ -4876,7 +4877,7 @@ server <- function(input, output, session) {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input3",
-        value = set_axis_values(correlation_map_data()[[3]], "Anomaly"))
+        value = set_axis_values(data_input = correlation_map_data()[[3]], mode = "Anomaly"))
     }
   })
   
@@ -4895,7 +4896,7 @@ server <- function(input, output, session) {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts3",
-        value = set_ts_axis_values(timeseries_data_v1()$Mean))
+        value = set_ts_axis_values(data_input = timeseries_data_v1()$Mean))
     }
   })
   
@@ -5126,7 +5127,7 @@ server <- function(input, output, session) {
     
     if (input$projection3 != "UTM (default)") {
       new_points <- transform_points_df(
-        new_points,
+        df = new_points,
         xcol = "x_value",
         ycol = "y_value",
         projection_from = switch(
@@ -5163,7 +5164,7 @@ server <- function(input, output, session) {
     
     if (input$projection3 != "UTM (default)") {
       new_highlight <- transform_box_df(
-        new_highlight,
+        df = new_highlight,
         x1col = "x1",
         x2col = "x2",
         y1col = "y1",
@@ -6204,7 +6205,7 @@ server <- function(input, output, session) {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts4a",
-        value = set_ts_axis_values(regression_ts_data()[,2])  # Original
+        value = set_ts_axis_values(data_input = regression_ts_data()[,2])  # Original
       )
     }
   })
@@ -6225,7 +6226,7 @@ server <- function(input, output, session) {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts4b",
-        value = set_ts_axis_values(regression_ts_data()[,4])  # Residuals
+        value = set_ts_axis_values(data_input = regression_ts_data()[,4])  # Residuals
       )
     }
   })
@@ -6625,7 +6626,7 @@ server <- function(input, output, session) {
     
     if (input$projection_reg_coeff != "UTM (default)") {
       new_points <- transform_points_df(
-        new_points,
+        df = new_points,
         xcol = "x_value",
         ycol = "y_value",
         projection_from = switch(
@@ -6682,7 +6683,7 @@ server <- function(input, output, session) {
     
     if (input$projection_reg_coeff != "UTM (default)") {
       new_highlight <- transform_box_df(
-        new_highlight,
+        df = new_highlight,
         x1col = "x1",
         x2col = "x2",
         y1col = "y1",
@@ -6728,7 +6729,7 @@ server <- function(input, output, session) {
     
     if (input$projection_reg_pval != "UTM (default)") {
       new_points <- transform_points_df(
-        new_points,
+        df = new_points,
         xcol = "x_value",
         ycol = "y_value",
         projection_from = switch(
@@ -6765,7 +6766,7 @@ server <- function(input, output, session) {
     
     if (input$projection_reg_pval != "UTM (default)") {
       new_highlight <- transform_box_df(
-        new_highlight,
+        df = new_highlight,
         x1col = "x1",
         x2col = "x2",
         y1col = "y1",
@@ -6837,7 +6838,7 @@ server <- function(input, output, session) {
     
     if (input$projection_reg_res != "UTM (default)") {
       new_points <- transform_points_df(
-        new_points,
+        df = new_points,
         xcol = "x_value",
         ycol = "y_value",
         projection_from = switch(
@@ -6890,7 +6891,7 @@ server <- function(input, output, session) {
     
     if (input$projection_reg_res != "UTM (default)") {
       new_highlight <- transform_box_df(
-        new_highlight,
+        df = new_highlight,
         x1col = "x1",
         x2col = "x2",
         y1col = "y1",
@@ -7682,12 +7683,16 @@ server <- function(input, output, session) {
   observeEvent(input$add_monthly_ts, {
     
     # Generate data ID
-    monthly_ts_data_ID = generate_data_ID(input$dataset_selected5,input$variable_selected5,c(NA,NA))
+    monthly_ts_data_ID = generate_data_ID(
+      dataset = input$dataset_selected5,
+      variable = input$variable_selected5,
+      month_range = c(NA, NA)
+    )
     
     # Update custom_data if required
     if (!identical(custom_data_id_primary()[2:3], monthly_ts_data_ID[2:3])) {
       # ....i.e. changed variable or dataset
-      custom_data_primary(load_ModE_data(input$dataset_selected5, input$variable_selected5)) # load new custom data
+      custom_data_primary(load_ModE_data(dataset = input$dataset_selected5, variable = input$variable_selected5)) # load new custom data
       custom_data_id_primary(monthly_ts_data_ID) # update custom data ID
     }
     
@@ -8599,25 +8604,32 @@ server <- function(input, output, session) {
   
   month_range_primary <- reactive({
     #Creating Numeric Vector for Month Range between 0 and 12
-    if (input$nav1 == "tab1"){   # Anomalies
-      create_month_range(input$range_months)    
-    } else if (input$nav1 == "tab2"){   # Composites
-      create_month_range(input$range_months2)    
-    } else if (input$nav1 == "tab3"){   # Correlation
-      create_month_range(input$range_months_v1)   
-    } else if (input$nav1 == "tab4"){   # Regression
-      create_month_range(input$range_months_dv)
-    } else if (input$nav1 == "tab6"){   # SEA
-      create_month_range(input$range_months_6) 
+    if (input$nav1 == "tab1") {
+      # Anomalies
+      create_month_range(month_names_vector = input$range_months)
+    } else if (input$nav1 == "tab2") {
+      # Composites
+      create_month_range(month_names_vector = input$range_months2)
+    } else if (input$nav1 == "tab3") {
+      # Correlation
+      create_month_range(month_names_vector = input$range_months_v1)
+    } else if (input$nav1 == "tab4") {
+      # Regression
+      create_month_range(month_names_vector = input$range_months_dv)
+    } else if (input$nav1 == "tab6") {
+      # SEA
+      create_month_range(month_names_vector = input$range_months_6)
     }
   })
   
   month_range_secondary <- reactive({
     #Creating Numeric Vector for Month Range between 0 and 12
-    if (input$nav1 == "tab3"){   # Correlation
-      create_month_range(input$range_months_v2)  
-    } else if (input$nav1 == "tab4"){   # Regression
-      create_month_range(input$range_months_iv) 
+    if (input$nav1 == "tab3") {
+      # Correlation
+      create_month_range(month_names_vector = input$range_months_v2)
+    } else if (input$nav1 == "tab4") {
+      # Regression
+      create_month_range(month_names_vector = input$range_months_iv)
     }
   })
   
@@ -8625,25 +8637,25 @@ server <- function(input, output, session) {
   
   subset_lons_primary <- reactive({
     if (input$nav1 == "tab1") {   # Anomalies
-      create_subset_lon_IDs(lonlat_vals()[1:2])       
+      create_subset_lon_IDs(lon_range = lonlat_vals()[1:2])       
     } else if (input$nav1 == "tab2") {   # Composites
-      create_subset_lon_IDs(lonlat_vals2()[1:2])
+      create_subset_lon_IDs(lon_range = lonlat_vals2()[1:2])
     } else if (input$nav1 == "tab3") {   # Correlation
-      create_subset_lon_IDs(lonlat_vals_v1()[1:2])
+      create_subset_lon_IDs(lon_range = lonlat_vals_v1()[1:2])
     } else if (input$nav1 == "tab4") {   # Regression
-      create_subset_lon_IDs(lonlat_vals_dv()[1:2])
+      create_subset_lon_IDs(lon_range = lonlat_vals_dv()[1:2])
     } else if (input$nav1 == "tab5") {   # Annual Cycle
-      create_subset_lon_IDs(lonlat_vals5()[1:2])
+      create_subset_lon_IDs(lon_range = lonlat_vals5()[1:2])
     } else if (input$nav1 == "tab6") {   # SEA
-      create_subset_lon_IDs(lonlat_vals6()[1:2])
+      create_subset_lon_IDs(lon_range = lonlat_vals6()[1:2])
     }
   })
   
   subset_lons_secondary <- reactive({
     if (input$nav1 == "tab3"){   # Correlation
-      create_subset_lon_IDs(lonlat_vals_v2()[1:2])
+      create_subset_lon_IDs(lon_range = lonlat_vals_v2()[1:2])
     } else if (input$nav1 == "tab4"){   # Regression
-      create_subset_lon_IDs(lonlat_vals_iv()[1:2])
+      create_subset_lon_IDs(lon_range = lonlat_vals_iv()[1:2])
     }
   })
   
@@ -8675,22 +8687,52 @@ server <- function(input, output, session) {
   # Generating data ID - c(pre-processed data?,dataset,variable,season)
   
   data_id_primary <- reactive({
-    if (input$nav1 == "tab1"){   # Anomalies
-      generate_data_ID(input$dataset_selected,input$variable_selected, month_range_primary())  
-    } else if (input$nav1 == "tab2"){   # Composites
-      generate_data_ID(input$dataset_selected2,input$variable_selected2, month_range_primary())
-    } else if (input$nav1 == "tab3"){   # Correlation
-      generate_data_ID(input$dataset_selected_v1,input$ME_variable_v1, month_range_primary())
-    } else if (input$nav1 == "tab4"){   # Regression
-      generate_data_ID(input$dataset_selected_dv,input$ME_variable_dv, month_range_primary())
-    } else if (input$nav1 == "tab6"){   # SEA
-      generate_data_ID(input$dataset_selected_6,input$ME_variable_6, month_range_primary())
-    }  
+    if (input$nav1 == "tab1") {
+      # Anomalies
+      generate_data_ID(
+        dataset = input$dataset_selected,
+        variable = input$variable_selected,
+        month_range = month_range_primary()
+      )
+    } else if (input$nav1 == "tab2") {
+      # Composites
+      generate_data_ID(
+        dataset = input$dataset_selected2,
+        variable = input$variable_selected2,
+        month_range = month_range_primary()
+      )
+    } else if (input$nav1 == "tab3") {
+      # Correlation
+      generate_data_ID(
+        dataset = input$dataset_selected_v1,
+        variable = input$ME_variable_v1,
+        month_range = month_range_primary()
+      )
+    } else if (input$nav1 == "tab4") {
+      # Regression
+      generate_data_ID(
+        dataset = input$dataset_selected_dv,
+        variable = input$ME_variable_dv,
+        month_range = month_range_primary()
+      )
+    } else if (input$nav1 == "tab6") {
+      # SEA
+      generate_data_ID(
+        dataset = input$dataset_selected_6,
+        variable = input$ME_variable_6,
+        month_range = month_range_primary()
+      )
+    }
   })
   
   data_id_secondary <- reactive({
-    if (input$nav1 == "tab3"){   # Correlation
-      generate_data_ID(input$dataset_selected_v2,input$ME_variable_v2, month_range_secondary())
+    if (input$nav1 == "tab3") {
+      # Correlation
+      generate_data_ID(
+        dataset = input$dataset_selected_v2,
+        variable = input$ME_variable_v2,
+        month_range = month_range_secondary()
+      )
     }
   })
   
@@ -8713,7 +8755,7 @@ server <- function(input, output, session) {
                               "3" = "SLP",
                               "4" = "Z500")
         
-        custom_data_primary(load_ModE_data(new_dataset,new_variable)) # load new custom data
+        custom_data_primary(load_ModE_data(dataset = new_dataset, variable = new_variable)) # load new custom data
         custom_data_id_primary(data_id_primary()) # update custom data ID
       }
     } 
@@ -8721,7 +8763,7 @@ server <- function(input, output, session) {
     # Update preprocessed data
     else if (data_id_primary()[1] == 2){ # Only updates when new pp data is required...
       if (!identical(preprocessed_data_id_primary()[2:4],data_id_primary()[2:4])){ # ....i.e. changed variable, dataset or month range
-        preprocessed_data_primary(load_preprocessed_data(data_id_primary()))# load new pp data
+        preprocessed_data_primary(load_preprocessed_data(data_ID = data_id_primary()))# load new pp data
         preprocessed_data_id_primary(data_id_primary()) # update pp data ID
       }
     }
@@ -8742,7 +8784,7 @@ server <- function(input, output, session) {
                               "3" = "SLP",
                               "4" = "Z500")
         
-        custom_data_secondary(load_ModE_data(new_dataset,new_variable)) # load new custom data
+        custom_data_secondary(load_ModE_data(dataset = new_dataset, variable = new_variable)) # load new custom data
         custom_data_id_secondary(data_id_secondary()) # update custom data ID
       }
     }
@@ -8750,7 +8792,7 @@ server <- function(input, output, session) {
     # Update preprocessed data
     else if (data_id_secondary()[1] == 2){ # Only updates when new pp data is required...
       if (!identical(preprocessed_data_id_secondary()[2:4],data_id_secondary()[2:4])){ # ....i.e. changed variable, dataset or month range
-        preprocessed_data_secondary(load_preprocessed_data(data_id_secondary()))# load new pp data
+        preprocessed_data_secondary(load_preprocessed_data(data_ID = data_id_secondary()))# load new pp data
         preprocessed_data_id_secondary(data_id_secondary()) # update pp data ID
       }
     }
@@ -8759,81 +8801,214 @@ server <- function(input, output, session) {
   ####### Geographic Subset ----
   
   data_output1_primary <- reactive({
-    req(data_id_primary(), subset_lons_primary(), subset_lats_primary())
-    if (data_id_primary()[1] != 2) { # i.e. preloaded or custom data
-      create_latlon_subset(custom_data_primary(), data_id_primary(), subset_lons_primary(), subset_lats_primary())
-    } else { # i.e. preloaded data
-      create_latlon_subset(preprocessed_data_primary(), data_id_primary(), subset_lons_primary(), subset_lats_primary())
+    req(data_id_primary(),
+        subset_lons_primary(),
+        subset_lats_primary())
+    if (data_id_primary()[1] != 2) {
+      # i.e. preloaded or custom data
+      create_latlon_subset(
+        data_input = custom_data_primary(),
+        data_ID = data_id_primary(),
+        subset_lon_IDs = subset_lons_primary(),
+        subset_lat_IDs = subset_lats_primary()
+      )
+    } else {
+      # i.e. preloaded data
+      create_latlon_subset(
+        data_input = preprocessed_data_primary(),
+        data_ID = data_id_primary(),
+        subset_lon_IDs = subset_lons_primary(),
+        subset_lat_IDs = subset_lats_primary()
+        
+      )
     }
   })
   
   data_output1_secondary <- reactive({
-    req(data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
-    if (data_id_secondary()[1] != 2) { # i.e. preloaded or custom data
-      create_latlon_subset(custom_data_secondary(), data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
-    } else { # i.e. preloaded data
-      create_latlon_subset(preprocessed_data_secondary(), data_id_secondary(), subset_lons_secondary(), subset_lats_secondary())
+    req(data_id_secondary(),
+        subset_lons_secondary(),
+        subset_lats_secondary())
+    if (data_id_secondary()[1] != 2) {
+      # i.e. preloaded or custom data
+      create_latlon_subset(
+        data_input = custom_data_secondary(),
+        data_ID = data_id_secondary(),
+        subset_lon_IDs = subset_lons_secondary(),
+        subset_lat_IDs = subset_lats_secondary()
+      )
+    } else {
+      # i.e. preloaded data
+      create_latlon_subset(
+        data_input = preprocessed_data_secondary(),
+        data_ID = data_id_secondary(),
+        subset_lon_IDs = subset_lons_secondary(),
+        subset_lat_IDs = subset_lats_secondary()
+      )
     }
   })
   
   ####### Yearly subset ----
   
   data_output2_primary <- reactive({
-    if (input$nav1 == "tab1"){   # Anomalies
-      create_yearly_subset(data_output1_primary(), data_id_primary(), input$range_years, month_range_primary())  
-    } else if (input$nav1 == "tab2"){   # Composites
-      create_yearly_subset_composite(data_output1_primary(), data_id_primary(), year_set_comp(), month_range_primary())
-    } else if (input$nav1 == "tab3"){   # Correlation
-      adjusted_years = input$range_years3+input$lagyears_v1_cor
-      create_yearly_subset(data_output1_primary(), data_id_primary(), adjusted_years, month_range_primary())     
-    } else if (input$nav1 == "tab4"){   # Regression
-      create_yearly_subset(data_output1_primary(), data_id_primary(), input$range_years4, month_range_primary())
-    } else if (input$nav1 == "tab6"){   # SEA
-      create_yearly_subset(data_output1_primary(), data_id_primary(), c(1422,2008), month_range_primary()) 
+    if (input$nav1 == "tab1") {
+      # Anomalies
+      create_yearly_subset(
+        data_input = data_output1_primary(),
+        data_ID = data_id_primary(),
+        year_range = input$range_years,
+        month_range = month_range_primary()
+      )
+    } else if (input$nav1 == "tab2") {
+      # Composites
+      create_yearly_subset_composite(
+        data_output1_primary(),
+        data_id_primary(),
+        year_set_comp(),
+        month_range_primary()
+      )
+    } else if (input$nav1 == "tab3") {
+      # Correlation
+      adjusted_years = input$range_years3 + input$lagyears_v1_cor
+      create_yearly_subset(
+        data_input = data_output1_primary(),
+        data_ID = data_id_primary(),
+        year_range = adjusted_years,
+        month_range = month_range_primary()
+      )
+    } else if (input$nav1 == "tab4") {
+      # Regression
+      create_yearly_subset(
+        data_input = data_output1_primary(),
+        data_ID = data_id_primary(),
+        year_range = input$range_years4,
+        month_range = month_range_primary()
+      )
+    } else if (input$nav1 == "tab6") {
+      # SEA
+      create_yearly_subset(
+        data_input = data_output1_primary(),
+        data_ID = data_id_primary(),
+        year_range = c(1422, 2008),
+        month_range = month_range_primary()
+      )
     }
   })
   
   data_output2_secondary <- reactive({
-    if (input$nav1 == "tab3"){   # Correlation
-      adjusted_years = input$range_years3+input$lagyears_v2_cor
-      create_yearly_subset(data_output1_secondary(), data_id_secondary(), adjusted_years, month_range_secondary())
+    if (input$nav1 == "tab3") {
+      # Correlation
+      adjusted_years = input$range_years3 + input$lagyears_v2_cor
+      create_yearly_subset(
+        data_input = data_output1_secondary(),
+        data_ID = data_id_secondary(),
+        year_range = adjusted_years,
+        month_range = month_range_secondary()
+      )
     }
   })
   
   ####### Reference subset ----
   # Create reference yearly subset & convert to mean
-  
   data_output3_primary <- reactive({
-    if (input$nav1 == "tab1"){   # Anomalies
-      apply(create_yearly_subset(data_output1_primary(), data_id_primary(), input$ref_period, month_range_primary()),c(1:2),mean)  
-    } else if (input$nav1 == "tab2"){   # Composites
-      if (input$mode_selected2 == "Fixed reference"){
-        apply(create_yearly_subset(data_output1_primary(), data_id_primary(), input$ref_period2, month_range_primary()),c(1:2),mean)
+    if (input$nav1 == "tab1") {
+      # Anomalies
+      apply(
+        create_yearly_subset(
+          data_input = data_output1_primary(),
+          data_ID = data_id_primary(),
+          year_range = input$ref_period,
+          month_range = month_range_primary()
+        ),
+        c(1:2),
+        mean
+      )
+    } else if (input$nav1 == "tab2") {
+      # Composites
+      if (input$mode_selected2 == "Fixed reference") {
+        apply(
+          create_yearly_subset(
+            data_input = data_output1_primary(),
+            data_ID = data_id_primary(),
+            year_range = input$ref_period2,
+            month_range = month_range_primary()
+          ),
+          
+          c(1:2),
+          mean
+        )
       } else if (input$mode_selected2 == "Custom reference") {
-        apply(create_yearly_subset_composite(data_output1_primary(), data_id_primary(), year_set_comp_ref(), month_range_primary()),c(1:2),mean)
+        apply(
+          create_yearly_subset_composite(
+            data_output1_primary(),
+            data_id_primary(),
+            year_set_comp_ref(),
+            month_range_primary()
+          ),
+          c(1:2),
+          mean
+        )
       } else {
         NA
       }
-    } else if (input$nav1 == "tab3"){   # Correlation
-      apply(create_yearly_subset(data_output1_primary(), data_id_primary(), input$ref_period_v1, month_range_primary()),c(1:2),mean)
-    } else if (input$nav1 == "tab4"){   # Regression
-      apply(create_yearly_subset(data_output1_primary(), data_id_primary(), input$ref_period_dv, month_range_primary()),c(1:2),mean)
-    } else if (input$nav1 == "tab6"){   # SEA
-      apply(create_yearly_subset(data_output1_primary(), data_id_primary(), input$ref_period_6, month_range_primary()),c(1:2),mean)
+    } else if (input$nav1 == "tab3") {
+      # Correlation
+      apply(
+        create_yearly_subset(
+          data_input = data_output1_primary(),
+          data_ID = data_id_primary(),
+          year_range = input$ref_period_v1,
+          month_range = month_range_primary()
+        ),
+        c(1:2),
+        mean
+      )
+    } else if (input$nav1 == "tab4") {
+      # Regression
+      apply(
+        create_yearly_subset(
+          data_input = data_output1_primary(),
+          data_ID = data_id_primary(),
+          year_range = input$ref_period_dv,
+          month_range = month_range_primary()
+        ),
+        c(1:2),
+        mean
+      )
+    } else if (input$nav1 == "tab6") {
+      # SEA
+      apply(
+        create_yearly_subset(
+          data_input = data_output1_primary(),
+          data_ID = data_id_primary(),
+          year_range = input$ref_period_6,
+          month_range = month_range_primary()
+        ),
+        c(1:2),
+        mean
+      )
     }
-  })    
+  })
   
   data_output3_secondary <- reactive({
-    if (input$nav1 == "tab3"){   # Correlation
-      apply(create_yearly_subset(data_output1_secondary(), data_id_secondary(), input$ref_period_v2, month_range_secondary()),c(1:2),mean)
+    if (input$nav1 == "tab3") {
+      # Correlation
+      apply(
+        create_yearly_subset(
+          data_input = data_output1_secondary(),
+          data_ID = data_id_secondary(),
+          year_range = input$ref_period_v2,
+          month_range = month_range_secondary()
+        ),
+        c(1:2),
+        mean
+      )
     }
   })    
   
   
   #Converting absolutes to anomalies
   data_output4 <- reactive({
-    
-    processed_data4 <- convert_subset_to_anomalies(data_output2_primary(), data_output3_primary())
+    processed_data4 <- convert_subset_to_anomalies(data_input = data_output2_primary(), ref_data = data_output3_primary())
     
     return(processed_data4)
   })
@@ -8841,28 +9016,40 @@ server <- function(input, output, session) {
   ####### Convert to anomalies ----
   
   data_output4_primary <- reactive({
-    if (input$nav1 == "tab1"){   # Anomalies
-      convert_subset_to_anomalies(data_output2_primary(), data_output3_primary())
-    } else if (input$nav1 == "tab2"){   # Composites
-      if (input$mode_selected2 == "X years prior"){
-        convert_composite_to_anomalies(data_output2_primary(), data_output1_primary(), data_id_primary(), year_set_comp(), month_range_primary(), input$prior_years2)
+    if (input$nav1 == "tab1") {
+      # Anomalies
+      convert_subset_to_anomalies(data_input = data_output2_primary(), ref_data = data_output3_primary())
+    } else if (input$nav1 == "tab2") {
+      # Composites
+      if (input$mode_selected2 == "X years prior") {
+        convert_composite_to_anomalies(
+          data_output2_primary(),
+          data_output1_primary(),
+          data_id_primary(),
+          year_set_comp(),
+          month_range_primary(),
+          input$prior_years2
+        )
       } else {
-        convert_subset_to_anomalies(data_output2_primary(), data_output3_primary())
+        convert_subset_to_anomalies(data_input = data_output2_primary(), ref_data = data_output3_primary())
       }
-    } else if (input$nav1 == "tab3"){   # Correlation
-      if (input$mode_selected_v1 == "Absolute"){
+    } else if (input$nav1 == "tab3") {
+      # Correlation
+      if (input$mode_selected_v1 == "Absolute") {
         data_output2_primary()
       } else {
-        convert_subset_to_anomalies(data_output2_primary(), data_output3_primary())
+        convert_subset_to_anomalies(data_input = data_output2_primary(), ref_data = data_output3_primary())
       }
-    } else if (input$nav1 == "tab4"){   # Regression
-      if (input$mode_selected_dv == "Absolute"){
+    } else if (input$nav1 == "tab4") {
+      # Regression
+      if (input$mode_selected_dv == "Absolute") {
         data_output2_primary()
       } else {
-        convert_subset_to_anomalies(data_output2_primary(), data_output3_primary())
-      } 
-    } else if (input$nav1 == "tab6"){   # SEA
-      convert_subset_to_anomalies(data_output2_primary(), data_output3_primary())
+        convert_subset_to_anomalies(data_input = data_output2_primary(), ref_data = data_output3_primary())
+      }
+    } else if (input$nav1 == "tab6") {
+      # SEA
+      convert_subset_to_anomalies(data_input = data_output2_primary(), ref_data = data_output3_primary())
     }
   })
   
@@ -8871,7 +9058,7 @@ server <- function(input, output, session) {
       if (input$mode_selected_v2 == "Absolute"){
         data_output2_secondary()
       } else {
-        convert_subset_to_anomalies(data_output2_secondary(), data_output3_secondary())
+        convert_subset_to_anomalies(data_input = data_output2_secondary(), ref_data = data_output3_secondary())
       }
     }
   })
@@ -8888,11 +9075,11 @@ server <- function(input, output, session) {
             new_data_id = data_id_primary()
             new_data_id[2] = 4 # change data ID to SD ratio
             
-            SDratio_data(load_preprocessed_data(new_data_id)) # load new SD data
+            SDratio_data(load_preprocessed_data(data_ID = new_data_id)) # load new SD data
             SDratio_data_id(data_id_primary()) # update custom data ID
           }
           else{
-            SDratio_data(load_ModE_data("SD Ratio",input$variable_selected)) # load new SD data
+            SDratio_data(load_ModE_data(dataset = "SD Ratio", variable = input$variable_selected)) # load new SD data
             SDratio_data_id(data_id_primary()) # update custom data ID
           }
         } 
@@ -9005,9 +9192,13 @@ server <- function(input, output, session) {
   })
   
   #Plotting the Data (Maps)
-  map_data <- function(){create_map_datatable(data_output4_primary(),
-                                              subset_lons_primary(),
-                                              subset_lats_primary())}
+  map_data <- function() {
+    create_map_datatable(
+      data_input = data_output4_primary(),
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary()
+    )
+  }
   
   final_map_data <- reactive({
     # req(input$value_type_map_data)  # Ensure input is available
@@ -9017,12 +9208,18 @@ server <- function(input, output, session) {
     if (option == "Anomalies") {
       map_data()
     } else if (option == "Absolute") {
-      create_map_datatable(data_output2_primary(), subset_lons_primary(), subset_lats_primary())
+      create_map_datatable(data_input = data_output2_primary(),
+                           subset_lon_IDs = subset_lons_primary(),
+                           subset_lat_IDs = subset_lats_primary())
     } else if (option == "Reference") {
-      create_map_datatable(data_output3_primary(), subset_lons_primary(), subset_lats_primary())
+      create_map_datatable(data_input = data_output3_primary(),
+                           subset_lon_IDs = subset_lons_primary(),
+                           subset_lat_IDs = subset_lats_primary())
     } else if (option == "SD Ratio") {
       req(SDratio_subset())
-      create_map_datatable(SDratio_subset(), subset_lons_primary(), subset_lats_primary())
+      create_map_datatable(data_input = SDratio_subset(),
+                           subset_lon_IDs = subset_lons_primary(),
+                           subset_lat_IDs = subset_lats_primary())
     }
   })
   
@@ -9031,8 +9228,14 @@ server <- function(input, output, session) {
   #Plotting the Map
   map_dimensions <- reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
-    m_d = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_map_width, input$dimension[2], input$hide_axis)
-    return(m_d)  
+    m_d = generate_map_dimensions(
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary(),
+      output_width = session$clientData$output_map_width,
+      output_height = input$dimension[2],
+      hide_axis = input$hide_axis
+    )
+    return(m_d)
   })
   
   map_plot <- function() {
@@ -9096,14 +9299,20 @@ server <- function(input, output, session) {
   
   
   #Ref/Absolute/SD ratio Map
-  ref_map_data <- function(){
-    if (input$ref_map_mode == "Absolute Values"){
-      create_map_datatable(data_output2_primary(), subset_lons_primary(), subset_lats_primary())
-    } else if (input$ref_map_mode == "Reference Values"){
-      create_map_datatable(data_output3_primary(), subset_lons_primary(), subset_lats_primary())
-    } else if (input$ref_map_mode == "SD Ratio"){
+  ref_map_data <- function() {
+    if (input$ref_map_mode == "Absolute Values") {
+      create_map_datatable(data_input = data_output2_primary(),
+                           subset_lon_IDs = subset_lons_primary(),
+                           subset_lat_IDs = subset_lats_primary())
+    } else if (input$ref_map_mode == "Reference Values") {
+      create_map_datatable(data_input = data_output3_primary(),
+                           subset_lon_IDs = subset_lons_primary(),
+                           subset_lat_IDs = subset_lats_primary())
+    } else if (input$ref_map_mode == "SD Ratio") {
       req(SDratio_subset())
-      create_map_datatable(SDratio_subset(), subset_lons_primary(), subset_lats_primary())
+      create_map_datatable(data_input = SDratio_subset(),
+                           subset_lon_IDs = subset_lons_primary(),
+                           subset_lat_IDs = subset_lats_primary())
     }
   }    
   
@@ -9203,32 +9412,53 @@ server <- function(input, output, session) {
     req(input$nav1 == "tab1") # Only run code if in the current tab
     
     #Plot normal timeseries if year range is > 1 year
-    if (input$range_years[1] != input$range_years[2]){
-      ts_data1 <- create_timeseries_datatable(data_output4_primary(), input$range_years, "range", subset_lons_primary(), subset_lats_primary())
-      
-      ts_data2 = add_stats_to_TS_datatable(ts_data1,input$custom_average_ts,input$year_moving_ts,
-                                           "center",input$custom_percentile_ts,input$percentile_ts,input$moving_percentile_ts)
-    } 
+    if (input$range_years[1] != input$range_years[2]) {
+      ts_data1 <- create_timeseries_datatable(
+        data_input = data_output4_primary(),
+        year_input = input$range_years,
+        year_input_type = "range",
+        subset_lon_IDs = subset_lons_primary(),
+        subset_lat_IDs = subset_lats_primary()
+      )
+      ts_data2 = add_stats_to_TS_datatable(
+        data_input = ts_data1,
+        add_moving_average = input$custom_average_ts,
+        moving_average_range = input$year_moving_ts,
+        moving_average_alignment = "center",
+        add_percentiles = input$custom_percentile_ts,
+        percentiles = input$percentile_ts,
+        use_MA_percentiles = input$moving_percentile_ts
+      )
+    }
     # Plot monthly TS if year range = 1 year
     else {
-      ts_data1 = load_ModE_data(input$dataset_selected,input$variable_selected)
+      ts_data1 = load_ModE_data(dataset = input$dataset_selected,
+                                variable = input$variable_selected)
       
-      ts_data2 = create_monthly_TS_data(ts_data1,input$dataset_selected,input$variable_selected,
-                                        input$range_years[1],input$range_longitude,
-                                        input$range_latitude,"Anomaly",
-                                        "Individual years",input$ref_period)
+      ts_data2 = create_monthly_TS_data(
+        ts_data1,
+        input$dataset_selected,
+        input$variable_selected,
+        input$range_years[1],
+        input$range_longitude,
+        input$range_latitude,
+        "Anomaly",
+        "Individual years",
+        input$ref_period
+      )
     }
     return(ts_data2)
   })
   
   timeseries_data_output = reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
-    if (input$range_years[1] != input$range_years[2]){
-      output_ts_table = rewrite_tstable(timeseries_data(),input$variable_selected)
+    if (input$range_years[1] != input$range_years[2]) {
+      output_ts_table = rewrite_tstable(tstable = timeseries_data(),
+                                        variable = input$variable_selected)
     } else {
       output_ts_table = timeseries_data()
     }
-    return(output_ts_table) 
+    return(output_ts_table)
   })
   
   output$data2 <- renderDataTable({timeseries_data_output()}, rownames = FALSE, options = list(
@@ -9290,27 +9520,29 @@ server <- function(input, output, session) {
   
   # Load global data
   fad_global_data = reactive({
-    load_modera_source_data(input$fad_year, season_fad_short())
+    load_modera_source_data(year = input$fad_year, season = season_fad_short())
   })
   
   # Plot map 
   fad_plot = function(base_size = 18) {
-    plot_modera_sources(fad_global_data(),
-                        input$fad_year,
-                        season_fad_short(),
-                        fad_zoom(),
-                        base_size = base_size)
+    plot_modera_sources(
+      ME_source_data = fad_global_data(),
+      year = input$fad_year,
+      season = season_fad_short(),
+      minmax_lonlat = fad_zoom(),
+      base_size = base_size
+    )
   }
   
   
   fad_dimensions <- reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
     m_d_f = generate_map_dimensions(
-      subset_lons_primary(),
-      subset_lats_primary(),
-      session$clientData$output_fad_map_width,
-      input$dimension[2],
-      FALSE
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary(),
+      output_width = session$clientData$output_fad_map_width,
+      output_height = input$dimension[2],
+      hide_axis = FALSE
     )
     return(m_d_f)
   })
@@ -9325,10 +9557,14 @@ server <- function(input, output, session) {
   
   # Set up data function
   fad_data <- function() {
-    fad_base_data = download_feedback_data(fad_global_data(), fad_zoom()[1:2], fad_zoom()[3:4])
+    fad_base_data = download_feedback_data(
+      global_data = fad_global_data(),
+      lon_range = fad_zoom()[1:2],
+      lat_range = fad_zoom()[3:4]
+    )
     
     # Remove the last column
-    fad_base_data = fad_base_data[ , -ncol(fad_base_data)]
+    fad_base_data = fad_base_data[, -ncol(fad_base_data)]
     
     return(fad_base_data)
   }
@@ -9413,21 +9649,39 @@ server <- function(input, output, session) {
                                                        dev.off()
                                                      }) 
   
-  output$download_map_data        <- downloadHandler(filename = function() {paste(plot_titles()$file_title, "-mapdata.", input$file_type_map_data, sep = "")},
-                                                     content = function(file) {
-                                                       if (input$file_type_map_data == "csv"){
-                                                         map_data_new <- rewrite_maptable(final_map_data(), subset_lons_primary(), subset_lats_primary())
-                                                         colnames(map_data_new) <- NULL
-                                                         
-                                                         write.csv(map_data_new, file,
-                                                                   row.names = FALSE)
-                                                       } else if (input$file_type_map_data == "xlsx") {
-                                                         openxlsx::write.xlsx(rewrite_maptable(final_map_data(), subset_lons_primary(), subset_lats_primary()), file,
-                                                                              row.names = FALSE,
-                                                                              col.names = FALSE)
-                                                       } else if (input$file_type_map_data == "GeoTIFF") {
-                                                         create_geotiff(final_map_data(), file)
-                                                       }})
+  output$download_map_data <- downloadHandler(
+    filename = function() {
+      paste(plot_titles()$file_title,
+            "-mapdata.",
+            input$file_type_map_data,
+            sep = "")
+    },
+    content = function(file) {
+      if (input$file_type_map_data == "csv") {
+        map_data_new <- rewrite_maptable(
+          maptable = final_map_data(),
+          subset_lon_IDs = subset_lons_primary(),
+          subset_lat_IDs = subset_lats_primary()
+        )
+        colnames(map_data_new) <- NULL
+        
+        write.csv(map_data_new, file, row.names = FALSE)
+      } else if (input$file_type_map_data == "xlsx") {
+        openxlsx::write.xlsx(
+          rewrite_maptable(
+            maptable = final_map_data(),
+            subset_lon_IDs = subset_lons_primary(),
+            subset_lat_IDs = subset_lats_primary()
+          ),
+          file,
+          row.names = FALSE,
+          col.names = FALSE
+        )
+      } else if (input$file_type_map_data == "GeoTIFF") {
+        create_geotiff(final_map_data(), file)
+      }
+    }
+  )
   
   output$download_timeseries_data  <- downloadHandler(filename = function(){paste(plot_titles()$file_title, "-tsdata.",input$file_type_timeseries_data, sep = "")},
                                                       content  = function(file) {
@@ -9448,11 +9702,11 @@ server <- function(input, output, session) {
     
     content = function(file) {
       mmd = generate_map_dimensions(
-        subset_lons_primary(),
-        subset_lats_primary(),
-        session$clientData$output_fad_map_width,
-        input$dimension[2],
-        FALSE
+        subset_lon_IDs = subset_lons_primary(),
+        subset_lat_IDs = subset_lats_primary(),
+        output_width = session$clientData$output_fad_map_width,
+        output_height = input$dimension[2],
+        hide_axis = FALSE
       )
       if (input$file_type_fad == "png") {
         png(file, width = mmd[3], height = mmd[4], res = 400, bg = "transparent")
@@ -9482,13 +9736,31 @@ server <- function(input, output, session) {
                                                                              row.names = FALSE)
                                                       }})
   
-  output$download_netcdf             <- downloadHandler(filename = function() {paste(plot_titles()$netcdf_title, ".nc", sep = "")},
-                                                        content  = function(file) {
-                                                          netcdf_ID = sample(1:1000000,1)
-                                                          generate_custom_netcdf (data_output4_primary(), "general",input$dataset_selected,netcdf_ID, input$variable_selected, input$netcdf_variables, "Anomaly", subset_lons_primary(), subset_lats_primary(), month_range_primary(), input$range_years, input$ref_period, NA)
-                                                          file.copy(paste("user_ncdf/netcdf_",netcdf_ID,".nc", sep=""),file)
-                                                          file.remove(paste("user_ncdf/netcdf_",netcdf_ID,".nc", sep=""))
-                                                        })
+  output$download_netcdf <- downloadHandler(
+    filename = function() {
+      paste(plot_titles()$netcdf_title, ".nc", sep = "")
+    },
+    content  = function(file) {
+      netcdf_ID = sample(1:1000000, 1)
+      generate_custom_netcdf (
+        data_input = data_output4_primary(),
+        tab = "general",
+        dataset = input$dataset_selected,
+        ncdf_ID = netcdf_ID,
+        variable = input$variable_selected,
+        user_nc_variables = input$netcdf_variables,
+        mode = "Anomaly",
+        subset_lon_IDs = subset_lons_primary(),
+        subset_lat_IDs = subset_lats_primary(),
+        month_range = month_range_primary(),
+        year_range = input$range_years,
+        baseline_range = input$ref_period,
+        baseline_years_before = NA
+      )
+      file.copy(paste("user_ncdf/netcdf_", netcdf_ID, ".nc", sep = ""), file)
+      file.remove(paste("user_ncdf/netcdf_", netcdf_ID, ".nc", sep = ""))
+    }
+  )
   
   ### COMPOSITE Year range,load SD ratio data, plotting & downloads ---- 
   
@@ -9515,11 +9787,11 @@ server <- function(input, output, session) {
             new_data_id = data_id_primary()
             new_data_id[2] = 4 # change data ID to SD ratio
             
-            SDratio_data(load_preprocessed_data(new_data_id)) # load new SD data
+            SDratio_data(load_preprocessed_data(data_ID = new_data_id)) # load new SD data
             SDratio_data_id(data_id_primary()) # update custom data ID
           }
           else{
-            SDratio_data(load_ModE_data("SD Ratio",input$variable_selected2)) # load new SD data
+            SDratio_data(load_ModE_data(dataset = "SD Ratio", variable = input$variable_selected2)) # load new SD data
             SDratio_data_id(data_id_primary()) # update custom data ID
           }
         } 
@@ -9628,7 +9900,11 @@ server <- function(input, output, session) {
   })
   
   #Plotting the Data (Maps)
-  map_data_2 <- function(){create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
+  map_data_2 <- function() {
+    create_map_datatable(data_input = data_output4_primary(),
+                         subset_lon_IDs = subset_lons_primary(),
+                         subset_lat_IDs = subset_lats_primary())
+  }
   
   final_map_data_2 <- reactive({
     req(input$value_type_map_data2)  # Ensure input is available
@@ -9638,12 +9914,18 @@ server <- function(input, output, session) {
     if (option == "Anomalies") {
       map_data()
     } else if (option == "Absolute") {
-      create_map_datatable(data_output2_primary(), subset_lons_primary(), subset_lats_primary())
+      create_map_datatable(data_input = data_output2_primary(),
+                           subset_lon_IDs = subset_lons_primary(),
+                           subset_lat_IDs = subset_lats_primary())
     } else if (option == "Reference") {
-      create_map_datatable(data_output3_primary(), subset_lons_primary(), subset_lats_primary())
+      create_map_datatable(data_input = data_output3_primary(),
+                           subset_lon_IDs = subset_lons_primary(),
+                           subset_lat_IDs = subset_lats_primary())
     } else if (option == "SD Ratio") {
       req(SDratio_subset_2())
-      create_map_datatable(SDratio_subset_2(), subset_lons_primary(), subset_lats_primary())
+      create_map_datatable(data_input = SDratio_subset_2(),
+                           subset_lon_IDs = subset_lons_primary(),
+                           subset_lat_IDs = subset_lats_primary())
     }
   })
   
@@ -9655,8 +9937,13 @@ server <- function(input, output, session) {
     
     req(input$nav1 == "tab2") # Only run code if in the current tab
     
-    m_d_2 = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_map2_width, input$dimension[2]*0.85, input$hide_axis2)
-    
+    m_d_2 = generate_map_dimensions(
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary(),
+      output_width = session$clientData$output_map2_width,
+      output_height = input$dimension[2] * 0.85,
+      hide_axis = input$hide_axis2
+    )
     return(m_d_2)
   })
   
@@ -9719,13 +10006,19 @@ server <- function(input, output, session) {
   
   
   #Ref/Absolute Map
-  ref_map_data_2 <- function(){
-    if (input$ref_map_mode2 == "Absolute Values"){
-      create_map_datatable(data_output2_primary(), subset_lons_primary(), subset_lats_primary())
-    } else if (input$ref_map_mode2 == "Reference Values"){
-      create_map_datatable(data_output3_primary(), subset_lons_primary(), subset_lats_primary())
-    } else if (input$ref_map_mode2 == "SD Ratio"){
-      create_map_datatable(SDratio_subset_2(), subset_lons_primary(), subset_lats_primary())
+  ref_map_data_2 <- function() {
+    if (input$ref_map_mode2 == "Absolute Values") {
+      create_map_datatable(data_input = data_output2_primary(),
+                           subset_lon_IDs = subset_lons_primary(),
+                           subset_lat_IDs = subset_lats_primary())
+    } else if (input$ref_map_mode2 == "Reference Values") {
+      create_map_datatable(data_input = data_output3_primary(),
+                           subset_lon_IDs = subset_lons_primary(),
+                           subset_lat_IDs = subset_lats_primary())
+    } else if (input$ref_map_mode2 == "SD Ratio") {
+      create_map_datatable(data_input = SDratio_subset_2(),
+                           subset_lon_IDs = subset_lons_primary(),
+                           subset_lat_IDs = subset_lats_primary())
     }
   }    
   
@@ -9824,15 +10117,27 @@ server <- function(input, output, session) {
     req(input$nav1 == "tab2") # Only run code if in the current tab
     
     #Plot normal timeseries if year set is > 1 year
-    if (length(year_set_comp()) > 1){    
-      ts_data1 <- create_timeseries_datatable(data_output4_primary(), year_set_comp(), "set", subset_lons_primary(), subset_lats_primary())
-      
-      ts_data2 = add_stats_to_TS_datatable(ts_data1,FALSE,NA,NA,input$custom_percentile_ts2,
-                                           input$percentile_ts2,FALSE)
+    if (length(year_set_comp()) > 1) {
+      ts_data1 <- create_timeseries_datatable(
+        data_input = data_output4_primary(),
+        year_input = year_set_comp(),
+        year_input_type = "set",
+        subset_lon_IDs = subset_lons_primary(),
+        subset_lat_IDs = subset_lats_primary()
+      )
+      ts_data2 = add_stats_to_TS_datatable(
+        data_input = ts_data1,
+        add_moving_average = FALSE,
+        moving_average_range = NA,
+        moving_average_alignment = NA,
+        add_percentiles = input$custom_percentile_ts2,
+        percentiles = input$percentile_ts2,
+        use_MA_percentiles = FALSE
+      )
     } 
     # Plot monthly TS if year range = 1 year
     else {
-      ts_data1 = load_ModE_data(input$dataset_selected2,input$variable_selected2)
+      ts_data1 = load_ModE_data(dataset = input$dataset_selected2, variable = input$variable_selected2)
       
       # Generate ref years
       if (input$mode_selected2 == "Fixed reference"){
@@ -9852,15 +10157,15 @@ server <- function(input, output, session) {
   })
   
   timeseries_data_output_2 = reactive({
-    
     req(input$nav1 == "tab2") # Only run code if in the current tab
     
-    if (length(year_set_comp()) > 1){ 
-      output_ts_table = rewrite_tstable(timeseries_data_2(),input$variable_selected2)
+    if (length(year_set_comp()) > 1) {
+      output_ts_table = rewrite_tstable(tstable = timeseries_data_2(),
+                                        variable = input$variable_selected2)
     } else {
       output_ts_table = timeseries_data_2()
     }
-    return(output_ts_table) 
+    return(output_ts_table)
   })
   
   output$data4 <- renderDataTable({timeseries_data_output_2()}, rownames = FALSE, options = list(
@@ -9933,26 +10238,28 @@ server <- function(input, output, session) {
   
   # Load global data
   fad_global_data2 = reactive({
-    load_modera_source_data(input$fad_year2, season_fad_short2())
+    load_modera_source_data(year = input$fad_year2, season = season_fad_short2())
   })
   
   # Plot map 
   fad_plot2 = function(base_size = 18) {
-    plot_modera_sources(fad_global_data2(),
-                        input$fad_year2,
-                        season_fad_short2(),
-                        fad_zoom2(),
-                        base_size = base_size)
+    plot_modera_sources(
+      ME_source_data = fad_global_data2(),
+      year = input$fad_year2,
+      season = season_fad_short2(),
+      minmax_lonlat = fad_zoom2(),
+      base_size = base_size
+    )
   }
   
   fad_dimensions2 <- reactive({
     req(input$nav1 == "tab2") # Only run code if in the current tab
     m_d_f2 = generate_map_dimensions(
-      subset_lons_primary(),
-      subset_lats_primary(),
-      session$clientData$output_fad_map2_width,
-      input$dimension[2],
-      FALSE
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary(),
+      output_width = session$clientData$output_fad_map2_width,
+      output_height = input$dimension[2],
+      hide_axis = FALSE
     )
     return(m_d_f2)
   })
@@ -9967,11 +10274,14 @@ server <- function(input, output, session) {
   
   # Set up data function
   fad_data2 <- function() {
-    
-    fad_base_data2 = download_feedback_data(fad_global_data2(), fad_zoom2()[1:2], fad_zoom2()[3:4])
+    fad_base_data2 = download_feedback_data(
+      global_data = fad_global_data2(),
+      lon_range = fad_zoom2()[1:2],
+      lat_range = fad_zoom2()[3:4]
+    )
     
     # Remove the last column
-    fad_base_data2 = fad_base_data2[ , -ncol(fad_base_data2)]
+    fad_base_data2 = fad_base_data2[, -ncol(fad_base_data2)]
     
     return(fad_base_data2)
   }
@@ -10075,21 +10385,41 @@ server <- function(input, output, session) {
     }
   ) 
   
-  output$download_map_data2        <- downloadHandler(filename = function(){paste(plot_titles_composites()$file_title, "-mapdata.",input$file_type_map_data2, sep = "")},
-                                                      content  = function(file) {
-                                                        if (input$file_type_map_data2 == "csv"){
-                                                          map_data_new_2 <- rewrite_maptable(final_map_data_2(), subset_lons_primary(), subset_lats_primary())
-                                                          colnames(map_data_new_2) <- NULL
-                                                          
-                                                          write.csv(map_data_new_2, file,
-                                                                    row.names = FALSE)
-                                                        } else if (input$file_type_map_data2 == "xlsx") {
-                                                          openxlsx::write.xlsx(rewrite_maptable(final_map_data_2(), subset_lons_primary(), subset_lats_primary()), file,
-                                                                               row.names = FALSE,
-                                                                               col.names = FALSE)
-                                                        } else if (input$file_type_map_data2 == "GeoTIFF") {
-                                                          create_geotiff(final_map_data_2(), file)
-                                                        }})
+  output$download_map_data2 <- downloadHandler(
+    filename = function() {
+      paste(
+        plot_titles_composites()$file_title,
+        "-mapdata.",
+        input$file_type_map_data2,
+        sep = ""
+      )
+    },
+    content  = function(file) {
+      if (input$file_type_map_data2 == "csv") {
+        map_data_new_2 <- rewrite_maptable(
+          maptable = final_map_data_2(),
+          subset_lon_IDs = subset_lons_primary(),
+          subset_lat_IDs = subset_lats_primary()
+        )
+        colnames(map_data_new_2) <- NULL
+        
+        write.csv(map_data_new_2, file, row.names = FALSE)
+      } else if (input$file_type_map_data2 == "xlsx") {
+        openxlsx::write.xlsx(
+          rewrite_maptable(
+            maptable = final_map_data_2(),
+            subset_lon_IDs = subset_lons_primary(),
+            subset_lat_IDs = subset_lats_primary()
+          ),
+          file,
+          row.names = FALSE,
+          col.names = FALSE
+        )
+      } else if (input$file_type_map_data2 == "GeoTIFF") {
+        create_geotiff(final_map_data_2(), file)
+      }
+    }
+  )
   
   output$download_timeseries_data2  <- downloadHandler(filename = function(){paste(plot_titles_composites()$file_title, "-tsdata.",input$file_type_timeseries_data2, sep = "")},
                                                        content  = function(file) {
@@ -10109,11 +10439,11 @@ server <- function(input, output, session) {
     
     content = function(file) {
       mmd = generate_map_dimensions(
-        subset_lons_primary(),
-        subset_lats_primary(),
-        session$clientData$output_fad_map2_width,
-        input$dimension[2],
-        FALSE
+        subset_lon_IDs = subset_lons_primary(),
+        subset_lat_IDs = subset_lats_primary(),
+        output_width = session$clientData$output_fad_map2_width,
+        output_height = input$dimension[2],
+        hide_axis = FALSE
       )
       if (input$file_type_fad2 == "png") {
         png(file, width = mmd[3], height = mmd[4], res = 400, bg = "transparent")
@@ -10268,9 +10598,9 @@ server <- function(input, output, session) {
   
   # Generate Map data & plotting function
   map_data_v1 <- function() {
-    create_map_datatable(data_output4_primary(),
-                         subset_lons_primary(),
-                         subset_lats_primary())
+    create_map_datatable(data_input = data_output4_primary(),
+                         subset_lon_IDs = subset_lons_primary(),
+                         subset_lat_IDs = subset_lats_primary())
   }
   
   ME_map_plot_v1 <- function() {
@@ -10291,11 +10621,11 @@ server <- function(input, output, session) {
   timeseries_data_v1 <- reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
     ts_data1_v1 <- create_timeseries_datatable(
-      data_output4_primary(),
-      input$range_years3,
-      "range",
-      subset_lons_primary(),
-      subset_lats_primary()
+      data_input = data_output4_primary(),
+      year_input = input$range_years3,
+      year_input_type = "range",
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary()
     )
     return(ts_data1_v1)
   })
@@ -10343,9 +10673,14 @@ server <- function(input, output, session) {
   }) 
   
   # Generate Map data & plotting function
-  map_data_v2 <- function(){
-    req(data_output4_secondary(), subset_lons_secondary(), subset_lats_secondary())
-    create_map_datatable(data_output4_secondary(), subset_lons_secondary(), subset_lats_secondary())}
+  map_data_v2 <- function() {
+    req(data_output4_secondary(),
+        subset_lons_secondary(),
+        subset_lats_secondary())
+    create_map_datatable(data_input = data_output4_secondary(),
+                         subset_lon_IDs = subset_lons_secondary(),
+                         subset_lat_IDs = subset_lats_secondary())
+  }
   
   map_data_v2_tiff = reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
@@ -10370,11 +10705,11 @@ server <- function(input, output, session) {
   timeseries_data_v2 <- reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
     ts_data1_v2 <- create_timeseries_datatable(
-      data_output4_secondary(),
-      input$range_years3,
-      "range",
-      subset_lons_secondary(),
-      subset_lats_secondary()
+      data_input = data_output4_secondary(),
+      year_input = input$range_years3,
+      year_input_type = "range",
+      subset_lon_IDs = subset_lons_secondary(),
+      subset_lat_IDs = subset_lats_secondary()
     )
     return(ts_data1_v2)
   })
@@ -10411,11 +10746,11 @@ server <- function(input, output, session) {
       map_dims_v1 = c(session$clientData$output_plot_v1_width, 400)
     } else {
       map_dims_v1 = generate_map_dimensions(
-        subset_lons_primary(),
-        subset_lats_primary(),
-        session$clientData$output_plot_v1_width,
-        (input$dimension[2]),
-        FALSE
+        subset_lon_IDs = subset_lons_primary(),
+        subset_lat_IDs = subset_lats_primary(),
+        output_width = session$clientData$output_plot_v1_width,
+        output_height = (input$dimension[2]),
+        hide_axis = FALSE
       )
     }
     return(map_dims_v1)
@@ -10556,13 +10891,13 @@ server <- function(input, output, session) {
     
     # Add moving averages (if chosen)
     tsds_v1 = add_stats_to_TS_datatable(
-      tsd_v1,
-      input$custom_average_ts3,
-      input$year_moving_ts3,
-      "center",
-      FALSE,
-      NA,
-      FALSE
+      data_input = tsd_v1,
+      add_moving_average = input$custom_average_ts3,
+      moving_average_range = input$year_moving_ts3,
+      moving_average_alignment = "center",
+      add_percentiles = FALSE,
+      percentiles = NA,
+      use_MA_percentiles = FALSE
     )
     
     return(tsds_v1)
@@ -10579,8 +10914,15 @@ server <- function(input, output, session) {
     } 
     
     # Add moving averages (if chosen)
-    tsds_v2 = add_stats_to_TS_datatable(tsd_v2,input$custom_average_ts3,input$year_moving_ts3,
-                                        "center",FALSE,NA,FALSE)
+    tsds_v2 = add_stats_to_TS_datatable(
+      data_input = tsd_v2,
+      add_moving_average = input$custom_average_ts3,
+      moving_average_range = input$year_moving_ts3,
+      moving_average_alignment = "center",
+      add_percentiles = FALSE,
+      percentiles = NA,
+      use_MA_percentiles = FALSE
+    )
     
     return(tsds_v2)
   })
@@ -10852,11 +11194,11 @@ server <- function(input, output, session) {
     req(input$nav1 == "tab3") # Only run code if in the current tab
     
     c_m_d = generate_map_dimensions(
-      correlation_map_data()[[1]],
-      correlation_map_data()[[2]],
-      session$clientData$output_correlation_map_width,
-      (input$dimension[2]),
-      FALSE
+      subset_lon_IDs = correlation_map_data()[[1]],
+      subset_lat_IDs = correlation_map_data()[[2]],
+      output_width = session$clientData$output_correlation_map_width,
+      output_height = (input$dimension[2]),
+      hide_axis = FALSE
     )
     
     return(c_m_d)
@@ -11046,8 +11388,8 @@ server <- function(input, output, session) {
     }
     
     # Create v1/v2 datatables
-    ctd_v1 = rewrite_tstable(ts_data_v1(),variable_v1)
-    ctd_v2 = rewrite_tstable(ts_data_v2(),variable_v2)
+    ctd_v1 = rewrite_tstable(tstable = ts_data_v1(), variable = variable_v1)
+    ctd_v2 = rewrite_tstable(tstable = ts_data_v2(), variable = variable_v2)
     
     # Combine into dataframe
     ctd = data.frame(ctd_v1,ctd_v2[-1])
@@ -11090,26 +11432,28 @@ server <- function(input, output, session) {
   
   # Load global data
   fad_global_data3 = reactive({
-    load_modera_source_data(input$fad_year3, season_fad_short3())
+    load_modera_source_data(year = input$fad_year3, season = season_fad_short3())
   })
   
   # Plot map 
   fad_plot3 = function(base_size = 18) {
-    plot_modera_sources(fad_global_data3(),
-                        input$fad_year3,
-                        season_fad_short3(),
-                        fad_zoom3(),
-                        base_size = base_size)
+    plot_modera_sources(
+      ME_source_data = fad_global_data3(),
+      year = input$fad_year3,
+      season = season_fad_short3(),
+      minmax_lonlat = fad_zoom3(),
+      base_size = base_size
+    )
   }
   
   fad_dimensions3 <- reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
     m_d_f3 = generate_map_dimensions(
-      subset_lons_secondary(),
-      subset_lats_secondary(),
-      session$clientData$output_fad_map3_width,
-      input$dimension[2],
-      FALSE
+      subset_lon_IDs = subset_lons_secondary(),
+      subset_lat_IDs = subset_lats_secondary(),
+      output_width = session$clientData$output_fad_map3_width,
+      output_height = input$dimension[2],
+      hide_axis = FALSE
     )
     return(m_d_f3)
   })
@@ -11124,11 +11468,14 @@ server <- function(input, output, session) {
   
   # Set up data function
   fad_data3 <- function() {
-    
-    fad_base_data3 = download_feedback_data(fad_global_data3(), fad_zoom3()[1:2], fad_zoom3()[3:4])
+    fad_base_data3 = download_feedback_data(
+      global_data = fad_global_data3(),
+      lon_range = fad_zoom3()[1:2],
+      lat_range = fad_zoom3()[3:4]
+    )
     
     # Remove the last column
-    fad_base_data3 = fad_base_data3[ , -ncol(fad_base_data3)]
+    fad_base_data3 = fad_base_data3[, -ncol(fad_base_data3)]
     
     return(fad_base_data3)
     
@@ -11246,21 +11593,39 @@ server <- function(input, output, session) {
                                                                                 col.names = TRUE)
                                                          }}) 
   
-  output$download_map_data3        <- downloadHandler(filename = function(){paste(plot_titles_cor()$file_title, "-mapdata.",input$file_type_map_data3, sep = "")},
-                                                      content  = function(file) {
-                                                        if (input$file_type_map_data3 == "csv"){
-                                                          map_data_new_3 <- rewrite_maptable(correlation_map_datatable(),subset_lons_secondary(),subset_lats_secondary())
-                                                          colnames(map_data_new_3) <- NULL
-                                                          
-                                                          write.csv(map_data_new_3, file,
-                                                                    row.names = FALSE)
-                                                        } else if (input$file_type_map_data3 == "xlsx") {
-                                                          openxlsx::write.xlsx(rewrite_maptable(correlation_map_datatable(),subset_lons_secondary(),subset_lats_secondary()), file,
-                                                                               row.names = FALSE,
-                                                                               col.names = FALSE)
-                                                        } else if (input$file_type_map_data3 == "GeoTIFF") {
-                                                          create_geotiff(correlation_map_datatable(), file)
-                                                        }})
+  output$download_map_data3 <- downloadHandler(
+    filename = function() {
+      paste(plot_titles_cor()$file_title,
+            "-mapdata.",
+            input$file_type_map_data3,
+            sep = "")
+    },
+    content  = function(file) {
+      if (input$file_type_map_data3 == "csv") {
+        map_data_new_3 <- rewrite_maptable(
+          maptable = correlation_map_datatable(),
+          subset_lon_IDs = subset_lons_secondary(),
+          subset_lat_IDs = subset_lats_secondary()
+        )
+        colnames(map_data_new_3) <- NULL
+        
+        write.csv(map_data_new_3, file, row.names = FALSE)
+      } else if (input$file_type_map_data3 == "xlsx") {
+        openxlsx::write.xlsx(
+          rewrite_maptable(
+            maptable = correlation_map_datatable(),
+            subset_lon_IDs = subset_lons_secondary(),
+            subset_lat_IDs = subset_lats_secondary()
+          ),
+          file,
+          row.names = FALSE,
+          col.names = FALSE
+        )
+      } else if (input$file_type_map_data3 == "GeoTIFF") {
+        create_geotiff(correlation_map_datatable(), file)
+      }
+    }
+  )
 
   output$download_fad3 <- downloadHandler(
     filename = function()
@@ -11268,11 +11633,11 @@ server <- function(input, output, session) {
     
     content = function(file) {
       mmd = generate_map_dimensions(
-        subset_lons_secondary(),
-        subset_lats_secondary(),
-        session$clientData$output_fad_map3_width,
-        input$dimension[2],
-        FALSE
+        subset_lon_IDs = subset_lons_secondary(),
+        subset_lat_IDs = subset_lats_secondary(),
+        output_width = session$clientData$output_fad_map3_width,
+        output_height = input$dimension[2],
+        hide_axis = FALSE
       )
       if (input$file_type_fad3 == "png") {
         png(file, width = mmd[3], height = mmd[4], res = 400, bg = "transparent")
@@ -11433,9 +11798,14 @@ server <- function(input, output, session) {
   }) 
   
   # Generate Map data & plotting function for dv
-  map_data_dv <- function(){
-    req(data_output4_primary(), subset_lons_primary(), subset_lats_primary())
-    create_map_datatable(data_output4_primary(), subset_lons_primary(), subset_lats_primary())}
+  map_data_dv <- function() {
+    req(data_output4_primary(),
+        subset_lons_primary(),
+        subset_lats_primary())
+    create_map_datatable(data_input = data_output4_primary(),
+                         subset_lon_IDs = subset_lons_primary(),
+                         subset_lat_IDs = subset_lats_primary())
+  }
   
   ME_map_plot_dv <- function(){plot_map(
     data_input = create_geotiff(map_data_dv()),
@@ -11484,10 +11854,15 @@ server <- function(input, output, session) {
   
   # Generate Timeseries data for dv
   timeseries_data_dv <- reactive({
-    
     req(input$nav1 == "tab4") # Only run code if in the current tab
     
-    ts_data1_dv <- create_timeseries_datatable(data_output4_primary(), input$range_years4, "range", subset_lons_primary(), subset_lats_primary())
+    ts_data1_dv <- create_timeseries_datatable(
+      data_input = data_output4_primary(),
+      year_input = input$range_years4,
+      year_input_type = "range",
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary()
+    )
     return(ts_data1_dv)
   })
   
@@ -11508,7 +11883,13 @@ server <- function(input, output, session) {
     if (input$source_dv == "User Data"){
       map_dims_dv = c(session$clientData$output_plot_dv_width,400)
     } else {
-      map_dims_dv = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_plot_dv_width, (input$dimension[2]), FALSE)
+      map_dims_dv = generate_map_dimensions(
+        subset_lon_IDs = subset_lons_primary(),
+        subset_lat_IDs = subset_lats_primary(),
+        output_width = session$clientData$output_plot_dv_width,
+        output_height = (input$dimension[2]),
+        hide_axis = FALSE
+      )
     }
     return(map_dims_dv)  
   })
@@ -11839,7 +12220,13 @@ server <- function(input, output, session) {
     
     req(input$nav1 == "tab4") # Only run code if in the current tab
     
-    p_d_r = generate_map_dimensions(subset_lons_primary(), subset_lats_primary(), session$clientData$output_plot_dv_width, input$dimension[2], FALSE)
+    p_d_r = generate_map_dimensions(
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary(),
+      output_width = session$clientData$output_plot_dv_width,
+      output_height = input$dimension[2],
+      hide_axis = FALSE
+    )
     
     return(p_d_r)
   })
@@ -12164,26 +12551,28 @@ server <- function(input, output, session) {
   
   # Load global data
   fad_global_data4 = reactive({
-    load_modera_source_data(input$fad_year4, season_fad_short4())
+    load_modera_source_data(year = input$fad_year4, season = season_fad_short4())
   })
   
   # Plot map 
   fad_plot4 = function(base_size = 18) {
-    plot_modera_sources(fad_global_data4(),
-                        input$fad_year4,
-                        season_fad_short4(),
-                        fad_zoom4(),
-                        base_size = base_size)
+    plot_modera_sources(
+      ME_source_data = fad_global_data4(),
+      year = input$fad_year4,
+      season = season_fad_short4(),
+      minmax_lonlat = fad_zoom4(),
+      base_size = base_size
+    )
   }
   
   fad_dimensions4 <- reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
     m_d_f4 = generate_map_dimensions(
-      subset_lons_primary(),
-      subset_lats_primary(),
-      session$clientData$output_fad_map4_width,
-      input$dimension[2],
-      FALSE
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary(),
+      output_width = session$clientData$output_fad_map4_width,
+      output_height = input$dimension[2],
+      hide_axis = FALSE
     )
     return(m_d_f4)
   })
@@ -12198,11 +12587,14 @@ server <- function(input, output, session) {
   
   # Set up data function
   fad_data4 <- function() {
-    
-    fad_base_data4 = download_feedback_data(fad_global_data4(), fad_zoom4()[1:2], fad_zoom4()[3:4])
+    fad_base_data4 = download_feedback_data(
+      global_data = fad_global_data4(),
+      lon_range = fad_zoom4()[1:2],
+      lat_range = fad_zoom4()[3:4]
+    )
     
     # Remove the last column
-    fad_base_data4 = fad_base_data4[ , -ncol(fad_base_data4)]
+    fad_base_data4 = fad_base_data4[, -ncol(fad_base_data4)]
     
     return(fad_base_data4)
     
@@ -12330,21 +12722,41 @@ server <- function(input, output, session) {
                                                          dev.off()
                                                        })
   
-  output$download_reg_coe_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg_coeff()$file_title, "-mapdata.",input$reg_coe_plot_data_type, sep = "")},
-                                                              content  = function(file) {
-                                                                if (input$reg_coe_plot_data_type == "csv"){
-                                                                  map_data_new_4a <- rewrite_maptable(reg_coef_table(),subset_lons_secondary(),subset_lats_secondary())
-                                                                  colnames(map_data_new_4a) <- NULL
-                                                                  
-                                                                  write.csv(map_data_new_4a, file,
-                                                                            row.names = FALSE)
-                                                                } else if (input$reg_coe_plot_data_type == "xlsx"){
-                                                                  openxlsx::write.xlsx(rewrite_maptable(reg_coef_table(),subset_lons_secondary(),subset_lats_secondary()), file,
-                                                                                       row.names = FALSE,
-                                                                                       col.names = FALSE)
-                                                                } else if (input$reg_coe_plot_data_type == "GeoTIFF") {
-                                                                  create_geotiff(reg_coef_table(), file)
-                                                                }})
+  output$download_reg_coe_plot_data <- downloadHandler(
+    filename = function() {
+      paste(
+        plot_titles_reg_coeff()$file_title,
+        "-mapdata.",
+        input$reg_coe_plot_data_type,
+        sep = ""
+      )
+    },
+    content  = function(file) {
+      if (input$reg_coe_plot_data_type == "csv") {
+        map_data_new_4a <- rewrite_maptable(
+          maptable = reg_coef_table(),
+          subset_lon_IDs = subset_lons_secondary(),
+          subset_lat_IDs = subset_lats_secondary()
+        )
+        colnames(map_data_new_4a) <- NULL
+        
+        write.csv(map_data_new_4a, file, row.names = FALSE)
+      } else if (input$reg_coe_plot_data_type == "xlsx") {
+        openxlsx::write.xlsx(
+          rewrite_maptable(
+            maptable = reg_coef_table(),
+            subset_lon_IDs = subset_lons_secondary(),
+            subset_lat_IDs = subset_lats_secondary()
+          ),
+          file,
+          row.names = FALSE,
+          col.names = FALSE
+        )
+      } else if (input$reg_coe_plot_data_type == "GeoTIFF") {
+        create_geotiff(reg_coef_table(), file)
+      }
+    }
+  )
   
   output$download_reg_pval_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg_pval()$file_title,"-map.",input$reg_pval_plot_type, sep = "")},
                                                         content  = function(file) {
@@ -12359,21 +12771,41 @@ server <- function(input, output, session) {
                                                           dev.off()
                                                         })
   
-  output$download_reg_pval_plot_data       <- downloadHandler(filename = function(){paste(plot_titles_reg_pval()$file_title, "-mapdata.",input$reg_pval_plot_data_type, sep = "")},
-                                                              content  = function(file) {
-                                                                if (input$reg_pval_plot_data_type == "csv"){
-                                                                  map_data_new_4b <- rewrite_maptable(reg_pval_table(),subset_lons_secondary(),subset_lats_secondary())
-                                                                  colnames(map_data_new_4b) <- NULL
-                                                                  
-                                                                  write.csv(map_data_new_4b, file,
-                                                                            row.names = FALSE)
-                                                                } else if (input$reg_pval_plot_data_type == "xlsx"){
-                                                                  openxlsx::write.xlsx(rewrite_maptable(reg_pval_table(),subset_lons_secondary(),subset_lats_secondary()), file,
-                                                                                       row.names = FALSE,
-                                                                                       col.names = FALSE)
-                                                                } else if (input$reg_pval_plot_data_type == "GeoTIFF") {
-                                                                  create_geotiff(reg_pval_table(), file)
-                                                                }})
+  output$download_reg_pval_plot_data <- downloadHandler(
+    filename = function() {
+      paste(
+        plot_titles_reg_pval()$file_title,
+        "-mapdata.",
+        input$reg_pval_plot_data_type,
+        sep = ""
+      )
+    },
+    content  = function(file) {
+      if (input$reg_pval_plot_data_type == "csv") {
+        map_data_new_4b <- rewrite_maptable(
+          maptable = reg_pval_table(),
+          subset_lon_IDs = subset_lons_secondary(),
+          subset_lat_IDs = subset_lats_secondary()
+        )
+        colnames(map_data_new_4b) <- NULL
+        
+        write.csv(map_data_new_4b, file, row.names = FALSE)
+      } else if (input$reg_pval_plot_data_type == "xlsx") {
+        openxlsx::write.xlsx(
+          rewrite_maptable(
+            maptable = reg_pval_table(),
+            subset_lon_IDs = subset_lons_secondary(),
+            subset_lat_IDs = subset_lats_secondary()
+          ),
+          file,
+          row.names = FALSE,
+          col.names = FALSE
+        )
+      } else if (input$reg_pval_plot_data_type == "GeoTIFF") {
+        create_geotiff(reg_pval_table(), file)
+      }
+    }
+  )
   
   output$download_reg_res_plot      <- downloadHandler(filename = function(){paste(plot_titles_reg_res()$file_title,"-map.",input$reg_res_plot_type, sep = "")},
                                                        content  = function(file) {
@@ -12388,21 +12820,41 @@ server <- function(input, output, session) {
                                                          dev.off()
                                                        })
   
-  output$download_reg_res_plot_data        <- downloadHandler(filename = function(){paste(plot_titles_reg_res()$file_title, "-mapdata.",input$reg_res_plot_data_type, sep = "")},
-                                                              content  = function(file) {
-                                                                if (input$reg_res_plot_data_type == "csv"){
-                                                                  map_data_new_4c <- rewrite_maptable(reg_res_table(),subset_lons_secondary(),subset_lats_secondary())
-                                                                  colnames(map_data_new_4c) <- NULL
-                                                                  
-                                                                  write.csv(map_data_new_4c, file,
-                                                                            row.names = FALSE)
-                                                                } else if (input$reg_res_plot_data_type == "xlsx"){
-                                                                  openxlsx::write.xlsx(rewrite_maptable(reg_res_table(),subset_lons_secondary(),subset_lats_secondary()), file,
-                                                                                       row.names = FALSE,
-                                                                                       col.names = FALSE)
-                                                                } else if (input$reg_res_plot_data_type == "GeoTIFF") {
-                                                                  create_geotiff(reg_res_table(), file)
-                                                                }})
+  output$download_reg_res_plot_data <- downloadHandler(
+    filename = function() {
+      paste(
+        plot_titles_reg_res()$file_title,
+        "-mapdata.",
+        input$reg_res_plot_data_type,
+        sep = ""
+      )
+    },
+    content  = function(file) {
+      if (input$reg_res_plot_data_type == "csv") {
+        map_data_new_4c <- rewrite_maptable(
+          maptable = reg_res_table(),
+          subset_lon_IDs = subset_lons_secondary(),
+          subset_lat_IDs = subset_lats_secondary()
+        )
+        colnames(map_data_new_4c) <- NULL
+        
+        write.csv(map_data_new_4c, file, row.names = FALSE)
+      } else if (input$reg_res_plot_data_type == "xlsx") {
+        openxlsx::write.xlsx(
+          rewrite_maptable(
+            maptable = reg_res_table(),
+            subset_lon_IDs = subset_lons_secondary(),
+            subset_lat_IDs = subset_lats_secondary()
+          ),
+          file,
+          row.names = FALSE,
+          col.names = FALSE
+        )
+      } else if (input$reg_res_plot_data_type == "GeoTIFF") {
+        create_geotiff(reg_res_table(), file)
+      }
+    }
+  )
 
   
   output$download_fad4 <- downloadHandler(
@@ -12411,11 +12863,11 @@ server <- function(input, output, session) {
     
     content = function(file) {
       mmd = generate_map_dimensions(
-        subset_lons_primary(),
-        subset_lats_primary(),
-        session$clientData$output_fad_map4_width,
-        input$dimension[2],
-        FALSE
+        subset_lon_IDs = subset_lons_primary(),
+        subset_lat_IDs = subset_lats_primary(),
+        output_width = session$clientData$output_fad_map4_width,
+        output_height = input$dimension[2],
+        hide_axis = FALSE
       )
       if (input$file_type_fad4 == "png") {
         png(file, width = mmd[3], height = mmd[4], res = 400, bg = "transparent")
@@ -12511,26 +12963,28 @@ server <- function(input, output, session) {
   
   # Load global data
   fad_global_data5 = reactive({
-    load_modera_source_data(input$fad_year5, season_fad_short5())
+    load_modera_source_data(year = input$fad_year5, season = season_fad_short5())
   })
   
   # Plot map 
   fad_plot5 = function(base_size = 18) {
-    plot_modera_sources(fad_global_data5(),
-                        input$fad_year5,
-                        season_fad_short5(),
-                        fad_zoom5(),
-                        base_size = base_size)
+    plot_modera_sources(
+      ME_source_data = fad_global_data5(),
+      year = input$fad_year5,
+      season = season_fad_short5(),
+      minmax_lonlat = fad_zoom5(),
+      base_size = base_size
+    )
   }
   
   fad_dimensions5 <- reactive({
     req(input$nav1 == "tab5") # Only run code if in the current tab
     m_d_f5 = generate_map_dimensions(
-      subset_lons_primary(),
-      subset_lats_primary(),
-      session$clientData$output_fad_map5_width,
-      input$dimension[2],
-      FALSE
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary(),
+      output_width = session$clientData$output_fad_map5_width,
+      output_height = input$dimension[2],
+      hide_axis = FALSE
     )
     return(m_d_f5)
   })
@@ -12545,11 +12999,14 @@ server <- function(input, output, session) {
   
   # Set up data function
   fad_data5 <- function() {
-    
-    fad_base_data5 = download_feedback_data(fad_global_data5(), fad_zoom5()[1:2], fad_zoom5()[3:4])
+    fad_base_data5 = download_feedback_data(
+      global_data = fad_global_data5(),
+      lon_range = fad_zoom5()[1:2],
+      lat_range = fad_zoom5()[3:4]
+    )
     
     # Remove the last column
-    fad_base_data5 = fad_base_data5[ , -ncol(fad_base_data5)]
+    fad_base_data5 = fad_base_data5[, -ncol(fad_base_data5)]
     
     return(fad_base_data5)
     
@@ -12604,11 +13061,11 @@ server <- function(input, output, session) {
     
     content = function(file) {
       mmd = generate_map_dimensions(
-        subset_lons_primary(),
-        subset_lats_primary(),
-        session$clientData$output_fad_map5_width,
-        input$dimension[2],
-        FALSE
+        subset_lon_IDs = subset_lons_primary(),
+        subset_lat_IDs = subset_lats_primary(),
+        output_width = session$clientData$output_fad_map5_width,
+        output_height = input$dimension[2],
+        hide_axis = FALSE
       )
       if (input$file_type_fad5 == "png") {
         png(file, width = mmd[3], height = mmd[4], res = 400, bg = "transparent")
@@ -12649,7 +13106,7 @@ server <- function(input, output, session) {
   # Load global data
   MES_global_data <- reactive({
     if (input$year_MES >= 1422 && input$year_MES <= 2008) {
-      load_modera_source_data(input$year_MES, season_MES_short()) |>
+      load_modera_source_data(year = input$year_MES, season = season_MES_short()) |>
         dplyr::select(LON, LAT, VARIABLE, TYPE, Name_Database, Paper_Database, Code_Proxy, Reference_Proxy, Reference_Proxy_Database, Omitted_Duplicates) |>
         st_as_sf(coords = c('LON', 'LAT')) |>
         st_set_crs(4326)
@@ -12758,15 +13215,19 @@ server <- function(input, output, session) {
   fad_zoom_MES  <- reactiveVal(c(-180,180,-90,90)) # These are the min/max lon/lat for the zoomed plot
   
   MES_global_data_download = reactive({
-    load_modera_source_data(input$year_MES, season_MES_short())
+    load_modera_source_data(year = input$year_MES, season = season_MES_short())
   })
   
   # Set up data function
   fad_data_MES <- function() {
-    fad_base_data_MES = download_feedback_data(MES_global_data_download(), fad_zoom_MES()[1:2], fad_zoom_MES()[3:4])
+    fad_base_data_MES = download_feedback_data(
+      global_data = MES_global_data_download(),
+      lon_range = fad_zoom_MES()[1:2],
+      lat_range = fad_zoom_MES()[3:4]
+    )
     
     # Remove the last column
-    fad_base_data_MES = fad_base_data_MES[ , -ncol(fad_base_data_MES)]
+    fad_base_data_MES = fad_base_data_MES[, -ncol(fad_base_data_MES)]
     
     return(fad_base_data_MES)
   }
@@ -12864,7 +13325,13 @@ server <- function(input, output, session) {
   timeseries_data_sea <- reactive({
     req(input$nav1 == "tab6") # Only run code if in the current tab
     
-    ts_data1 <- create_timeseries_datatable(data_output4_primary(), c(1422,2008), "range", subset_lons_primary(), subset_lats_primary())
+    ts_data1 <- create_timeseries_datatable(
+      data_input = data_output4_primary(),
+      year_input = c(1422, 2008),
+      year_input_type = "range",
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary()
+    )
     
     return(ts_data1)
   })
