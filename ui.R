@@ -356,6 +356,7 @@ ui <- navbarPage(
                                     br(), br(),
                                     h5(strong("v1.4 (insert date)", style = "color: #094030;")),
                                     tags$ul(
+                                      tags$li("General overhaul of ClimeApp"),
                                       tags$li("Addition of Superposed Epoch Analysis (SEA)"),
                                       tags$li("New maps and timeseries design using ggplot2"),
                                       tags$li("Additional map customization options: font size, projection, greying out land or ocean"),
