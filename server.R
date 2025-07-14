@@ -2450,7 +2450,21 @@ server <- function(input, output, session) {
     location <- input$location
     if (!is.null(location) && nchar(location) > 0) {
       location_encoded <- URLencode(location)
-      result <- geocode_OSM(location_encoded)
+      
+      projection <- input$projection  # Make sure this input exists for anomalies
+      result <- NULL
+      
+      if (projection == "UTM (default)") {
+        result <- geocode_OSM(location_encoded)
+      } else if (projection == "Robinson") {
+        result <- geocode_OSM(location_encoded, projection = "+proj=robin")
+      } else if (projection == "Orthographic") {
+        result <- geocode_OSM(location_encoded,
+                              projection = ortho_proj(input$center_lat, input$center_lon))
+      } else if (projection == "LAEA") {
+        result <- geocode_OSM(location_encoded, projection = laea_proj)
+      }
+      
       if (!is.null(result$coords)) {
         longitude <- result$coords[1]
         latitude <- result$coords[2]
@@ -4926,12 +4940,25 @@ server <- function(input, output, session) {
   ####### Interactivity ----
   
   # Input geo-coded locations
-  
   observeEvent(input$search3, {
     location3 <- input$location3
     if (!is.null(location3) && nchar(location3) > 0) {
       location_encoded3 <- URLencode(location3)
-      result <- geocode_OSM(location_encoded3)
+      
+      projection3 <- input$projection3  # Ensure this exists in your UI
+      result <- NULL
+      
+      if (projection3 == "UTM (default)") {
+        result <- geocode_OSM(location_encoded3)
+      } else if (projection3 == "Robinson") {
+        result <- geocode_OSM(location_encoded3, projection = "+proj=robin")
+      } else if (projection3 == "Orthographic") {
+        result <- geocode_OSM(location_encoded3,
+                              projection = ortho_proj(input$center_lat3, input$center_lon3))
+      } else if (projection3 == "LAEA") {
+        result <- geocode_OSM(location_encoded3, projection = laea_proj)
+      }
+      
       if (!is.null(result$coords)) {
         longitude3 <- result$coords[1]
         latitude3 <- result$coords[2]
@@ -6655,18 +6682,34 @@ server <- function(input, output, session) {
     location_reg_coeff <- input$location_reg_coeff
     if (!is.null(location_reg_coeff) && nchar(location_reg_coeff) > 0) {
       location_encoded_reg_coeff <- URLencode(location_reg_coeff)
-      result <- geocode_OSM(location_encoded_reg_coeff)
+      
+      projection <- input$projection_reg_coeff  # Make sure this exists in the UI
+      result <- NULL
+      
+      if (projection == "UTM (default)") {
+        result <- geocode_OSM(location_encoded_reg_coeff)
+      } else if (projection == "Robinson") {
+        result <- geocode_OSM(location_encoded_reg_coeff, projection = "+proj=robin")
+      } else if (projection == "Orthographic") {
+        result <- geocode_OSM(
+          location_encoded_reg_coeff,
+          projection = ortho_proj(input$center_lat_reg_coeff, input$center_lon_reg_coeff)
+        )
+      } else if (projection == "LAEA") {
+        result <- geocode_OSM(location_encoded_reg_coeff, projection = laea_proj)
+      }
+      
       if (!is.null(result$coords)) {
         longitude_reg_coeff <- result$coords[1]
         latitude_reg_coeff <- result$coords[2]
         updateTextInput(session, "point_location_x_reg_coeff", value = as.character(longitude_reg_coeff))
         updateTextInput(session, "point_location_y_reg_coeff", value = as.character(latitude_reg_coeff))
-        shinyjs::hide(id = "inv_location_reg_coeff")  # Hide the "Invalid location" message
+        shinyjs::hide(id = "inv_location_reg_coeff")
       } else {
-        shinyjs::show(id = "inv_location_reg_coeff")  # Show the "Invalid location" message
+        shinyjs::show(id = "inv_location_reg_coeff")
       }
     } else {
-      shinyjs::hide(id = "inv_location_reg_coeff")  # Hide the "Invalid location" message when no input
+      shinyjs::hide(id = "inv_location_reg_coeff")
     }
   })
   
@@ -6796,27 +6839,39 @@ server <- function(input, output, session) {
   # Input geo-coded locations
   observeEvent(input$search_reg_pval, {
     location_reg_pval <- input$location_reg_pval
-    if (!is.null(location_reg_pval) &&
-        nchar(location_reg_pval) > 0) {
+    if (!is.null(location_reg_pval) && nchar(location_reg_pval) > 0) {
       location_encoded_reg_pval <- URLencode(location_reg_pval)
-      result <- geocode_OSM(location_encoded_reg_pval)
+      
+      projection <- input$projection_reg_pval  # This input must exist in your UI
+      result <- NULL
+      
+      if (projection == "UTM (default)") {
+        result <- geocode_OSM(location_encoded_reg_pval)
+      } else if (projection == "Robinson") {
+        result <- geocode_OSM(location_encoded_reg_pval, projection = "+proj=robin")
+      } else if (projection == "Orthographic") {
+        result <- geocode_OSM(
+          location_encoded_reg_pval,
+          projection = ortho_proj(input$center_lat_reg_pval, input$center_lon_reg_pval)
+        )
+      } else if (projection == "LAEA") {
+        result <- geocode_OSM(location_encoded_reg_pval, projection = laea_proj)
+      }
+      
       if (!is.null(result$coords)) {
         longitude_reg_pval <- result$coords[1]
         latitude_reg_pval <- result$coords[2]
-        updateTextInput(session,
-                        "point_location_x_reg_pval",
-                        value = as.character(longitude_reg_pval))
-        updateTextInput(session,
-                        "point_location_y_reg_pval",
-                        value = as.character(latitude_reg_pval))
-        shinyjs::hide(id = "inv_location_reg_pval")  # Hide the "Invalid location" message
+        updateTextInput(session, "point_location_x_reg_pval", value = as.character(longitude_reg_pval))
+        updateTextInput(session, "point_location_y_reg_pval", value = as.character(latitude_reg_pval))
+        shinyjs::hide(id = "inv_location_reg_pval")
       } else {
-        shinyjs::show(id = "inv_location_reg_pval")  # Show the "Invalid location" message
+        shinyjs::show(id = "inv_location_reg_pval")
       }
     } else {
-      shinyjs::hide(id = "inv_location_reg_pval") # Hide the "Invalid location" message when no input
+      shinyjs::hide(id = "inv_location_reg_pval")
     }
   })
+  
   
   ######### Regression Residual Map Plot
   
@@ -6867,16 +6922,37 @@ server <- function(input, output, session) {
     location_reg_res <- input$location_reg_res
     if (!is.null(location_reg_res) && nchar(location_reg_res) > 0) {
       location_encoded_reg_res <- URLencode(location_reg_res)
-      result <- geocode_OSM(location_encoded_reg_res)
+      
+      projection <- input$projection_reg_res  # This input should exist in your UI
+      result <- NULL
+      
+      if (projection == "UTM (default)") {
+        result <- geocode_OSM(location_encoded_reg_res)
+      } else if (projection == "Robinson") {
+        result <- geocode_OSM(location_encoded_reg_res, projection = "+proj=robin")
+      } else if (projection == "Orthographic") {
+        result <- geocode_OSM(
+          location_encoded_reg_res,
+          projection = ortho_proj(input$center_lat_reg_res, input$center_lon_reg_res)
+        )
+      } else if (projection == "LAEA") {
+        result <- geocode_OSM(location_encoded_reg_res, projection = laea_proj)
+      }
+      
       if (!is.null(result$coords)) {
         longitude_reg_res <- result$coords[1]
         latitude_reg_res <- result$coords[2]
         updateTextInput(session, "point_location_x_reg_res", value = as.character(longitude_reg_res))
         updateTextInput(session, "point_location_y_reg_res", value = as.character(latitude_reg_res))
-        shinyjs::hide(id = "inv_location_reg_res")  # Hide the "Invalid location" message
+        shinyjs::hide(id = "inv_location_reg_res")
       } else {
-        shinyjs::show(id = "inv_location_reg_res")  # Show the "Invalid location" message
-      }}})
+        shinyjs::show(id = "inv_location_reg_res")
+      }
+    } else {
+      shinyjs::hide(id = "inv_location_reg_res")
+    }
+  })
+  
 
   # Map Highlights - Regression Residuals
   observeEvent(input$add_highlight_reg_res, {
