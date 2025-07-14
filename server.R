@@ -13329,7 +13329,7 @@ server <- function(input, output, session) {
   ### MODE-RA SOURCES data procession and plotting ----
   ####### Plotting (for download)----
   
-  season_MES_short <- reactive({
+  season_MES_short <- reactive({ c
     switch(input$season_MES,
            "April to September" = "summer",
            "October to March" = "winter")
