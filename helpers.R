@@ -2990,11 +2990,13 @@ plot_ts_modera_sources <- function(data,
 #' @return None. A NetCDF file is written to `user_ncdf/netcdf_<ncdf_ID>.nc`.
 
 generate_custom_netcdf = function(data_input,
-                                  tab,dataset,
+                                  tab,
+                                  dataset,
                                   ncdf_ID,
                                   variable,
                                   user_nc_variables,
-                                  mode,subset_lon_IDs,
+                                  mode,
+                                  subset_lon_IDs,
                                   subset_lat_IDs,
                                   month_range,
                                   year_range,
@@ -3180,6 +3182,8 @@ create_geotiff <- function(map_data,
 #' (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS FOR ANOMALIES PLOTS
 #'
 #' Collects and flattens all relevant user inputs (shared, map, timeseries) into a single-row metadata table.
+#' 
+#' @param ALL Inputs and reactive vals relevant for plots
 #'
 #' @return Data frame. A single-row `data.frame` containing all selected customization inputs, formatted for export or upload to composite modules.
 
@@ -3354,14 +3358,22 @@ generate_metadata_anomalies <- function(
 #'
 #' @param file_path Character. Path to the uploaded `.xlsx` file containing metadata and optional data sheets.
 #' @param mode Character. Either `"map"` or `"ts"` to indicate the target visualization module.
-#' @param metadata_sheet Character. Name of the Excel sheet containing metadata (default `"custom_meta"`).
-#' @param df_ts_points, df_ts_highlights, df_ts_lines Character (optional). Sheet names for uploading TS-related data frames.
-#' @param df_map_points, df_map_highlights Character (optional). Sheet names for uploading map-related data frames.
-#' @param rv_plotOrder, rv_availableLayers, rv_lonlat_vals Reactive values (optional). Updated with uploaded values if present.
-#' @param map_points_data, map_highlights_data Reactive functions (optional). Updated with uploaded map data.
-#' @param ts_points_data, ts_highlights_data, ts_lines_data Reactive functions (optional). Updated with uploaded TS data.
+#' @param metadata_sheet Character. Name of the Excel sheet containing metadata (default is `"custom_meta"`).
+#' @param df_ts_points Character (optional). Sheet name for uploaded TS points data.
+#' @param df_ts_highlights Character (optional). Sheet name for uploaded TS highlights data.
+#' @param df_ts_lines Character (optional). Sheet name for uploaded TS lines data.
+#' @param df_map_points Character (optional). Sheet name for uploaded map points data.
+#' @param df_map_highlights Character (optional). Sheet name for uploaded map highlights data.
+#' @param rv_plotOrder ReactiveVal (optional). Stores the ordering of shapefile overlays for maps.
+#' @param rv_availableLayers ReactiveVal (optional). Stores the available shapefile layer IDs.
+#' @param rv_lonlat_vals ReactiveVal (optional). Stores the selected lon/lat values (numeric vector).
+#' @param map_points_data Function (reactive setter). Updates the stored map points data.
+#' @param map_highlights_data Function (reactive setter). Updates the stored map highlights data.
+#' @param ts_points_data Function (reactive setter). Updates the stored timeseries points data.
+#' @param ts_highlights_data Function (reactive setter). Updates the stored timeseries highlights data.
+#' @param ts_lines_data Function (reactive setter). Updates the stored timeseries lines data.
 #'
-#' @return None. Function updates Shiny UI inputs and reactive values directly based on uploaded metadata.
+#' @return None. This function updates Shiny inputs and reactive values in-place based on the uploaded metadata file.
 
 process_uploaded_metadata <- function(
     file_path,
@@ -3542,11 +3554,20 @@ updateRadioButtonsGroup <- function(selected_value,
 #                              "triangle" = 17,
 #                              "square" = 15)
 
-## (Plot Features) CREATE SD RATIO DATA - creates SD ratio data for the current 
-##                 year/season/region selected
-##                 data_input = custom_sd_data() (which can also be pp data)
-##                 tab = "general" or "composites"
-##                 year_range = year range or year set
+
+#' (Plot Features) CREATE SD RATIO DATA
+#'
+#' Generates standard deviation ratio data for the selected year range, season, and region.
+#'
+#' @param data_input 3D numeric array. Preprocessed or raw ModE-RA input data.
+#' @param data_ID Numeric vector. Data identifier used to guide processing steps.
+#' @param tab Character. Either `"general"` or `"composites"` to define subset method.
+#' @param variable Character. Variable name used for consistency in calling.
+#' @param subset_lon_IDs, subset_lat_IDs Integer vectors. Subsets of longitude/latitude indices for the region.
+#' @param month_range Integer vector. Range of months used to create seasonal subset.
+#' @param year_range Integer vector. Range or set of years (must be within 1422–2008).
+#'
+#' @return 3D array. Subsetted SD ratio data (lon × lat × time) for the specified region and time range.
 
 create_sdratio_data = function(data_input,
                                data_ID,
@@ -3581,16 +3602,18 @@ create_sdratio_data = function(data_input,
 }
 
 
-
-## (Plot Features) CREATE STATISTICAL HIGHLIGHTS DATA - creates a dataframe for
-##                 adding dots to an anomaly map to mark points which match a certain criteria
-##                 stat_highlight = "None","% sign match", "SD ratio"
-##                 data_input = any subset_to_anomaly ModE-RA data
-##                 sd_data = output from create_sdratio_data
-##                 tab = "general" or "composites"
-##                 add_stat_highlight = TRUE or FALSE
-##                 sdratio = any numeric value from 0 to 1
-##                 percent = any numeric value from 1 to 100
+#' (Plot Features) CREATE STATISTICAL HIGHLIGHTS DATA
+#'
+#' Creates a dataframe of points to highlight on anomaly maps based on SD ratio or percent sign agreement.
+#'
+#' @param data_input 3D array. Anomaly data (subsetted) from ModE-RA.
+#' @param sd_data 3D array. SD ratio data from `create_sdratio_data()`.
+#' @param stat_highlight Character. One of `"None"`, `"% sign match"`, or `"SD ratio"`.
+#' @param sdratio Numeric. Threshold between 0 and 1 for SD ratio filtering.
+#' @param percent Numeric. Percent threshold (1–100) for sign match agreement.
+#' @param subset_lon_IDs, subset_lat_IDs Integer vectors. Longitude and latitude indices of the selected region.
+#'
+#' @return Data frame with `x_vals`, `y_vals`, and `criteria_vals` columns for plotting map highlights.
 
 create_stat_highlights_data = function(data_input,
                                        sd_data,
@@ -3660,14 +3683,18 @@ create_stat_highlights_data = function(data_input,
 }
 
 
-## (Plot Features) CREATE NEW HIGHLIGHTS DATA - creates a dataframe for new custom
-##                 highlights to add to the main highlights_data
-##              highlight_x_values = a vector - c(x1,x2) - for the left/right edge
-##              highlight_y_values = a vector - c(y1,y2) - for the bottom/top edge
-##              highlight_color = a single character string giving highlight color
-##              highlight_type = "Fill","Box","Hatched"
-##              show_highlight_on_key = TRUE or FALSE (FALSE by default)
-##              highlight_label = a label for the highlight on the key ("") by default)
+#' (Plot Features) CREATE NEW HIGHLIGHTS DATA
+#'
+#' Generates a single-row dataframe defining a custom highlight box for use on plots.
+#'
+#' @param highlight_x_values Numeric vector of length 2. Horizontal range: `c(x1, x2)` for box edges.
+#' @param highlight_y_values Numeric vector of length 2. Vertical range: `c(y1, y2)` for box edges.
+#' @param highlight_color Character. Fill or border color of the highlight box.
+#' @param highlight_type Character. One of `"Fill"`, `"Box"`, or `"Hatched"`.
+#' @param show_highlight_on_key Logical. Whether to include the highlight in the legend (`FALSE` by default).
+#' @param highlight_label Character. Label used in the legend (`""` by default).
+#'
+#' @return Data frame. A single-row data frame containing all highlight properties for use in plotting.
 
 create_new_highlights_data = function(highlight_x_values,
                                       highlight_y_values,
@@ -3693,15 +3720,18 @@ create_new_highlights_data = function(highlight_x_values,
 }
 
 
-## (Plot Features) CREATE NEW LINES DATA - creates a dataframe of new lines
-##                                         to add to the main lines_data
-##              line_orientaton = "Horizontal" or "Vertical"
-##              line_locations = a CHARACTER string of locations to plot the lines,
-##                                 seperated by commas (e.g. "1823,1824,1828" or "1.9,2.3"
-##              line_color = a single character string giving highlight color
-##              line_type = "solid" or "dashed"
-##              show_line_on_key = TRUE or FALSE (FALSE by default)
-##              line_label = a label for the line on the key ("") by default)
+#' (Plot Features) CREATE NEW LINES DATA
+#'
+#' Creates a dataframe of custom vertical or horizontal reference lines for plotting.
+#'
+#' @param line_orientation Character. Either `"Horizontal"` or `"Vertical"`.
+#' @param line_locations Character. Comma-separated numeric string of line positions (e.g., `"1823,1824"`).
+#' @param line_color Character. Color of the lines.
+#' @param line_type Character. Linetype, e.g., `"solid"` or `"dashed"`.
+#' @param show_line_on_key Logical. Whether the line should appear in the legend (`FALSE` by default).
+#' @param line_label Character. Label to display in the legend (`""` by default).
+#'
+#' @return Data frame. A dataframe with one row per line containing all line properties.
 
 create_new_lines_data = function(line_orientation,
                                  line_locations,
@@ -3727,15 +3757,18 @@ create_new_lines_data = function(line_orientation,
 }
 
 
-## (Plot Features) CREATE NEW POINTS DATA - creates a dataframe of data on the new
-##                 points to add to the main points_data 
-##                point_x/y_values = a single lon/x/lat/y value or character string 
-##                                   with several seperated by commas
-##                point_label = a single point label
-##                point_shape = single value for shape IDs (circle = 16,
-##                          triangle = 17, square = 15)
-##                point_color = a single character string giving point color
-##                point_size = a single point size (sizes 0 -10)
+#' (Plot Features) CREATE NEW POINTS DATA
+#'
+#' Creates a dataframe of custom points for plotting, including shape, color, size, and optional labels.
+#'
+#' @param point_x_values Character. A single numeric value or comma-separated string of values (e.g., `"30.5, 40.2"`).
+#' @param point_y_values Character. A single numeric value or comma-separated string of values (e.g., `"30.5, 40.2"`).
+#' @param point_label Character. Label to assign to all points (used in legends or tooltips).
+#' @param point_shape Character or numeric. Unicode symbol (`"●"`, `"▲"`, `"■"`) or shape ID (16=circle, 17=triangle, 15=square).
+#' @param point_color Character. Color of the points.
+#' @param point_size Numeric. Size of the points (suggested range: 0–10).
+#'
+#' @return Data frame. A dataframe with one row per point containing all point properties.
 
 create_new_points_data = function(point_x_values,
                                   point_y_values,
@@ -3765,10 +3798,17 @@ create_new_points_data = function(point_x_values,
 }
 
 
-## (Plot Features) ADD CORRELATION TIMESERIES - replots both correlation timeseries 
-##                                              over other features and adds moving
-##                                              average (if selected)
-##                 data_input1/2 = output from add_stats_to_TS_datatable for v1/v2
+#' (Plot Features) ADD CORRELATION TIMESERIES
+#'
+#' Plots two correlation timeseries on the same base plot, each with optional moving averages.
+#'
+#' @param data_input1 Data frame. Output from `add_stats_to_TS_datatable()` for the first variable.
+#' @param data_input2 Data frame. Output from `add_stats_to_TS_datatable()` for the second variable.
+#' @param variable1 Character. Name of the first variable being plotted.
+#' @param variable2 Character. Name of the second variable being plotted.
+#' @param correlation_titles List. Named list with color values: `V1_color` and `V2_color`.
+#'
+#' @return None. Draws a dual time series plot using base R graphics (`plot()` and `lines()`).
 
 add_correlation_timeseries = function(data_input1,
                                       data_input2,
@@ -3818,11 +3858,15 @@ add_correlation_timeseries = function(data_input1,
 
 #### Composite Functions ####
 
-## (Composite) Read user year data and convert into a year_set vector
-##             data_input_manual = a string of years (e.g. "1455,1532,1782")
-##             data_input_filepath = filepath to an excel or csv document listing
-##                                   years to be composited
-##                                   (assumes column DOES NOT have a header)
+#' (Composite) READ USER YEAR DATA AND CONVERT INTO A YEAR_SET VECTOR
+#'
+#' Reads composite years from either a manual string input or a file and returns a filtered numeric vector.
+#'
+#' @param data_input_manual Character. A comma-separated string of years (e.g., `"1455,1532,1782"`).
+#' @param data_input_filepath Character. File path to a `.csv` or Excel file containing years (no header).
+#' @param year_input_mode Character. Either `"Manual"` or another value indicating file upload.
+#'
+#' @return Numeric vector. A `year_set` filtered to include only values within the valid ModE-RA range (1422–2008).
 
 read_composite_data = function(data_input_manual,
                                data_input_filepath,
@@ -3851,10 +3895,17 @@ read_composite_data = function(data_input_manual,
   return(year_set)
 }
 
-## (Composite) Calculate yearly subset given a set of years 
-##             data_input = any create_latlon_subset data
-##             year_set = set of years to be composited (format c(1422,1457,...))
-##                        as generated by read_composite_data  
+
+#' (Composite) CALCULATE YEARLY SUBSET GIVEN A SET OF YEARS
+#'
+#' Generates a composite data subset by averaging over months for each selected year.
+#'
+#' @param data_input 3D numeric array. Output from `create_latlon_subset()`.
+#' @param data_ID Numeric vector. Data identifier used to determine processing mode (raw vs. preprocessed).
+#' @param year_set Integer vector. Set of years to include (e.g., from `read_composite_data()`).
+#' @param month_range Integer vector of length 2. Month range to average over (e.g., `c(4,9)`).
+#'
+#' @return 3D numeric array. Composite subset with dimensions [lon × lat × year_set].
 
 create_yearly_subset_composite = function(data_input,
                                           data_ID,
@@ -3884,12 +3935,18 @@ create_yearly_subset_composite = function(data_input,
 }
 
 
-## (Composite) Calculate composite anomalies compared to x years before
-##             data_input = create_yearly_subset_composite data
-##             ref_data = corresponding create_latlon_subset data that yearly_subset
-##                        was generated from
-##             baseline_years_before = number of years before to calculate each anomaly
-##                                     w.r.t. (i.e 5 for a mean of the 5 preceding years)
+#' (Composite) CALCULATE COMPOSITE ANOMALIES COMPARED TO X YEARS BEFORE
+#'
+#' Computes anomalies for each year in a composite set, relative to the mean of a number of preceding years.
+#'
+#' @param data_input 3D numeric array. Output from `create_yearly_subset_composite()`.
+#' @param ref_data 3D numeric array. Corresponding output from `create_latlon_subset()` used for baseline calculations.
+#' @param data_ID Numeric vector. Data identifier used to determine if preprocessed data is used.
+#' @param year_set Integer vector. List of years for which anomalies are computed.
+#' @param month_range Integer vector of length 2. Month range to include in the averaging.
+#' @param baseline_year_before Integer. Number of years prior to each year in `year_set` to use for the reference mean.
+#'
+#' @return 3D numeric array. Anomaly values for each year, compared to its preceding-year baseline.
 
 convert_composite_to_anomalies = function(data_input,
                                           ref_data,
@@ -3936,10 +3993,15 @@ convert_composite_to_anomalies = function(data_input,
   return(anomaly_data)
 }
 
-## (General) GENERATE METADATA FROM CUSTOMIZATION INPUTS FOR COMPOSITE PLOTS
-##           collects and flattens all relevant user inputs (shared, map, ts)
-##           for export or upload use in composite plot modules
-##           returns a single-row metadata dataframe
+#' (Composite) GENERATE METADATA FROM CUSTOMIZATION INPUTS FOR COMPOSITE PLOTS
+#'
+#' Collects and flattens relevant user inputs from the composite plotting interface (shared, map, and timeseries),
+#' returning a one-row metadata `data.frame` for export or upload into other modules.
+#'
+#' @param ALL Inputs and reactive values relevant for plotting.
+#'
+#' @return A single-row metadata `data.frame` summarizing all composite customization inputs.
+
 
 generate_metadata_composite <- function(
     
@@ -4099,10 +4161,31 @@ generate_metadata_composite <- function(
   return(meta)
 }
 
-## (General) PROCESS UPLOADED METADATA FOR COMPOSITE VISUALIZATION
-##           reads composite metadata and optional data frames from Excel file
-##           updates all relevant Shiny UI inputs and reactiveVals for composite plots
-##           expects composite-style input IDs (e.g. *_2, *_ts2)
+
+#' (Composite) Process Uploaded Metadata for Composite Visualization
+#'
+#' Reads composite metadata and optional data frames from an uploaded Excel file
+#' and updates corresponding Shiny UI inputs and reactive values for composite 
+#' map or timeseries visualizations. Expects composite-style input IDs (e.g., *_2, *_ts2).
+#'
+#' @param file_path Character. Path to the uploaded Excel `.xlsx` file containing metadata and optional data sheets.
+#' @param mode Character. Either `"map"` or `"ts"`; determines which UI group to update.
+#' @param metadata_sheet Character. Name of the Excel sheet containing metadata (default: `"custom_meta"`).
+#' @param df_ts_points Character (optional). Name of the sheet containing timeseries points data.
+#' @param df_ts_highlights Character (optional). Name of the sheet containing timeseries highlights data.
+#' @param df_ts_lines Character (optional). Name of the sheet containing timeseries lines data.
+#' @param df_map_points Character (optional). Name of the sheet containing map points data.
+#' @param df_map_highlights Character (optional). Name of the sheet containing map highlights data.
+#' @param rv_plotOrder ReactiveVal (optional). Reactive value storing the order of plotted map layers.
+#' @param rv_availableLayers ReactiveVal (optional). Reactive value storing available shapefile layer names.
+#' @param rv_lonlat_vals ReactiveVal (optional). Reactive value storing selected lon/lat points for highlighting.
+#' @param map_points_data Function (optional). Reactive setter function for map points data.
+#' @param map_highlights_data Function (optional). Reactive setter function for map highlights data.
+#' @param ts_points_data Function (optional). Reactive setter function for timeseries points data.
+#' @param ts_highlights_data Function (optional). Reactive setter function for timeseries highlights data.
+#' @param ts_lines_data Function (optional). Reactive setter function for timeseries lines data.
+#'
+#' @return None. This function performs side effects by updating Shiny inputs and reactive values.
 
 process_uploaded_metadata_composite <- function(
     file_path,
@@ -4253,10 +4336,15 @@ process_uploaded_metadata_composite <- function(
 
 #### Reg/Cor Functions ####
 
-## (Regression/Correlation) LOAD USER DATA
-##                          data_input_filepath = filepath to an excel or csv document
-##                                                col1 = years, col2 = variable 
-##                                                headers = TRUE
+
+#' (Regression/Correlation) Load User Data
+#'
+#' Loads user-supplied data from a CSV or Excel file for regression or correlation analysis.
+#' Replaces placeholder values (-999.9) with `NA` for proper handling of missing data.
+#'
+#' @param data_input_filepath Character. Path to a `.csv` or Excel `.xlsx` file containing the user data.
+#'
+#' @return A data frame with user-provided data, with -999.9 replaced by `NA`.
 
 read_regcomp_data = function(data_input_filepath) {
   # Read in user data
@@ -4271,14 +4359,27 @@ read_regcomp_data = function(data_input_filepath) {
   return(user_data)
 }
 
-## (Regression/Correlation) EXTRACT SHARED YEAR RANGE from user/modE-RA data,which can 
-##                          be used to set min,max and value of year_range input
-##                          - returns a vector with c(year_range1,year_range2,
-##                            year_range_min,year_range_max)
-##                          variable_source = "ModE-RA" or "User Data"
-##                          variable_data_filepath = "" by default
-##                          variable1_lag = number of lagged years for variable 1
-##                          variable2_lag = number of lagged years for variable 2
+#' (Regression/Correlation) Extract Shared Year Range
+#'
+#' Computes the shared valid year range between two variables (ModE-RA or user-supplied),
+#' accounting for lag settings. Useful for defining valid `year_range` slider inputs.
+#'
+#' @param variable1_source Character. Source of variable 1: either `"ModE-RA"` or `"User Data"`.
+#' @param variable2_source Character. Source of variable 2: either `"ModE-RA"` or `"User Data"`.
+#' @param variable1_data_filepath Character. Path to the user file for variable 1, if applicable.
+#' @param variable2_data_filepath Character. Path to the user file for variable 2, if applicable.
+#' @param variable1_lag Numeric. Number of years to lag variable 1 (default = 0).
+#' @param variable2_lag Numeric. Number of years to lag variable 2 (default = 0).
+#'
+#' @return A numeric vector with six elements:
+#'   \describe{
+#'     \item{[1]}{Shared year range start (after lag adjustment)}
+#'     \item{[2]}{Shared year range end (after lag adjustment)}
+#'     \item{[3]}{Variable 1 min year (raw)}
+#'     \item{[4]}{Variable 1 max year (raw)}
+#'     \item{[5]}{Variable 2 min year (raw)}
+#'     \item{[6]}{Variable 2 max year (raw)}
+#'   }
 
 extract_year_range = function(variable1_source,
                               variable2_source,
@@ -4336,15 +4437,17 @@ extract_year_range = function(variable1_source,
 }  
 
 
-## (Regression/Correlation) CREATE USER DATA SUBSET - cuts user data to year_range
-##                          and chosen variable , adjusts years based on lag and
-##                          replaces missing values with NA
-##                      data_input = as created by read_regcomp_data
-##                      variable = as selected from user data headings (a single string
-##                                 for correlation, or multiple strings for regression)
-##                      year_range = as selected by the user (from the range of years 
-##                                   generated by extract_year_range) 
-##                      lag = number of years user data has been lagged by
+#' (Regression/Correlation) Create User Data Subset
+#'
+#' Subsets user-uploaded data to match a specified year range and lag setting.
+#' Adjusts the years based on the lag and ensures variable values are numeric, replacing invalid entries with `NA`.
+#'
+#' @param data_input Data frame. Loaded user data, typically from `read_regcomp_data()`.
+#' @param variable Character. The name of the column (variable) to extract from user data.
+#' @param year_range Numeric vector of length 2. The desired year range (e.g., `c(1850, 1900)`).
+#' @param lag Numeric. Number of years the data should be lagged by (default = 0).
+#'
+#' @return A data frame with two columns: `"Year"` (adjusted for lag) and the selected variable values (numeric).
 
 create_user_data_subset = function(data_input,
                                    variable,
@@ -4367,8 +4470,19 @@ create_user_data_subset = function(data_input,
 }
 
 
-## (Regression/Correlation) EXTRACT SHARED LONLAT VALUES - Find shared lonlat values for
-##                          v1 and v2 that will be used for the map plot
+#' (Regression/Correlation) Extract Shared LonLat Values
+#'
+#' Identifies the overlapping longitude and latitude range between two input variables, used for plotting correlation/regression maps.
+#' If one variable is a timeseries, the lon/lat range of the other variable is used directly.
+#'
+#' @param variable1_type Character. Type of variable 1 ("Timeseries" or "Map").
+#' @param variable2_type Character. Type of variable 2 ("Timeseries" or "Map").
+#' @param variable1_lon_range Numeric vector of length 2. Longitude range for variable 1 (e.g., `c(-10, 30)`).
+#' @param variable1_lat_range Numeric vector of length 2. Latitude range for variable 1 (e.g., `c(35, 65)`).
+#' @param variable2_lon_range Numeric vector of length 2. Longitude range for variable 2.
+#' @param variable2_lat_range Numeric vector of length 2. Latitude range for variable 2.
+#'
+#' @return A numeric vector of length 4: `c(shared_lon_min, shared_lon_max, shared_lat_min, shared_lat_max)`.
 
 extract_shared_lonlat = function(variable1_type,
                                  variable2_type,
@@ -4406,11 +4520,14 @@ extract_shared_lonlat = function(variable1_type,
 ##                    (i.e. NOT a single point)
 
 
-## (Correlation) PLOT USER TIMESERIES
-##               data_input = user_data_subset
-##               color = a string giving the colour of the timeseries
-##                        "darkorange2" for V1 or "saddlebrown" for V2
-
+#' (Correlation) Plot User Timeseries
+#'
+#' Plots a single user-provided timeseries with color customization. Also tests for normality and displays range and standard deviation (if applicable).
+#'
+#' @param data_input Data frame. Subset of user data created with `create_user_data_subset()`, must include a "Year" column and one variable column.
+#' @param color Character. Color used for the line plot (e.g., `"darkorange2"` for Variable 1, `"saddlebrown"` for Variable 2).
+#'
+#' @return None. The function draws a base R line plot with annotation for value range and standard deviation.
 
 plot_user_timeseries = function(data_input,
                                 color) {
@@ -4456,14 +4573,39 @@ plot_user_timeseries = function(data_input,
 }
 
 
-## (Correlation) GENERATE CORRELATION TITLES - creates a dataframe of V1_axis_label,
-##                                             V2_axis_label, V1_color,V2_color,
-##                                             TS_title, Map_title,file_title
-##             variable_source = "ModE-RA" or "User Data"
-##             variable = user or ModE-RA variable name
-##             variable_type = "Timeseries" or "Field"
-##             variable_mode = "Absolute" or "Anomaly"
-##             method = "pearson" or "spearman" ("pearson" by default)
+#' (Correlation) Generate Correlation Titles
+#'
+#' Generates a set of titles, axis labels, colors, and metadata strings for correlation plots
+#' based on user inputs and the selected ModE-RA or user-supplied variables.
+#'
+#' @param variable1_source Character. `"ModE-RA"` or `"User Data"` for Variable 1.
+#' @param variable2_source Character. `"ModE-RA"` or `"User Data"` for Variable 2.
+#' @param variable1_dataset Character. Name of the dataset used for Variable 1 (e.g., "ModE-RA").
+#' @param variable2_dataset Character. Name of the dataset used for Variable 2.
+#' @param variable1 Character. Variable name for Variable 1 (e.g., "Temperature").
+#' @param variable2 Character. Variable name for Variable 2.
+#' @param variable1_type Character. `"Timeseries"` or `"Field"` for Variable 1.
+#' @param variable2_type Character. `"Timeseries"` or `"Field"` for Variable 2.
+#' @param variable1_mode Character. `"Absolute"` or `"Anomaly"` for Variable 1.
+#' @param variable2_mode Character. `"Absolute"` or `"Anomaly"` for Variable 2.
+#' @param variable1_month_range Numeric vector. Month range (start and end) for Variable 1.
+#' @param variable2_month_range Numeric vector. Month range (start and end) for Variable 2.
+#' @param variable1_lon_range Numeric vector. Longitude range for Variable 1.
+#' @param variable2_lon_range Numeric vector. Longitude range for Variable 2.
+#' @param variable1_lat_range Numeric vector. Latitude range for Variable 1.
+#' @param variable2_lat_range Numeric vector. Latitude range for Variable 2.
+#' @param year_range Numeric vector. Year range used in the analysis.
+#' @param method Character. Correlation method, either `"pearson"` or `"spearman"`.
+#' @param map_title_mode Character. `"Custom"` or `"Auto"` title mode for the map.
+#' @param ts_title_mode Character. `"Custom"` or `"Auto"` title mode for the time series.
+#' @param map_custom_title Character. Custom main title for the map (used if mode is "Custom").
+#' @param map_custom_subtitle Character. Custom subtitle for the map (used if mode is "Custom").
+#' @param ts_custom_title Character. Custom title for the time series (used if mode is "Custom").
+#' @param map_title_size Numeric. Font size for the map title.
+#' @param ts_title_size Numeric. Font size for the time series title.
+#'
+#' @return A data frame containing map title, subtitle, time series title, file-safe title,
+#' axis labels, colors, and font sizes for Variable 1 and Variable 2.
 
 generate_correlation_titles = function(variable1_source,
                                        variable2_source,
@@ -4651,10 +4793,16 @@ generate_correlation_titles = function(variable1_source,
 }
 
 
-## (Correlation) PLOT COMBINED TIMESERIES
-##               variable_data = either user_data_subset
-##                               or ModE-RA timeseries_datatable
-##               correlation_titles = as generated by generate_correlation_titles function                 
+#' (Correlation) Plot Combined Timeseries
+#'
+#' Plots two timeseries on the same plot with separate y-axes and customized labels/colors.
+#' Typically used to visualize the temporal co-variation between two variables (ModE-RA or user-supplied).
+#'
+#' @param variable1_data Data frame. First variable's data with columns `Year` and values.
+#' @param variable2_data Data frame. Second variable's data with columns `Year` and values.
+#' @param correlation_titles Data frame. Output from `generate_correlation_titles()`, containing axis labels, colors, and title strings.
+#'
+#' @return None. This function generates a base R plot directly using `plot()` and `mtext()`.
 
 plot_combined_timeseries = function(variable1_data,
                                     variable2_data,
@@ -4693,10 +4841,16 @@ plot_combined_timeseries = function(variable1_data,
 }
 
 
-## (Correlation) CORRELATE TWO TIMESERIES 
-##               variable_data = either user_data_subset
-##                               or ModE-RA timeseries_datatable
-##               method = "pearson" or "spearman" ("pearson" by default)
+#' (Correlation) Correlate Two Timeseries
+#'
+#' Calculates the correlation between two timeseries using Pearson or Spearman method.
+#' Handles missing values by excluding incomplete observations.
+#'
+#' @param variable1_data Data frame. First variable's data with columns `Year` and values.
+#' @param variable2_data Data frame. Second variable's data with columns `Year` and values.
+#' @param method Character. Correlation method to use: `"pearson"` (default) or `"spearman"`.
+#'
+#' @return An object of class `"htest"` returned by `cor.test()`, containing the correlation coefficient, p-value, confidence interval, and other statistics.
 
 correlate_timeseries = function(variable1_data,
                                 variable2_data,
@@ -4709,13 +4863,28 @@ correlate_timeseries = function(variable1_data,
 }
 
 
-## (Correlation) GENERATE CORRELATION MAP DATA creates correlation map data (x,y,z) from
-##               either a timeseries and a field or two fields (NOT two timeseries!)
-##               variable_data = either user_data_subset
-##                               or ModE-RA timeseries_datatable
-##                               or ModE-RA yearly_subset/anomalies data 
-##               method = "pearson" or "spearman" ("pearson" by default)
-##               Note: uses the subset_lat/lon functions
+#' (Correlation) Generate Correlation Map Data
+#'
+#' Computes grid-based correlation values between a timeseries and a spatial field,
+#' or between two spatial fields. Returns map-ready correlation data (`x`, `y`, `z`).
+#' Assumes input ModE-RA data has been preprocessed. Not suitable for comparing two timeseries.
+#'
+#' @param variable1_data Array or data frame. Either a 2D or 3D data set: a user or ModE-RA timeseries or field.
+#' @param variable2_data Array or data frame. Second data set to correlate (timeseries or field).
+#' @param method Character. Correlation method to use: `"pearson"` (default) or `"spearman"`.
+#' @param variable1_type Character. `"Timeseries"` or `"Field"` – type of the first variable.
+#' @param variable2_type Character. `"Timeseries"` or `"Field"` – type of the second variable.
+#' @param variable1_lon_range Numeric vector of length 2. Longitude range for variable 1.
+#' @param variable2_lon_range Numeric vector of length 2. Longitude range for variable 2.
+#' @param variable1_lat_range Numeric vector of length 2. Latitude range for variable 1.
+#' @param variable2_lat_range Numeric vector of length 2. Latitude range for variable 2.
+#'
+#' @return A list containing three elements:
+#' \describe{
+#'   \item{x}{Numeric vector of longitudes.}
+#'   \item{y}{Numeric vector of latitudes.}
+#'   \item{z}{Matrix of correlation values for each grid cell.}
+#' }
 
 generate_correlation_map_data = function(variable1_data,
                                          variable2_data,
@@ -4780,9 +4949,16 @@ generate_correlation_map_data = function(variable1_data,
   return(xyz)
 }
 
-## (Correlation) GENERATE CORRELATION MAP DATATABLE - creates a correlation map 
-##               datatable for display from the correlation_map_data
-##               data_input = correlation_map_data
+#' (Correlation) Generate Correlation Map Datatable
+#'
+#' Converts correlation map output (`x`, `y`, `z`) into a formatted matrix
+#' suitable for display as a datatable. Includes rotated and labeled axes.
+#'
+#' @param data_input List. Correlation map data as returned by `generate_correlation_map_data()`,
+#'                   containing elements `x` (longitude), `y` (latitude), and `z` (correlation matrix).
+#'
+#' @return A matrix with row and column labels including degree symbols and cardinal directions,
+#'         representing latitude and longitude respectively.
 
 generate_correlation_map_datatable = function(data_input){
   
@@ -4810,10 +4986,15 @@ generate_correlation_map_datatable = function(data_input){
   return(zt)
 }
 
-## (Correlation) GENERATE METADATA FROM CUSTOMIZATION INPUTS FOR CORRELATION PLOTS
-##               collects and flattens all relevant user inputs (shared, map, ts)
-##               for export or upload use in correlation plot modules
-##               returns a single-row metadata dataframe
+
+#' (Correlation) Generate Metadata from Customization Inputs
+#'
+#' Collects and flattens all user-specified inputs for correlation plot generation,
+#' including shared settings, map and timeseries parameters. Useful for saving or exporting session state.
+#'
+#' @param ALL Inputs or Reactives Values
+#'
+#' @return A one-row data frame containing all metadata inputs, flattened for export or saving.
 
 generate_metadata_correlation <- function(
     # Shared inputs
@@ -5009,10 +5190,30 @@ generate_metadata_correlation <- function(
 }
 
 
-## (General) PROCESS UPLOADED METADATA FOR CORRELATION VISUALIZATION
-##           reads correlation metadata and optional data frames from Excel file
-##           updates all relevant Shiny UI inputs and reactiveVals for correlation plots
-##           expects correlation-style input IDs (e.g. *_v1, *_v2, *_ts3, *_3)
+#' (Correlation) Process Uploaded Metadata
+#'
+#' Reads and applies user-saved metadata and optional UI-related data tables from an Excel file,
+#' updating Shiny UI inputs and reactive values to restore a previous correlation plot configuration.
+#'
+#' @param file_path Character. Filepath to the Excel metadata file.
+#' @param mode Character. Visualization mode: either `"map"` or `"ts"`.
+#' @param metadata_sheet Character. Sheet name in Excel file containing the metadata (default: `"custom_meta"`).
+#' @param df_ts_points Character. Optional sheet name containing timeseries point data.
+#' @param df_ts_highlights Character. Optional sheet name containing timeseries highlight data.
+#' @param df_ts_lines Character. Optional sheet name containing timeseries line data.
+#' @param df_map_points Character. Optional sheet name containing map point data.
+#' @param df_map_highlights Character. Optional sheet name containing map highlight data.
+#' @param rv_plotOrder ReactiveVal. Stores the current order of plot layers.
+#' @param rv_availableLayers ReactiveVal. Stores the available layers for display.
+#' @param rv_lonlat_vals_v1 ReactiveVal. Stores lon/lat coordinates for variable 1.
+#' @param rv_lonlat_vals_v2 ReactiveVal. Stores lon/lat coordinates for variable 2.
+#' @param map_points_data ReactiveVal. Function to update map point overlay data.
+#' @param map_highlights_data ReactiveVal. Function to update map highlight overlay data.
+#' @param ts_points_data ReactiveVal. Function to update timeseries point data.
+#' @param ts_highlights_data ReactiveVal. Function to update timeseries highlight data.
+#' @param ts_lines_data ReactiveVal. Function to update timeseries line data.
+#'
+#' @return This function is called for its side effects. It updates Shiny inputs and reactive values.
 
 process_uploaded_metadata_correlation <- function(
     file_path,
@@ -5182,10 +5383,21 @@ process_uploaded_metadata_correlation <- function(
 
 #### Regression Functions ####
 
-## (Regression) CREATE MODE-RA TIMESERIES DATA creates timeseries data for single/
-##              multiple ModE-RA variables to be used as independent variables
-##              Note: Uses the GENERAL functions to create data
-##              variables = name/names of the modE-RA variable 
+#' (Regression) Create ModE-RA Timeseries Data
+#'
+#' Creates a timeseries dataset for one or more ModE-RA variables to be used as independent variables in regression.
+#' Internally applies a sequence of preprocessing steps, including subsetting, anomaly conversion, and spatial weighting.
+#' 
+#' @param dataset Character. Name of the ModE-RA dataset.
+#' @param variables Character vector. One or more variable names to extract timeseries for.
+#' @param subset_lon_IDs Integer vector. Longitude indices for spatial subsetting.
+#' @param subset_lat_IDs Integer vector. Latitude indices for spatial subsetting.
+#' @param mode Character. Either `"Absolute"` or `"Anomaly"` mode for the final output.
+#' @param month_range Integer vector. Vector of months used for temporal subsetting (e.g. `1:12`).
+#' @param year_range Integer vector of length 2. Range of years to extract timeseries data for (e.g. `c(1901, 2000)`).
+#' @param baseline_range Integer vector of length 2. Range of baseline years for anomaly calculation.
+#'
+#' @return A data frame containing a `Year` column and one column for each variable's weighted annual average.
 
 create_ME_timeseries_data = function(dataset,
                                      variables,
@@ -5257,15 +5469,36 @@ create_ME_timeseries_data = function(dataset,
 }
 
 
-## (Regression) GENERATE REGRESSION TITLES - creates a dataframe of regression titles
-##              ind/dep_variable = name/s of ind/dep variables
-##              independent_variable_number = number in "user_independent_variables" 
-##                                            of the variable to be plotted
-##                                            (set to 1 as default)
-##              ind/dep_mode =ModE-RA" or "User Data"  
-##              ME_independent_mode/d = ind/dep ModE-Ra data mode ("Absolute" or "Anomaly")
-##              subset_lon/lat_IDs = subset_lon/lat_IDs for dependent variable
-##              month_range_i/d = ind/dep ModE-RA month range
+#' (Regression) Generate Regression Titles
+#'
+#' Creates a dataframe of titles and labels for regression coefficient, p-value, and residual maps.
+#' Handles both user and ModE-RA data sources and supports optional customization of map titles and subtitles.
+#'
+#' @param independent_source Character. `"ModE-RA"` or `"User Data"` for the independent variable.
+#' @param dependent_source Character. `"ModE-RA"` or `"User Data"` for the dependent variable.
+#' @param dataset_i Character. Name of the dataset for the independent variable (if ModE-RA).
+#' @param dataset_d Character. Name of the dataset for the dependent variable (if ModE-RA).
+#' @param modERA_dependent_variable Character. Variable name from ModE-RA for the dependent variable.
+#' @param mode_i Character. `"Absolute"` or `"Anomaly"` mode for the independent variable.
+#' @param mode_d Character. `"Absolute"` or `"Anomaly"` mode for the dependent variable.
+#' @param month_range_i Integer vector. Months used for independent variable.
+#' @param month_range_d Integer vector. Months used for dependent variable.
+#' @param lon_range_i Numeric vector. Longitude range for the independent variable.
+#' @param lon_range_d Numeric vector. Longitude range for the dependent variable.
+#' @param lat_range_i Numeric vector. Latitude range for the independent variable.
+#' @param lat_range_d Numeric vector. Latitude range for the dependent variable.
+#' @param year_range Integer vector of length 2. Range of years used for regression.
+#' @param year_selected Integer. Single year selected for residual plotting.
+#' @param independent_variables Character vector. List of all independent variables used.
+#' @param dependent_variable Character. Name of the dependent variable.
+#' @param iv_number_coeff Integer. Index of independent variable used for coefficient plot.
+#' @param iv_number_pvals Integer. Index of independent variable used for p-value plot.
+#' @param map_title_mode Character. `"Auto"` or `"Custom"` for title handling.
+#' @param map_custom_title Character. Custom map title (optional).
+#' @param map_custom_subtitle Character. Custom map subtitle (optional).
+#' @param title_size Integer. Font size for map titles (default is 18).
+#'
+#' @return A single-row dataframe containing various titles and formatting options for regression plots.
 
 generate_regression_titles = function(independent_source,
                                       dependent_source,
@@ -5437,6 +5670,39 @@ generate_regression_titles = function(independent_source,
   return(titles_df)
 }
 
+
+#' (Regression) Generate Regression Titles for Timeseries Plots
+#'
+#' Creates a dataframe of titles, axis labels, and subtitles for regression timeseries plots,
+#' including metadata for dependent and independent variables and customization options.
+#'
+#' @param independent_source Character. `"ModE-RA"` or `"User Data"` for the independent variable source.
+#' @param dependent_source Character. `"ModE-RA"` or `"User Data"` for the dependent variable source.
+#' @param dataset_i Character. Dataset name for the independent variable (if ModE-RA).
+#' @param dataset_d Character. Dataset name for the dependent variable (if ModE-RA).
+#' @param modERA_dependent_variable Character. ModE-RA variable name for the dependent variable.
+#' @param mode_i Character. `"Absolute"` or `"Anomaly"` for the independent variable mode.
+#' @param mode_d Character. `"Absolute"` or `"Anomaly"` for the dependent variable mode.
+#' @param month_range_i Integer vector. Month range for the independent variable.
+#' @param month_range_d Integer vector. Month range for the dependent variable.
+#' @param lon_range_i Numeric vector. Longitude range for the independent variable.
+#' @param lon_range_d Numeric vector. Longitude range for the dependent variable.
+#' @param lat_range_i Numeric vector. Latitude range for the independent variable.
+#' @param lat_range_d Numeric vector. Latitude range for the dependent variable.
+#' @param year_range Integer vector of length 2. Year range for the regression period.
+#' @param year_selected Integer. Specific year for residual plot context.
+#' @param independent_variables Character vector. Names of all independent variables used.
+#' @param dependent_variable Character. Name of the dependent variable.
+#' @param iv_number_coeff Integer. Index of the independent variable used for coefficient context.
+#' @param iv_number_pvals Integer. Index of the independent variable used for p-value context.
+#' @param map_title_mode Character. `"Auto"` or `"Custom"` to control title generation mode.
+#' @param map_custom_title Character. Optional custom title for maps and timeseries.
+#' @param map_custom_subtitle Character. Optional custom subtitle for maps and timeseries.
+#' @param title_size Integer. Font size for titles and subtitles (default: user-defined).
+#'
+#' @return A single-row dataframe containing metadata used for timeseries regression plot labeling,
+#' including axis labels, titles, subtitles, and download-safe file title.
+
 generate_regression_titles_ts = function(independent_source,
                                          dependent_source,
                                          dataset_i,
@@ -5607,11 +5873,18 @@ generate_regression_titles_ts = function(independent_source,
   return(titles_df)
 }
 
-## (Regression) CALCULATE SUMMARY DATA
-##              independent_variable_data = timeseries data for one or more variables
-##              dependent_variable_data = Mod-Era create_timeseries_datatable for ONE variable
-##              independent_variables = selected independent variables user or ModE-Ra
-##                                      as a list,e.g. (c("CO2.ppm.","TSI.w.m2."))
+
+#' (Regression) Calculate Summary Data
+#'
+#' Performs linear regression on one or more independent variables against a single
+#' dependent variable to generate a regression model object.
+#'
+#' @param independent_variable_data Data frame. Timeseries data containing one or more independent variables
+#' @param dependent_variable_data Data frame. Timeseries data for the dependent variable;
+#' @param independent_variables Character vector. Names of the independent variables
+#'
+#' @return A linear model object (class \code{"lm"}) containing the fitted regression model.
+#'   This can be passed to \code{summary()} or \code{broom::tidy()} for detailed output.
 
 create_regression_summary_data = function(independent_variable_data,
                                           dependent_variable_data,
@@ -5623,10 +5896,16 @@ create_regression_summary_data = function(independent_variable_data,
 }
 
 
-## (Regression) Calculate regression coefficients for mapping (the first dimension
-##              is the number in user_variables of each variable)
-##              independent_variable_data = timeseries data for one or more variables
-##              dependent_variable_data = any yearly ModE-RA data (absolute or anomaly)
+#' (Regression) Calculate Regression Coefficients for Mapping
+#'
+#' Computes spatially distributed regression coefficients for each grid cell,
+#' where each time series at a grid point is regressed on one or more independent variables.
+#'
+#' @param independent_variable_data Data frame. Timeseries data for one or more independent variables
+#' @param dependent_variable_data 3D array. Yearly ModE-RA data (either absolute or anomaly) with dimensions
+#' @param independent_variables Character vector. Names of the independent variables to use from
+#'
+#' @return A 3D array of regression coefficients (excluding intercepts) with dimensions
 
 create_regression_coeff_data = function(independent_variable_data,
                                         dependent_variable_data,
@@ -5637,10 +5916,17 @@ create_regression_coeff_data = function(independent_variable_data,
 }
 
 
-## (Regression) Calculate regression p values for mapping (the first dimension
-##              is the number in user_variables of each variable)
-##              independent_variable_data = timeseries data for one or more variables
-##              dependent_variable_data = any yearly ModE-RA data (absolute or anomaly)
+#' (Regression) Calculate Regression P-values for Mapping
+#'
+#' Computes spatially distributed regression p-values for each grid cell,
+#' based on linear regression of the grid point time series on one or more
+#' independent variables.
+#'
+#' @param independent_variable_data Data frame. Timeseries data for one or more independent variables.
+#' @param dependent_variable_data 3D array. Yearly ModE-RA data (absolute or anomaly).
+#' @param independent_variables Character vector. Names of the independent variables from \code{independent_variable_data}.
+#'
+#' @return 3D array of p-values (excluding intercepts) with dimensions [independent variables, lon, lat].
 
 create_regression_pvalue_data = function(independent_variable_data,
                                          dependent_variable_data,
@@ -5658,10 +5944,16 @@ create_regression_pvalue_data = function(independent_variable_data,
 }
 
 
-## (Regression) Calculate regression residuals for mapping and TS (only needed 
-##              for ModE-RA = dependent variable)
-##              independent_variable_data = timeseries data for one or more variables
-##              dependent_variable_data = any yearly ModE-RA data (absolute or anomaly)
+#' (Regression) Calculate Regression Residuals for Mapping and Timeseries
+#'
+#' Computes residuals from multiple linear regression between timeseries predictors and a ModE-RA field. 
+#' Used for plotting spatial or timeseries regression residuals.
+#'
+#' @param independent_variable_data A data frame of timeseries for one or more independent variables (columns = variables, rows = years).
+#' @param dependent_variable_data A 3D array of ModE-RA data (lon x lat x year) representing the dependent variable.
+#' @param independent_variables A character vector of column names in \code{independent_variable_data} to be used as predictors.
+#'
+#' @return A 3D array (lon x lat x year) of regression residuals excluding model intercepts.
 
 create_regression_residuals = function(independent_variable_data,
                                        dependent_variable_data,
@@ -5671,8 +5963,16 @@ create_regression_residuals = function(independent_variable_data,
 }
 
 
-## (REGRESSION) CREATE REGRESSION MAP DATATABLE
-##              data_input = 2D data that was plotted for coeffs, pvalue or residuals
+#' (Regression) Create Regression Map Datatable
+#'
+#' Generates a labeled 2D datatable (latitude x longitude) from spatial regression outputs such as 
+#' coefficients, p-values, or residuals for display or export purposes.
+#'
+#' @param data_input A 2D numeric matrix (lon x lat) representing the regression result to be formatted.
+#' @param subset_lon_IDs Integer vector of selected longitude indices used in the regression.
+#' @param subset_lat_IDs Integer vector of selected latitude indices used in the regression.
+#'
+#' @return A labeled 2D matrix (lat x lon) with longitude/latitude in degree format as column and row names.
 
 create_regression_map_datatable = function(data_input,
                                            subset_lon_IDs,
@@ -5702,12 +6002,16 @@ create_regression_map_datatable = function(data_input,
 }
 
 
-## (Regression) CREATE REGRESSION TIMESERIES DATATABLE including Original, Trend & Residual
-##              dependent_variable_data = original Mod-Era create_timeseries_datatable
-##                                        for the dependent variable
-##              summary_data = create_regression_summary_data
-##              residuals_data = as created by create_regression_residuals
-##              regression_titles = as created by generate_regression_titles
+#' (Regression) Create Regression Timeseries Datatable
+#'
+#' Combines the original, trend, and residual timeseries into a labeled dataframe 
+#' for display or export following a regression analysis.
+#'
+#' @param dependent_variable_data Data frame containing the original ModE-RA timeseries for the dependent variable.
+#' @param summary_data An object from `create_regression_summary_data`, containing regression summary output.
+#' @param regression_titles A data frame from `generate_regression_titles`, used to label columns with units.
+#'
+#' @return A data frame with columns for Year, Original, Trend, and Residuals, labeled with appropriate units.
 
 create_regression_timeseries_datatable = function(dependent_variable_data,
                                                   summary_data,
@@ -5731,10 +6035,15 @@ create_regression_timeseries_datatable = function(dependent_variable_data,
 }
 
 
-## (Regression) GENERATE METADATA FOR REGRESSION VISUALIZATION
-##              Collects and flattens all relevant user inputs for regression plots 
-##              (both map and timeseries). Returns a single-row metadata table 
-##              for export or reloading customization settings. Supports multi-variable IVs.
+#' (Regression) Generate Metadata for Regression Visualization
+#'
+#' Flattens and consolidates all user selections related to regression map and timeseries plots.
+#' Returns a single-row metadata data frame for saving or reloading UI customizations.
+#'
+#' @param ALL Inputs and Reactive Values from the Plots.
+#'
+#' @return A single-row data frame containing all flattened metadata used in the regression modules.
+
 
 generate_metadata_regression <- function(
     # Shared regression inputs
@@ -5900,11 +6209,32 @@ generate_metadata_regression <- function(
   return(meta)
 }
 
-## (Regression) PROCESS UPLOADED METADATA FOR REGRESSION VISUALIZATION
-##              Reads metadata and optional data frames from uploaded Excel file,
-##              and updates all relevant Shiny UI inputs and reactiveVals for regression plots.
-##              Supports shared regression inputs, timeseries, and three map types:
-##              Coefficient, P-Value, and Residual.
+
+#' (Regression) Process Uploaded Metadata for Regression Visualization
+#'
+#' Loads regression metadata and optional data sheets from an Excel file to update
+#' Shiny UI inputs and reactive values. Supports regression timeseries and map modes:
+#' Coefficient, P-Value, and Residual.
+#'
+#' @param file_path Character. Path to the Excel file containing metadata and optional data.
+#' @param mode Character. Regression view mode: one of "ts", "coeff", "pval", or "res".
+#' @param metadata_sheet Character. Name of the sheet containing metadata (default is "custom_meta").
+#' @param df_ts_points Character or NULL. Sheet name for regression TS point data.
+#' @param df_ts_highlights Character or NULL. Sheet name for regression TS highlights.
+#' @param df_ts_lines Character or NULL. Sheet name for regression TS line data.
+#' @param df_map_points Character or NULL. Sheet name for regression map points.
+#' @param df_map_highlights Character or NULL. Sheet name for regression map highlights.
+#' @param ts_points_data Reactive function or NULL. Shiny reactive value for storing TS point data.
+#' @param ts_highlights_data Reactive function or NULL. Shiny reactive value for TS highlight data.
+#' @param ts_lines_data Reactive function or NULL. Shiny reactive value for TS line data.
+#' @param map_points_data Reactive function or NULL. Shiny reactive value for map point data.
+#' @param map_highlights_data Reactive function or NULL. Shiny reactive value for map highlight data.
+#' @param rv_plotOrder Reactive function or NULL. Stores plotting order for map layers.
+#' @param rv_availableLayers Reactive function or NULL. Stores available shapefile layers.
+#' @param rv_lonlat_vals_iv Reactive function or NULL. Reactive value for IV (independent variable) lon/lat.
+#' @param rv_lonlat_vals_dv Reactive function or NULL. Reactive value for DV (dependent variable) lon/lat.
+#'
+#' @return No return value. The function updates Shiny inputs and reactive values in-place.
 
 process_uploaded_metadata_regression <- function(
     file_path,
@@ -6065,7 +6395,14 @@ process_uploaded_metadata_regression <- function(
 
 #### Annual cycles Functions ----
 
-## (Annual cycles) Annual cycles starter data - Bern,1815  
+#' (Annual Cycles) Starter Data for Monthly Time Series (Bern, 1815)
+#'
+#' Provides example monthly temperature data for Bern in the year 1815.
+#' Used to initialize the annual cycles plotting interface.
+#'
+#' @return A data frame containing one row of monthly temperature data for Bern (1815),
+#'   including metadata such as dataset, coordinates, mode, and data type.
+
 monthly_ts_starter_data = function(){
   Dataset = "ModE-RA"
   Years = "1815" ; Variable = "Temperature" ; Unit = "\u00B0C"
@@ -6084,13 +6421,23 @@ monthly_ts_starter_data = function(){
 }
 
 
-## (Annual cycles) CREATE ANNUAL CYCLES DATA - creates a data.frame where each row is one 
-##              year (or an averaged period) of monthly data. 
-##              Uses create_subset_lat/lon_IDs functions
-##              data_input = custom_data()
-##              years = either one year "1483", a set of years "1483,1812"
-##                      or a range of years "1483-1489"
-##              type = "Average" or "Individual years"
+#' (Annual Cycles) Create Monthly Time Series Data
+#'
+#' Generates a monthly time series data frame from 3D climate data for selected years,
+#' spatial extent, and mode (absolute or anomaly). Supports individual years or averaged periods.
+#'
+#' @param data_input 3D array of climate data [lon, lat, time] from `custom_data()`.
+#' @param dataset Character. Name of the dataset (e.g., "ModE-RA").
+#' @param variable Character. Variable name (e.g., "Temperature").
+#' @param years Character. Year(s) to include (e.g., "1815", "1800,1815", or "1800-1810").
+#' @param lon_range Numeric vector. Longitude range (e.g., c(7.5, 7.5)).
+#' @param lat_range Numeric vector. Latitude range (e.g., c(47, 47)).
+#' @param mode Character. Either "Absolute" or "Anomaly".
+#' @param type Character. Either "Average" or "Individual years".
+#' @param baseline_range Numeric vector. Reference years used for anomalies (if mode = "Anomaly").
+#'
+#' @return A data frame containing monthly values with metadata (dataset, variable, coordinates,
+#'   unit, mode, type, and reference period), where each row represents a year or averaged period.
 
 create_monthly_TS_data = function(data_input,
                                   dataset,
@@ -6226,8 +6573,7 @@ create_monthly_TS_data = function(data_input,
 }
 
 
-
-#' PLOT MONTHLY TIMESERIES 
+#' (Annual Cycles) PLOT MONTHLY TIMESERIES 
 #' 
 #' @param data data.frame. The main monthly time series data table.
 #' @param titles Character vector. Contains ts_title and ts_title_size
@@ -6614,7 +6960,15 @@ plot_monthly_timeseries <- function(data = NA,
 }
 
 
-# Helper function to to generate month label
+#' (Annual Cycles) Generate Month Label
+#'
+#' Helper function to create a short string label representing a range of months.
+#' Returns "Annual" if the full year is selected, otherwise a concatenation of month initials.
+#'
+#' @param range Integer vector of length 2. Start and end months (1 = January, 12 = December).
+#'
+#' @return A character string representing the month range (e.g., "JFM" or "Annual").
+
 generate_month_label <- function(range) {
   if (range[1] == 1 && range[2] == 12) {
     "Annual"
@@ -6624,9 +6978,32 @@ generate_month_label <- function(range) {
   }
 }
 
-## (Annual Cycles) GENERATE METADATA FROM USER INPUTS  
-## Collects all relevant UI inputs for annual cycle plots into a single-row metadata table.  
-## Used for exporting and reloading customization settings (no lonlat values included).
+
+#' (Annual Cycles) Generate Metadata from User Inputs
+#'
+#' Collects all annual cycle plot UI inputs and compiles them into a single-row metadata table.  
+#' Used for exporting or reloading customization settings. Does not include coordinate points.
+#'
+#' @param range_years5 Year(s) or year range selected for plotting.
+#' @param custom_ts5 Logical indicating whether custom styling is enabled.
+#' @param key_position_ts5 Position of the legend/key in the plot.
+#' @param show_key_ts5 Logical indicating whether to display the legend/key.
+#' @param title_mode_ts5 Title mode selection (e.g., automatic or custom).
+#' @param title_size_input_ts5 Numeric value for the title font size.
+#' @param title1_input_ts5 Custom title text input.
+#' @param file_type_timeseries5 Selected file format for download (e.g., png, pdf).
+#' @param dataset_selected5 Name of the selected dataset.
+#' @param variable_selected5 Selected climate variable (e.g., Temperature, Precipitation).
+#' @param range_latitude5 Latitude range selected for the subset.
+#' @param range_longitude5 Longitude range selected for the subset.
+#' @param ref_period5 Reference period used for anomaly calculations.
+#' @param ref_period_sg5 Single year selected as reference (if applicable).
+#' @param ref_single_year5 Logical indicating use of a single reference year.
+#' @param mode_selected5 Mode of data display ("Absolute" or "Anomaly").
+#' @param type_selected5 Type of output ("Average" or "Individual years").
+#'
+#' @return A single-row `data.frame` containing all relevant user customization inputs.
+
 
 generate_metadata_annualcycle <- function(
     range_years5 = NA,
@@ -6677,10 +7054,24 @@ generate_metadata_annualcycle <- function(
   return(meta)
 }
 
-## (Annual Cycles) PROCESS UPLOADED METADATA FOR ANNUAL CYCLES
-##                 Reads metadata and optional data frames from Excel file
-##                 Updates all relevant UI inputs and reactive values
-##                 for Annual Cycles visualization (timeseries mode only)
+#' (Annual Cycles) Process Uploaded Metadata for Annual Cycles
+#'
+#' Reads metadata and optional supporting data from an uploaded Excel file  
+#' and updates all relevant UI inputs and reactive values for annual cycle visualization.
+#'
+#' @param file_path File path to the Excel file containing metadata and optional data sheets.
+#' @param metadata_sheet Sheet name in the Excel file that contains the metadata (default is "custom_meta").
+#' @param df_monthly_ts Optional sheet name for uploaded monthly timeseries data.
+#' @param df_ts_points Optional sheet name for point annotations on the timeseries.
+#' @param df_ts_highlights Optional sheet name for highlighted points/regions.
+#' @param df_ts_lines Optional sheet name for line annotations on the timeseries.
+#' @param monthly_ts_data Reactive value/function to store the uploaded monthly timeseries data.
+#' @param ts_points_data Reactive value/function to store the uploaded point annotations.
+#' @param ts_highlights_data Reactive value/function to store the uploaded highlight data.
+#' @param ts_lines_data Reactive value/function to store the uploaded line annotations.
+#'
+#' @return None. This function updates UI elements and reactive values in a Shiny session.
+
 
 process_uploaded_metadata_cycles <- function(
     file_path,
@@ -6755,8 +7146,48 @@ process_uploaded_metadata_cycles <- function(
 #### SEA Functions ----
 
 
-## (SEA) GENERATE METADATA FROM INPUTS FOR PLOT GENERATION
-##       Data input = Plot settings from SEA UI, flattened for export/import
+#' (SEA) Generate Metadata from Inputs for Plot Generation
+#'
+#' Flattens SEA UI inputs into a single-row metadata table for export or import.  
+#' Captures all plot settings and optional reactive values.
+#'
+#' @param axis_input_6 Axis range for the y-axis in the SEA plot.
+#' @param axis_mode_6 Axis scaling mode (e.g., "auto", "manual").
+#' @param coordinates_type_6 Coordinate input mode ("latlon" or other).
+#' @param custom_6 Logical; whether to enable custom visualization options.
+#' @param dataset_selected_6 Selected dataset for SEA.
+#' @param download_options_6 Logical; whether download options are enabled.
+#' @param enable_custom_statistics_6 Logical; enable custom pre/post statistics.
+#' @param enter_upload_6 Logical; indicates whether a file was uploaded.
+#' @param event_years_6 Comma-separated string of event years.
+#' @param file_type_timeseries6 Selected output file type (e.g., "pdf", "png").
+#' @param lag_years_6 Numeric vector of lag years to include in SEA.
+#' @param ME_statistic_6 Selected ModE-RA statistic (e.g., mean, median).
+#' @param ME_variable_6 Selected ModE-RA variable (e.g., "Temperature").
+#' @param range_latitude_6 Latitude range for spatial subset.
+#' @param range_longitude_6 Longitude range for spatial subset.
+#' @param range_months_6 Month range for seasonal aggregation.
+#' @param ref_period_6 Numeric range for reference period baseline.
+#' @param ref_period_sg_6 Single numeric value for reference alignment.
+#' @param ref_single_year_6 Logical; if reference is a single year.
+#' @param sample_size_6 Number of years used in composite statistics.
+#' @param season_selected_6 Selected season or time aggregation (e.g., "DJF").
+#' @param show_confidence_bands_6 Logical; whether to display confidence bands.
+#' @param show_key_6 Logical; whether to display the legend/key.
+#' @param show_means_6 Logical; whether to show mean lines.
+#' @param show_observations_6 Logical; whether to show individual observations.
+#' @param show_pvalues_6 Logical; whether to show p-values on plot.
+#' @param show_ticks_6 Logical; whether to show axis ticks.
+#' @param source_sea_6 Source of SEA data ("User Data" or "ModE-RA").
+#' @param title_mode_6 Title mode selection ("Default" or "Custom").
+#' @param title1_input_6 Custom title text.
+#' @param use_custom_post_6 Logical; use custom post-event year range.
+#' @param use_custom_pre_6 Logical; use custom pre-event year range.
+#' @param user_variable_6 Name of user-uploaded variable (if used).
+#' @param y_label_6 Y-axis label.
+#' @param lonlat_vals Optional vector of selected coordinates used in SEA.
+#'
+#' @return A single-row data.frame containing all SEA UI and reactive inputs.
 
 generate_metadata_sea <- function(
   
@@ -6849,10 +7280,17 @@ generate_metadata_sea <- function(
   return(meta)
 }
 
-# ## (SEA) PROCESS UPLOADED METADATA FOR SEA VISUALIZATION
-# ##       Reads metadata from uploaded Excel file and updates 
-# ##       all relevant SEA-related Shiny inputs and reactive values.
-# ##       metadata_sheet = name of the metadata sheet (default: "custom_meta")
+
+#' (SEA) Process Uploaded Metadata for SEA Visualization
+#'
+#' Loads and applies SEA-related settings from a metadata Excel file.  
+#' Updates all relevant Shiny inputs and reactive values used in SEA plotting.
+#'
+#' @param file_path File path to the uploaded Excel metadata file.
+#' @param metadata_sheet Name of the Excel sheet containing metadata (default is "custom_meta").
+#' @param rv_lonlat_vals Optional reactive value object for selected coordinates.
+#'
+#' @return This function is called for its side effects. It updates Shiny UI inputs and reactive values.
 
 process_uploaded_metadata_sea <- function(
     file_path,
@@ -6921,8 +7359,15 @@ process_uploaded_metadata_sea <- function(
   }
 }
 
-## (SEA) SET AXIS VALUES IN CUSTOMIZATION
-##       data input = Input from SEA_datatable()
+
+#' (SEA) Set Axis Values in Customization
+#'
+#' Calculates padded axis limits for SEA plots based on the data range.
+#' Adds 5% padding on both sides and rounds to 3 significant digits.
+#'
+#' @param data_input Numeric vector or matrix input, typically from SEA_datatable().
+#'
+#' @return A numeric vector of length 2 representing the lower and upper axis bounds.
 
 set_sea_axis_values <- function(data_input) {
   min_val <- min(data_input, na.rm = TRUE)
@@ -6933,11 +7378,18 @@ set_sea_axis_values <- function(data_input) {
 }
 
 
-## (SEA) SEA EVENT DATA - creates a dataframe of event years with optional pre- and post-background years
-##       data_input_manual =   String of comma-separated years (e.g. "1815,1883,1783") if manual mode is used
-##       data_input_filepath = File path to CSV or Excel file containing events (and optional pre/post columns)
-##       year_input_mode =   "Manual" to use manual input, "Upload" to read from file
-##       data_source_sea =  If "ModE-", filters events to years 1422–2008
+#' (SEA) Read SEA Event Data
+#'
+#' Creates a standardized dataframe of SEA event years with optional pre- and post-event background years.
+#' Supports manual entry or reading from a CSV/Excel file. Filters years if source is "ModE-RA".
+#'
+#' @param data_input_manual Character string of comma-separated years (e.g., "1815,1883,1783") if manual mode is selected.
+#' @param data_input_filepath Character. File path to a `.csv` or Excel file containing event data.
+#' @param year_input_mode Character. One of `"Manual"` or `"Upload"` to select the input mode.
+#' @param data_source_sea Character. If `"ModE-"`, restricts event years to between 1422 and 2008.
+#'
+#' @return A data frame with columns `Event`, `Pre`, and `Post`, containing event years and optional background years.
+
 
 read_sea_data <- function(data_input_manual,
                           data_input_filepath,
