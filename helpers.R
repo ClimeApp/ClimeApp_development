@@ -1466,7 +1466,7 @@ plot_map <- function(data_input,
         size = 5,
         fontface = "bold",
         bg.color = "white", # shadow color
-        bg.r = 0.3, # shadow radius
+        bg.r = 0.2, # shadow radius
         point.padding = 10,
         show.legend = FALSE
       ) +
@@ -4339,43 +4339,44 @@ plot_user_timeseries = function(data_input,
                                 color) {
   # Calculate y statistics
   y = data_input[, 2]
-  y_range = range(data_input[, 2])
-
+  y_range = range(y, na.rm = TRUE)
+  
   # Test data for normality
-  p_value = shapiro.test(data_input[, 2])[[2]]
+  p_value = shapiro.test(y)[[2]]
   if (p_value > 0.05) {
-    y_sd = sd(data_input[, 2])
+    y_sd = sd(y, na.rm = TRUE)
   } else {
     y_sd = NA
   }
-
-  #Plot
-  plot(
-    data_input$Year,
-    y,
-    type = "l",
-    col = color,
-    lwd = 2,
-    xaxs = "i",
-    xlab = "Year",
-    ylab = colnames(data_input)[2]
+  
+  # Build title text
+  plot_title <- paste(
+    "Range = ",
+    signif(y_range[1], 3),
+    ":",
+    signif(y_range[2], 3),
+    "   SD = ",
+    signif(y_sd, 3),
+    sep = ""
   )
-
-  title(
-    paste(
-      "Range = ",
-      signif(y_range[1], 3),
-      ":",
-      signif(y_range[2], 3),
-      "   SD = ",
-      signif(y_sd, 3),
-      sep = ""
-    ),
-    cex.main = 1,
-    font.main = 1,
-    adj = 1,
-    line = 0.5
-  )
+  
+  # Create plot
+  p <- ggplot(data_input, aes(x = Year, y = !!sym(colnames(data_input)[2]))) +
+    geom_line(color = color, linewidth = 1.2, na.rm = TRUE) +
+    labs(
+      x = "Year",
+      y = colnames(data_input)[2],
+      title = plot_title
+    ) +
+    scale_x_continuous(limits = range(data_input$Year, na.rm = TRUE), expand = c(0, 0)) +  # <--- added here
+    theme_bw(base_size = 18) +
+    theme(
+      plot.title = element_text(hjust = 1, size = 12, face = "plain", margin = margin(b = 10)),
+      axis.title.x = element_text(margin = margin(t = 10)),
+      axis.title.y = element_text(margin = margin(r = 10))
+    )
+  
+  return(p)
 }
 
 
@@ -5773,26 +5774,97 @@ create_regression_map_datatable = function(data_input,
 #'
 #' @return A data frame with columns for Year, Original, Trend, and Residuals, labeled with appropriate units.
 
+# create_regression_timeseries_datatable = function(dependent_variable_data,
+#                                                   summary_data,
+#                                                   regression_titles){
+#   
+#   # Extract original timeseries
+#   years = dependent_variable_data$Year
+#   original_ts = signif(dependent_variable_data[,2],digits = 3)
+#   
+#   # Exract residuals timeseries
+#   residuals_ts = signif(summary_data$residuals,digits = 3)  
+#   
+#   # Create trend timeseries
+#   trend_ts = signif((original_ts - residuals_ts),digits = 3) 
+#   
+#   # Create dataframe
+#   regression_ts_df = data.frame(years,original_ts,trend_ts,residuals_ts)
+#   colnames(regression_ts_df) = c("Year",paste(c("Original","Trend","Residuals"),regression_titles$unit_d))
+#   
+#   return(regression_ts_df)                               
+# }
+
+# create_regression_timeseries_datatable = function(dependent_variable_data,
+#                                                   summary_data,
+#                                                   regression_titles) {
+#   
+#   # Extract original series and year
+#   years_all <- dependent_variable_data$Year
+#   original_all <- dependent_variable_data[, 2]
+#   
+#   # Find which rows were used in regression (i.e., non-NA complete cases)
+#   valid_rows <- which(!is.na(original_all))  # or use model.frame() from lm
+#   if (length(summary_data$residuals) != length(valid_rows)) {
+#     stop("Length mismatch: residuals and non-missing original data do not align.")
+#   }
+#   
+#   # Extract only the rows used for regression
+#   years <- years_all[valid_rows]
+#   original_ts <- signif(original_all[valid_rows], digits = 3)
+#   residuals_ts <- signif(summary_data$residuals, digits = 3)
+#   trend_ts <- signif((original_ts - residuals_ts), digits = 3)
+# 
+#   # Create final data frame
+#   regression_ts_df <- data.frame(years, original_ts, trend_ts, residuals_ts)
+#   colnames(regression_ts_df) <- c("Year", paste(c("Original", "Trend", "Residuals"), regression_titles$unit_d))
+#   
+#   return(regression_ts_df)
+# }
+
 create_regression_timeseries_datatable = function(dependent_variable_data,
                                                   summary_data,
-                                                  regression_titles){
+                                                  regression_titles) {
   
-  # Extract original timeseries
-  years = dependent_variable_data$Year
-  original_ts = signif(dependent_variable_data[,2],digits = 3)
+  # Extract original series and years
+  years_all <- dependent_variable_data$Year
+  original_all <- dependent_variable_data[, 2]
   
-  # Exract residuals timeseries
-  residuals_ts = signif(summary_data$residuals,digits = 3)  
+  # Find which rows were used in regression (i.e., non-NA complete cases)
+  valid_rows <- which(!is.na(original_all))
+  if (length(summary_data$residuals) != length(valid_rows)) {
+    stop("Length mismatch: residuals and non-missing original data do not align.")
+  }
   
-  # Create trend timeseries
-  trend_ts = signif((original_ts - residuals_ts),digits = 3) 
+  # Prepare full-length output with NAs
+  trend_full <- rep(NA, length(years_all))
+  residuals_full <- rep(NA, length(years_all))
   
-  # Create dataframe
-  regression_ts_df = data.frame(years,original_ts,trend_ts,residuals_ts)
-  colnames(regression_ts_df) = c("Year",paste(c("Original","Trend","Residuals"),regression_titles$unit_d))
+  # Fill only valid rows
+  original_ts <- signif(original_all, digits = 3)
+  residuals_ts <- signif(summary_data$residuals, digits = 3)
+  trend_ts <- signif(original_all[valid_rows] - residuals_ts, digits = 3)
   
-  return(regression_ts_df)                               
+  residuals_full[valid_rows] <- residuals_ts
+  trend_full[valid_rows] <- trend_ts
+  
+  # Final data frame includes all years
+  regression_ts_df <- data.frame(
+    Year = years_all,
+    Original = original_ts,
+    Trend = trend_full,
+    Residuals = residuals_full
+  )
+  
+  colnames(regression_ts_df) <- c("Year", 
+                                  paste("Original", regression_titles$unit_d), 
+                                  paste("Trend", regression_titles$unit_d), 
+                                  paste("Residuals", regression_titles$unit_d))
+  
+  return(regression_ts_df)
 }
+
+
 
 
 #' (Regression) Generate Metadata for Regression Visualization
