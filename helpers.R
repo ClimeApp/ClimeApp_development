@@ -2458,154 +2458,6 @@ plot_timeseries <- function(type,
 }
 
 
-#' (General) Add Data Layer to ggplot Timeseries
-#'
-#' Adds a line or point layer to a ggplot timeseries, depending on plot type.
-#' Supports anomalies, regression, correlation, or composite visualizations.
-#' Legend mapping is handled via `legend_label` for later scale customization.
-#'
-#' @param data Data frame. Timeseries data with required columns depending on `plottype`.
-#'             For anomalies: `Year`, `Mean`, `Min`, `Max`; for regression: `Year`, `Original`, `Trend`, `Residuals`.
-#' @param variable Character. Variable name to be plotted (used in regression context).
-#' @param plottype Character. One of `"Anomalies"`, `"Correlation"`, `"Regression"`, `"Monthly"`, or `"Composites"`.
-#' @param legend_label Character. Label used for color and linetype grouping in the legend.
-#' @param show_key Logical. Whether to include the layer in the legend.
-#' @param vcol Character. Color for points (only used if `plottype == "Composites"`).
-#'
-#' @return A `ggplot2` layer (`geom_line` or `geom_point`) to be added to a plot.
-
-add_data_to_TS <- function(data,
-                           variable,
-                           plottype,
-                           legend_label,
-                           show_key,
-                           vcol) {
-  
-  # Ensure legend_label is part of the data
-  data$legend_label <- factor(rep(legend_label, nrow(data)), levels = legend_label)
-  
-  y <- data[, 2]
-  
-  # Return the appropriate geom layer without modifying a plot
-  if (plottype == "Composites") {
-    return(geom_point(
-      data = data,
-      aes(x = Year, y = y, shape = legend_label),
-      color = vcol,
-      size = 2,
-      show.legend = show_key
-    ))
-  } else {
-    return(geom_line(
-      data = data,
-      aes(x = Year, y = y, color = legend_label, linetype = legend_label),
-      linewidth = 1,
-      show.legend = show_key
-    ))
-  }
-}
-
-
-#' (General) ADD CUSTOM FEATURES TO TIMESERIES PLOT (Points, Lines, Highlights)
-#'
-#' Adds custom graphical elements to a ggplot timeseries, including lines, points, and highlight rectangles.
-#' Allows selective inclusion in the legend via ghost layers and tracks legend styling entries.
-#' Useful for overlaying reference lines, annotations, or visual emphasis.
-#'
-#' @param p ggplot object. The existing timeseries plot to modify.
-#' @param highlights_data Data frame (optional). Rectangles with columns: `x1`, `x2`, `y1`, `y2`, `color`, `type`.
-#' @param lines_data Data frame (optional). Lines with columns: `location`, `color`, `type`, `orientation`, `label`, `key_show`.
-#' @param points_data Data frame (optional). Points with columns: `x_value`, `y_value`, `color`, `shape`, `size`, `label`.
-#' @param labels Character vector. Legend labels accumulated so far (can be empty).
-#' @param colors Character vector. Color values to match `labels` (can be empty).
-#' @param linetypes Character vector. Linetypes to match `labels` (can be empty).
-#' @param year_range Numeric vector. Year range used for plotting ghost lines (e.g., `c(1901, 2000)`).
-#' @param data_mean Numeric. A representative y-value used to anchor ghost lines for legend display.
-#'
-#' @return List with updated ggplot object and updated `labels`, `colors`, and `linetypes` vectors:
-#'   - `p`: the modified ggplot object  
-#'   - `labels`: updated legend labels  
-#'   - `colors`: updated legend colors  
-#'   - `linetypes`: updated legend linetypes  
-
-add_timeseries_custom_features <- function(p,
-                                           highlights_data = NULL,
-                                           lines_data = NULL,
-                                           points_data = NULL,
-                                           labels = NULL,
-                                           colors = NULL,
-                                           linetypes = NULL,
-                                           year_range = NULL,
-                                           data_mean = NULL) {
-  
-  # --- CUSTOM LINES ---
-  if (!is.null(lines_data) && nrow(lines_data) > 0) {
-    
-    # Create a key_label column to control legend inclusion
-    lines_data$key_label <- ifelse(lines_data$key_show, lines_data$label, NA)
-    
-    # Add all lines to plot
-    for (i in 1:nrow(lines_data)) {
-      line_data <- lines_data[i, ]
-      
-      # Vertical lines
-      if (line_data$orientation == "Vertical") {
-        p <- p + geom_vline(data = line_data,
-                            aes(xintercept = location),
-                            color = line_data$color,
-                            linetype = line_data$type,
-                            size = 1,
-                            show.legend = FALSE)
-      }
-      
-      # Horizontal lines
-      if (line_data$orientation == "Horizontal") {
-        p <- p + geom_hline(data = line_data,
-                            aes(yintercept = location),
-                            color = line_data$color,
-                            linetype = line_data$type,
-                            size = 1,
-                            show.legend = FALSE)
-      }
-    }
-    
-    # Add ghost_lines to show on key
-    lines_to_show <- subset(lines_data, key_show == TRUE)
-    
-    if (length(lines_to_show[,1]>0)){
-      for (i in 1:nrow(lines_to_show)) {
-        line <- lines_to_show[i, ]
-        
-        # Create a ghost line data frame with NA x/y values
-        ghost_line <- data.frame(
-          x = year_range,
-          y = c(data_mean,data_mean + 0.0000001),
-          label = line$label
-        )
-        
-        # Add the ghost line (only in legend)
-        p <- p + geom_line(
-          data = ghost_line,
-          aes(x = x, y = y, color = label, linetype = label),
-          alpha = 0,
-          size = 1,
-          show.legend = TRUE,
-          na.rm = TRUE
-        )
-        
-        # Update legend entries
-        labels <- c(labels, line$label)
-        colors <- c(colors, line$color)
-        linetypes <- c(linetypes, line$type)
-      }
-    }
-    
-  }  
-  
-  return(list(p = p, labels = labels, colors = colors, linetypes = linetypes))
-}
-
-
 #' (General) GET VARIABLE PROPERTIES
 #'
 #' Returns display properties for a climate variable, including its unit and color.
@@ -2787,8 +2639,8 @@ plot_modera_sources = function(ME_source_data,
   type_list = c("ice_proxy","glacier_ice_proxy","lake_sediment_proxy","tree_proxy",
                 "coral_proxy","instrumental_data","documentary_proxy","speleothem_proxy",
                 "bivalve_proxy","other_proxy")
-  color_list = c('#88CCEE', '#332288', '#DDCC77', '#117733', '#CC6677',
-                 '#882255', '#44AA99', '#999933', '#AA4499', '#000000')
+  color_list = c('#5dbae8', '#332288', '#d0b943', '#117733', '#CC6677',
+                 '#882255', '#44AA99', '#717126', '#AA4499', '#000000')
   named_colors = setNames(color_list, type_list)
   
   # Clean labels for TYPE
@@ -2814,7 +2666,7 @@ plot_modera_sources = function(ME_source_data,
     geom_polygon(
       data = world,
       aes(x = long, y = lat, group = group),
-      fill = "grey",
+      fill = "#e8e8e8",
       color = "darkgrey"
     ) +
     geom_sf() +
@@ -2833,7 +2685,8 @@ plot_modera_sources = function(ME_source_data,
         shape = VARIABLE
       ),
       alpha = 1,
-      size = 1.5
+      size = 2,
+      stroke = 1
     ) +
     labs(
       title = paste0("Assimilated Observations - ", season_title, " ", yr),
@@ -3798,62 +3651,6 @@ create_new_points_data = function(point_x_values,
 }
 
 
-#' (Plot Features) ADD CORRELATION TIMESERIES
-#'
-#' Plots two correlation timeseries on the same base plot, each with optional moving averages.
-#'
-#' @param data_input1 Data frame. Output from `add_stats_to_TS_datatable()` for the first variable.
-#' @param data_input2 Data frame. Output from `add_stats_to_TS_datatable()` for the second variable.
-#' @param variable1 Character. Name of the first variable being plotted.
-#' @param variable2 Character. Name of the second variable being plotted.
-#' @param correlation_titles List. Named list with color values: `V1_color` and `V2_color`.
-#'
-#' @return None. Draws a dual time series plot using base R graphics (`plot()` and `lines()`).
-
-add_correlation_timeseries = function(data_input1,
-                                      data_input2,
-                                      variable1,
-                                      variable2,
-                                      correlation_titles){
-  
-  # Set up variables for plotting
-  x = data_input1$Year
-  y1 = data_input1[,2]
-  y2 = data_input2[,2]
-  
-  cnames = colnames(data_input1)
-  
-  v_col1 = correlation_titles$V1_color
-  v_col2 = correlation_titles$V2_color
-  
-  # Save original graphical parameters and increase the plot margins
-  old.par = par(mar = c(0, 0, 0, 0))
-  par(mar = c(5, 4, 4, 4) + 0.25)
-  
-  # Needed to merge the plots
-  par(new = TRUE)
-  
-  # Plot variable 1
-  
-  plot(x,y1,type = "l", col = v_col1, lwd=2, xaxs="i", axes = FALSE, bty = "n", xlab = "", ylab = "")
-  if ("Moving_Average" %in% cnames){
-    lines(x,data_input1$Moving_Average,lwd = 3.5,col = "black")
-    lines(x,data_input1$Moving_Average,lwd = 2,col = v_col1)
-  }
-  
-  # Needed to merge the plots
-  par(new = TRUE)
-  
-  # Plot variable 2
-  plot(x,y2,type = "l", col = v_col2, lwd=2, xaxs="i", axes = FALSE, bty = "n", xlab = "", ylab = "")
-  if ("Moving_Average" %in% cnames){
-    lines(x,data_input2$Moving_Average,lwd = 3.5,col = "black")
-    lines(x,data_input2$Moving_Average,lwd = 2,col = v_col2)
-  }
-  # Reset original graphical parameters
-  par(old.par)
-  
-}
 
 
 #### Composite Functions ####
@@ -4793,52 +4590,6 @@ generate_correlation_titles = function(variable1_source,
 }
 
 
-#' (Correlation) Plot Combined Timeseries
-#'
-#' Plots two timeseries on the same plot with separate y-axes and customized labels/colors.
-#' Typically used to visualize the temporal co-variation between two variables (ModE-RA or user-supplied).
-#'
-#' @param variable1_data Data frame. First variable's data with columns `Year` and values.
-#' @param variable2_data Data frame. Second variable's data with columns `Year` and values.
-#' @param correlation_titles Data frame. Output from `generate_correlation_titles()`, containing axis labels, colors, and title strings.
-#'
-#' @return None. This function generates a base R plot directly using `plot()` and `mtext()`.
-
-plot_combined_timeseries = function(variable1_data,
-                                    variable2_data,
-                                    correlation_titles){
-  
-  # Set up variables for plotting
-  x = variable1_data[,1]
-  y1 = variable1_data[,2]
-  y2 = variable2_data[,2]
-  
-  # Save original graphical parameters and increase the plot margins
-  old.par = par(mar = c(0, 0, 0, 0))
-  par(mar = c(5, 4, 4, 4) + 0.25)
-  
-  # Plot variable 1
-  plot(x,y1, type = "l", col = correlation_titles$V1_color, lwd = 2, xaxs="i",
-       xlab = "",ylab = correlation_titles$V1_axis_label,col.axis = correlation_titles$V1_color,
-       col.lab = correlation_titles$V1_color )
-  axis(1)
-  mtext("Year", side = 1, line = 3)
-  
-  # Needed to merge the plots
-  par(new = TRUE)
-  
-  # Plot variable 2
-  plot(x,y2,type = "l", col = correlation_titles$V2_color, lwd = 2, xaxs="i",
-       axes = FALSE, bty = "n", xlab = "", ylab = "")
-  axis(4,col.axis = correlation_titles$V2_color)
-  mtext(correlation_titles$V2_axis_label, side = 4, line = 3, col = correlation_titles$V2_color)
-  
-  # Reset original graphical parameters
-  par(old.par)
-  
-  # Add main title
-  title(correlation_titles$TS_title, font.main= 1, adj=0, line = 0.5)
-}
 
 
 #' (Correlation) Correlate Two Timeseries
