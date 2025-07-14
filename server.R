@@ -2742,15 +2742,17 @@ server <- function(input, output, session) {
   ts_lines_data = reactiveVal(data.frame())
   
   # Map Points
-  observeEvent(input$add_point, {
-    new_points <- create_new_points_data(
-      input$point_location_x,
-      input$point_location_y,
-      input$point_label,
-      input$point_shape,
-      input$point_colour,
-      input$point_size
-    )
+  observeEvent(
+    input$add_point,
+    {
+      new_points <- create_new_points_data(
+        point_x_values = input$point_location_x,
+        point_y_values = input$point_location_y,
+        point_label = input$point_label,
+        point_shape = input$point_shape,
+        point_color = input$point_colour,
+        point_size = input$point_size
+      )
     
     if (input$projection != "UTM (default)") {
       new_points <- transform_points_df(
@@ -2779,15 +2781,17 @@ server <- function(input, output, session) {
   })
   
   # Map Highlights
-  observeEvent(input$add_highlight, {
-    new_highlight <- create_new_highlights_data(
-      input$highlight_x_values,
-      input$highlight_y_values,
-      input$highlight_colour,
-      input$highlight_type,
-      NA,
-      NA
-    )
+  observeEvent(
+    input$add_highlight,
+    {
+      new_highlight <- create_new_highlights_data(
+        highlight_x_values = input$highlight_x_values,
+        highlight_y_values = input$highlight_y_values,
+        highlight_color = input$highlight_colour,
+        highlight_type = input$highlight_type,
+        show_highlight_on_key = NA,
+        highlight_label = NA
+      )
     
     if (input$projection != "UTM (default)") {
       new_highlight <- transform_box_df(
@@ -2819,10 +2823,17 @@ server <- function(input, output, session) {
   
   # timeseries Points
   observeEvent(input$add_point_ts, {
-    ts_points_data(rbind(ts_points_data(),
-                         create_new_points_data(input$point_location_x_ts,input$point_location_y_ts,
-                                                input$point_label_ts,input$point_shape_ts,
-                                                input$point_colour_ts,input$point_size_ts)))
+    ts_points_data(rbind(
+      ts_points_data(),
+      create_new_points_data(
+        point_x_values = input$point_location_x_ts,
+        point_y_values = input$point_location_y_ts,
+        point_label = input$point_label_ts,
+        point_shape = input$point_shape_ts,
+        point_color = input$point_colour_ts,
+        point_size = input$point_size_ts
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_point_ts, {
@@ -2838,12 +2849,12 @@ server <- function(input, output, session) {
     ts_highlights_data(rbind(
       ts_highlights_data(),
       create_new_highlights_data(
-        input$highlight_x_values_ts,
-        input$highlight_y_values_ts,
-        input$highlight_colour_ts,
-        input$highlight_type_ts,
-        input$show_highlight_on_legend_ts,
-        input$highlight_label_ts
+        highlight_x_values = input$highlight_x_values_ts,
+        highlight_y_values = input$highlight_y_values_ts,
+        highlight_color = input$highlight_colour_ts,
+        highlight_type = input$highlight_type_ts,
+        show_highlight_on_key = input$show_highlight_on_legend_ts,
+        highlight_label = input$highlight_label_ts
       )
     ))
   })  
@@ -2858,10 +2869,17 @@ server <- function(input, output, session) {
   
   # timeseries Lines
   observeEvent(input$add_line_ts, {
-    ts_lines_data(rbind(ts_lines_data(),
-                        create_new_lines_data(input$line_orientation_ts,input$line_position_ts,
-                                              input$line_colour_ts,input$line_type_ts,
-                                              input$show_line_on_legend_ts,input$line_label_ts)))
+    ts_lines_data(rbind(
+      ts_lines_data(),
+      create_new_lines_data(
+        line_orientation = input$line_orientation_ts,
+        line_locations = input$line_position_ts,
+        line_color = input$line_colour_ts,
+        line_type = input$line_type_ts,
+        show_line_on_key = input$show_line_on_legend_ts,
+        line_label = input$line_label_ts
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_line_ts, {
@@ -3754,15 +3772,17 @@ server <- function(input, output, session) {
   ts_highlights_data2 = reactiveVal(data.frame())
   ts_lines_data2 = reactiveVal(data.frame())
   
-  observeEvent(input$add_point2, {
-    new_points <- create_new_points_data(
-      input$point_location_x2,
-      input$point_location_y2,
-      input$point_label2,
-      input$point_shape2,
-      input$point_colour2,
-      input$point_size2
-    )
+  observeEvent(
+    input$add_point2,
+    {
+      new_points <- create_new_points_data(
+        point_x_values = input$point_location_x2,
+        point_y_values = input$point_location_y2,
+        point_label = input$point_label2,
+        point_shape = input$point_shape2,
+        point_color = input$point_colour2,
+        point_size = input$point_size2
+      )
     
     if (input$projection2 != "UTM (default)") {
       new_points <- transform_points_df(
@@ -3792,15 +3812,17 @@ server <- function(input, output, session) {
   })
   
   # Map Highlights
-  observeEvent(input$add_highlight2, {
-    new_highlight <- create_new_highlights_data(
-      input$highlight_x_values2,
-      input$highlight_y_values2,
-      input$highlight_colour2,
-      input$highlight_type2,
-      NA,
-      NA
-    )
+  observeEvent(
+    input$add_highlight2,
+    {
+      new_highlight <- create_new_highlights_data(
+        highlight_x_values = input$highlight_x_values2,
+        highlight_y_values = input$highlight_y_values2,
+        highlight_color = input$highlight_colour2,
+        highlight_type = input$highlight_type2,
+        show_highlight_on_key = NA,
+        highlight_label = NA
+      )
     
     print(new_highlight)  # check what coords and columns look like
     
@@ -3835,10 +3857,17 @@ server <- function(input, output, session) {
   
   # timeseries Points
   observeEvent(input$add_point_ts2, {
-    ts_points_data2(rbind(ts_points_data2(),
-                          create_new_points_data(input$point_location_x_ts2,input$point_location_y_ts2,
-                                                 input$point_label_ts2,input$point_shape_ts2,
-                                                 input$point_colour_ts2,input$point_size_ts2)))
+    ts_points_data2(rbind(
+      ts_points_data2(),
+      create_new_points_data(
+        point_x_values = input$point_location_x_ts2,
+        point_y_values = input$point_location_y_ts2,
+        point_label = input$point_label_ts2,
+        point_shape = input$point_shape_ts2,
+        point_color = input$point_colour_ts2,
+        point_size = input$point_size_ts2
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_point_ts2, {
@@ -3854,12 +3883,12 @@ server <- function(input, output, session) {
     ts_highlights_data2(rbind(
       ts_highlights_data2(),
       create_new_highlights_data(
-        input$highlight_x_values_ts2,
-        input$highlight_y_values_ts2,
-        input$highlight_colour_ts2,
-        input$highlight_type_ts2,
-        input$show_highlight_on_legend_ts2,
-        input$highlight_label_ts2
+        highlight_x_values = input$highlight_x_values_ts2,
+        highlight_y_values = input$highlight_y_values_ts2,
+        highlight_color = input$highlight_colour_ts2,
+        highlight_type = input$highlight_type_ts2,
+        show_highlight_on_key = input$show_highlight_on_legend_ts2,
+        highlight_label = input$highlight_label_ts2
       )
     ))
   })  
@@ -3874,10 +3903,17 @@ server <- function(input, output, session) {
   
   # timeseries Lines
   observeEvent(input$add_line_ts2, {
-    ts_lines_data2(rbind(ts_lines_data2(),
-                         create_new_lines_data(input$line_orientation_ts2,input$line_position_ts2,
-                                               input$line_colour_ts2,input$line_type_ts2,
-                                               input$show_line_on_legend_ts2,input$line_label_ts2)))
+    ts_lines_data2(rbind(
+      ts_lines_data2(),
+      create_new_lines_data(
+        line_orientation = input$line_orientation_ts2,
+        line_locations = input$line_position_ts2,
+        line_color = input$line_colour_ts2,
+        line_type = input$line_type_ts2,
+        show_line_on_key = input$show_line_on_legend_ts2,
+        line_label = input$line_label_ts2
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_line_ts2, {
@@ -5115,15 +5151,17 @@ server <- function(input, output, session) {
   ts_lines_data3 = reactiveVal(data.frame())
   
   # Map Points 3
-  observeEvent(input$add_point3, {
-    new_points <- create_new_points_data(
-      input$point_location_x3,
-      input$point_location_y3,
-      input$point_label3,
-      input$point_shape3,
-      input$point_colour3,
-      input$point_size3
-    )
+  observeEvent(
+    input$add_point3,
+    {
+      new_points <- create_new_points_data(
+        point_x_values = input$point_location_x3,
+        point_y_values = input$point_location_y3,
+        point_label = input$point_label3,
+        point_shape = input$point_shape3,
+        point_color = input$point_colour3,
+        point_size = input$point_size3
+      )
     
     if (input$projection3 != "UTM (default)") {
       new_points <- transform_points_df(
@@ -5152,17 +5190,19 @@ server <- function(input, output, session) {
   })
   
   # Map Highlights 3
-  observeEvent(input$add_highlight3, {
-    new_highlight <- create_new_highlights_data(
-      input$highlight_x_values3,
-      input$highlight_y_values3,
-      input$highlight_colour3,
-      input$highlight_type3,
-      NA,
-      NA
-    )
-    
-    if (input$projection3 != "UTM (default)") {
+  observeEvent(
+    input$add_highlight3,
+    {
+      new_highlight <- create_new_highlights_data(
+        highlight_x_values = input$highlight_x_values3,
+        highlight_y_values = input$highlight_y_values3,
+        highlight_color = input$highlight_colour3,
+        highlight_type = input$highlight_type3,
+        show_highlight_on_key = NA,
+        highlight_label = NA
+      )
+      
+      if (input$projection3 != "UTM (default)") {
       new_highlight <- transform_box_df(
         df = new_highlight,
         x1col = "x1",
@@ -5192,11 +5232,18 @@ server <- function(input, output, session) {
   
   # timeseries Points
   observeEvent(input$add_point_ts3, {
-    ts_points_data3(rbind(ts_points_data3(),
-                          create_new_points_data(input$point_location_x_ts3,input$point_location_y_ts3,
-                                                 input$point_label_ts3,input$point_shape_ts3,
-                                                 input$point_colour_ts3,input$point_size_ts3)))
-  })  
+    ts_points_data3(rbind(
+      ts_points_data3(),
+      create_new_points_data(
+        point_x_values = input$point_location_x_ts3,
+        point_y_values = input$point_location_y_ts3,
+        point_label = input$point_label_ts3,
+        point_shape = input$point_shape_ts3,
+        point_color = input$point_colour_ts3,
+        point_size = input$point_size_ts3
+      )
+    ))
+  })
   
   observeEvent(input$remove_last_point_ts3, {
     ts_points_data3(ts_points_data3()[-nrow(ts_points_data3()),])
@@ -5208,10 +5255,17 @@ server <- function(input, output, session) {
   
   # timeseries Highlights
   observeEvent(input$add_highlight_ts3, {
-    ts_highlights_data3(rbind(ts_highlights_data3(),
-                              create_new_highlights_data(input$highlight_x_values_ts3,input$highlight_y_values_ts3,
-                                                         input$highlight_colour_ts3,input$highlight_type_ts3,
-                                                         input$show_highlight_on_legend_ts3,input$highlight_label_ts3)))
+    ts_highlights_data3(rbind(
+      ts_highlights_data3(),
+      create_new_highlights_data(
+        highlight_x_values = input$highlight_x_values_ts3,
+        highlight_y_values = input$highlight_y_values_ts3,
+        highlight_color = input$highlight_colour_ts3,
+        highlight_type = input$highlight_type_ts3,
+        show_highlight_on_key = input$show_highlight_on_legend_ts3,
+        highlight_label = input$highlight_label_ts3
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_highlight_ts3, {
@@ -5224,10 +5278,17 @@ server <- function(input, output, session) {
   
   # timeseries Lines
   observeEvent(input$add_line_ts3, {
-    ts_lines_data3(rbind(ts_lines_data3(),
-                         create_new_lines_data(input$line_orientation_ts3,input$line_position_ts3,
-                                               input$line_colour_ts3,input$line_type_ts3,
-                                               input$show_line_on_legend_ts3,input$line_label_ts3)))
+    ts_lines_data3(rbind(
+      ts_lines_data3(),
+      create_new_lines_data(
+        line_orientation = input$line_orientation_ts3,
+        line_locations = input$line_position_ts3,
+        line_color = input$line_colour_ts3,
+        line_type = input$line_type_ts3,
+        show_line_on_key = input$show_line_on_legend_ts3,
+        line_label = input$line_label_ts3
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_line_ts3, {
@@ -6512,10 +6573,17 @@ server <- function(input, output, session) {
   
   # timeseries Points Trend (4a)
   observeEvent(input$add_point_ts4, {
-    ts_points_data4a(rbind(ts_points_data4a(),
-                          create_new_points_data(input$point_location_x_ts4,input$point_location_y_ts4,
-                                                 input$point_label_ts4,input$point_shape_ts4,
-                                                 input$point_colour_ts4,input$point_size_ts4)))
+    ts_points_data4a(rbind(
+      ts_points_data4a(),
+      create_new_points_data(
+        point_x_values = input$point_location_x_ts4,
+        point_y_values = input$point_location_y_ts4,
+        point_label = input$point_label_ts4,
+        point_shape = input$point_shape_ts4,
+        point_color = input$point_colour_ts4,
+        point_size = input$point_size_ts4
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_point_ts4, {
@@ -6528,10 +6596,17 @@ server <- function(input, output, session) {
   
   # timeseries Points Residual (4b)
   observeEvent(input$add_point_ts4, {
-    ts_points_data4b(rbind(ts_points_data4b(),
-                          create_new_points_data(input$point_location_x_ts4,input$point_location_y_ts4,
-                                                 input$point_label_ts4,input$point_shape_ts4,
-                                                 input$point_colour_ts4,input$point_size_ts4)))
+    ts_points_data4b(rbind(
+      ts_points_data4b(),
+      create_new_points_data(
+        point_x_values = input$point_location_x_ts4,
+        point_y_values = input$point_location_y_ts4,
+        point_label = input$point_label_ts4,
+        point_shape = input$point_shape_ts4,
+        point_color = input$point_colour_ts4,
+        point_size = input$point_size_ts4
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_point_ts4, {
@@ -6545,10 +6620,17 @@ server <- function(input, output, session) {
   
   # timeseries Highlights Trend (4a)
   observeEvent(input$add_highlight_ts4, {
-    ts_highlights_data4a(rbind(ts_highlights_data4a(),
-                              create_new_highlights_data(input$highlight_x_values_ts4,input$highlight_y_values_ts4,
-                                                         input$highlight_colour_ts4,input$highlight_type_ts4,
-                                                         input$show_highlight_on_legend_ts4,input$highlight_label_ts4)))
+    ts_highlights_data4a(rbind(
+      ts_highlights_data4a(),
+      create_new_highlights_data(
+        highlight_x_values = input$highlight_x_values_ts4,
+        highlight_y_values = input$highlight_y_values_ts4,
+        highlight_color = input$highlight_colour_ts4,
+        highlight_type = input$highlight_type_ts4,
+        show_highlight_on_key = input$show_highlight_on_legend_ts4,
+        highlight_label = input$highlight_label_ts4
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_highlight_ts4, {
@@ -6561,10 +6643,17 @@ server <- function(input, output, session) {
   
   # timeseries Highlights Residual (4b)
   observeEvent(input$add_highlight_ts4, {
-    ts_highlights_data4b(rbind(ts_highlights_data4b(),
-                              create_new_highlights_data(input$highlight_x_values_ts4,input$highlight_y_values_ts4,
-                                                         input$highlight_colour_ts4,input$highlight_type_ts4,
-                                                         input$show_highlight_on_legend_ts4,input$highlight_label_ts4)))
+    ts_highlights_data4b(rbind(
+      ts_highlights_data4b(),
+      create_new_highlights_data(
+        highlight_x_values = input$highlight_x_values_ts4,
+        highlight_y_values = input$highlight_y_values_ts4,
+        highlight_color = input$highlight_colour_ts4,
+        highlight_type = input$highlight_type_ts4,
+        show_highlight_on_key = input$show_highlight_on_legend_ts4,
+        highlight_label = input$highlight_label_ts4
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_highlight_ts4, {
@@ -6577,10 +6666,17 @@ server <- function(input, output, session) {
   
   # timeseries Lines Trend (4a)
   observeEvent(input$add_line_ts4, {
-    ts_lines_data4a(rbind(ts_lines_data4a(),
-                         create_new_lines_data(input$line_orientation_ts4,input$line_position_ts4,
-                                               input$line_colour_ts4,input$line_type_ts4,
-                                               input$show_line_on_legend_ts4,input$line_label_ts4)))
+    ts_lines_data4a(rbind(
+      ts_lines_data4a(),
+      create_new_lines_data(
+        line_orientation = input$line_orientation_ts4,
+        line_locations = input$line_position_ts4,
+        line_color = input$line_colour_ts4,
+        line_type = input$line_type_ts4,
+        show_line_on_key = input$show_line_on_legend_ts4,
+        line_label = input$line_label_ts4
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_line_ts4, {
@@ -6593,10 +6689,17 @@ server <- function(input, output, session) {
   
   # timeseries Lines Residual (4b)
   observeEvent(input$add_line_ts4, {
-    ts_lines_data4b(rbind(ts_lines_data4b(),
-                         create_new_lines_data(input$line_orientation_ts4,input$line_position_ts4,
-                                               input$line_colour_ts4,input$line_type_ts4,
-                                               input$show_line_on_legend_ts4,input$line_label_ts4)))
+    ts_lines_data4b(rbind(
+      ts_lines_data4b(),
+      create_new_lines_data(
+        line_orientation = input$line_orientation_ts4,
+        line_locations = input$line_position_ts4,
+        line_color = input$line_colour_ts4,
+        line_type = input$line_type_ts4,
+        show_line_on_key = input$show_line_on_legend_ts4,
+        line_label = input$line_label_ts4
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_line_ts4, {
@@ -6614,15 +6717,17 @@ server <- function(input, output, session) {
   map_highlights_data_reg_coeff = reactiveVal(data.frame())
 
   # Map Points - Regression Coefficients
-  observeEvent(input$add_point_reg_coeff, {
-    new_points <- create_new_points_data(
-      input$point_location_x_reg_coeff,
-      input$point_location_y_reg_coeff,
-      input$point_label_reg_coeff,
-      input$point_shape_reg_coeff,
-      input$point_colour_reg_coeff,
-      input$point_size_reg_coeff
-    )
+  observeEvent(
+    input$add_point_reg_coeff,
+    {
+      new_points <- create_new_points_data(
+        point_x_values = input$point_location_x_reg_coeff,
+        point_y_values = input$point_location_y_reg_coeff,
+        point_label = input$point_label_reg_coeff,
+        point_shape = input$point_shape_reg_coeff,
+        point_color = input$point_colour_reg_coeff,
+        point_size = input$point_size_reg_coeff
+      )
     
     if (input$projection_reg_coeff != "UTM (default)") {
       new_points <- transform_points_df(
@@ -6671,16 +6776,18 @@ server <- function(input, output, session) {
   })
   
   # Map Highlights - Regression Coefficients
-  observeEvent(input$add_highlight_reg_coeff, {
-    new_highlight <- create_new_highlights_data(
-      input$highlight_x_values_reg_coeff,
-      input$highlight_y_values_reg_coeff,
-      input$highlight_colour_reg_coeff,
-      input$highlight_type_reg_coeff,
-      NA,
-      NA
-    )
-    
+  observeEvent(
+    input$add_highlight_reg_coeff,
+    {
+      new_highlight <- create_new_highlights_data(
+        highlight_x_values = input$highlight_x_values_reg_coeff,
+        highlight_y_values = input$highlight_y_values_reg_coeff,
+        highlight_color = input$highlight_colour_reg_coeff,
+        highlight_type = input$highlight_type_reg_coeff,
+        show_highlight_on_key = NA,
+        highlight_label = NA
+      )
+      
     if (input$projection_reg_coeff != "UTM (default)") {
       new_highlight <- transform_box_df(
         df = new_highlight,
@@ -6717,15 +6824,17 @@ server <- function(input, output, session) {
   map_highlights_data_reg_pval = reactiveVal(data.frame())
   
   # Map Points - Regression P-Values
-  observeEvent(input$add_point_reg_pval, {
-    new_points <- create_new_points_data(
-      input$point_location_x_reg_pval,
-      input$point_location_y_reg_pval,
-      input$point_label_reg_pval,
-      input$point_shape_reg_pval,
-      input$point_colour_reg_pval,
-      input$point_size_reg_pval
-    )
+  observeEvent(
+    input$add_point_reg_pval,
+    {
+      new_points <- create_new_points_data(
+        point_x_values = input$point_location_x_reg_pval,
+        point_y_values = input$point_location_y_reg_pval,
+        point_label = input$point_label_reg_pval,
+        point_shape = input$point_shape_reg_pval,
+        point_color = input$point_colour_reg_pval,
+        point_size = input$point_size_reg_pval
+      )
     
     if (input$projection_reg_pval != "UTM (default)") {
       new_points <- transform_points_df(
@@ -6754,15 +6863,17 @@ server <- function(input, output, session) {
   })
   
   # Map Highlights - Regression P-Values
-  observeEvent(input$add_highlight_reg_pval, {
-    new_highlight <- create_new_highlights_data(
-      input$highlight_x_values_reg_pval,
-      input$highlight_y_values_reg_pval,
-      input$highlight_colour_reg_pval,
-      input$highlight_type_reg_pval,
-      NA,
-      NA
-    )
+  observeEvent(
+    input$add_highlight_reg_pval,
+    {
+      new_highlight <- create_new_highlights_data(
+        highlight_x_values = input$highlight_x_values_reg_pval,
+        highlight_y_values = input$highlight_y_values_reg_pval,
+        highlight_color = input$highlight_colour_reg_pval,
+        highlight_type = input$highlight_type_reg_pval,
+        show_highlight_on_key = NA,
+        highlight_label = NA
+      )
     
     if (input$projection_reg_pval != "UTM (default)") {
       new_highlight <- transform_box_df(
@@ -6826,15 +6937,17 @@ server <- function(input, output, session) {
   
 
   # Map Points - Regression Residuals
-  observeEvent(input$add_point_reg_res, {
-    new_points <- create_new_points_data(
-      input$point_location_x_reg_res,
-      input$point_location_y_reg_res,
-      input$point_label_reg_res,
-      input$point_shape_reg_res,
-      input$point_colour_reg_res,
-      input$point_size_reg_res
-    )
+  observeEvent(
+    input$add_point_reg_res,
+    {
+      new_points <- create_new_points_data(
+        point_x_values = input$point_location_x_reg_res,
+        point_y_values = input$point_location_y_reg_res,
+        point_label = input$point_label_reg_res,
+        point_shape = input$point_shape_reg_res,
+        point_color = input$point_colour_reg_res,
+        point_size = input$point_size_reg_res
+      )
     
     if (input$projection_reg_res != "UTM (default)") {
       new_points <- transform_points_df(
@@ -6879,15 +6992,17 @@ server <- function(input, output, session) {
       }}})
 
   # Map Highlights - Regression Residuals
-  observeEvent(input$add_highlight_reg_res, {
-    new_highlight <- create_new_highlights_data(
-      input$highlight_x_values_reg_res,
-      input$highlight_y_values_reg_res,
-      input$highlight_colour_reg_res,
-      input$highlight_type_reg_res,
-      NA,
-      NA
-    )
+  observeEvent(
+    input$add_highlight_reg_res,
+    {
+      new_highlight <- create_new_highlights_data(
+        highlight_x_values = input$highlight_x_values_reg_res,
+        highlight_y_values = input$highlight_y_values_reg_res,
+        highlight_color = input$highlight_colour_reg_res,
+        highlight_type = input$highlight_type_reg_res,
+        show_highlight_on_key = NA,
+        highlight_label = NA
+      )
     
     if (input$projection_reg_res != "UTM (default)") {
       new_highlight <- transform_box_df(
@@ -7697,11 +7812,20 @@ server <- function(input, output, session) {
     }
     
     # Replace starter data if tracker = 1
-    if (monthly_ts_tracker() == 1){
-      monthly_ts_data(create_monthly_TS_data(custom_data_primary(),input$dataset_selected5,input$variable_selected5,
-                                             input$range_years5,input$range_longitude5,
-                                             input$range_latitude5,input$mode_selected5,
-                                             input$type_selected5,input$ref_period5))
+    if (monthly_ts_tracker() == 1) {
+      monthly_ts_data(
+        create_monthly_TS_data(
+          data_input = custom_data_primary(),
+          dataset = input$dataset_selected5,
+          variable = input$variable_selected5,
+          years = input$range_years5,
+          lon_range = input$range_longitude5,
+          lat_range = input$range_latitude5,
+          mode = input$mode_selected5,
+          type = input$type_selected5,
+          baseline_range = input$ref_period5
+        )
+      )
       
       # Limit variable choice to only that already chosen:
       updateSelectInput(
@@ -7712,13 +7836,21 @@ server <- function(input, output, session) {
       
       # update tracker
       monthly_ts_tracker(monthly_ts_tracker()+1)
-    } 
+    }
     # Otherwise, add to dataframe
     else {
-      new_rows = create_monthly_TS_data(custom_data_primary(),input$dataset_selected5,input$variable_selected5,
-                                        input$range_years5,input$range_longitude5,
-                                        input$range_latitude5,input$mode_selected5,
-                                        input$type_selected5,input$ref_period5)
+      new_rows = create_monthly_TS_data(
+        data_input = custom_data_primary(),
+        dataset = input$dataset_selected5,
+        variable = input$variable_selected5,
+        years = input$range_years5,
+        lon_range = input$range_longitude5,
+        lat_range = input$range_latitude5,
+        mode = input$mode_selected5,
+        type = input$type_selected5,
+        baseline_range = input$ref_period5
+        
+      )
       
       updated_monthly_ts_data = rbind(monthly_ts_data(),new_rows)
       
@@ -8098,12 +8230,12 @@ server <- function(input, output, session) {
     ts_points_data5(rbind(
       ts_points_data5(),
       create_new_points_data(
-        input$point_location_x_ts5,
-        input$point_location_y_ts5,
-        input$point_label_ts5,
-        input$point_shape_ts5,
-        input$point_colour_ts5,
-        input$point_size_ts5
+        point_x_values = input$point_location_x_ts5,
+        point_y_values = input$point_location_y_ts5,
+        point_label = input$point_label_ts5,
+        point_shape = input$point_shape_ts5,
+        point_color = input$point_colour_ts5,
+        point_size = input$point_size_ts5
       )
     ))
   })  
@@ -8121,12 +8253,12 @@ server <- function(input, output, session) {
     ts_highlights_data5(rbind(
       ts_highlights_data5(),
       create_new_highlights_data(
-        input$highlight_x_values_ts5,
-        input$highlight_y_values_ts5,
-        input$highlight_colour_ts5,
-        input$highlight_type_ts5,
-        input$show_highlight_on_legend_ts5,
-        input$highlight_label_ts5
+        highlight_x_values = input$highlight_x_values_ts5,
+        highlight_y_values = input$highlight_y_values_ts5,
+        highlight_color = input$highlight_colour_ts5,
+        highlight_type = input$highlight_type_ts5,
+        show_highlight_on_key = input$show_highlight_on_legend_ts5,
+        highlight_label = input$highlight_label_ts5
       )
     ))
   })  
@@ -8141,10 +8273,17 @@ server <- function(input, output, session) {
   
   # timeseries Lines
   observeEvent(input$add_line_ts5, {
-    ts_lines_data5(rbind(ts_lines_data5(),
-                         create_new_lines_data(input$line_orientation_ts5,input$line_position_ts5,
-                                               input$line_colour_ts5,input$line_type_ts5,
-                                               input$show_line_on_legend_ts5,input$line_label_ts5)))
+    ts_lines_data5(rbind(
+      ts_lines_data5(),
+      create_new_lines_data(
+        line_orientation = input$line_orientation_ts5,
+        line_locations = input$line_position_ts5,
+        line_color = input$line_colour_ts5,
+        line_type = input$line_type_ts5,
+        show_line_on_key = input$show_line_on_legend_ts5,
+        line_label = input$line_label_ts5
+      )
+    ))
   })  
   
   observeEvent(input$remove_last_line_ts5, {
@@ -8501,7 +8640,7 @@ server <- function(input, output, session) {
       data <- SEA_datatable()
       relevant_cols <- data[, !names(data) %in% c("LAG_YEAR", "P")]
       
-      padded_range <- set_sea_axis_values(relevant_cols)
+      padded_range <- set_sea_axis_values(data_input = relevant_cols)
       
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
@@ -8861,10 +9000,10 @@ server <- function(input, output, session) {
     } else if (input$nav1 == "tab2") {
       # Composites
       create_yearly_subset_composite(
-        data_output1_primary(),
-        data_id_primary(),
-        year_set_comp(),
-        month_range_primary()
+        data_input = data_output1_primary(),
+        data_ID = data_id_primary(),
+        year_set = year_set_comp(),
+        month_range = month_range_primary()
       )
     } else if (input$nav1 == "tab3") {
       # Correlation
@@ -8939,10 +9078,10 @@ server <- function(input, output, session) {
       } else if (input$mode_selected2 == "Custom reference") {
         apply(
           create_yearly_subset_composite(
-            data_output1_primary(),
-            data_id_primary(),
-            year_set_comp_ref(),
-            month_range_primary()
+            data_input = data_output1_primary(),
+            data_ID = data_id_primary(),
+            year_set = year_set_comp_ref(),
+            month_range = month_range_primary()
           ),
           c(1:2),
           mean
@@ -9023,12 +9162,12 @@ server <- function(input, output, session) {
       # Composites
       if (input$mode_selected2 == "X years prior") {
         convert_composite_to_anomalies(
-          data_output2_primary(),
-          data_output1_primary(),
-          data_id_primary(),
-          year_set_comp(),
-          month_range_primary(),
-          input$prior_years2
+          data_input = data_output2_primary(),
+          ref_data = data_output1_primary(),
+          data_ID = data_id_primary(),
+          year_set = year_set_comp(),
+          month_range = month_range_primary(),
+          baseline_year_before = input$prior_years2
         )
       } else {
         convert_subset_to_anomalies(data_input = data_output2_primary(), ref_data = data_output3_primary())
@@ -9089,13 +9228,22 @@ server <- function(input, output, session) {
   
   # Processed SD data
   SDratio_subset = reactive({
-    
     req(input$nav1 == "tab1") # Only run code if in the current tab
     
-    req(((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")))
+    req(((input$ref_map_mode == "SD Ratio") |
+           (input$custom_statistic == "SD ratio")
+    ))
     
-    create_sdratio_data(SDratio_data(),data_id_primary(),"general",input$variable_selected,
-                        subset_lons_primary(),subset_lats_primary(),month_range_primary(),input$range_years)
+    create_sdratio_data(
+      data_input = SDratio_data(),
+      data_ID = data_id_primary(),
+      tab = "general",
+      variable = input$variable_selected,
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary(),
+      month_range = month_range_primary(),
+      year_range = input$range_years
+    )
   })
   
   ####### Plotting ----
@@ -9180,13 +9328,13 @@ server <- function(input, output, session) {
   map_statistics = reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
     my_stats = create_stat_highlights_data(
-      data_output4_primary(),
-      SDratio_subset(),
-      input$custom_statistic,
-      input$sd_ratio,
-      NA,
-      subset_lons_primary(),
-      subset_lats_primary()
+      data_input = data_output4_primary(),
+      sd_data = SDratio_subset(),
+      stat_highlight = input$custom_statistic,
+      sdratio = input$sd_ratio,
+      percent = NA,
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary()
     )
     return(my_stats)
   })
@@ -9253,7 +9401,7 @@ server <- function(input, output, session) {
     }
     
     plot_map(
-      data_input = create_geotiff(map_data()),
+      data_input = create_geotiff(map_data = map_data()),
       lon_lat_range = lonlat_vals(),
       variable = input$variable_selected,
       
@@ -9352,7 +9500,7 @@ server <- function(input, output, session) {
       v=NULL; m="SD Ratio"; axis_range=c(0,1)
     }
     plot_map(
-      data_input = create_geotiff(ref_map_data()),
+      data_input = create_geotiff(map_data = ref_map_data()),
       lon_lat_range = lonlat_vals(),
       variable = v,
       
@@ -9436,15 +9584,15 @@ server <- function(input, output, session) {
                                 variable = input$variable_selected)
       
       ts_data2 = create_monthly_TS_data(
-        ts_data1,
-        input$dataset_selected,
-        input$variable_selected,
-        input$range_years[1],
-        input$range_longitude,
-        input$range_latitude,
-        "Anomaly",
-        "Individual years",
-        input$ref_period
+        data_input = ts_data1,
+        dataset = input$dataset_selected,
+        variable = input$variable_selected,
+        years = input$range_years[1],
+        lon_range = input$range_longitude,
+        lat_range = input$range_latitude,
+        mode = "Anomaly",
+        type = "Individual years",
+        baseline_range = input$ref_period
       )
     }
     return(ts_data2)
@@ -9678,7 +9826,7 @@ server <- function(input, output, session) {
           col.names = FALSE
         )
       } else if (input$file_type_map_data == "GeoTIFF") {
-        create_geotiff(final_map_data(), file)
+        create_geotiff(map_data = final_map_data(), output_file = file)
       }
     }
   )
@@ -9768,12 +9916,20 @@ server <- function(input, output, session) {
   
   #Creating a year set for composite
   year_set_comp <- reactive({
-    read_composite_data(input$range_years2, input$upload_file2$datapath, input$enter_upload2)
+    read_composite_data(
+      data_input_manual = input$range_years2,
+      data_input_filepath = input$upload_file2$datapath,
+      year_input_mode = input$enter_upload2
+    )
   })
   
   #List of custom anomaly years (from read Composite) as reference data
   year_set_comp_ref <- reactive({
-    read_composite_data(input$range_years2a, input$upload_file2a$datapath, input$enter_upload2a)
+    read_composite_data(
+      data_input_manual = input$range_years2a,
+      data_input_filepath = input$upload_file2a$datapath,
+      year_input_mode = input$enter_upload2a
+    )
   })
   
   ####### SD Ratio data ----
@@ -9801,13 +9957,22 @@ server <- function(input, output, session) {
   
   # Processed SD data
   SDratio_subset_2 = reactive({
-    
     req(input$nav1 == "tab2") # Only run code if in the current tab
     
-    req(((input$ref_map_mode2 == "SD Ratio")|(input$custom_statistic2 == "SD ratio")))
+    req(((input$ref_map_mode2 == "SD Ratio") |
+           (input$custom_statistic2 == "SD ratio")
+    ))
     
-    create_sdratio_data(SDratio_data(),data_id_primary(),"composites",input$variable_selected2,
-                        subset_lons_primary(),subset_lats_primary(),month_range_primary(),year_set_comp())
+    create_sdratio_data(
+      data_input = SDratio_data(),
+      data_ID = data_id_primary(),
+      tab = "composites",
+      variable = input$variable_selected2,
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary(),
+      month_range = month_range_primary(),
+      year_range = year_set_comp()
+    )
   })
   
   ####### Plotting ----
@@ -9888,13 +10053,17 @@ server <- function(input, output, session) {
   # Composite statistics
   
   map_statistics_2 = reactive({
-    
     req(input$nav1 == "tab2") # Only run code if in the current tab
     
-    my_stats = create_stat_highlights_data(data_output4_primary(),SDratio_subset_2(),
-                                           input$custom_statistic2,input$sd_ratio2,
-                                           input$percentage_sign_match2,
-                                           subset_lons_primary(),subset_lats_primary())
+    my_stats = create_stat_highlights_data(
+      data_input = data_output4_primary(),
+      sd_data = SDratio_subset_2(),
+      stat_highlight = input$custom_statistic2,
+      sdratio = input$sd_ratio2,
+      percent = input$percentage_sign_match2,
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary()
+    )
     
     return(my_stats)
   })
@@ -9960,7 +10129,7 @@ server <- function(input, output, session) {
     }
 
     plot_map(
-      data_input = create_geotiff(map_data_2()),
+      data_input = create_geotiff(map_data = map_data_2()),
       lon_lat_range = lonlat_vals2(),
       variable = input$variable_selected2,
       mode = input$mode_selected2,
@@ -10059,7 +10228,7 @@ server <- function(input, output, session) {
     } else if (input$ref_map_mode2 == "SD Ratio"){
       v=NULL; m="SD Ratio"; axis_range=c(0,1)
     }
-    plot_map(data_input = create_geotiff(ref_map_data_2()),
+    plot_map(data_input = create_geotiff(map_data = ref_map_data_2()),
              lon_lat_range = lonlat_vals2(),
              variable = v,
              mode = m,
@@ -10137,21 +10306,30 @@ server <- function(input, output, session) {
     } 
     # Plot monthly TS if year range = 1 year
     else {
-      ts_data1 = load_ModE_data(dataset = input$dataset_selected2, variable = input$variable_selected2)
+      ts_data1 = load_ModE_data(dataset = input$dataset_selected2,
+                                variable = input$variable_selected2)
       
       # Generate ref years
-      if (input$mode_selected2 == "Fixed reference"){
+      if (input$mode_selected2 == "Fixed reference") {
         ref_years = input$ref_period2
-      } else if (input$mode_selected2 == "X years prior"){
-        ref_years = c((year_set_comp()-input$prior_years2),year_set_comp()-1)
+      } else if (input$mode_selected2 == "X years prior") {
+        ref_years = c((year_set_comp() - input$prior_years2), year_set_comp() -
+                        1)
       } else {
         ref_years = year_set_comp_ref()
       }
       
-      ts_data2 = create_monthly_TS_data(ts_data1,input$dataset_selected2,input$variable_selected2,
-                                        year_set_comp(),input$range_longitude2,
-                                        input$range_latitude2,"Anomaly",
-                                        "Individual years",ref_years)
+      ts_data2 = create_monthly_TS_data(
+        data_input = ts_data1,
+        dataset = input$dataset_selected2,
+        variable = input$variable_selected2,
+        years = year_set_comp(),
+        lon_range = input$range_longitude2,
+        lat_range = input$range_latitude2,
+        mode = "Anomaly",
+        type = "Individual years",
+        baseline_range = ref_years
+      )
     }
     return(ts_data2)
   })
@@ -10416,7 +10594,7 @@ server <- function(input, output, session) {
           col.names = FALSE
         )
       } else if (input$file_type_map_data2 == "GeoTIFF") {
-        create_geotiff(final_map_data_2(), file)
+        create_geotiff(map_data = final_map_data_2(), output_file = file)
       }
     }
   )
@@ -10479,9 +10657,14 @@ server <- function(input, output, session) {
   # Find shared lonlat
   
   lonlat_vals3 = reactive({
-    extract_shared_lonlat(input$type_v1,input$type_v2,input$range_longitude_v1,
-                          input$range_latitude_v1,input$range_longitude_v2,
-                          input$range_latitude_v2)
+    extract_shared_lonlat(
+      variable1_type = input$type_v1,
+      variable2_type = input$type_v2,
+      variable1_lon_range = input$range_longitude_v1,
+      variable1_lat_range = input$range_latitude_v1,
+      variable2_lon_range = input$range_longitude_v2,
+      variable2_lat_range = input$range_latitude_v2
+    )
   })
   
   # Extract shared year range
@@ -10522,7 +10705,7 @@ server <- function(input, output, session) {
     req(input$user_file_v1)
     
     if (input$source_v1 == "User Data"){
-      new_data1 = read_regcomp_data(input$user_file_v1$datapath)
+      new_data1 = read_regcomp_data(data_input_filepath = input$user_file_v1$datapath)
 
       return(new_data1)
     }
@@ -10537,7 +10720,7 @@ server <- function(input, output, session) {
     req(input$user_file_v2)
     
     if (input$source_v2 == "User Data"){
-      new_data2 = read_regcomp_data(input$user_file_v2$datapath)  
+      new_data2 = read_regcomp_data(data_input_filepath = input$user_file_v2$datapath)  
       return(new_data2)
     }
     else{
@@ -10605,7 +10788,7 @@ server <- function(input, output, session) {
   
   ME_map_plot_v1 <- function() {
     plot_map(
-      data_input = create_geotiff(map_data_v1()),
+      data_input = create_geotiff(map_data = map_data_v1()),
       lon_lat_range = lonlat_vals_v1(),
       variable = input$ME_variable_v1,
       mode = input$mode_selected_v1,
@@ -10684,7 +10867,7 @@ server <- function(input, output, session) {
   
   map_data_v2_tiff = reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
-    create_geotiff(map_data_v2())
+    create_geotiff(map_data = map_data_v2())
   })
   
   ME_map_plot_v2 <- function() {
@@ -10775,7 +10958,7 @@ server <- function(input, output, session) {
   # Plot
   output$plot_v1 <- renderPlot({
     if (input$source_v1 == "User Data") {
-      plot_user_timeseries(user_subset_v1(), "darkorange2")
+      plot_user_timeseries(data_input = user_subset_v1(), color = "darkorange2")
     } else if (input$type_v1 == "Timeseries") {
       timeseries_plot_v1()
     } else{
@@ -10790,7 +10973,7 @@ server <- function(input, output, session) {
   
   output$plot_v2 <- renderPlot({
     if (input$source_v2 == "User Data") {
-      plot_user_timeseries(user_subset_v2(), "saddlebrown")
+      plot_user_timeseries(data_input = user_subset_v2(), color = "saddlebrown")
     } else if (input$type_v2 == "Timeseries") {
       timeseries_plot_v2()
     } else{
@@ -10931,7 +11114,11 @@ server <- function(input, output, session) {
   correlation_stats = reactive({
     req(input$nav1 == "tab3") # Only run code if in the current tab
     
-    c_st = correlate_timeseries(ts_data_v1(), ts_data_v2(), input$cor_method_ts)
+    c_st = correlate_timeseries(
+      variable1_data = ts_data_v1(),
+      variable2_data = ts_data_v2(),
+      method = input$cor_method_ts
+    )
     
     return(c_st)
   })
@@ -11172,19 +11359,18 @@ server <- function(input, output, session) {
   
   # Generate correlation map data
   correlation_map_data = reactive({
-    
     req(input$nav1 == "tab3") # Only run code if in the current tab
     
     corrmd = generate_correlation_map_data(
-      correlation_map_data_v1(),
-      correlation_map_data_v2(),
-      input$cor_method_map,
-      input$type_v1,
-      input$type_v2,
-      lonlat_vals_v1()[1:2],
-      lonlat_vals_v2()[1:2],
-      lonlat_vals_v1()[3:4],
-      lonlat_vals_v2()[3:4]
+      variable1_data = correlation_map_data_v1(),
+      variable2_data = correlation_map_data_v2(),
+      method = input$cor_method_map,
+      variable1_type = input$type_v1,
+      variable2_type = input$type_v2,
+      variable1_lon_range = lonlat_vals_v1()[1:2],
+      variable2_lon_range = lonlat_vals_v2()[1:2],
+      variable1_lat_range = lonlat_vals_v1()[3:4],
+      variable2_lat_range = lonlat_vals_v2()[3:4]
     )
     return(corrmd)
   })
@@ -11206,10 +11392,9 @@ server <- function(input, output, session) {
   
   # Geotiff of correlation map data
   correlation_map_data_tiff = reactive({
-    
     req(input$nav1 == "tab3") # Only run code if in the current tab
     
-    create_geotiff(generate_correlation_map_datatable(correlation_map_data()))
+    create_geotiff(map_data = generate_correlation_map_datatable(data_input = correlation_map_data()))
   })
   
   
@@ -11412,7 +11597,7 @@ server <- function(input, output, session) {
     
     req(input$nav1 == "tab3") # Only run code if in the current tab
     
-    corrmada = generate_correlation_map_datatable(correlation_map_data())
+    corrmada = generate_correlation_map_datatable(data_input = correlation_map_data())
     
     return(corrmada)
   })
@@ -11622,7 +11807,7 @@ server <- function(input, output, session) {
           col.names = FALSE
         )
       } else if (input$file_type_map_data3 == "GeoTIFF") {
-        create_geotiff(correlation_map_datatable(), file)
+        create_geotiff(map_data = correlation_map_datatable(), output_file = file)
       }
     }
   )
@@ -11676,10 +11861,10 @@ server <- function(input, output, session) {
     
     result <- tryCatch({
       res <- extract_year_range(
-        input$source_iv,
-        input$source_dv,
-        input$user_file_iv$datapath,
-        input$user_file_dv$datapath
+        variable1_source = input$source_iv,
+        variable2_source = input$source_dv,
+        variable1_data_filepath = input$user_file_iv$datapath,
+        variable2_data_filepath = input$user_file_dv$datapath
       )
 
     },
@@ -11708,7 +11893,7 @@ server <- function(input, output, session) {
     
     if (input$source_iv == "User Data"){
 
-      new_data1 = read_regcomp_data(input$user_file_iv$datapath)  
+      new_data1 = read_regcomp_data(data_input_filepath = input$user_file_iv$datapath)  
 
       return(new_data1)
     }
@@ -11723,7 +11908,7 @@ server <- function(input, output, session) {
     req(input$user_file_dv)
     
     if (input$source_dv == "User Data"){
-      new_data2 = read_regcomp_data(input$user_file_dv$datapath)      
+      new_data2 = read_regcomp_data(data_input_filepath = input$user_file_dv$datapath)      
       return(new_data2)
     }
     else{
@@ -11736,16 +11921,24 @@ server <- function(input, output, session) {
   user_subset_iv = reactive({
     req(user_data_iv(), input$user_variable_iv)
     
-    usr_ss1 = create_user_data_subset(user_data_iv(), input$user_variable_iv, input$range_years4)
+    usr_ss1 = create_user_data_subset(
+      data_input = user_data_iv(),
+      variable = input$user_variable_iv,
+      year_range = input$range_years4
+    )
     
     return(usr_ss1)
-  }) 
+  })
   
   # Subset dv data to year_range and chosen variable
   user_subset_dv = reactive({
     req(user_data_dv(), input$user_variable_dv)
     
-    usr_ss2 = create_user_data_subset(user_data_dv(), input$user_variable_dv, input$range_years4)
+    usr_ss2 = create_user_data_subset(
+      data_input = user_data_dv(),
+      variable = input$user_variable_dv,
+      year_range = input$range_years4
+    )
     
     return(usr_ss2)
   }) 
@@ -11808,7 +12001,7 @@ server <- function(input, output, session) {
   }
   
   ME_map_plot_dv <- function(){plot_map(
-    data_input = create_geotiff(map_data_dv()),
+    data_input = create_geotiff(map_data = map_data_dv()),
     lon_lat_range = lonlat_vals_dv(),
     variable = input$ME_variable_dv,
     mode = input$mode_selected_dv,
@@ -11821,14 +12014,22 @@ server <- function(input, output, session) {
   
   # Generate timeseries data & plotting function for iv
   ME_ts_data_iv <- reactive({
-    
     req(input$nav1 == "tab4") # Only run code if in the current tab
     
-    req(subset_lons_secondary(),subset_lats_secondary(),month_range_secondary())
+    req(subset_lons_secondary(),
+        subset_lats_secondary(),
+        month_range_secondary())
     
-    me_tsd_iv = create_ME_timeseries_data(input$dataset_selected_dv,input$ME_variable_iv,subset_lons_secondary(),subset_lats_secondary(),
-                                          input$mode_selected_iv,month_range_secondary(),input$range_years4,
-                                          input$ref_period_iv)
+    me_tsd_iv = create_ME_timeseries_data(
+      dataset = input$dataset_selected_dv,
+      variables = input$ME_variable_iv,
+      subset_lon_IDs = subset_lons_secondary(),
+      subset_lat_IDs = subset_lats_secondary(),
+      mode = input$mode_selected_iv,
+      month_range = month_range_secondary(),
+      year_range = input$range_years4,
+      baseline_range = input$ref_period_iv
+    )
     return(me_tsd_iv)
   })
   
@@ -11897,7 +12098,7 @@ server <- function(input, output, session) {
   # Plot 
   output$plot_iv <- renderPlot({
     if (input$source_iv == "User Data") {
-      plot_user_timeseries(user_subset_iv(), "darkorange2")
+      plot_user_timeseries(data_input = user_subset_iv(), color = "darkorange2")
     } else {
       timeseries_plot_iv()
     }
@@ -11905,7 +12106,7 @@ server <- function(input, output, session) {
   
   output$plot_dv <- renderPlot({
     if (input$source_dv == "User Data") {
-      plot_user_timeseries(user_subset_dv(), "saddlebrown")
+      plot_user_timeseries(data_input = user_subset_dv(), color = "saddlebrown")
     } else{
       ME_map_plot_dv()
     }
@@ -12233,15 +12434,18 @@ server <- function(input, output, session) {
 
   ####### Plotting ----
 
-  ######### Regression timeseries plot 
+  ######### Regression timeseries plot
   
   regression_ts_data = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
-    rtsd = create_regression_timeseries_datatable(ts_data_dv(),regression_summary_data(),
-                                                  plot_titles_reg_ts())
+    rtsd = create_regression_timeseries_datatable(
+      dependent_variable_data = ts_data_dv(),
+      summary_data = regression_summary_data(),
+      regression_titles = plot_titles_reg_ts()
+    )
     return(rtsd)
   })
-    
+  
   timeseries_plot_reg1 = function() {
     plot_timeseries(
       type = "Regression_Trend",
@@ -12297,13 +12501,16 @@ server <- function(input, output, session) {
     pagingType = "numbers"
   ))
   
-  ### Regression Summary data 
+  ### Regression Summary data
   
   regression_summary_data = reactive({
-    
     req(input$nav1 == "tab4") # Only run code if in the current tab
     
-    rsd = create_regression_summary_data(ts_data_iv(),ts_data_dv(),variables_iv())
+    rsd = create_regression_summary_data(
+      independent_variable_data = ts_data_iv(),
+      dependent_variable_data = ts_data_dv(),
+      independent_variables = variables_iv()
+    )
     
     return(rsd)
   })
@@ -12317,17 +12524,20 @@ server <- function(input, output, session) {
   ######### Regression coefficient plot
   
   regression_coeff_data = reactive({
-    
     req(input$nav1 == "tab4") # Only run code if in the current tab
     
-    reg_cd = create_regression_coeff_data(ts_data_iv(), data_output4_primary(), variables_iv())
+    reg_cd = create_regression_coeff_data(
+      independent_variable_data = ts_data_iv(),
+      dependent_variable_data = data_output4_primary(),
+      independent_variables = variables_iv()
+    )
     
     return(reg_cd)
   })
   
   reg_coef_tiff = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
-    create_geotiff(reg_coef_table()) 
+    create_geotiff(map_data = reg_coef_table()) 
   })
   
   # Plot Map
@@ -12373,15 +12583,20 @@ server <- function(input, output, session) {
   output$plot_reg_coeff = renderPlot({reg_coef_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
   
   # Plot Table
-  reg_coef_table = function(){
+  reg_coef_table = function() {
     req(input$coeff_variable)
-    if (length(variables_iv()) == 1){ #  Deals with the 'variable' dimension disappearing
+    if (length(variables_iv()) == 1) {
+      #  Deals with the 'variable' dimension disappearing
       rcd1 = regression_coeff_data()
     } else{
-      rcd1 = regression_coeff_data()[match(input$coeff_variable,variables_iv()),,]
+      rcd1 = regression_coeff_data()[match(input$coeff_variable, variables_iv()), , ]
     }
     # Transform and add rownames to data
-    rcd2 = create_regression_map_datatable(rcd1,subset_lons_primary(),subset_lats_primary())
+    rcd2 = create_regression_map_datatable(
+      data_input = rcd1,
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary()
+    )
     return (rcd2)
   }
   
@@ -12392,13 +12607,17 @@ server <- function(input, output, session) {
   
   regression_pvalue_data = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
-    rpvd = create_regression_pvalue_data(ts_data_iv(), data_output4_primary(), variables_iv())
+    rpvd = create_regression_pvalue_data(
+      independent_variable_data = ts_data_iv(),
+      dependent_variable_data = data_output4_primary(),
+      independent_variables = variables_iv()
+    )
     return(rpvd)
   })
   
   reg_pval_tiff = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
-    create_geotiff(reg_pval_table()) 
+    create_geotiff(map_data = reg_pval_table()) 
   })
   
   reg_pval_map = function() {
@@ -12444,15 +12663,20 @@ server <- function(input, output, session) {
     reg_pval_map()
   }, width = function(){plot_dimensions_reg()[1]}, height = function(){plot_dimensions_reg()[2]})
   
-  reg_pval_table = function(){
+  reg_pval_table = function() {
     req(input$pvalue_variable)
-    if (length(variables_iv()) == 1){ #  Deals with the 'variable' dimension disappearing
+    if (length(variables_iv()) == 1) {
+      #  Deals with the 'variable' dimension disappearing
       rpd1 = regression_pvalue_data()
     } else{
-      rpd1 = regression_pvalue_data()[match(input$pvalue_variable,variables_iv()),,]
+      rpd1 = regression_pvalue_data()[match(input$pvalue_variable, variables_iv()), , ]
     }
     # Transform and add rownames to data
-    rpd2 = create_regression_map_datatable(rpd1,subset_lons_primary(),subset_lats_primary())
+    rpd2 = create_regression_map_datatable(
+      data_input = rpd1,
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary()
+    )
     
     return(rpd2)
   }
@@ -12464,13 +12688,17 @@ server <- function(input, output, session) {
   
   regression_residuals_data = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
-    rresd = create_regression_residuals(ts_data_iv(), data_output4_primary(), variables_iv())
+    rresd = create_regression_residuals(
+      independent_variable_data = ts_data_iv(),
+      dependent_variable_data = data_output4_primary(),
+      independent_variables = variables_iv()
+    )
     return(rresd)
   })
   
   reg_res_tiff = reactive({
     req(input$nav1 == "tab4") # Only run code if in the current tab
-    create_geotiff(reg_res_table()) 
+    create_geotiff(map_data = reg_res_table()) 
   })
   
   # Make sure plot only updates when year is valid
@@ -12528,12 +12756,16 @@ server <- function(input, output, session) {
     plot_dimensions_reg()[2]
   })
   
-  reg_res_table = function(){
+  reg_res_table = function() {
     # Find ID of year selected
-    year_ID = (reg_resi_year_val()-input$range_years4[1])+1
-    rrd1 = regression_residuals_data()[year_ID,,]
+    year_ID = (reg_resi_year_val() - input$range_years4[1]) + 1
+    rrd1 = regression_residuals_data()[year_ID, , ]
     # Transform and add rownames to data
-    rrd2 = create_regression_map_datatable(rrd1,subset_lons_primary(),subset_lats_primary())
+    rrd2 = create_regression_map_datatable(
+      data_input = rrd1,
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary()
+    )
   }
   
   output$data_reg_res = renderTable({reg_res_table()},rownames = TRUE)
@@ -12753,7 +12985,7 @@ server <- function(input, output, session) {
           col.names = FALSE
         )
       } else if (input$reg_coe_plot_data_type == "GeoTIFF") {
-        create_geotiff(reg_coef_table(), file)
+        create_geotiff(map_data = reg_coef_table(), output_file = file)
       }
     }
   )
@@ -12802,7 +13034,7 @@ server <- function(input, output, session) {
           col.names = FALSE
         )
       } else if (input$reg_pval_plot_data_type == "GeoTIFF") {
-        create_geotiff(reg_pval_table(), file)
+        create_geotiff(map_data = reg_pval_table(), output_file = file)
       }
     }
   )
@@ -12851,7 +13083,7 @@ server <- function(input, output, session) {
           col.names = FALSE
         )
       } else if (input$reg_res_plot_data_type == "GeoTIFF") {
-        create_geotiff(reg_res_table(), file)
+        create_geotiff(map_data = reg_res_table(), output_file = file)
       }
     }
   )
@@ -13288,7 +13520,7 @@ server <- function(input, output, session) {
     req(input$user_file_6)
     
     if (input$source_sea_6 == "User Data"){
-      new_data1 = read_regcomp_data(input$user_file_6$datapath)   
+      new_data1 = read_regcomp_data(data_input_filepath = input$user_file_6$datapath)   
       return(new_data1)
     }
     else{
@@ -13316,7 +13548,12 @@ server <- function(input, output, session) {
   
   #Creating a year set for sea
   year_set_sea <- reactive({
-    read_sea_data(input$event_years_6, input$upload_file_6b$datapath, input$enter_upload_6, input$source_sea_6)
+    read_sea_data(
+      data_input_manual = input$event_years_6,
+      data_input_filepath = input$upload_file_6b$datapath,
+      year_input_mode = input$enter_upload_6,
+      data_source_sea = input$source_sea_6
+    )
   })
   
   ####### ModE-Data Processing ----
