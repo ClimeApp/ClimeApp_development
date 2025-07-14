@@ -123,6 +123,14 @@ server <- function(input, output, session) {
     }
   })
   
+  output$hope <- renderUI({
+    if (input$title1_input_reg_res == "Hope") {
+      img(src = 'pics/hope.png', id = "img_hope", height = "450", style = "display: block; margin: 0 auto;")
+    } else {
+      NULL
+    }
+  })
+  
   output$ruebli <- renderUI({
     if (input$title2_input == "Rüebli") {
       img(src = 'pics/zero_ruebli.jpg', id = "img_miau", height = "600", width = "338", style = "display: block; margin: 0 auto;")

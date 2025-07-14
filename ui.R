@@ -5758,6 +5758,9 @@ ui <- navbarPage(
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
+                                            
+                                            uiOutput(outputId = "hope", inline = TRUE),
+                                            
                                             br(),
                                             br(),
                                             
