@@ -1460,7 +1460,16 @@ plot_map <- function(data_input,
         ),
         show.legend = FALSE
       ) +
-      geom_text(data = points_data, aes(x = x_value, y = y_value, label = label), position = position_nudge(y = -0.5), show.legend = FALSE) +
+      geom_text_repel(
+        data = points_data,
+        aes(x = x_value, y = y_value, label = label),
+        size = 5,
+        fontface = "bold",
+        bg.color = "white", # shadow color
+        bg.r = 0.3, # shadow radius
+        point.padding = 10,
+        show.legend = FALSE
+      ) +
       scale_color_identity() +
       scale_shape_identity() +
       labs(x = NULL, y = NULL)

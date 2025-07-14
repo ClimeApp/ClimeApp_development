@@ -117,6 +117,8 @@ library(dplR, lib.loc = lib_path)
 library(burnr, lib.loc = lib_path)
 library(shinyjqui, lib.loc = lib_path)
 
+library(ggrepel)
+
 
 #### Design ----
 
