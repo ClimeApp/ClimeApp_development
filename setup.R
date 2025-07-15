@@ -132,7 +132,7 @@ type_list <- c("bivalve_proxy", "coral_proxy", "documentary_proxy", "glacier_ice
 type_names <-c("Bivalve", "Coral", "Documentary", "Glacier ice", "Ice", "Instrumental", "Lake sediment", "Other", "Speleothem", "Tree")
 named_types <- setNames(type_names, type_list)
 # Create a Factor Palette with Paul Tol's Muted Colour List for Colour Blind People
-pal_type <- colorFactor(c('#AA4499', '#CC6677', '#44AA99', '#332288', '#88CCEE', '#882255', '#DDCC77', '#bbbbbb', '#999933', '#117733'), type_list)
+pal_type <- colorFactor(c('#AA4499', '#CC6677', '#44AA99', '#332288', '#5dbae8', '#882255', '#d0b943', '#000000', '#717126', '#117733'), type_list)
 
 variable_list <- c("sea_level_pressure", "no_of_rainy_days", "pressure", "precipitation", "temperature", "historical_proxy", "natural_proxy")
 variable_names <- c("Sea level pressure", "No. of rainy days", "Pressure", "Precipitation", "Temperature", "Historical proxy", "Natural proxy")
