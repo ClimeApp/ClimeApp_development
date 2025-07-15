@@ -13445,9 +13445,9 @@ server <- function(input, output, session) {
       
       # Add layers control for filtering by TYPE
       addLayersControl(
-        baseGroups = c("ESRI gray", "Open Street Map", "ESRI Satellite"), # Base maps
-        overlayGroups = type_list,  # Use TYPE values as overlay groups
-        options = layersControlOptions(collapsed = TRUE)  # Make the control always expanded
+        baseGroups = c("ESRI gray", "Open Street Map", "ESRI Satellite"),
+        overlayGroups = type_names,  # Use readable names here too
+        options = layersControlOptions(collapsed = TRUE)
       ) |>
       
       # Add initial data points
@@ -13459,39 +13459,40 @@ server <- function(input, output, session) {
                        color = "grey",
                        fillOpacity = 1,
                        opacity = 1,
-                       group = data$TYPE,
+                       group = named_types[data$TYPE],  # Use readable names
                        popup = paste(
                          "<strong>Measurement type: </strong>", named_variables[data$VARIABLE],
                          "<br><strong>Source type: </strong>", named_types[data$TYPE],
                          "<br><strong>Name database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Name_Database, "</a>",
-                         #"<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
                          "<br><strong>Proxy code: </strong>", data$Code_Proxy,
                          "<br><strong>Proxy reference: </strong>", data$Reference_Proxy,
                          "<br><strong>Proxy reference database: </strong>", data$Reference_Proxy_Database
                        ))
     
+    
   })
   
   # Use a separate observer to show or hide the legend
   observe({
+    data <- MES_global_data()
     
-    if (input$legend_MES == TRUE) {
-      proxy <- leafletProxy("MES_leaflet")
+    proxy <- leafletProxy("MES_leaflet")
+    
+    if (input$legend_MES == TRUE && !is.null(data)) {
       proxy %>%
         addLegend(pal = pal_type,
-                  values = type_list, # pal_type and type_list are defined in helpers.R
+                  values = data$TYPE,  # use actual data
                   title = "Legend",
-                  labels = c("Bivalve", "Coral", "Documentary", "Glacier ice", "Ice", "Instrumental", "Lake sediment", "Other", "Speleothem", "Tree"),
                   position = "bottomleft",
-                  opacity = 1.0) |>
-        
+                  opacity = 1.0,
+                  labFormat = function(type, values) {
+                    named_types[values]  # display names instead of codes
+                  }) %>%
         addControl(
-          html = sprintf("<strong>Total global sources: %d</strong>", nrow(MES_global_data())),
+          html = sprintf("<strong>Total global sources: %d</strong>", nrow(data)),
           position = "bottomleft"
         )
-    }
-    else {
-      proxy <- leafletProxy("MES_leaflet")
+    } else {
       proxy %>% clearControls()
     }
   })
@@ -13513,12 +13514,11 @@ server <- function(input, output, session) {
                          color = "grey",
                          fillOpacity = 1,
                          opacity = 1,
-                         group = data$TYPE,
+                         group = named_types[data$TYPE],  # Use readable names
                          popup = paste(
                            "<strong>Measurement type: </strong>", named_variables[data$VARIABLE],
-                           "<br><strong>Source type: </strong>", named_types[data$TYPE], 
+                           "<br><strong>Source type: </strong>", named_types[data$TYPE],
                            "<br><strong>Name database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Name_Database, "</a>",
-                           #"<br><strong>Paper database: </strong>", "<a href='", data$Paper_Database, "' target='_blank'>", data$Paper_Database, "</a>",
                            "<br><strong>Proxy code: </strong>", data$Code_Proxy,
                            "<br><strong>Proxy reference: </strong>", data$Reference_Proxy,
                            "<br><strong>Proxy reference database: </strong>", data$Reference_Proxy_Database
