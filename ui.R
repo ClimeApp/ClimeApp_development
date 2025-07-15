@@ -5036,7 +5036,8 @@ ui <- navbarPage(
                                             br(),
                                             div(id = "reg1",
                                                 fluidRow(
-                                                  h4("Downloads", style = "color: #094030;"), 
+                                                  h4("Downloads", style = "color: #094030;",downloads_popover("pop_regression_ts_downloads")),
+                                                  
                                                   column(width = 3,
                                                          radioButtons(inputId = "reg_ts_plot_type", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE),
                                                          downloadButton(outputId = "download_reg_ts_plot", label = "Download plot 1")),
@@ -6611,7 +6612,7 @@ ui <- navbarPage(
                                             ),
                                             
                                             #### Downloads ----
-                                            h4("Download", style = "color: #094030;"),
+                                            h4("Downloads", style = "color: #094030;",downloads_popover("pop_annual_cycles_ts_downloads")),
                                             fluidRow(
                                               column(2, radioButtons(inputId = "file_type_timeseries5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
                                               column(3, downloadButton(outputId = "download_timeseries5", label = "Download timeseries"))

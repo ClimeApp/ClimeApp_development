@@ -573,7 +573,7 @@ annualcycles_region_popover = function(popover_ID){
 
 ## DOWNLOADS
 ## popover_IDs = pop_anomalies_map_downloads,pop_anomalies_ts_downloads, pop_composites_map_downloads, pop_composites_ts_downloads,
-##               pop_correlation_map_downloads, pop_correlation_ts_downloads, pop_sea_ts_downloads
+##               pop_correlation_map_downloads, pop_correlation_ts_downloads, pop_sea_ts_downloads, pop_regression_ts_downloads, pop_annual_cycles_ts_downloads
 
 downloads_popover = function(popover_ID){
   popover(
