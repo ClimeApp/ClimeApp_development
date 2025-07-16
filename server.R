@@ -14070,6 +14070,13 @@ server <- function(input, output, session) {
     return(p)
   }
   
+  #List of chosen event years (upload or manual) to plot
+  output$text_years6 <- renderText("Chosen event years:")
+  output$years6 <- renderText({
+    sorted_years <- sort(as.numeric(event_years_cut()))
+  })
+  
+  
   # Generate Plot
   output$SEA_plot_6 <- renderPlot({
     SEA_plotfunction()

@@ -2761,7 +2761,7 @@ ui <- navbarPage(
                                      
                                      br(),
                                      
-                                     h6("Optional SEA event background period", style = "color: #094030;", sea_background_popover("pop_sea_background")),
+                                     h5("Optional SEA event background period", style = "color: #094030;", sea_background_popover("pop_sea_background")),
                                      
                                      checkboxInput(
                                        inputId = "use_custom_pre_6",
