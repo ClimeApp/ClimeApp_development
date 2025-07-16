@@ -3186,6 +3186,7 @@ ui <- navbarPage(
                  ),
                  
                  # Set lag years
+                 column(width = 8, fluidRow(
                  numericInput(inputId   = "lagyears_v1_cor",
                               label     = "Set Variable 1 lag (in years)",
                               value     = 0,
@@ -3198,6 +3199,8 @@ ui <- navbarPage(
                               min       = -100,
                               max       = 100),
                  
+               ))
+               
                ), width = 12),
                
                br(),

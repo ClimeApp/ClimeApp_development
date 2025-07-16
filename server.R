@@ -11265,14 +11265,24 @@ server <- function(input, output, session) {
   
   ######### Correlation Scatter Plot
   # Function
-  scatter_plot_corr = function(){
+  scatter_plot_corr = function() {
     req(ts_data_v1(), ts_data_v2(), plot_titles_cor())
     
-    # Prepare the data
-    y1 <- ts_data_v1()[, 2]
-    y2 <- ts_data_v2()[, 2]
-    df <- data.frame(v1 = y1, v2 = y2)
-    df <- na.omit(df)
+    #repare the data with year already included
+    df_full <- data.frame(
+      year = ts_data_v1()[, 1],
+      v1 = ts_data_v1()[, 2],
+      v2 = ts_data_v2()[, 2]
+    )
+    
+    #Remove all rows with NAs
+    df <- na.omit(df_full)
+    
+    #Guard: if nothing left, abort gracefully
+    if (nrow(df) == 0) {
+      showNotification("No valid data after filtering for scatter plot.", type = "error")
+      return(NULL)
+    }
     
     # Extract titles
     titles <- plot_titles_cor()
@@ -11284,38 +11294,26 @@ server <- function(input, output, session) {
     p <- ggplot(df, aes(x = v1, y = v2)) +
       geom_point(color = "#094030", alpha = 0.7, size = 4) +
       theme_minimal(base_size = 13) +
-      labs(
-        title = title_text,
-        x = x_label,
-        y = y_label
-      ) +
+      labs(title = title_text, x = x_label, y = y_label) +
       theme(
-        plot.title = element_text(size = 20, face = "bold", hjust = 0),  # Left-aligned
+        plot.title = element_text(size = 20, face = "bold", hjust = 0),
         axis.text = element_text(size = 12),
         axis.title = element_text(size = 13),
-        panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8),  # Replace size with linewidth
-        axis.ticks = element_line(color = "black", linewidth = 0.5)  # Replace size with linewidth
+        panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8),
+        axis.ticks = element_line(color = "black", linewidth = 0.5)
       ) +
       scale_x_continuous(minor_breaks = waiver()) +
       scale_y_continuous(minor_breaks = waiver())
     
     # Z-score outliers
     if (input$add_outliers_ref_ts3 == "z-score") {
-      # Extract year column (assumed to be the first column)
-      years <- ts_data_v1()[, 1]
+      z_v1 <- (df$v1 - mean(df$v1)) / sd(df$v1)
+      z_v2 <- (df$v2 - mean(df$v2)) / sd(df$v2)
       
-      # Compute z-scores
-      z_v1 <- (df$v1 - mean(df$v1, na.rm = TRUE)) / sd(df$v1, na.rm = TRUE)
-      z_v2 <- (df$v2 - mean(df$v2, na.rm = TRUE)) / sd(df$v2, na.rm = TRUE)
-      
-      # Determine outlier status
-      df$outlier <- factor(ifelse(abs(z_v1) > input$sd_input_ref_ts3 | abs(z_v2) > input$sd_input_ref_ts3, 
+      df$outlier <- factor(ifelse(abs(z_v1) > input$sd_input_ref_ts3 | abs(z_v2) > input$sd_input_ref_ts3,
                                   "Outlier", "Normal"))
       
-      # Add year column
-      df$year <- years
-      
-      # Rebuild plot with colored points and year labels for outliers
+      # Plot with outlier colors and year labels
       p <- ggplot(df, aes(x = v1, y = v2, color = outlier)) +
         geom_point(alpha = 0.7, size = 4) +
         geom_text(
@@ -11337,28 +11335,14 @@ server <- function(input, output, session) {
         scale_y_continuous(minor_breaks = waiver())
     }
     
-    # Trend outliers
+    # Trend deviation outliers
     if (input$add_outliers_ref_ts3 == "Trend deviation") {
-      # Extract year column (assumed to be the first column)
-      years <- ts_data_v1()[, 1]
-      
-      # Fit linear model (trend)
       model <- lm(v2 ~ v1, data = df)
+      z_resid <- resid(model) / sd(resid(model))
       
-      # Get residuals
-      residuals <- resid(model)
-      
-      # Standardize residuals (z-scores from trend)
-      z_resid <- residuals / sd(residuals, na.rm = TRUE)
-      
-      # Determine outlier status based on residual z-score
       df$outlier <- factor(ifelse(abs(z_resid) > input$trend_sd_input_ref_ts3,
                                   "Outlier", "Normal"))
       
-      # Add year column
-      df$year <- years
-      
-      # Plot with color based on outlier status
       p <- ggplot(df, aes(x = v1, y = v2, color = outlier)) +
         geom_point(alpha = 0.7, size = 4) +
         geom_text(
@@ -11380,7 +11364,7 @@ server <- function(input, output, session) {
         scale_y_continuous(minor_breaks = waiver())
     }
     
-    # Trendline
+    # Add trendline if selected
     if (input$add_trend_ref_ts3) {
       p <- p + 
         geom_smooth(aes(linetype = "Trendline"),
@@ -11388,7 +11372,7 @@ server <- function(input, output, session) {
         scale_linetype_manual(name = "Legend", values = c("Trendline" = "dashed"))
     }
     
-    # Legend visibility
+    # Toggle legend visibility
     if (input$show_key_ref_ts3) {
       p <- p +
         guides(
@@ -11403,7 +11387,6 @@ server <- function(input, output, session) {
         )
     }
     
-    # Return the plot
     return(p)
   }
   
