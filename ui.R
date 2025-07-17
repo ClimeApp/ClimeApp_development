@@ -354,7 +354,7 @@ ui <- navbarPage(
                            #### Tab Version History ----
                            tabPanel("Version history",
                                     br(), br(),
-                                    h5(strong("v1.4 (16.07.2025)", style = "color: #094030;")),
+                                    h5(strong("v1.4 (17.07.2025)", style = "color: #094030;")),
                                     tags$ul(
                                       tags$li("General overhaul of ClimeApp"),
                                       tags$li("Addition of Superposed Epoch Analysis (SEA)"),
