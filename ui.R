@@ -143,7 +143,7 @@ ui <- navbarPage(
                  h4(em(helpText("Created by Niklaus Bartlome & Richard Warren."))),
                  h4(em(helpText("Co-developed by No\u00E9mie Wellinger & Tanja Falasca."))),
                  br(),
-                 h4("Data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis", style = "color: #094030;"),
+                 h4("Data processing tool for the state-of-the-art ModE-RA global climate reanalysis", style = "color: #094030;"),
                  h5(helpText("V. Valler, J. Franke, Y. Brugnara, E. Samakinwa, R. Hand, E. Lundstad, A.-M. Burgdorf, L. Lipfert, A. R. Friedman, S. Br\u00F6nnimann, 2024")),
                  
                  
@@ -160,9 +160,9 @@ ui <- navbarPage(
                  column(width = 12,
                         
                         h5(strong("Variables:", style = "color: #094030;")),
-                        h5(helpText("Temperature = Air temperature at 2m [\u00B0C]")),
-                        h5(helpText("Precipitation = Total monthly precipitation [mm]")),
-                        h5(helpText("SLP = Sea level pressure [hPa]")),
+                        h5(helpText("Temperature = air temperature at 2m [\u00B0C]")),
+                        h5(helpText("Precipitation = total monthly precipitation [mm]")),
+                        h5(helpText("SLP = sea level pressure [hPa]")),
                         h5(helpText("Z500 = 500 hPa geopotential height [m]"))
                  ),
                  
@@ -171,7 +171,7 @@ ui <- navbarPage(
                  column(width = 12,
                         
                         h5(strong("User information:", style = "color: #094030;")),
-                        h5(helpText("To receive additional information for certain options, click question mark icons of UI elements, e.g. Anomalies")),
+                        h5(helpText("To receive additional information for certain options, click question mark icons of UI elements, e.g. Anomalies.")),
                         h5(helpText("Additional features and subordinate options are initially hidden but can be made visible by clicking or ticking the respective elements.")),
                         h5(helpText("ClimeApp updates instantly when inputs are changed or new values are selected. Customizations have to be added manually.")),
                         h5(helpText("Wait until the loading symbol is gone or the new plot is rendered before changing further values."))
@@ -324,7 +324,7 @@ ui <- navbarPage(
                                     tags$hr(),
                                     
                                     br(), br(),
-                                    h5(strong("Explore ModE-RA Sources", style = "color: #094030;")),
+                                    h5(strong("Explore ModE-RA sources:", style = "color: #094030;")),
                                     helpText("The interactive map shows information on all the sources used to create ModE-RA and ModE-RAclim. Source data should include the study or database that observations were sourced from, along with supplementary information. A rounding algorithm was used to identfy each study based on source type and location, so there is a small chance that some data sources may have been mis-attributed. Please report any errors or omissions to the ClimeApp development team."),
                                     tags$hr(),
                                     
@@ -339,16 +339,18 @@ ui <- navbarPage(
                            ),
                            
                            #### Offline version ----
-                           tabPanel("ClimeApp Desktop",
+                           tabPanel("ClimeApp desktop",
                                     br(), br(),
                                     h5(strong("An offline version ClimeApp for Windows - CLIMEAPP DESKTOP - is available to download here:", style = "color: #094030;")),
                                     br(),
                                     downloadButton("climeapp_desktop_download",
-                                                   label = "Download ClimeApp Desktop"),
+                                                   label = "Download ClimeApp desktop"),
                                     br(), br(), br(),
-                                    h5(strong("ClimeApp Desktop User Guide", style = "color: #094030;")),
+                                    h5(strong("ClimeApp desktop user guide", style = "color: #094030;")),
                                     br(),
                                     htmltools::includeHTML("ClimeApp Desktop User Guide.html")
+                                    # includeMarkdown("text/ClimeApp Desktop User Guide.md")
+                                    
                            ),
                            
                            #### Tab Version History ----
@@ -369,7 +371,7 @@ ui <- navbarPage(
                                     br(),
                                     h5(strong("v1.3 (19.07.2024)", style = "color: #094030;")),
                                     tags$ul(
-                                      tags$li("Fixed the depiction of Historical Proxies on ModE-RA source plots"),
+                                      tags$li("Fixed the depiction of historical proxies on ModE-RA source plots"),
                                       tags$li("Changed ModE-RA source plots to only show the number of sources"),
                                       tags$li(a("View code on GitHub", 
                                           href = "https://github.com/ClimeApp/ClimeApp_development/tree/ClimeApp_v1.3", 
@@ -414,7 +416,7 @@ ui <- navbarPage(
                                     h5(strong("Beta v0.5 (22.12.2023)", style = "color: #094030;")),
                                     tags$ul(
                                       tags$li("Download NetCDF files"),
-                                      tags$li("Version History"),
+                                      tags$li("Version history"),
                                     ),
                                     br(),  
                                     h5(strong("Beta v0.4", style = "color: #094030;")),
@@ -767,34 +769,34 @@ ui <- navbarPage(
                                                                              value   = FALSE),
                                                                
                                                                checkboxInput(inputId = "show_rivers",
-                                                                             label   = "Show Rivers",
+                                                                             label   = "Show rivers",
                                                                              value   = FALSE),
                                                                
                                                                checkboxInput(inputId = "label_rivers",
-                                                                             label   = "Label Rivers",
+                                                                             label   = "Label rivers",
                                                                              value   = FALSE),
                                                                
                                                                checkboxInput(inputId = "show_lakes",
-                                                                             label   = "Show Lakes",
+                                                                             label   = "Show lakes",
                                                                              value   = FALSE),
                                                                
                                                                checkboxInput(inputId = "label_lakes",
-                                                                             label   = "Label Lakes",
+                                                                             label   = "Label lakes",
                                                                              value   = FALSE),
                                                                
                                                                checkboxInput(inputId = "show_mountains",
-                                                                             label   = "Show Mountains",
+                                                                             label   = "Show mountains",
                                                                              value   = FALSE),
                                                                
                                                                checkboxInput(inputId = "label_mountains",
-                                                                             label   = "Label Mountains",
+                                                                             label   = "Label mountains",
                                                                              value   = FALSE),
                                                            
                                                              )),
                                                            
                                                            #Shape File Option
                                         
-                                                           fileInput(inputId = "shpFile", label = "Upload Shapefile (ZIP)"),
+                                                           fileInput(inputId = "shpFile", label = "Upload shapefile (ZIP)"),
                                                            
                                                            # Single sortable checkbox group input for selecting and ordering shapefiles
                                                            uiOutput("shapefileSelector"),
@@ -986,7 +988,7 @@ ui <- navbarPage(
                                             
                                             radioButtons(inputId  = "ref_map_mode",
                                                          label    = NULL,
-                                                         choices  = c("None", "Absolute Values","Reference Values","SD Ratio"),
+                                                         choices  = c("None", "Absolute Values","Reference Values","SD ratio"),
                                                          selected = "None" , inline = TRUE),
                                             
                                             withSpinner(ui_element = plotOutput("ref_map", height = "auto"), 
@@ -1348,7 +1350,7 @@ ui <- navbarPage(
                                                      h4("Data", style = "color: #094030;"),
                                                      fluidRow(
                                                        column(10, radioButtons(inputId = "value_type_map_data", label = "Choose data values:", 
-                                                                               choices = c("Anomalies", "Absolute", "Reference", "SD Ratio"), selected = "Anomalies", inline = TRUE))
+                                                                               choices = c("Anomalies", "Absolute", "Reference", "SD ratio"), selected = "Anomalies", inline = TRUE))
                                                      )),
                                               column(width = 6,
                                                      h4("Download", style = "color: #094030;"),
@@ -1409,7 +1411,7 @@ ui <- navbarPage(
                                                           selected = "April to September"),
                                             ),
                                             
-                                            h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
+                                            h6("Use the Explore ModE-RA sources tab for more information", style = "color: #094030;"),
                                             
                                             withSpinner(
                                               ui_element = plotOutput(
@@ -1440,7 +1442,7 @@ ui <- navbarPage(
                                             h4("Downloads", style = "color: #094030;"),
                                             fluidRow(
                                               column(2,radioButtons(inputId = "file_type_fad", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                              column(3,downloadButton(outputId = "download_fad", label = "Download Map")),
+                                              column(3,downloadButton(outputId = "download_fad", label = "Download map")),
                                             ),
                                             
                                             br(),
@@ -1448,7 +1450,7 @@ ui <- navbarPage(
                                             fluidRow(
                                               # Download data
                                               column(2,radioButtons(inputId = "data_file_type_fad", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                              column(3,downloadButton(outputId = "download_fad_data", label = "Download Map Data"))
+                                              column(3,downloadButton(outputId = "download_fad_data", label = "Download map data"))
                                             )
                                    )          
              ## Main Panel END ----
@@ -1822,34 +1824,34 @@ ui <- navbarPage(
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_rivers2",
-                                                                               label   = "Show Rivers",
+                                                                               label   = "Show rivers",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_rivers2",
-                                                                               label   = "Label Rivers",
+                                                                               label   = "Label rivers",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_lakes2",
-                                                                               label   = "Show Lakes",
+                                                                               label   = "Show lakes",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_lakes2",
-                                                                               label   = "Label Lakes",
+                                                                               label   = "Label lakes",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_mountains2",
-                                                                               label   = "Show Mountains",
+                                                                               label   = "Show mountains",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_mountains2",
-                                                                               label   = "Label Mountains",
+                                                                               label   = "Label mountains",
                                                                                value   = FALSE),
                                                                  
                                                              )),
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput(inputId = "shpFile2", label = "Upload Shapefile (ZIP)"),
+                                                           fileInput(inputId = "shpFile2", label = "Upload shapefile (ZIP)"),
                                                            
                                                            # Single sortable checkbox group input for selecting and ordering shapefiles
                                                            uiOutput("shapefileSelector2"),
@@ -2054,7 +2056,7 @@ ui <- navbarPage(
                                             
                                             radioButtons(inputId  = "ref_map_mode2",
                                                          label    = NULL,
-                                                         choices  = c("None", "Absolute Values","Reference Values","SD Ratio"),
+                                                         choices  = c("None", "Absolute Values","Reference Values","SD ratio"),
                                                          selected = "None" , inline = TRUE),
                                             
                                             withSpinner(ui_element = plotOutput("ref_map2", height = "auto"),
@@ -2402,7 +2404,7 @@ ui <- navbarPage(
                                                      h4("Data", style = "color: #094030;"),
                                                      fluidRow(
                                                        column(10, radioButtons(inputId = "value_type_map_data2", label = "Choose data values:", 
-                                                                               choices = c("Anomalies", "Absolute", "Reference", "SD Ratio"), selected = "Anomalies", inline = TRUE))
+                                                                               choices = c("Anomalies", "Absolute", "Reference", "SD ratio"), selected = "Anomalies", inline = TRUE))
                                                      )),
                                               column(width = 6,
                                                      h4("Download", style = "color: #094030;"),
@@ -2454,7 +2456,7 @@ ui <- navbarPage(
                                                           selected = "April to September"),
                                             ),
                                             
-                                            h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
+                                            h6("Use the Explore ModE-RA sources tab for more information", style = "color: #094030;"),
                                             
                                             withSpinner(
                                               ui_element = plotOutput(
@@ -2485,7 +2487,7 @@ ui <- navbarPage(
                                             h4("Downloads", style = "color: #094030;"),
                                             fluidRow(
                                               column(2,radioButtons(inputId = "file_type_fad2", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                              column(3,downloadButton(outputId = "download_fad2", label = "Download Map")),
+                                              column(3,downloadButton(outputId = "download_fad2", label = "Download map")),
                                             ),
                                             
                                             br(),
@@ -2493,7 +2495,7 @@ ui <- navbarPage(
                                             fluidRow(
                                               # Download data
                                               column(2,radioButtons(inputId = "data_file_type_fad2", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                              column(3,downloadButton(outputId = "download_fad_data2", label = "Download Map Data"))
+                                              column(3,downloadButton(outputId = "download_fad_data2", label = "Download map data"))
                                             )
                                    )          
                                    
@@ -2520,7 +2522,7 @@ ui <- navbarPage(
                  #Choose a data source: ME or User 
                  radioButtons(inputId  = "source_sea_6",
                               label    = "Choose a data source:",
-                              choices  = c("ModE-", "User Data"),
+                              choices  = c("ModE-", "User data"),
                               selected = "ModE-" ,
                               inline = TRUE),
                  
@@ -2967,7 +2969,7 @@ ui <- navbarPage(
                  #Choose a data source: ME or USer 
                  radioButtons(inputId  = "source_v1",
                               label    = "Choose a data source:",
-                              choices  = c("ModE-", "User Data"),
+                              choices  = c("ModE-", "User data"),
                               selected = "ModE-" ,
                               inline = TRUE),
                  
@@ -3191,13 +3193,13 @@ ui <- navbarPage(
                  # Set lag years
                  column(width = 8, fluidRow(
                  numericInput(inputId   = "lagyears_v1_cor",
-                              label     = "Set Variable 1 lag (in years)",
+                              label     = "Set variable 1 lag (in years):",
                               value     = 0,
                               min       = -100,
                               max       = 100),
                  
                  numericInput(inputId   = "lagyears_v2_cor",
-                              label     = "Set Variable 2 lag (in years)",
+                              label     = "Set variable 2 lag (in years):",
                               value     = 0,
                               min       = -100,
                               max       = 100),
@@ -3217,7 +3219,7 @@ ui <- navbarPage(
                  #Choose a data source: ME or USer 
                  radioButtons(inputId  = "source_v2",
                               label    = "Choose a data source:",
-                              choices  = c("ModE-", "User Data"),
+                              choices  = c("ModE-", "User data"),
                               selected = "ModE-" ,
                               inline = TRUE),
                  
@@ -3973,34 +3975,34 @@ ui <- navbarPage(
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_rivers3",
-                                                                               label   = "Show Rivers",
+                                                                               label   = "Show rivers",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_rivers3",
-                                                                               label   = "Label Rivers",
+                                                                               label   = "Label rivers",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_lakes3",
-                                                                               label   = "Show Lakes",
+                                                                               label   = "Show lakes",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_lakes3",
-                                                                               label   = "Label Lakes",
+                                                                               label   = "Label lakes",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_mountains3",
-                                                                               label   = "Show Mountains",
+                                                                               label   = "Show mountains",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_mountains3",
-                                                                               label   = "Label Mountains",
+                                                                               label   = "Label mountains",
                                                                                value   = FALSE),
                                                                  
                                                              )),
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput(inputId = "shpFile3", label = "Upload Shapefile (ZIP)"),
+                                                           fileInput(inputId = "shpFile3", label = "Upload shapefile (ZIP)"),
                                                            
                                                            # Single sortable checkbox group input for selecting and ordering shapefiles
                                                            uiOutput("shapefileSelector3"),
@@ -4240,7 +4242,7 @@ ui <- navbarPage(
                                                           selected = "April to September"),
                                             ),
                                             
-                                            h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
+                                            h6("Use the Explore ModE-RA sources tab for more information", style = "color: #094030;"),
                                             
                                             withSpinner(
                                               ui_element = plotOutput(
@@ -4271,7 +4273,7 @@ ui <- navbarPage(
                                             h4("Downloads", style = "color: #094030;"),
                                             fluidRow(
                                               column(2,radioButtons(inputId = "file_type_fad3", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                              column(3,downloadButton(outputId = "download_fad3", label = "Download Map")),
+                                              column(3,downloadButton(outputId = "download_fad3", label = "Download map")),
                                             ),
                                             
                                             br(),
@@ -4279,7 +4281,7 @@ ui <- navbarPage(
                                             fluidRow(
                                               # Download data
                                               column(2,radioButtons(inputId = "data_file_type_fad3", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                              column(3,downloadButton(outputId = "download_fad_data3", label = "Download Map Data"))
+                                              column(3,downloadButton(outputId = "download_fad_data3", label = "Download map data"))
                                             )
                                    )       
                                    
@@ -4309,7 +4311,7 @@ ui <- navbarPage(
                  #Choose a data source: ME or USer 
                  radioButtons(inputId  = "source_iv",
                               label    = "Choose a data source:",
-                              choices  = c("ModE-", "User Data"),
+                              choices  = c("ModE-", "User data"),
                               selected = "ModE-" ,
                               inline = TRUE),
                  
@@ -4532,7 +4534,7 @@ ui <- navbarPage(
                  #Choose a data source: ME or USer 
                  radioButtons(inputId  = "source_dv",
                               label    = "Choose a data source:",
-                              choices  = c("ModE-", "User Data"),
+                              choices  = c("ModE-", "User data"),
                               selected = "ModE-" ,
                               inline = TRUE),
                  
@@ -5205,34 +5207,34 @@ ui <- navbarPage(
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_rivers_reg_coeff",
-                                                                               label   = "Show Rivers",
+                                                                               label   = "Show rivers",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_rivers_reg_coeff",
-                                                                               label   = "Label Rivers",
+                                                                               label   = "Label rivers",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_lakes_reg_coeff",
-                                                                               label   = "Show Lakes",
+                                                                               label   = "Show lakes",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_lakes_reg_coeff",
-                                                                               label   = "Label Lakes",
+                                                                               label   = "Label lakes",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_mountains_reg_coeff",
-                                                                               label   = "Show Mountains",
+                                                                               label   = "Show mountains",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_mountains_reg_coeff",
-                                                                               label   = "Label Mountains",
+                                                                               label   = "Label mountains",
                                                                                value   = FALSE),
                                                                  
                                                              )),
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput(inputId = "shpFile_reg_coeff", label = "Upload Shapefile (ZIP)"),
+                                                           fileInput(inputId = "shpFile_reg_coeff", label = "Upload shapefile (ZIP)"),
                                                            
                                                            # Single sortable checkbox group input for selecting and ordering shapefiles
                                                            uiOutput("shapefileSelector_reg_coeff"),
@@ -5537,34 +5539,34 @@ ui <- navbarPage(
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_rivers_reg_pval",
-                                                                               label   = "Show Rivers",
+                                                                               label   = "Show rivers",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_rivers_reg_pval",
-                                                                               label   = "Label Rivers",
+                                                                               label   = "Label rivers",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_lakes_reg_pval",
-                                                                               label   = "Show Lakes",
+                                                                               label   = "Show lakes",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_lakes_reg_pval",
-                                                                               label   = "Label Lakes",
+                                                                               label   = "Label lakes",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_mountains_reg_pval",
-                                                                               label   = "Show Mountains",
+                                                                               label   = "Show mountains",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_mountains_reg_pval",
-                                                                               label   = "Label Mountains",
+                                                                               label   = "Label mountains",
                                                                                value   = FALSE),
                                                                  
                                                              )),
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput(inputId = "shpFile_reg_pval", label = "Upload Shapefile (ZIP)"),
+                                                           fileInput(inputId = "shpFile_reg_pval", label = "Upload shapefile (ZIP)"),
                                                            
                                                            # Single sortable checkbox group input for selecting and ordering shapefiles
                                                            uiOutput("shapefileSelector_reg_pval"),
@@ -5871,34 +5873,34 @@ ui <- navbarPage(
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_rivers_reg_res",
-                                                                               label   = "Show Rivers",
+                                                                               label   = "Show rivers",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_rivers_reg_res",
-                                                                               label   = "Label Rivers",
+                                                                               label   = "Label rivers",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_lakes_reg_res",
-                                                                               label   = "Show Lakes",
+                                                                               label   = "Show lakes",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_lakes_reg_res",
-                                                                               label   = "Label Lakes",
+                                                                               label   = "Label lakes",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "show_mountains_reg_res",
-                                                                               label   = "Show Mountains",
+                                                                               label   = "Show mountains",
                                                                                value   = FALSE),
                                                                  
                                                                  checkboxInput(inputId = "label_mountains_reg_res",
-                                                                               label   = "Label Mountains",
+                                                                               label   = "Label mountains",
                                                                                value   = FALSE),
                                                                  
                                                              )),
                                                            
                                                            #Shape File Option
                                                            
-                                                           fileInput(inputId = "shpFile_reg_res", label = "Upload Shapefile (ZIP)"),
+                                                           fileInput(inputId = "shpFile_reg_res", label = "Upload shapefile (ZIP)"),
                                                            
                                                            # Single sortable checkbox group input for selecting and ordering shapefiles
                                                            uiOutput("shapefileSelector_reg_res"),
@@ -6104,7 +6106,7 @@ ui <- navbarPage(
                                                           selected = "April to September"),
                                             ),
                                             
-                                            h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
+                                            h6("Use the Explore ModE-RA sources tab for more information", style = "color: #094030;"),
                                             
                                             withSpinner(
                                               ui_element = plotOutput(
@@ -6136,7 +6138,7 @@ ui <- navbarPage(
                                             h4("Downloads", style = "color: #094030;"),
                                             fluidRow(
                                               column(2,radioButtons(inputId = "file_type_fad4", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                              column(3,downloadButton(outputId = "download_fad4", label = "Download Map")),
+                                              column(3,downloadButton(outputId = "download_fad4", label = "Download map")),
                                             ),
                                             
                                             br(),
@@ -6144,7 +6146,7 @@ ui <- navbarPage(
                                             fluidRow(
                                               # Download data
                                               column(2,radioButtons(inputId = "data_file_type_fad4", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                              column(3,downloadButton(outputId = "download_fad_data4", label = "Download Map Data"))
+                                              column(3,downloadButton(outputId = "download_fad_data4", label = "Download map data"))
                                             )
                                    )       
                                    
@@ -6672,7 +6674,7 @@ ui <- navbarPage(
                                                           selected = "April to September"),
                                             ),
                                             
-                                            h6("Use the Explore ModE-RA Sources tab for more information", style = "color: #094030;"),
+                                            h6("Use the Explore ModE-RA sources tab for more information", style = "color: #094030;"),
                                             
                                             withSpinner(
                                               ui_element = plotOutput(
@@ -6703,7 +6705,7 @@ ui <- navbarPage(
                                             h4("Downloads", style = "color: #094030;"),
                                             fluidRow(
                                               column(2,radioButtons(inputId = "file_type_fad5", label = "Choose file type:", choices = c("png", "jpeg", "pdf"), selected = "png", inline = TRUE)),
-                                              column(3,downloadButton(outputId = "download_fad5", label = "Download Map")),
+                                              column(3,downloadButton(outputId = "download_fad5", label = "Download map")),
                                             ),
                                             
                                             br(),
@@ -6711,7 +6713,7 @@ ui <- navbarPage(
                                             fluidRow(
                                               # Download data
                                               column(2,radioButtons(inputId = "data_file_type_fad5", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE)),
-                                              column(3,downloadButton(outputId = "download_fad_data5", label = "Download Map Data"))
+                                              column(3,downloadButton(outputId = "download_fad_data5", label = "Download map data"))
                                             ),
                                    )       
                                    
@@ -6721,7 +6723,7 @@ ui <- navbarPage(
            )),
   
   # ModE-RA Sources START ----                             
-  tabPanel("Explore ModE-RA Sources", value = "tab6",
+  tabPanel("Explore ModE-RA sources", value = "tab6",
            shinyjs::useShinyjs(),
            
            h4("Explore ModE-RA sources", style = "color: #094030;"),
@@ -6750,14 +6752,14 @@ ui <- navbarPage(
                     # Download
                     h4("Download", style = "color: #094030;"),
                     radioButtons(inputId = "data_file_type_MES", label = "Choose file type:", choices = c("csv", "xlsx"), selected = "csv", inline = TRUE),
-                    downloadButton(outputId = "download_MES_data", label = "Download Map Data"),
+                    downloadButton(outputId = "download_MES_data", label = "Download map data"),
                     
                     br(), br(),
                     #Modera Time Series
                     h4("Total sources", style = "color: #094030;", sourcesandobservations_popover("pop_sourcesandobservation")),
                     
                     numericRangeInput(inputId = "year_range_sources",
-                                      label = "Select Year Range:", 
+                                      label = "Select year range:", 
                                       value = c(1421, 2009), 
                                       min = 1421, max = 2009, step = 1)
              ),

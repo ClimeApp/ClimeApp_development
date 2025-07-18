@@ -2433,7 +2433,7 @@ server <- function(input, output, session) {
       updateRadioButtons(
         inputId = "ref_map_mode",
         label    = NULL,
-        choices  = c("None", "Absolute Values","Reference Values","SD Ratio"),
+        choices  = c("None", "Absolute Values","Reference Values","SD ratio"),
         selected = "None" , inline = TRUE)
     }
   })
@@ -3571,7 +3571,7 @@ server <- function(input, output, session) {
       updateRadioButtons(
         inputId = "ref_map_mode2",
         label    = NULL,
-        choices  = c("None", "Absolute Values","Reference Values", "SD Ratio"),
+        choices  = c("None", "Absolute Values","Reference Values", "SD ratio"),
         selected = "None" , inline = TRUE)
     }
   })
@@ -3581,13 +3581,13 @@ server <- function(input, output, session) {
       updateRadioButtons(
         inputId = "ref_map_mode2",
         label    = NULL,
-        choices  = c("None", "Absolute Values", "SD Ratio"),
+        choices  = c("None", "Absolute Values", "SD ratio"),
         selected = "None" , inline = TRUE)
     } else {
       updateRadioButtons(
         inputId = "ref_map_mode2",
         label    = NULL,
-        choices  = c("None", "Absolute Values","Reference Values", "SD Ratio"),
+        choices  = c("None", "Absolute Values","Reference Values", "SD ratio"),
         selected = "None" , inline = TRUE)
     }
   })
@@ -9302,7 +9302,7 @@ server <- function(input, output, session) {
             SDratio_data_id(data_id_primary()) # update custom data ID
           }
           else{
-            SDratio_data(load_ModE_data(dataset = "SD Ratio", variable = input$variable_selected)) # load new SD data
+            SDratio_data(load_ModE_data(dataset = "SD ratio", variable = input$variable_selected)) # load new SD data
             SDratio_data_id(data_id_primary()) # update custom data ID
           }
         } 
@@ -9314,7 +9314,7 @@ server <- function(input, output, session) {
   SDratio_subset = reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
     
-    req(((input$ref_map_mode == "SD Ratio") |
+    req(((input$ref_map_mode == "SD ratio") |
            (input$custom_statistic == "SD ratio")
     ))
     
@@ -9447,7 +9447,7 @@ server <- function(input, output, session) {
       create_map_datatable(data_input = data_output3_primary(),
                            subset_lon_IDs = subset_lons_primary(),
                            subset_lat_IDs = subset_lats_primary())
-    } else if (option == "SD Ratio") {
+    } else if (option == "SD ratio") {
       req(SDratio_subset())
       create_map_datatable(data_input = SDratio_subset(),
                            subset_lon_IDs = subset_lons_primary(),
@@ -9540,7 +9540,7 @@ server <- function(input, output, session) {
       create_map_datatable(data_input = data_output3_primary(),
                            subset_lon_IDs = subset_lons_primary(),
                            subset_lat_IDs = subset_lats_primary())
-    } else if (input$ref_map_mode == "SD Ratio") {
+    } else if (input$ref_map_mode == "SD ratio") {
       req(SDratio_subset())
       create_map_datatable(data_input = SDratio_subset(),
                            subset_lon_IDs = subset_lons_primary(),
@@ -9551,7 +9551,7 @@ server <- function(input, output, session) {
   ref_map_titles = reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
     
-    active_tab <- ifelse(input$ref_map_mode == "SD Ratio", "sdratio", "general")
+    active_tab <- ifelse(input$ref_map_mode == "SD ratio", "sdratio", "general")
     years_or_ref <- if (input$ref_map_mode == "Reference Values") {
       input$ref_period
     } else {
@@ -9580,8 +9580,8 @@ server <- function(input, output, session) {
     if (input$ref_map_mode == "Absolute Values" | input$ref_map_mode == "Reference Values" ){
       v=input$variable_selected; m="Absolute"; axis_range=NULL
       
-    } else if(input$ref_map_mode == "SD Ratio"){
-      v=NULL; m="SD Ratio"; axis_range=c(0,1)
+    } else if(input$ref_map_mode == "SD ratio"){
+      v=NULL; m="SD ratio"; axis_range=c(0,1)
     }
     plot_map(
       data_input = create_geotiff(map_data = ref_map_data()),
@@ -10020,7 +10020,7 @@ server <- function(input, output, session) {
   
   # Update SD ratio data when required
   observe({
-    if((input$ref_map_mode2 == "SD Ratio")|(input$custom_statistic2 == "SD ratio")){
+    if((input$ref_map_mode2 == "SD ratio")|(input$custom_statistic2 == "SD ratio")){
       if (input$nav1 == "tab2"){ # check current tab
         if (!identical(SDratio_data_id()[3:4],data_id_primary()[3:4])){ # check to see if currently loaded variable & month range are the same
           if (data_id_primary()[1] != 0) { # check for preprocessed SD ratio data
@@ -10031,7 +10031,7 @@ server <- function(input, output, session) {
             SDratio_data_id(data_id_primary()) # update custom data ID
           }
           else{
-            SDratio_data(load_ModE_data(dataset = "SD Ratio", variable = input$variable_selected2)) # load new SD data
+            SDratio_data(load_ModE_data(dataset = "SD ratio", variable = input$variable_selected2)) # load new SD data
             SDratio_data_id(data_id_primary()) # update custom data ID
           }
         } 
@@ -10043,7 +10043,7 @@ server <- function(input, output, session) {
   SDratio_subset_2 = reactive({
     req(input$nav1 == "tab2") # Only run code if in the current tab
     
-    req(((input$ref_map_mode2 == "SD Ratio") |
+    req(((input$ref_map_mode2 == "SD ratio") |
            (input$custom_statistic2 == "SD ratio")
     ))
     
@@ -10174,7 +10174,7 @@ server <- function(input, output, session) {
       create_map_datatable(data_input = data_output3_primary(),
                            subset_lon_IDs = subset_lons_primary(),
                            subset_lat_IDs = subset_lats_primary())
-    } else if (option == "SD Ratio") {
+    } else if (option == "SD ratio") {
       req(SDratio_subset_2())
       create_map_datatable(data_input = SDratio_subset_2(),
                            subset_lon_IDs = subset_lons_primary(),
@@ -10268,7 +10268,7 @@ server <- function(input, output, session) {
       create_map_datatable(data_input = data_output3_primary(),
                            subset_lon_IDs = subset_lons_primary(),
                            subset_lat_IDs = subset_lats_primary())
-    } else if (input$ref_map_mode2 == "SD Ratio") {
+    } else if (input$ref_map_mode2 == "SD ratio") {
       create_map_datatable(data_input = SDratio_subset_2(),
                            subset_lon_IDs = subset_lons_primary(),
                            subset_lat_IDs = subset_lats_primary())
@@ -10283,7 +10283,7 @@ server <- function(input, output, session) {
     mode_params <- list(
       "Absolute Values" = list(type = "composites", years = year_set_comp()),
       "Reference Values" = list(type = "reference", years = year_set_comp_ref()),
-      "SD Ratio" = list(type = "sdratio", years = c(NA, NA))
+      "SD ratio" = list(type = "sdratio", years = c(NA, NA))
     )
     params <- mode_params[[input$ref_map_mode2]]
     
@@ -10309,8 +10309,8 @@ server <- function(input, output, session) {
     if (input$ref_map_mode2 == "Absolute Values" | input$ref_map_mode2 == "Reference Values" ){
       v=input$variable_selected2; m="Absolute"; axis_range=NULL
       
-    } else if (input$ref_map_mode2 == "SD Ratio"){
-      v=NULL; m="SD Ratio"; axis_range=c(0,1)
+    } else if (input$ref_map_mode2 == "SD ratio"){
+      v=NULL; m="SD ratio"; axis_range=c(0,1)
     }
     plot_map(data_input = create_geotiff(map_data = ref_map_data_2()),
              lon_lat_range = lonlat_vals2(),

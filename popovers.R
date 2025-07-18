@@ -470,7 +470,7 @@ regression_year_popover = function(popover_ID){
 
 regression_timeseries_popover = function(popover_ID){
   popover(
-    h4(HTML("Regression Timeseries <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    h4(HTML("Regression timeseries <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
     "Plot 1 shows the",em("original"),"data for the dependent variable and the",em("trend"),"in the dependent variable, as predicted from the linear regression and the independent variable(s).",br(),br(),
     "Plot 2 shows the",em("residual"),"values ( ",em("original – trend"),") for the dependent variable.",br(),br(),
     "The",em("Statistical summary"),"gives the",em("coefficients"),"and",em("intercept"),"for each independent variable as well as a summary of the",em("residuals"),"and further statistical information.",br(),br(),
@@ -485,7 +485,7 @@ regression_timeseries_popover = function(popover_ID){
 
 regression_coefficient_popover = function(popover_ID){
   popover(
-    h4(HTML("Regression Coefficients Map <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    h4(HTML("Regression coefficients map <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
     "The map shows the",em("coefficients"),"of the independent variable(s) in the linear regression equation, for each point on the map. Use",em("Choose a variable"),"to select which of the independent variables you would like to plot the coefficients for.",br(),br(),
     "The",em("coefficient"),"shows you what the independent variable is being multiplied by in the regression calculation.",br(),br(),
     "See the",em("ClimeApp functions"),"tabs on the Welcome page for more information.",
@@ -499,7 +499,7 @@ regression_coefficient_popover = function(popover_ID){
 
 regression_pvalue_popover = function(popover_ID){
   popover(
-    h4(HTML("Regression P Values Map <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    h4(HTML("Regression P values map <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
     "The map shows the",em("p values"),"of the independent variable(s) in the linear regression equation, for each point on the map. Use",em("Choose a variable"),"to select which of the independent variables you would like to plot the p values for.",br(),br(),
     "The",em("p value"),"shows the probability (as a decimal) of the linear regression arising due to random chance rather than an actual statistical relationship.",br(),br(),
     "See the",em("ClimeApp functions"),"tabs on the Welcome page for more information.",
@@ -513,7 +513,7 @@ regression_pvalue_popover = function(popover_ID){
 
 regression_residuals_popover = function(popover_ID){
   popover(
-    h4(HTML("Regression Residuals Map <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
+    h4(HTML("Regression residuals map <sup><i class='fas fa-question-circle fa-xs'></i></sup>"), style = "color: #094030; margin-left: 11px;"),
     "The map shows the",em("residual"),"values of the dependent variable, for the selected",em("Year,"),"for each point on the map.",br(),br(),
     "The residual values are the ‘leftover’ variation in the dependent variable, after the",em("trend"),"predicted from the independent variable(s) has been removed:",em("Residual = Original – Trend."),br(),br(),
     "See the",em("ClimeApp functions"),"tabs on the Welcome page for more information.",

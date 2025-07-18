@@ -329,7 +329,7 @@ generate_map_dimensions = function(subset_lon_IDs,
 #'    - `1` = "ModE-RA"
 #'    - `2` = "ModE-Sim"
 #'    - `3` = "ModE-RAclim"
-#'    - `4` = "SD Ratio"
+#'    - `4` = "SD ratio"
 #' 3. Variable code:
 #'    - `1` = "Temperature"
 #'    - `2` = "Precipitation"
@@ -342,7 +342,7 @@ generate_map_dimensions = function(subset_lon_IDs,
 #'    - `4` = SON (c(9, 11))
 #'    - `5` = Annual (c(1, 12))
 #'
-#' @param dataset Character. One of: "ModE-RA", "ModE-Sim", "ModE-RAclim", "SD Ratio".
+#' @param dataset Character. One of: "ModE-RA", "ModE-Sim", "ModE-RAclim", "SD ratio".
 #' @param variable Character. One of: "Temperature", "Precipitation", "SLP", "Z500".
 #' @param month_range Numeric vector of length 2. Month range for seasonal selection.
 #'
@@ -359,7 +359,7 @@ generate_data_ID = function(dataset,
     dataset_ref = 2
   } else if (dataset == "ModE-RAclim"){
     dataset_ref = 3
-  } else { # dataset == "Sd Ratio"
+  } else { # dataset == "Sd ratio"
     dataset_ref = 4   
   }
   
@@ -427,7 +427,7 @@ generate_data_ID = function(dataset,
 
 #' (General) LOAD FULL ModE DATA
 #'
-#' Loads full ModE monthly data (ModE-RA, ModE-Sim, ModE-RAclim, or SD Ratio) for the selected variable.
+#' Loads full ModE monthly data (ModE-RA, ModE-Sim, ModE-RAclim, or SD ratio) for the selected variable.
 #' Automatically opens and processes the relevant NetCDF file and returns the complete 3D data array.
 #' Applies appropriate unit conversions depending on the variable.
 #'
@@ -435,7 +435,7 @@ generate_data_ID = function(dataset,
 #' - `"ModE-RA"`: Absolute values (e.g., temperature in °C, precipitation in mm/month).
 #' - `"ModE-Sim"`: Absolute values; first year (1420) is removed.
 #' - `"ModE-RAclim"`: Anomalies relative to the 1901–2000 climatology.
-#' - `"SD Ratio"`: Standard deviation ratio of ModE-RA to climate reference.
+#' - `"SD ratio"`: Standard deviation ratio of ModE-RA to climate reference.
 #'
 #' ## Supported Variables:
 #' - `"Temperature"`: Converted from Kelvin to Celsius.
@@ -443,7 +443,7 @@ generate_data_ID = function(dataset,
 #' - `"SLP"`: Converted from Pa to hPa.
 #' - `"Z500"`: Geopotential height at 500 hPa (no conversion).
 #'
-#' @param dataset Character. Name of dataset to load. One of `"ModE-RA"`, `"ModE-Sim"`, `"ModE-RAclim"`, `"SD Ratio"`.
+#' @param dataset Character. Name of dataset to load. One of `"ModE-RA"`, `"ModE-Sim"`, `"ModE-RAclim"`, `"SD ratio"`.
 #' @param variable Character. Name of variable. One of `"Temperature"`, `"Precipitation"`, `"SLP"`, `"Z500"`.
 #'
 #' @return 3D numeric array (lon × lat × time) containing the full ModE dataset for the selected variable.
@@ -526,7 +526,7 @@ load_ModE_data = function(dataset,
   }
   
   # SDratio
-  else if (dataset == "SD Ratio"){
+  else if (dataset == "SD ratio"){
     # get variable name and open file
     vname =  switch(variable,
                     "Temperature"   = "temp2",
@@ -909,13 +909,13 @@ generate_titles = function(tab,
   # SD ratio titles
   else if (tab == "sdratio") {
     if (is.na(year_range[1])) {
-      map_title <- paste(dataset, " ", title_months, " SD Ratio (Composite years)", sep = "")
+      map_title <- paste(dataset, " ", title_months, " SD ratio (Composite years)", sep = "")
       map_subtitle <- ""
     } else if (length(year_range) == 1 || year_range[1] == year_range[2]) {
-      map_title <- paste(dataset, " ", title_months, " SD Ratio ", year_range[1], sep = "")
+      map_title <- paste(dataset, " ", title_months, " SD ratio ", year_range[1], sep = "")
       map_subtitle <- ""
     } else {
-      map_title <- paste(dataset, " ", title_months, " SD Ratio ", year_range[1], "-", year_range[2], sep = "")
+      map_title <- paste(dataset, " ", title_months, " SD ratio ", year_range[1], "-", year_range[2], sep = "")
       map_subtitle <- ""
     }
   }
@@ -1074,7 +1074,7 @@ set_ts_axis_values = function(data_input) {
 #'
 #' @param data_input Spatial raster data to plot.
 #' @param lon_lat_range Numeric vector defining longitude and latitude plotting limits.
-#' @param variable Character specifying the variable to plot (e.g., "Temperature", "Precipitation", "SLP", "Z500", "SD Ratio").
+#' @param variable Character specifying the variable to plot (e.g., "Temperature", "Precipitation", "SLP", "Z500", "SD ratio").
 #' @param mode Character specifying the mode of plotting ("Absolute", "Correlation", "Regression_coefficients", etc.).
 #' @param titles List containing titles and subtitle text and sizes.
 #' @param axis_range Numeric vector defining axis limits for color scales.
@@ -1172,7 +1172,7 @@ plot_map <- function(data_input,
       titles$map_subtitle <- titles$map_subtitle_res
       titles$map_title_size <- titles$map_title_size_res
       
-    } else if (mode == "SD Ratio") {
+    } else if (mode == "SD ratio") {
       v_col <- rev(brewer.pal(9, "Greens"))
       v_unit <- ""
     }}
@@ -1180,7 +1180,7 @@ plot_map <- function(data_input,
   if (is.null(axis_range)) {
     if (!is.null(mode) && mode == "Regression_p_values") {
       axis_range <- c(1e-3, 1)  # avoid log(0)
-    } else if (!is.null(mode) && mode == "SD Ratio") {
+    } else if (!is.null(mode) && mode == "SD ratio") {
       axis_range <- c(0, 1)
     } else {
       max_abs_z <- max(abs(values(data_input)), na.rm = TRUE)
@@ -2775,9 +2775,9 @@ plot_ts_modera_sources <- function(data,
   
   # Define custom colors for each line (adjust as needed)
   line_colors <- c(
-    "Global Sources (Apr. - Sept.)" = "#882255",
-    "Global Sources (Oct. - Mar.)" = "#332288",
-    "Global Sources Total" = "#117733"
+    "Global sources (Apr. - Sept.)" = "#882255",
+    "Global sources (Oct. - Mar.)" = "#332288",
+    "Global sources Total" = "#117733"
   )
   
   # Calculate the maximum value of the selected columns
