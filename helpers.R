@@ -2777,7 +2777,7 @@ plot_ts_modera_sources <- function(data,
   line_colors <- c(
     "Global sources (Apr. - Sept.)" = "#882255",
     "Global sources (Oct. - Mar.)" = "#332288",
-    "Global sources Total" = "#117733"
+    "Global sources total" = "#117733"
   )
   
   # Calculate the maximum value of the selected columns

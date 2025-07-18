@@ -13555,9 +13555,9 @@ server <- function(input, output, session) {
                              "Total_global_sources") # List of columns to plot
   
   # Corresponding line titles for the legend
-  line_titles_sources <- c("Total_global_sources_summer" = "Global Sources (Apr. - Sept.)", 
-                           "Total_global_sources_winter" = "Global Sources (Oct. - Mar.)", 
-                           "Total_global_sources" = "Global Sources Total")
+  line_titles_sources <- c("Total_global_sources_summer" = "Global sources (Apr. - Sept.)", 
+                           "Total_global_sources_winter" = "Global sources (Oct. - Mar.)", 
+                           "Total_global_sources" = "Global sources total")
   
   # Read data from Excel once and reuse it
   data_sources <- read_excel(file_path_sources, sheet = sheet_name_sources)
@@ -13571,7 +13571,7 @@ server <- function(input, output, session) {
     year_range <- input$year_range_sources
     
     plot_ts_modera_sources(data_sources, year_column_sources, selected_columns, line_titles_sources,
-                           title = "Total Global Sources",
+                           title = "Total global sources",
                            x_label = "Year",
                            y_label = "Sources",
                            x_ticks_every = 20,
