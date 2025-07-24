@@ -4143,7 +4143,7 @@ process_uploaded_metadata_composite <- function(
 #### Reg/Cor Functions ####
 
 
-#' (Regression/Correlation) Load User Data
+#' (Regression/Correlation) Load User data
 #'
 #' Loads user-supplied data from a CSV or Excel file for regression or correlation analysis.
 #' Replaces placeholder values (-999.9) with `NA` for proper handling of missing data.
@@ -4170,8 +4170,8 @@ read_regcomp_data = function(data_input_filepath) {
 #' Computes the shared valid year range between two variables (ModE-RA or user-supplied),
 #' accounting for lag settings. Useful for defining valid `year_range` slider inputs.
 #'
-#' @param variable1_source Character. Source of variable 1: either `"ModE-RA"` or `"User Data"`.
-#' @param variable2_source Character. Source of variable 2: either `"ModE-RA"` or `"User Data"`.
+#' @param variable1_source Character. Source of variable 1: either `"ModE-RA"` or `"User data"`.
+#' @param variable2_source Character. Source of variable 2: either `"ModE-RA"` or `"User data"`.
 #' @param variable1_data_filepath Character. Path to the user file for variable 1, if applicable.
 #' @param variable2_data_filepath Character. Path to the user file for variable 2, if applicable.
 #' @param variable1_lag Numeric. Number of years to lag variable 1 (default = 0).
@@ -4200,7 +4200,7 @@ extract_year_range = function(variable1_source,
   V2_max = 2008
   
   # Set V1_min/max from user data
-  if (variable1_source == "User Data" &
+  if (variable1_source == "User data" &
       !is.null(variable1_data_filepath)) {
     if (grepl(".xls", variable1_data_filepath, fixed = TRUE) == TRUE) {
       years = read_excel(variable1_data_filepath, range = cell_cols("A"))
@@ -4215,7 +4215,7 @@ extract_year_range = function(variable1_source,
   }
   
   # Set V2_min/max from user data
-  if (variable2_source == "User Data" &
+  if (variable2_source == "User data" &
       !is.null(variable2_data_filepath)) {
     if (grepl(".xls", variable2_data_filepath, fixed = TRUE) == TRUE) {
       years = read_excel(variable2_data_filepath, range = cell_cols("A"))
@@ -4243,7 +4243,7 @@ extract_year_range = function(variable1_source,
 }  
 
 
-#' (Regression/Correlation) Create User Data Subset
+#' (Regression/Correlation) Create User data Subset
 #'
 #' Subsets user-uploaded data to match a specified year range and lag setting.
 #' Adjusts the years based on the lag and ensures variable values are numeric, replacing invalid entries with `NA`.
@@ -4385,8 +4385,8 @@ plot_user_timeseries = function(data_input,
 #' Generates a set of titles, axis labels, colors, and metadata strings for correlation plots
 #' based on user inputs and the selected ModE-RA or user-supplied variables.
 #'
-#' @param variable1_source Character. `"ModE-RA"` or `"User Data"` for Variable 1.
-#' @param variable2_source Character. `"ModE-RA"` or `"User Data"` for Variable 2.
+#' @param variable1_source Character. `"ModE-RA"` or `"User data"` for Variable 1.
+#' @param variable2_source Character. `"ModE-RA"` or `"User data"` for Variable 2.
 #' @param variable1_dataset Character. Name of the dataset used for Variable 1 (e.g., "ModE-RA").
 #' @param variable2_dataset Character. Name of the dataset used for Variable 2.
 #' @param variable1 Character. Variable name for Variable 1 (e.g., "Temperature").
@@ -4442,7 +4442,7 @@ generate_correlation_titles = function(variable1_source,
 
   
   # Set values for variable 1:
-  if (variable1_source=="User Data"){
+  if (variable1_source=="User data"){
     V1_axis_label = variable1
     V1_color = "darkorange2"
     V1_TS_title = variable1
@@ -4494,7 +4494,7 @@ generate_correlation_titles = function(variable1_source,
   }
   
   # Set values for variable 2:
-  if (variable2_source=="User Data"){
+  if (variable2_source=="User data"){
     V2_axis_label = variable2
     V2_color = "saddlebrown"
     V2_TS_title = variable2
@@ -4545,7 +4545,7 @@ generate_correlation_titles = function(variable1_source,
   }
   
   # Edit colors and titles if v1 and v2 are the same
-  if (variable1 == variable2 & variable1_source !="User Data" & variable2_source !="User Data"){
+  if (variable1 == variable2 & variable1_source !="User data" & variable2_source !="User data"){
     if (variable1 == "Temperature"){
       V1_color = "red4" ; V2_color = "red2"
     }
@@ -5235,8 +5235,8 @@ create_ME_timeseries_data = function(dataset,
 #' Creates a dataframe of titles and labels for regression coefficient, p-value, and residual maps.
 #' Handles both user and ModE-RA data sources and supports optional customization of map titles and subtitles.
 #'
-#' @param independent_source Character. `"ModE-RA"` or `"User Data"` for the independent variable.
-#' @param dependent_source Character. `"ModE-RA"` or `"User Data"` for the dependent variable.
+#' @param independent_source Character. `"ModE-RA"` or `"User data"` for the independent variable.
+#' @param dependent_source Character. `"ModE-RA"` or `"User data"` for the dependent variable.
 #' @param dataset_i Character. Name of the dataset for the independent variable (if ModE-RA).
 #' @param dataset_d Character. Name of the dataset for the dependent variable (if ModE-RA).
 #' @param modERA_dependent_variable Character. Variable name from ModE-RA for the dependent variable.
@@ -5286,7 +5286,7 @@ generate_regression_titles = function(independent_source,
                                       title_size=18){
   
   # Create Independent variable titles
-  if (independent_source == "User Data"){
+  if (independent_source == "User data"){
     title_months_i = ""
     title_mode_i = ""
     title_lonlat_i = ""
@@ -5318,7 +5318,7 @@ generate_regression_titles = function(independent_source,
   }
   
   # Create Dependent variable titles
-  if (dependent_source == "User Data"){
+  if (dependent_source == "User data"){
     title_months_d = ""
     title_mode_d = ""
     title_lonlat_d = ""
@@ -5437,8 +5437,8 @@ generate_regression_titles = function(independent_source,
 #' Creates a dataframe of titles, axis labels, and subtitles for regression timeseries plots,
 #' including metadata for dependent and independent variables and customization options.
 #'
-#' @param independent_source Character. `"ModE-RA"` or `"User Data"` for the independent variable source.
-#' @param dependent_source Character. `"ModE-RA"` or `"User Data"` for the dependent variable source.
+#' @param independent_source Character. `"ModE-RA"` or `"User data"` for the independent variable source.
+#' @param dependent_source Character. `"ModE-RA"` or `"User data"` for the dependent variable source.
 #' @param dataset_i Character. Dataset name for the independent variable (if ModE-RA).
 #' @param dataset_d Character. Dataset name for the dependent variable (if ModE-RA).
 #' @param modERA_dependent_variable Character. ModE-RA variable name for the dependent variable.
@@ -5490,7 +5490,7 @@ generate_regression_titles_ts = function(independent_source,
 ){
   
   # Create Independent variable titles
-  if (independent_source == "User Data"){
+  if (independent_source == "User data"){
     title_months_i = ""
     title_mode_i = ""
     title_lonlat_i = ""
@@ -5522,7 +5522,7 @@ generate_regression_titles_ts = function(independent_source,
   }
   
   # Create Dependent variable titles
-  if (dependent_source == "User Data"){
+  if (dependent_source == "User data"){
     title_months_d = ""
     title_mode_d = ""
     title_lonlat_d = ""
@@ -7010,7 +7010,7 @@ process_uploaded_metadata_cycles <- function(
 #' @param show_observations_6 Logical; whether to show individual observations.
 #' @param show_pvalues_6 Logical; whether to show p-values on plot.
 #' @param show_ticks_6 Logical; whether to show axis ticks.
-#' @param source_sea_6 Source of SEA data ("User Data" or "ModE-RA").
+#' @param source_sea_6 Source of SEA data ("User data" or "ModE-RA").
 #' @param title_mode_6 Title mode selection ("Default" or "Custom").
 #' @param title1_input_6 Custom title text.
 #' @param use_custom_post_6 Logical; use custom post-event year range.

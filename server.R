@@ -240,7 +240,7 @@ server <- function(input, output, session) {
   
   # Add logic to toggle the visibility of a specific tabPanel (Correlation and Regression Map) based on radio button values ("Choose a data source:")
   observe({
-    if (input$source_v1 == "User Data" && input$source_v2 == "User Data") {
+    if (input$source_v1 == "User data" && input$source_v2 == "User data") {
       shinyjs::runjs('
         // Get the tabPanel element by ID
         var tabPanelToHide = $("#tabset3 a[data-value=\'corr_fad_tab\']").parent();
@@ -260,7 +260,7 @@ server <- function(input, output, session) {
   })
   
   observe({
-    if (input$source_iv == "User Data" && input$source_dv == "User Data") {
+    if (input$source_iv == "User data" && input$source_dv == "User data") {
       shinyjs::runjs('
         // Get the tabPanel element by ID
         var tabPanelToHide = $("#tabset4 a[data-value=\'reg_fad_tab\']").parent();
@@ -886,7 +886,7 @@ server <- function(input, output, session) {
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$source_v1 == "User Data",
+                           condition = input$source_v1 == "User data",
                            asis = FALSE)})
   
   observe({shinyjs::toggle(id = "upload_example_v1",
@@ -902,7 +902,7 @@ server <- function(input, output, session) {
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$source_v1 == "User Data",
+                           condition = input$source_v1 == "User data",
                            asis = FALSE)})
   
   observe({shinyjs::toggle(id = "hidden_me_dataset_variable_v1",
@@ -970,7 +970,7 @@ server <- function(input, output, session) {
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$source_v2 == "User Data",
+                           condition = input$source_v2 == "User data",
                            asis = FALSE)})
   
   observe({shinyjs::toggle(id = "upload_example_v2",
@@ -986,7 +986,7 @@ server <- function(input, output, session) {
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$source_v2 == "User Data",
+                           condition = input$source_v2 == "User data",
                            asis = FALSE)})
   
   observe({shinyjs::toggle(id = "hidden_me_dataset_variable_v2",
@@ -1320,7 +1320,7 @@ server <- function(input, output, session) {
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$source_iv == "User Data",
+                           condition = input$source_iv == "User data",
                            asis = FALSE)})
   
   observe({shinyjs::toggle(id = "upload_example_iv",
@@ -1336,7 +1336,7 @@ server <- function(input, output, session) {
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$source_iv == "User Data",
+                           condition = input$source_iv == "User data",
                            asis = FALSE)})
   
   observe({shinyjs::toggle(id = "hidden_me_variable_dataset_iv",
@@ -1402,7 +1402,7 @@ server <- function(input, output, session) {
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$source_dv == "User Data",
+                           condition = input$source_dv == "User data",
                            asis = FALSE)})
   
   observe({shinyjs::toggle(id = "upload_example_dv",
@@ -1418,7 +1418,7 @@ server <- function(input, output, session) {
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$source_dv == "User Data",
+                           condition = input$source_dv == "User data",
                            asis = FALSE)})
   
   observe({shinyjs::toggle(id = "hidden_me_variable_dataset_dv",
@@ -1967,7 +1967,7 @@ server <- function(input, output, session) {
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$source_sea_6 == "User Data",
+                           condition = input$source_sea_6 == "User data",
                            asis = FALSE)})
   
   observe({shinyjs::toggle(id = "upload_example_6",
@@ -1983,7 +1983,7 @@ server <- function(input, output, session) {
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$source_sea_6 == "User Data",
+                           condition = input$source_sea_6 == "User data",
                            asis = FALSE)})
   
   observe({shinyjs::toggle(id = "hidden_me_dataset_6",
@@ -4291,7 +4291,7 @@ server <- function(input, output, session) {
   observe({
     req(user_data_v1())
     
-    if (input$source_v1 == "User Data"){
+    if (input$source_v1 == "User data"){
       updateSelectInput(
         session = getDefaultReactiveDomain(),
         inputId = "user_variable_v1",
@@ -4302,7 +4302,7 @@ server <- function(input, output, session) {
   observe({
     req(user_data_v2())
     
-    if (input$source_v2 == "User Data"){
+    if (input$source_v2 == "User data"){
       updateSelectInput(
         session = getDefaultReactiveDomain(),
         inputId = "user_variable_v2",
@@ -4315,7 +4315,7 @@ server <- function(input, output, session) {
     selected_type_v1 = input$type_v1
     
     # Check if source is user data OR map area is very small
-    if ((input$source_v1 == "User Data") |
+    if ((input$source_v1 == "User data") |
         (((
           input$range_longitude_v1[2] - input$range_longitude_v1[1]
         ) < 4) &
@@ -4346,7 +4346,7 @@ server <- function(input, output, session) {
     selected_type_v2 = input$type_v2
     
     # Check if source is user data OR map area is very small
-    if ((input$source_v2 == "User Data") | (((input$range_longitude_v2[2]-input$range_longitude_v2[1])<4) & ((input$range_latitude_v2[2]-input$range_latitude_v2[1]<4)))){
+    if ((input$source_v2 == "User data") | (((input$range_longitude_v2[2]-input$range_longitude_v2[1])<4) & ((input$range_latitude_v2[2]-input$range_latitude_v2[1]<4)))){
       updateRadioButtons(
         session = getDefaultReactiveDomain(),
         inputId = "type_v2",
@@ -4524,7 +4524,7 @@ server <- function(input, output, session) {
   }, {
     req(year_range_cor(), length(year_range_cor()) >= 2)
     
-    if (input$source_v1 == "User Data" || input$source_v2 == "User Data") {
+    if (input$source_v1 == "User data" || input$source_v2 == "User data") {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years3",
@@ -5716,7 +5716,7 @@ server <- function(input, output, session) {
     
     req(user_data_iv())
     
-    if (input$source_iv == "User Data"){
+    if (input$source_iv == "User data"){
       
       user_vs = names(user_data_iv())[-1]
       
@@ -5731,7 +5731,7 @@ server <- function(input, output, session) {
   observe({
     req(user_data_dv())
     
-    if (input$source_dv == "User Data"){
+    if (input$source_dv == "User data"){
       updateSelectInput(
         session = getDefaultReactiveDomain(),
         inputId = "user_variable_dv",
@@ -5907,7 +5907,7 @@ server <- function(input, output, session) {
   }, {
     req(year_range_reg(), length(year_range_reg()) >= 4)
     
-    if (input$source_iv == "User Data" || input$source_dv == "User Data") {
+    if (input$source_iv == "User data" || input$source_dv == "User data") {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years4",
@@ -8463,7 +8463,7 @@ server <- function(input, output, session) {
   observe({
     req(user_data_6())
     
-    if (input$source_sea_6 == "User Data"){
+    if (input$source_sea_6 == "User data"){
       updateSelectInput(
         session = getDefaultReactiveDomain(),
         inputId = "user_variable_6",
@@ -10788,7 +10788,7 @@ server <- function(input, output, session) {
     
     req(input$user_file_v1)
     
-    if (input$source_v1 == "User Data"){
+    if (input$source_v1 == "User data"){
       new_data1 = read_regcomp_data(data_input_filepath = input$user_file_v1$datapath)
 
       return(new_data1)
@@ -10803,7 +10803,7 @@ server <- function(input, output, session) {
     
     req(input$user_file_v2)
     
-    if (input$source_v2 == "User Data"){
+    if (input$source_v2 == "User data"){
       new_data2 = read_regcomp_data(data_input_filepath = input$user_file_v2$datapath)  
       return(new_data2)
     }
@@ -11041,7 +11041,7 @@ server <- function(input, output, session) {
   
   # Plot
   output$plot_v1 <- renderPlot({
-    if (input$source_v1 == "User Data") {
+    if (input$source_v1 == "User data") {
       plot_user_timeseries(data_input = user_subset_v1(), color = "darkorange2")
     } else if (input$type_v1 == "Timeseries") {
       timeseries_plot_v1()
@@ -11056,7 +11056,7 @@ server <- function(input, output, session) {
   
   
   output$plot_v2 <- renderPlot({
-    if (input$source_v2 == "User Data") {
+    if (input$source_v2 == "User data") {
       plot_user_timeseries(data_input = user_subset_v2(), color = "saddlebrown")
     } else if (input$type_v2 == "Timeseries") {
       timeseries_plot_v2()
@@ -11404,7 +11404,7 @@ server <- function(input, output, session) {
     
     if (input$type_v1 == "Field"){
       cmd_v1 = data_output4_primary()
-    } else if (input$source_v1 == "User Data"){
+    } else if (input$source_v1 == "User data"){
       cmd_v1 = user_subset_v1()
     } else {
       cmd_v1 = timeseries_data_v1()
@@ -11417,7 +11417,7 @@ server <- function(input, output, session) {
     
     if (input$type_v2 == "Field"){
       cmd_v2 = data_output4_secondary()
-    } else if (input$source_v2 == "User Data"){
+    } else if (input$source_v2 == "User data"){
       cmd_v2 = user_subset_v2()
     } else {
       cmd_v2 = timeseries_data_v2()
@@ -11958,7 +11958,7 @@ server <- function(input, output, session) {
     
     req(input$user_file_iv)
     
-    if (input$source_iv == "User Data"){
+    if (input$source_iv == "User data"){
 
       new_data1 = read_regcomp_data(data_input_filepath = input$user_file_iv$datapath)  
 
@@ -11974,7 +11974,7 @@ server <- function(input, output, session) {
     
     req(input$user_file_dv)
     
-    if (input$source_dv == "User Data"){
+    if (input$source_dv == "User data"){
       new_data2 = read_regcomp_data(data_input_filepath = input$user_file_dv$datapath)      
       return(new_data2)
     }
@@ -12148,7 +12148,7 @@ server <- function(input, output, session) {
     
     req(input$nav1 == "tab4") # Only run code if in the current tab
     
-    if (input$source_dv == "User Data"){
+    if (input$source_dv == "User data"){
       map_dims_dv = c(session$clientData$output_plot_dv_width,400)
     } else {
       map_dims_dv = generate_map_dimensions(
@@ -12164,7 +12164,7 @@ server <- function(input, output, session) {
   
   # Plot 
   output$plot_iv <- renderPlot({
-    if (input$source_iv == "User Data") {
+    if (input$source_iv == "User data") {
       plot_user_timeseries(data_input = user_subset_iv(), color = "darkorange2")
     } else {
       timeseries_plot_iv()
@@ -12172,7 +12172,7 @@ server <- function(input, output, session) {
   }, height = 400)  
   
   output$plot_dv <- renderPlot({
-    if (input$source_dv == "User Data") {
+    if (input$source_dv == "User data") {
       plot_user_timeseries(data_input = user_subset_dv(), color = "saddlebrown")
     } else{
       ME_map_plot_dv()
@@ -13586,7 +13586,7 @@ server <- function(input, output, session) {
     
     req(input$user_file_6)
     
-    if (input$source_sea_6 == "User Data"){
+    if (input$source_sea_6 == "User data"){
       new_data1 = read_regcomp_data(data_input_filepath = input$user_file_6$datapath)   
       return(new_data1)
     }
@@ -13657,7 +13657,7 @@ server <- function(input, output, session) {
   
   # Extract years, title & y label based on selected data source
   years = reactive({
-    if (input$source_sea_6 == "User Data") {
+    if (input$source_sea_6 == "User data") {
       return(unlist(user_subset_6()[,1]))  # Extract years from user-uploaded data
     } else {
       return(unlist(timeseries_data_sea()[,1]))  # Extract years from ModE- data
@@ -13667,7 +13667,7 @@ server <- function(input, output, session) {
   
   # Y Label and Plot Title
   ts_y_label = reactive({
-    if (input$source_sea_6 == "User Data") {
+    if (input$source_sea_6 == "User data") {
       if (input$y_label_6 != "" && input$title_mode_6 == "Custom"){
         return(input$y_label_6)
       } else {
@@ -13684,7 +13684,7 @@ server <- function(input, output, session) {
   })
   
   ts_title = reactive({
-    if (input$source_sea_6 == "User Data") {
+    if (input$source_sea_6 == "User data") {
       if (input$title1_input_6 != "" && input$title_mode_6 == "Custom") {
         return(input$title1_input_6)
       } else {
@@ -13732,7 +13732,7 @@ server <- function(input, output, session) {
   ts_data = reactive({
     req(input$source_sea_6)  # Ensure source selection exists
     
-    if (input$source_sea_6 == "User Data") {
+    if (input$source_sea_6 == "User data") {
       ts_data_new = data.frame(user_subset_6()[, 2, drop = FALSE])  # Keep it as a dataframe
     } else {
       ts_data_new = data.frame(timeseries_subdata_sea()[, 2, drop = FALSE])  # Use selected statistic
@@ -14234,11 +14234,11 @@ server <- function(input, output, session) {
   }
 
   updateNumericRangeInputSafe("range_years3", 1422, 2008, skip_if = function() {
-    input$source_v1 == "User Data" && input$source_v2 == "User Data"
+    input$source_v1 == "User data" && input$source_v2 == "User data"
   })
 
   updateNumericRangeInputSafe("range_years4", 1422, 2008, skip_if = function() {
-    input$source_dv == "User Data" && input$source_iv == "User Data"
+    input$source_dv == "User data" && input$source_iv == "User data"
   })
 
   updateNumericRangeInputSafe("range_years", 1422, 2008)
