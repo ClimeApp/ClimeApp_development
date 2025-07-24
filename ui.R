@@ -184,26 +184,30 @@ ui <- navbarPage(
                ### Second side bar ----
                
                sidebarPanel(fluidRow(
-                 h4(helpText("For feedback and suggestions on ClimeApp, please contact:")),
+                 h5("For feedback and suggestions on ClimeApp, please contact the ClimeApp team:"),
                  br(),
-                 h4("Mail to the ClimeApp team:", 
-                    tags$span(id = "email1", style = "color: #094030;")),
+                 h5(tags$span(id = "email1", style = "color: #094030;")),
                  column(width = 12, br()),
-                 h4(helpText("For queries relating to the ModE-RA data, please contact:")),
-                 h4("Mail to J\u00F6rg Franke:", 
-                    tags$span(id = "email2", style = "color: #094030;")),
+                 h5("For queries relating to the ModE-RA data, please contact J\u00F6rg Franke:"),
+                 h5(tags$span(id = "email2", style = "color: #094030;")),
+                 column(width = 12, br()),
+                 h5("To report technical issues, please contact the Linux support team:"),
+                 h5(tags$span(id = "email3", style = "color: #094030;")),
                  
                  # JavaScript to obfuscate email addresses
                  tags$script(HTML('
                 document.addEventListener("DOMContentLoaded", function() {
                   var email1 = ["climeapp.hist", "unibe.ch"];
                   var email2 = ["franke", "giub.unibe.ch"];
+                  var email3 = ["linux.support.giub", "unibe.ch"];
                   
                   var email1_link = "<a href=\'mailto:" + email1[0] + "@" + email1[1] + "\'>" + email1[0] + "@" + email1[1] + "</a>";
                   var email2_link = "<a href=\'mailto:" + email2[0] + "@" + email2[1] + "\'>" + email2[0] + "@" + email2[1] + "</a>";
+                  var email3_link = "<a href=\'mailto:" + email3[0] + "@" + email3[1] + "\'>" + email3[0] + "@" + email3[1] + "</a>";
                   
                   document.getElementById("email1").innerHTML = email1_link;
                   document.getElementById("email2").innerHTML = email2_link;
+                  document.getElementById("email3").innerHTML = email3_link;
                 });
               '))
                  
