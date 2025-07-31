@@ -198,7 +198,7 @@ ui <- navbarPage(
                  tags$script(HTML('
                 document.addEventListener("DOMContentLoaded", function() {
                   var email1 = ["climeapp.hist", "unibe.ch"];
-                  var email2 = ["franke", "giub.unibe.ch"];
+                  var email2 = ["joerg.franke", "unibe.ch"];
                   var email3 = ["linux.support.giub", "unibe.ch"];
                   
                   var email1_link = "<a href=\'mailto:" + email1[0] + "@" + email1[1] + "\'>" + email1[0] + "@" + email1[1] + "</a>";
