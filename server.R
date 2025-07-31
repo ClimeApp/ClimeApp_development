@@ -5057,14 +5057,14 @@ server <- function(input, output, session) {
         inputId = "feature3",
         label = NULL,
         selected = "Highlight")
-      
+
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values3",
         label = NULL,
         value = round(c(x_brush_1, x_brush_2), digits = 2))
 
-      
+
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values3",
@@ -11530,9 +11530,9 @@ server <- function(input, output, session) {
         input = input,
         plotType = "shp_colour3_",
         
-        projection=input$projection3,
-        center_lat=input$center_lat3,
-        center_lon=input$center_lon3,
+        projection = input$projection3,
+        center_lat = input$center_lat3,
+        center_lon = input$center_lon3,
         
         show_rivers = input$show_rivers3,
         label_rivers = input$label_rivers3,
@@ -11541,12 +11541,12 @@ server <- function(input, output, session) {
         show_mountains = input$show_mountains3,
         label_mountains = input$label_mountains3
       )
-
-      # Adapt title for Europe–Asia combination  
+      
+      # Adapt title for Europe–Asia combination
       if ((input$type_v1 == "Field") &&
           (input$type_v2 == "Field") &&
           # Europe
-          ((
+          (((
             input$range_longitude_v1[1] == -30 &&
             input$range_longitude_v1[2] == 40 &&
             input$range_latitude_v1[1] == 30 &&
@@ -11577,27 +11577,26 @@ server <- function(input, output, session) {
             input$range_latitude_v1[1] == 5 &&
             input$range_latitude_v1[2] == 80
           )
-          )) {
-        
-        
-      p <- p + labs(title = NA, subtitle = NA) +
-        patchwork::plot_annotation(
-          title = ifelse(titles$map_title != " ", titles$map_title, NULL),
-          subtitle = ifelse(titles$map_subtitle != " ", titles$map_subtitle, NULL),
-          theme = theme(
-            plot.title = ggtext::element_textbox_simple(
-              size = titles$map_title_size,
-              face = "bold",
-              margin = margin(0, 0, 5, 0)
-            ),
-            plot.subtitle = ggtext::element_textbox_simple(
-              size = titles$map_title_size / 1.3,
-              face = "plain",
-              margin = margin(15, 0, 0, 0)
-            ),
-            axis.text = element_text(size = titles$map_title_size / 1.6)
           )
-        )
+          )) {
+        p <- p + labs(title = NA, subtitle = NA) +
+          patchwork::plot_annotation(
+            title = ifelse(titles$map_title != " ", titles$map_title, NULL),
+            subtitle = ifelse(titles$map_subtitle != " ", titles$map_subtitle, NULL),
+            theme = theme(
+              plot.title = ggtext::element_textbox_simple(
+                size = titles$map_title_size,
+                face = "bold",
+                margin = margin(0, 0, 5, 0)
+              ),
+              plot.subtitle = ggtext::element_textbox_simple(
+                size = titles$map_title_size / 1.3,
+                face = "plain",
+                margin = margin(15, 0, 0, 0)
+              ),
+              axis.text = element_text(size = titles$map_title_size / 1.6)
+            )
+          )
       }
       
       return(p)

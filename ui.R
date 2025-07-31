@@ -3862,14 +3862,24 @@ ui <- navbarPage(
                                             
                                             #Choose a correlation method 
                                             # This radio button is linked to radio buttons with inputId = "cor_method_map_data" and "cor_method_ts"
-                                            radioButtons(inputId  = "cor_method_map",
-                                                         label    = "Choose a correlation method:",
-                                                         choices  = c("pearson", "spearman"),
-                                                         selected = "pearson" , inline = TRUE),
-                                            withSpinner(ui_element = plotOutput("correlation_map", height = "auto", dblclick = "map_dblclick3", brush = brushOpts(id = "map_brush3",resetOnNew = TRUE)),
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height),
+                                            radioButtons(
+                                              inputId  = "cor_method_map",
+                                              label    = "Choose a correlation method:",
+                                              choices  = c("pearson", "spearman"),
+                                              selected = "pearson" ,
+                                              inline = TRUE
+                                            ),
+                                            withSpinner(
+                                              ui_element = plotOutput(
+                                                "correlation_map",
+                                                height = "auto",
+                                                dblclick = "map_dblclick3",
+                                                brush = brushOpts(id = "map_brush3", resetOnNew = TRUE)
+                                              ),
+                                              image = spinner_image,
+                                              image.width = spinner_width,
+                                              image.height = spinner_height
+                                            ), 
                                             
                                             #Easter Leaves
                                             uiOutput(outputId = "leaves", inline = TRUE),
