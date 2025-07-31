@@ -4528,7 +4528,7 @@ server <- function(input, output, session) {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years3",
-        label = paste("Select the range of years (", year_range_cor()[1], "-", year_range_cor()[2], ")"),
+        label = paste("Select the range of years (", year_range_cor()[7], "-", year_range_cor()[8], ")"),
         value = year_range_cor()[1:2]
       )
     }
@@ -10760,6 +10760,8 @@ server <- function(input, output, session) {
         variable2_source = input$source_v2,
         variable1_data_filepath = input$user_file_v1$datapath,
         variable2_data_filepath = input$user_file_v2$datapath,
+        variable1_name = input$user_variable_v1,
+        variable2_name = input$user_variable_v2,
         variable1_lag = input$lagyears_v1_cor,
         variable2_lag = input$lagyears_v2_cor
       )

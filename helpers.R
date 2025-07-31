@@ -4191,56 +4191,158 @@ extract_year_range = function(variable1_source,
                               variable2_source,
                               variable1_data_filepath,
                               variable2_data_filepath,
+                              variable1_name = NULL,
+                              variable2_name = NULL,
                               variable1_lag = 0,
                               variable2_lag = 0) {
-  # Set initial values of V1_min/max and V2_min/max to ModE-RA defaults
-  V1_min = 1422
-  V1_max = 2008
-  V2_min = 1422
-  V2_max = 2008
   
-  # Set V1_min/max from user data
-  if (variable1_source == "User data" &
-      !is.null(variable1_data_filepath)) {
-    if (grepl(".xls", variable1_data_filepath, fixed = TRUE) == TRUE) {
-      years = read_excel(variable1_data_filepath, range = cell_cols("A"))
-      V1_min = min(years)
-      V1_max = max(years)
+  # Default values
+  V1_min = 1422; V1_max = 2008
+  V2_min = 1422; V2_max = 2008
+  V1_min_tot = 1422; V1_max_tot = 2008
+  V2_min_tot = 1422; V2_max_tot = 2008
+  
+  # Helper function to extract full and variable-specific year ranges
+  get_year_ranges <- function(filepath, variable_name) {
+    if (is.null(filepath)) return(list(var = NULL, all = NULL))
+    
+    # Read file
+    if (grepl(".xls", filepath, fixed = TRUE)) {
+      df <- read_excel(filepath)
+    } else if (grepl(".csv", filepath, fixed = TRUE)) {
+      df <- read_csv(filepath, show_col_types = FALSE)
+    } else return(list(var = NULL, all = NULL))
+    
+    # Identify Year column
+    year_col <- names(df)[tolower(names(df)) == "year"]
+    if (length(year_col) != 1) return(list(var = NULL, all = NULL))
+    df$Year <- as.numeric(df[[year_col]])
+    
+    # Full year range
+    all_years <- df$Year[!is.na(df$Year)]
+    range_all <- if (length(all_years) > 0) c(min(all_years), max(all_years)) else NULL
+    
+    # Year range for selected variable
+    if (!is.null(variable_name) && variable_name %in% names(df)) {
+      valid_years <- df$Year[!is.na(df[[variable_name]])]
+      range_var <- if (length(valid_years) > 0) c(min(valid_years), max(valid_years)) else NULL
+    } else {
+      range_var <- NULL
     }
-    else if (grepl(".csv", variable1_data_filepath, fixed = TRUE) == TRUE) {
-      years = read.csv(variable1_data_filepath)[, 1]
-      V1_min = min(years)
-      V1_max = max(years)
+    
+    return(list(var = range_var, all = range_all))
+  }
+  
+  # Variable 1
+  if (variable1_source == "User data") {
+    ranges1 <- get_year_ranges(variable1_data_filepath, variable1_name)
+    if (!is.null(ranges1$var)) {
+      V1_min <- ranges1$var[1]
+      V1_max <- ranges1$var[2]
+    }
+    if (!is.null(ranges1$all)) {
+      V1_min_tot <- ranges1$all[1]
+      V1_max_tot <- ranges1$all[2]
     }
   }
   
-  # Set V2_min/max from user data
-  if (variable2_source == "User data" &
-      !is.null(variable2_data_filepath)) {
-    if (grepl(".xls", variable2_data_filepath, fixed = TRUE) == TRUE) {
-      years = read_excel(variable2_data_filepath, range = cell_cols("A"))
-      V2_min = min(years)
-      V2_max = max(years)
+  # Variable 2
+  if (variable2_source == "User data") {
+    ranges2 <- get_year_ranges(variable2_data_filepath, variable2_name)
+    if (!is.null(ranges2$var)) {
+      V2_min <- ranges2$var[1]
+      V2_max <- ranges2$var[2]
     }
-    else if (grepl(".csv", variable2_data_filepath, fixed = TRUE) == TRUE) {
-      years = read.csv(variable2_data_filepath)[, 1]
-      V2_min = min(years)
-      V2_max = max(years)
+    if (!is.null(ranges2$all)) {
+      V2_min_tot <- ranges2$all[1]
+      V2_max_tot <- ranges2$all[2]
     }
   }
   
-  # Adjust V_min/max for lag years
-  V1_min_adjusted = V1_min - variable1_lag
-  V1_max_adjusted = V1_max - variable1_lag
-  V2_min_adjusted = V2_min - variable2_lag
-  V2_max_adjusted = V2_max - variable2_lag
+  # Apply lag
+  V1_min_adjusted <- V1_min - variable1_lag
+  V1_max_adjusted <- V1_max - variable1_lag
+  V2_min_adjusted <- V2_min - variable2_lag
+  V2_max_adjusted <- V2_max - variable2_lag
   
-  # Find shared year range
-  YR_min = max(c(V1_min_adjusted, V2_min_adjusted))
-  YR_max = min(c(V1_max_adjusted, V2_max_adjusted))
+  # Shared (overlapping) range after lag
+  YR_min <- max(c(V1_min_adjusted, V2_min_adjusted))
+  YR_max <- min(c(V1_max_adjusted, V2_max_adjusted))
   
-  return(c(YR_min, YR_max, V1_min, V1_max, V2_min, V2_max))
-}  
+  # Return all three types of year ranges
+  return(c(
+    V1_min,     # [1]
+    V1_max,     # [2]
+    V2_min,     # [3]
+    V2_max,     # [4]
+    
+    YR_min,     # [5]
+    YR_max,     # [6]
+    
+    V1_min_tot, # [7]
+    V1_max_tot, # [8]
+    V2_min_tot, # [9]
+    V2_max_tot  # [10]
+  ))
+}
+
+
+# extract_year_range = function(variable1_source,
+#                               variable2_source,
+#                               variable1_data_filepath,
+#                               variable2_data_filepath,
+#                               variable1_name = NULL,
+#                               variable2_name = NULL,
+#                               variable1_lag = 0,
+#                               variable2_lag = 0) {
+#   # Set initial values of V1_min/max and V2_min/max to ModE-RA defaults
+#   V1_min = 1422
+#   V1_max = 2008
+#   V2_min = 1422
+#   V2_max = 2008
+#   
+#   # Set V1_min/max from user data
+#   if (variable1_source == "User data" &
+#       !is.null(variable1_data_filepath)) {
+#     if (grepl(".xls", variable1_data_filepath, fixed = TRUE) == TRUE) {
+#       years = read_excel(variable1_data_filepath, range = cell_cols("A"))
+#       V1_min = min(years)
+#       V1_max = max(years)
+#     }
+#     else if (grepl(".csv", variable1_data_filepath, fixed = TRUE) == TRUE) {
+#       years = read.csv(variable1_data_filepath)[, 1]
+#       V1_min = min(years)
+#       V1_max = max(years)
+#     }
+#   }
+#   
+#   # Set V2_min/max from user data
+#   if (variable2_source == "User data" &
+#       !is.null(variable2_data_filepath)) {
+#     if (grepl(".xls", variable2_data_filepath, fixed = TRUE) == TRUE) {
+#       years = read_excel(variable2_data_filepath, range = cell_cols("A"))
+#       V2_min = min(years)
+#       V2_max = max(years)
+#     }
+#     else if (grepl(".csv", variable2_data_filepath, fixed = TRUE) == TRUE) {
+#       years = read.csv(variable2_data_filepath)[, 1]
+#       V2_min = min(years)
+#       V2_max = max(years)
+#     }
+#   }
+#   
+#   # Adjust V_min/max for lag years
+#   V1_min_adjusted = V1_min - variable1_lag
+#   V1_max_adjusted = V1_max - variable1_lag
+#   V2_min_adjusted = V2_min - variable2_lag
+#   V2_max_adjusted = V2_max - variable2_lag
+#   
+#   # Find shared year range
+#   YR_min = max(c(V1_min_adjusted, V2_min_adjusted))
+#   YR_max = min(c(V1_max_adjusted, V2_max_adjusted))
+#   
+#   return(c(YR_min, YR_max, V1_min, V1_max, V2_min, V2_max))
+# }  
 
 
 #' (Regression/Correlation) Create User data Subset
