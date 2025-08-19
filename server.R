@@ -14288,7 +14288,7 @@ server <- function(input, output, session) {
   observe({
     if (!is.na(input$ref_period_sg_6)) {
       updateNumericRangeInput(
-        inputId = "ref_period_sg_6",
+        inputId = "ref_period_6",
         value   = c(input$ref_period_sg_6, input$ref_period_sg_6)
       )
     }
