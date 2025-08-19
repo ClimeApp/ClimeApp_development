@@ -14195,25 +14195,7 @@ server <- function(input, output, session) {
   
   updateNumericInputRange1("lagyears_v1_cor", -100, 100)
   updateNumericInputRange1("lagyears_v2_cor", -100, 100)
-  
-  # updateNumericInputRange1("fad_year", 1422, 2008)
-  # updateNumericInputRange1("fad_year2", 1422, 2008)
-  # updateNumericInputRange1("fad_year3", 1422, 2008)
-  # updateNumericInputRange1("fad_year4", 1422, 2008)
-  # updateNumericInputRange1("fad_year5", 1422, 2008)
-  # updateNumericInputRange1("reg_resi_year", 1422, 2008)
-  # updateNumericInputRange1("range_years_sg", 1422, 2008)
-  # updateNumericInputRange1("ref_period_sg", 1422, 2008)
-  # updateNumericInputRange1("ref_period_sg2", 1422, 2008)
-  # updateNumericInputRange1("ref_period_sg_v1", 1422, 2008)
-  # updateNumericInputRange1("ref_period_sg_v2", 1422, 2008)
-  # updateNumericInputRange1("ref_period_sg_iv", 1422, 2008)
-  # updateNumericInputRange1("ref_period_sg_dv", 1422, 2008)
-  # updateNumericInputRange1("ref_period_sg5", 1422, 2008)
-  # updateNumericInputRange1("ref_period_sg6", 1422, 2008)
-  # updateNumericInputRange1("year_MES", 1422, 2008)
-  
-  
+
   #Updates Values outside of min / max (numericRangeInput)
   updateNumericRangeInputSafe <- function(inputId, minValue, maxValue, skip_if = NULL) {
     observe({
@@ -14299,6 +14281,15 @@ server <- function(input, output, session) {
       updateNumericRangeInput(
         inputId = "ref_period2",
         value   = c(input$ref_period_sg2, input$ref_period_sg2)
+      )
+    }
+  })
+  
+  observe({
+    if (!is.na(input$ref_period_sg_6)) {
+      updateNumericRangeInput(
+        inputId = "ref_period_6",
+        value   = c(input$ref_period_sg_6, input$ref_period_sg_6)
       )
     }
   })
