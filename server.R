@@ -24,137 +24,6 @@ server <- function(input, output, session) {
   SDratio_data = reactiveVal()
   SDratio_data_id = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current SD data
   
-  # Preparations in the Server (Hidden options) ----
-  ### Easter Eggs ----
-  
-  # Get the current month and day
-  current_month_day <- format(Sys.Date(), "%m-%d")
-  
-  # Default logo
-  logo_src <- 'pics/Logo_ClimeApp_Weiss_Font1.png'
-  logo_id <- "ClimeApp"
-  logo_height <- "75px"
-  logo_width <- "110px"
-  logo_style <- "margin-right: 5px; display: inline"
-  
-  # Check for special occasions
-  if (current_month_day >= "01-01" && current_month_day <= "01-03") {
-    # New Year Egg
-    logo_src <- 'pics/Clim-year.png'
-    logo_id <- "Clim-year"
-    logo_width <- "142px"
-  } else if ((current_month_day >= "03-22" && current_month_day <= "04-09")
-             #omitted the OR (current_month_day >= "04-11" && current_month_day <= "04-25")
-  ) {
-    # Easter Egg
-    logo_src <- 'pics/Clim-ster.png'
-    logo_id <- "Clim-ster"
-    logo_width <- "142px"
-  } else if (current_month_day >= "04-10" && current_month_day <= "04-10") {
-    # International Volcano Day Egg
-    logo_src <- 'pics/Clim-vol.png'
-    logo_id <- "Clim-vol"
-    logo_width <- "142px"
-  } else if (current_month_day >= "05-02" && current_month_day <= "05-02") {
-    # Harry Potter Egg
-    logo_src <- 'pics/Clim-bledore.png'
-    logo_id <- "Clim-bledore"
-    logo_width <- "142px"
-  } else if (current_month_day >= "05-04" && current_month_day <= "05-04") {
-    # May the Fourth Egg
-    logo_src <- 'pics/Clim-wars.png'
-    logo_id <- "Clim-wars"
-    logo_width <- "142px"
-  } else if (current_month_day >= "05-15" && current_month_day <= "05-15") {
-    # World Climate Day Egg
-    logo_src <- 'pics/Clim-day.png'
-    logo_id <- "Clim-day"
-    logo_width <- "142px"
-  } else if (current_month_day >= "09-22" && current_month_day <= "09-22") {
-    # Lord of The Rings Day Egg
-    logo_src <- 'pics/Clim-lord.png'
-    logo_id <- "Clim-lord"
-    logo_width <- "142px"
-  } else if (current_month_day >= "10-15" && current_month_day <= "11-02") {
-    # Halloween Egg
-    logo_src <- 'pics/Clim-ween.png'
-    logo_id <- "Clim-ween"
-    logo_width <- "142px"
-  } else if (current_month_day >= "12-01" && current_month_day <= "12-31") {
-    # Christmas Egg
-    logo_src <- 'pics/Clim-mas.png'
-    logo_id <- "Clim-mas"
-    logo_width <- "142px"
-  }
-  
-  ### Logos ----
-  
-  # Render the logo
-  output$logo_output <- renderUI({
-    img(src = logo_src, id = logo_id, height = logo_height, width = logo_width, style = logo_style)
-  })
-  
-  # Logo 2
-  logo2_src <- 'pics/Font_ClimeApp_Vers2_weiss.png'
-  logo2_id <- "ClimeAppText"
-  logo2_height <- "75px"
-  logo2_width <- "98px"
-  logo2_style <- "margin-right: 5px; display: inline; margin-left: -10px; display: inline"
-  
-  output$logo_output2 <- renderUI({
-    if (logo_id != "ClimeApp") {
-      img(src = logo2_src, id = logo2_id, height = logo2_height, width = logo2_width, style = logo2_style)
-    }
-  })
-  
-  output$vices <- renderUI({
-    if (input$location == "VICES") {
-      img(src = 'pics/no_image.jpg', id = "img_vices", height = "450", width = "600", style = "display: block; margin: 0 auto;")
-    } else {
-      NULL
-    }
-  })
-  
-  output$dev_team <- renderUI({
-    if (input$title1_input == "ClimeApp") {
-      img(src = 'pics/zero_image.jpg', id = "img_dev_team", height = "450", width = "600", style = "display: block; margin: 0 auto;")
-    } else {
-      NULL
-    }
-  })
-  
-  output$hope <- renderUI({
-    if (input$title1_input_reg_res == "Hope") {
-      img(src = 'pics/hope.png', id = "img_hope", height = "450", style = "display: block; margin: 0 auto;")
-    } else {
-      NULL
-    }
-  })
-  
-  output$ruebli <- renderUI({
-    if (input$title2_input == "Rüebli") {
-      img(src = 'pics/zero_ruebli.jpg', id = "img_miau", height = "600", width = "338", style = "display: block; margin: 0 auto;")
-    } else {
-      NULL
-    }
-  })
-  
-  output$keep_calm <- renderUI({
-    if (input$title1_input_ts3 == "Keep Calm") {
-      img(src = 'pics/KCAUCA.png', id = "img_britannia", height = "514", width = "488", style = "display: block; margin: 0 auto;")
-    } else {
-      NULL
-    }
-  })
-  
-  output$leaves <- renderUI({
-    if (input$title1_input3 == "Leaves from the Vine") {
-      img(src = 'pics/LeavesFromTheVine.jpg', id = "img_leaves", height = "450", width = "600", style = "display: block; margin: 0 auto;")
-    } else {
-      NULL
-    }
-  })
-  
   ### Panel Visibility ----
   
   # Add logic to toggle the visibility of the specific tabPanel (Correlation Map) based on radio button values ("Timeseries")
@@ -280,601 +149,111 @@ server <- function(input, output, session) {
   })
   
   ### Hiding, showing, enabling/unabling certain inputs ----
+  toggle_slide <- function(id, condition, time = 0.5) {
+    shinyjs::toggle(
+      id        = id,
+      condition = condition,
+      anim      = TRUE,
+      animType  = "slide",
+      time      = time
+    )
+    }
+  
   ####### Anomalies ----
-  
-  # Side Bar Panel
-  observe({shinyjs::toggle(id = "season",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$season_selected == "Custom",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_sec_map_download",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$ref_map_mode != "None",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "range_years_sg",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$single_year == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "range_years",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$single_year == FALSE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "ref_period_sg",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$ref_single_year == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "ref_period",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$ref_single_year == FALSE,
-                           asis = FALSE)})
-  
-  # Customization
-  ### Anomalies Maps
-  
-  observe({shinyjs::toggle(id = "hidden_custom_maps",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_map == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_axis",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$axis_mode == "Fixed",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_title",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$title_mode == "Custom",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_features",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_features == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_points",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$feature == "Point",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_highlights",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$feature == "Highlight",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_statistics",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$enable_custom_statistics == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_SD_ratio",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_statistic == "SD ratio",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_download",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$download_options == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_geo_options",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_topo == TRUE,
-                           asis = FALSE)})
-  
-  
-  
-  ### Anomalies TS
-  
-  observe({shinyjs::toggle(id = "hidden_custom_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_ts == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_title_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$title_mode_ts == "Custom",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_key_position_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$show_key_ts == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_statistics_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$enable_custom_statistics_ts == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_moving_average_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_average_ts == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_percentile_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_percentile_ts == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_moving_percentile_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_average_ts == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_features_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_features_ts == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_points_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$feature_ts == "Point",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_highlights_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$feature_ts == "Highlight",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_line_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$feature_ts == "Line",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_download_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$download_options_ts == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "highlight_label_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$show_highlight_on_legend_ts == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "line_label_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$show_line_on_legend_ts == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_axis_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$axis_mode_ts == "Fixed",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_xaxis_interval_ts",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$show_ticks_ts == TRUE,
-                           asis = FALSE)})
-  
+  observe({
+    req(input$nav1 == "tab1")
+    
+    # --- Side Bar Panel ---
+    toggle_slide("season", input$season_selected == "Custom")
+    toggle_slide("hidden_sec_map_download", input$ref_map_mode != "None")
+    toggle_slide("range_years_sg", isTRUE(input$single_year))
+    toggle_slide("range_years", isFALSE(input$single_year))
+    toggle_slide("ref_period_sg", isTRUE(input$ref_single_year))
+    toggle_slide("ref_period", isFALSE(input$ref_single_year))
+    
+    # --- Anomalies Maps ---
+    toggle_slide("hidden_custom_maps", isTRUE(input$custom_map))
+    toggle_slide("hidden_custom_axis", input$axis_mode == "Fixed")
+    toggle_slide("hidden_custom_title", input$title_mode == "Custom")
+    toggle_slide("hidden_custom_features", isTRUE(input$custom_features))
+    toggle_slide("hidden_custom_points", input$feature == "Point")
+    toggle_slide("hidden_custom_highlights", input$feature == "Highlight")
+    toggle_slide("hidden_custom_statistics", isTRUE(input$enable_custom_statistics))
+    toggle_slide("hidden_SD_ratio", input$custom_statistic == "SD ratio")
+    toggle_slide("hidden_download", isTRUE(input$download_options))
+    toggle_slide("hidden_geo_options", isTRUE(input$custom_topo))
+    
+    # --- Anomalies TS ---
+    toggle_slide("hidden_custom_ts", isTRUE(input$custom_ts))
+    toggle_slide("hidden_custom_title_ts", input$title_mode_ts == "Custom")
+    toggle_slide("hidden_key_position_ts", isTRUE(input$show_key_ts))
+    toggle_slide("hidden_custom_statistics_ts", isTRUE(input$enable_custom_statistics_ts))
+    toggle_slide("hidden_moving_average_ts", isTRUE(input$custom_average_ts))
+    toggle_slide("hidden_percentile_ts", isTRUE(input$custom_percentile_ts))
+    toggle_slide("hidden_moving_percentile_ts", isTRUE(input$custom_average_ts))
+    toggle_slide("hidden_custom_features_ts", isTRUE(input$custom_features_ts))
+    toggle_slide("hidden_custom_points_ts", input$feature_ts == "Point")
+    toggle_slide("hidden_custom_highlights_ts", input$feature_ts == "Highlight")
+    toggle_slide("hidden_custom_line_ts", input$feature_ts == "Line")
+    toggle_slide("hidden_download_ts", isTRUE(input$download_options_ts))
+    toggle_slide("highlight_label_ts", isTRUE(input$show_highlight_on_legend_ts))
+    toggle_slide("line_label_ts", isTRUE(input$show_line_on_legend_ts))
+    toggle_slide("hidden_custom_axis_ts", input$axis_mode_ts == "Fixed")
+    toggle_slide("hidden_xaxis_interval_ts", isTRUE(input$show_ticks_ts))
+    })
   
   ####### Composite ----
-  
-  # Side Bar
-  observe({shinyjs::toggle(id = "optional2a",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$mode_selected2 == "Fixed reference",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "optional2b",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$mode_selected2 == "X years prior",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "optional2c",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$enter_upload2 == "Manual",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "optional2d",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$enter_upload2 == "Upload",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "optional2e",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = is.null(input$upload_file2),
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "season2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$season_selected2 == "Custom",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "optional2f",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$mode_selected2 == "Custom reference",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "optional2g",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$enter_upload2a == "Manual",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "optional2h",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$enter_upload2a == "Upload",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "optional2i",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = is.null(input$upload_file2a),
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "ref_period_sg2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$ref_single_year2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "ref_period2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$ref_single_year2 == FALSE,
-                           asis = FALSE)})
-  
-  # Main Panel
-  observe({shinyjs::toggle(id = "hidden_sec_map_download2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$ref_map_mode2 != "None",
-                           asis = FALSE)})
-  
-  # Customization
-  ### Composites Maps
-  
-  observe({shinyjs::toggle(id = "hidden_custom_maps2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_map2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_axis2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$axis_mode2 == "Fixed",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_title2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$title_mode2 == "Custom",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_features2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_features2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_points2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$feature2 == "Point",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_highlights2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$feature2 == "Highlight",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_statistics2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$enable_custom_statistics2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_sign_match2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_statistic2 == "% sign match",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_SD_ratio2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_statistic2 == "SD ratio",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "custom_anomaly_years2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$mode_selected2 == "Custom reference",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_download2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$download_options2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_geo_options2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_topo2 == TRUE,
-                           asis = FALSE)})
-  
-  ### Composites TS
-  
-  observe({shinyjs::toggle(id = "hidden_custom_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_ts2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_title_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$title_mode_ts2 == "Custom",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_key_position_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$show_key_ts2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_statistics_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$enable_custom_statistics_ts2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_percentile_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_percentile_ts2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_features_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$custom_features_ts2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_points_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$feature_ts2 == "Point",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_highlights_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$feature_ts2 == "Highlight",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_line_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$feature_ts2 == "Line",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "custom_anomaly_years2b",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$mode_selected2 == "Custom reference",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_download_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$download_options_ts2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "highlight_label_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$show_highlight_on_legend_ts2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "line_label_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$show_line_on_legend_ts2 == TRUE,
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_custom_axis_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$axis_mode_ts2 == "Fixed",
-                           asis = FALSE)})
-  
-  observe({shinyjs::toggle(id = "hidden_xaxis_interval_ts2",
-                           anim = TRUE,
-                           animType = "slide",
-                           time = 0.5,
-                           selector = NULL,
-                           condition = input$show_ticks_ts2 == TRUE,
-                           asis = FALSE)})
+  observe({
+    req(input$nav1 == "tab2")
+    
+    # --- Side Bar Panel ---
+    toggle_slide("optional2a", input$mode_selected2 == "Fixed reference")
+    toggle_slide("optional2b", input$mode_selected2 == "X years prior")
+    toggle_slide("optional2c", input$enter_upload2 == "Manual")
+    toggle_slide("optional2d", input$enter_upload2 == "Upload")
+    toggle_slide("optional2e", is.null(input$upload_file2))
+    toggle_slide("season2", input$season_selected2 == "Custom")
+    toggle_slide("optional2f", input$mode_selected2 == "Custom reference")
+    toggle_slide("optional2g", input$enter_upload2a == "Manual")
+    toggle_slide("optional2h", input$enter_upload2a == "Upload")
+    toggle_slide("optional2i", is.null(input$upload_file2a))
+    toggle_slide("ref_period_sg2", isTRUE(input$ref_single_year2))
+    toggle_slide("ref_period2", isFALSE(input$ref_single_year2))
+    
+    # --- Main Panel ---
+    toggle_slide("hidden_sec_map_download2", input$ref_map_mode2 != "None")
+    
+    # --- Composites Maps ---
+    toggle_slide("hidden_custom_maps2", isTRUE(input$custom_map2))
+    toggle_slide("hidden_custom_axis2", input$axis_mode2 == "Fixed")
+    toggle_slide("hidden_custom_title2", input$title_mode2 == "Custom")
+    toggle_slide("hidden_custom_features2", isTRUE(input$custom_features2))
+    toggle_slide("hidden_custom_points2", input$feature2 == "Point")
+    toggle_slide("hidden_custom_highlights2", input$feature2 == "Highlight")
+    toggle_slide("hidden_custom_statistics2", isTRUE(input$enable_custom_statistics2))
+    toggle_slide("hidden_sign_match2", input$custom_statistic2 == "% sign match")
+    toggle_slide("hidden_SD_ratio2", input$custom_statistic2 == "SD ratio")
+    toggle_slide("custom_anomaly_years2", input$mode_selected2 == "Custom reference")
+    toggle_slide("hidden_download2", isTRUE(input$download_options2))
+    toggle_slide("hidden_geo_options2", isTRUE(input$custom_topo2))
+    
+    # --- Composites TS ---
+    toggle_slide("hidden_custom_ts2", isTRUE(input$custom_ts2))
+    toggle_slide("hidden_custom_title_ts2", input$title_mode_ts2 == "Custom")
+    toggle_slide("hidden_key_position_ts2", isTRUE(input$show_key_ts2))
+    toggle_slide("hidden_custom_statistics_ts2", isTRUE(input$enable_custom_statistics_ts2))
+    toggle_slide("hidden_percentile_ts2", isTRUE(input$custom_percentile_ts2))
+    toggle_slide("hidden_custom_features_ts2", isTRUE(input$custom_features_ts2))
+    toggle_slide("hidden_custom_points_ts2", input$feature_ts2 == "Point")
+    toggle_slide("hidden_custom_highlights_ts2", input$feature_ts2 == "Highlight")
+    toggle_slide("hidden_custom_line_ts2", input$feature_ts2 == "Line")
+    toggle_slide("custom_anomaly_years2b", input$mode_selected2 == "Custom reference")
+    toggle_slide("hidden_download_ts2", isTRUE(input$download_options_ts2))
+    toggle_slide("highlight_label_ts2", isTRUE(input$show_highlight_on_legend_ts2))
+    toggle_slide("line_label_ts2", isTRUE(input$show_line_on_legend_ts2))
+    toggle_slide("hidden_custom_axis_ts2", input$axis_mode_ts2 == "Fixed")
+    toggle_slide("hidden_xaxis_interval_ts2", isTRUE(input$show_ticks_ts2))
+  })
   
   
   ####### Correlation ----
@@ -9362,7 +8741,6 @@ server <- function(input, output, session) {
         map_custom_title1 = input$title1_input,
         map_custom_title2 = input$title2_input,
         ts_custom_title1 = input$title1_input_ts,
-        ts_custom_title2 = NA,
         map_title_size = input$title_size_input,
         ts_title_size = input$title_size_input_ts,
         ts_data = timeseries_data()
@@ -9375,36 +8753,27 @@ server <- function(input, output, session) {
   
   
   # Add value to custom title
-  
-  # Step 1: Clear inputs when switching to "Default"
+  # Clear inputs when switching to "Default"
   observeEvent(input$title_mode, {
-    if (input$title_mode == "Default" || input$title_mode_ts == "Default") {
+    if (input$title_mode == "Default" ||
+        input$title_mode_ts == "Default") {
       updateTextInput(session, "title1_input", value = "")
       updateTextInput(session, "title2_input", value = "")
       updateTextInput(session, "title1_input_ts", value = "")
     }
   })
-
-  # Step 2: Fill updated default values after a short delay
+  # Refill with updated defaults after clearing
   observeEvent({
     input$title_mode
+    plot_titles()
   }, {
-    req(input$title_mode == "Default" || input$title_mode_ts == "Default")
-
-    invalidateLater(100, session)
-
+    req(input$title_mode == "Default" ||
+          input$title_mode_ts == "Default")
+    req(plot_titles())
     isolate({
-      titles <- plot_titles()
-      if (is.null(titles)) {
-        showNotification("Could not generate default titles — check your year range.", type = "error")
-        updateTextInput(session, "title1_input", value = "Invalid Title")
-        updateTextInput(session, "title2_input", value = "")
-        updateTextInput(session, "title1_input_ts", value = "")
-      } else {
-        updateTextInput(session, "title1_input", value = titles$map_title)
-        updateTextInput(session, "title2_input", value = titles$map_subtitle)
-        updateTextInput(session, "title1_input_ts", value = titles$ts_title)
-      }
+      updateTextInput(session, "title1_input", value = plot_titles()$map_title)
+      updateTextInput(session, "title2_input", value = plot_titles()$map_subtitle)
+      updateTextInput(session, "title1_input_ts", value = plot_titles()$ts_title)
     })
   })
   
@@ -9528,6 +8897,7 @@ server <- function(input, output, session) {
   }, height = function() {
     map_dimensions()[2]
   })
+  
   
   
   #Ref/Absolute/SD ratio Map
@@ -10089,7 +9459,6 @@ server <- function(input, output, session) {
         map_custom_title1 = input$title1_input2,
         map_custom_title2 = input$title2_input2,
         ts_custom_title1 = input$title1_input_ts2,
-        ts_custom_title2 = NA,
         map_title_size = input$title_size_input2,
         ts_title_size = input$title_size_input_ts2,
         ts_data = timeseries_data_2()
@@ -10101,36 +9470,27 @@ server <- function(input, output, session) {
   })
   
   # Add value to custom title (composites)
-  
-  # Step 1: Clear inputs when switching to "Default"
+  # Clear inputs when switching to "Default"
   observeEvent(input$title_mode2, {
-    if (input$title_mode2 == "Default" || input$title_mode_ts2 == "Default") {
+    if (input$title_mode2 == "Default" ||
+        input$title_mode_ts2 == "Default") {
       updateTextInput(session, "title1_input2", value = "")
       updateTextInput(session, "title2_input2", value = "")
       updateTextInput(session, "title1_input_ts2", value = "")
     }
   })
-  
-  # Step 2: After clearing, fill in updated values (in Default mode only)
+  # Refill with updated defaults after clearing
   observeEvent({
     input$title_mode2
+    plot_titles_composites()
   }, {
-    req(input$title_mode2 == "Default" || input$title_mode_ts2 == "Default")
-    
-    invalidateLater(100, session)
-    
+    req(input$title_mode2 == "Default" ||
+          input$title_mode_ts2 == "Default")
+    req(plot_titles_composites())
     isolate({
-      titles <- plot_titles_composites()
-      if (is.null(titles)) {
-        showNotification("Could not generate composite titles — check your year range.", type = "error")
-        updateTextInput(session, "title1_input2", value = "Invalid Title")
-        updateTextInput(session, "title2_input2", value = "")
-        updateTextInput(session, "title1_input_ts2", value = "")
-      } else {
-        updateTextInput(session, "title1_input2", value = titles$map_title)
-        updateTextInput(session, "title2_input2", value = titles$map_subtitle)
-        updateTextInput(session, "title1_input_ts2", value = titles$ts_title)
-      }
+      updateTextInput(session, "title1_input2", value = plot_titles_composites()$map_title)
+      updateTextInput(session, "title2_input2", value = plot_titles_composites()$map_subtitle)
+      updateTextInput(session, "title1_input_ts2", value = plot_titles_composites()$ts_title)
     })
   })
   
@@ -11121,25 +10481,23 @@ server <- function(input, output, session) {
   }) 
   
   # Add value to custom title
-  # Step 1: Clear inputs when switching to "Default"
+  # Clear inputs when switching to "Default"
   observeEvent(input$title_mode3, {
-    if (input$title_mode3 == "Default" || input$title_mode_ts3 == "Default") {
+    if (input$title_mode3 == "Default" ||
+        input$title_mode_ts3 == "Default") {
       updateTextInput(session, "title1_input3", value = "")
       updateTextInput(session, "title2_input3", value = "")
       updateTextInput(session, "title1_input_ts3", value = "")
     }
   })
-  
-  # Step 2: Refill with updated defaults after clearing
+  # Refill with updated defaults after clearing
   observeEvent({
     input$title_mode3
     plot_titles_cor()
   }, {
-    req(input$title_mode3 == "Default" || input$title_mode_ts3 == "Default")
+    req(input$title_mode3 == "Default" ||
+          input$title_mode_ts3 == "Default")
     req(plot_titles_cor())
-    
-    invalidateLater(100, session)
-    
     isolate({
       updateTextInput(session, "title1_input3", value = plot_titles_cor()$map_title)
       updateTextInput(session, "title2_input3", value = plot_titles_cor()$map_subtitle)
@@ -12242,24 +11600,20 @@ server <- function(input, output, session) {
   })
   
   # Add value to custom title
-  # Step 1: Clear inputs when switching to "Default"
+  # Clear inputs when switching to "Default"
   observeEvent(input$title_mode_reg_coeff, {
     if (input$title_mode_reg_coeff == "Default") {
       updateTextInput(session, "title1_input_reg_coeff", value = "")
       updateTextInput(session, "title2_input_reg_coeff", value = "")
     }
   })
-  
-  # Step 2: Fill with default titles after clearing
+  # Fill with default titles after clearing
   observeEvent({
     input$title_mode_reg_coeff
     plot_titles_reg_coeff()
   }, {
     req(input$title_mode_reg_coeff == "Default")
     req(plot_titles_reg_coeff())
-    
-    invalidateLater(100, session)
-    
     isolate({
       updateTextInput(session,
                       "title1_input_reg_coeff",
@@ -12305,24 +11659,20 @@ server <- function(input, output, session) {
   })
   
   # Add value to custom title
-  # Step 1: Clear the inputs when switching to "Default"
+  # Clear the inputs when switching to "Default"
   observeEvent(input$title_mode_reg_pval, {
     if (input$title_mode_reg_pval == "Default") {
       updateTextInput(session, "title1_input_reg_pval", value = "")
       updateTextInput(session, "title2_input_reg_pval", value = "")
     }
   })
-  
-  # Step 2: Refill inputs with updated defaults after clearing
+  # Refill inputs with updated defaults after clearing
   observeEvent({
     input$title_mode_reg_pval
     plot_titles_reg_pval()
   }, {
     req(input$title_mode_reg_pval == "Default")
     req(plot_titles_reg_pval())
-    
-    invalidateLater(100, session)
-    
     isolate({
       updateTextInput(session,
                       "title1_input_reg_pval",
@@ -12369,7 +11719,7 @@ server <- function(input, output, session) {
   })
   
   # Add value to custom title
-  # Step 1: Clear title inputs when switching to "Default"
+  # Clear title inputs when switching to "Default"
   observeEvent(input$title_mode_reg_res, {
     if (input$title_mode_reg_res == "Default") {
       updateTextInput(session, "title1_input_reg_res", value = "")
@@ -12377,20 +11727,17 @@ server <- function(input, output, session) {
     }
   })
   
-  # Step 2: Refill inputs with defaults after clearing
+  # Refill inputs with defaults after clearing
   observeEvent({
     input$title_mode_reg_res
     plot_titles_reg_res()
   }, {
     req(input$title_mode_reg_res == "Default")
     req(plot_titles_reg_res())
-    
-    invalidateLater(100, session)
-    
     isolate({
-      updateTextInput(session, "title1_input_reg_res",
-                      value = plot_titles_reg_res()$map_title_res)
-      updateTextInput(session, "title2_input_reg_res",
+      updateTextInput(session, "title1_input_reg_res", value = plot_titles_reg_res()$map_title_res)
+      updateTextInput(session,
+                      "title2_input_reg_res",
                       value = plot_titles_reg_res()$map_subtitle_res)
     })
   })
@@ -12431,31 +11778,23 @@ server <- function(input, output, session) {
   })
   
   # Add value to custom title
-  # Step 1: Clear inputs when switching to "Default"
+  # Clear inputs when switching to "Default"
   observeEvent(input$title_mode_ts4, {
     if (input$title_mode_ts4 == "Default") {
       updateTextInput(session, "title1_input_ts4", value = "")
       updateTextInput(session, "title2_input_ts4", value = "")
     }
   })
-  
-  # Step 2: Refill inputs with updated defaults after clearing
+  # Refill inputs with updated defaults after clearing
   observeEvent({
     input$title_mode_ts4
     plot_titles_reg_ts()
   }, {
     req(input$title_mode_ts4 == "Default")
     req(plot_titles_reg_ts())
-    
-    invalidateLater(100, session)
-    
     isolate({
-      updateTextInput(session,
-                      "title1_input_ts4",
-                      value = plot_titles_reg_ts()$ts_title)
-      updateTextInput(session,
-                      "title2_input_ts4",
-                      value = plot_titles_reg_ts()$ts_subtitle)
+      updateTextInput(session, "title1_input_ts4", value = plot_titles_reg_ts()$ts_title)
+      updateTextInput(session, "title2_input_ts4", value = plot_titles_reg_ts()$ts_subtitle)
     })
   })
   
@@ -13701,26 +13040,22 @@ server <- function(input, output, session) {
   })
   
   
-  # # Add value to custom title
-  
-  # Step 1: When switching to Default, reset the inputs to blank
+  # Add value to custom title
+  # When switching to Default, reset the inputs to blank
   observeEvent(input$title_mode_6, {
     if (input$title_mode_6 != "Custom") {
       updateTextInput(session, "title1_input_6", value = "")
       updateTextInput(session, "y_label_6", value = "")
     }
   })
-  
-  # Step 2: Fill the fields after they are blanked out
+  # Fill the fields after they are blanked out
   observeEvent({
     input$title_mode_6
     input$ME_statistic_6
     input$ME_variable_6
     input$source_sea_6
   }, {
-    req(input$title_mode_6 != "Custom")  # Only do this in Default mode
-    # Delay by one reactive tick to allow inputs to update
-    invalidateLater(100, session)
+    req(input$title_mode_6 != "Custom")
     isolate({
       updateTextInput(session, "title1_input_6", value = ts_title())
       updateTextInput(session, "y_label_6", value = ts_y_label())

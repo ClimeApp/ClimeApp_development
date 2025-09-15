@@ -1,4 +1,50 @@
 # Helper Functions of ClimeApp 
+
+# Aus UI verschoben
+current_month_day <- format(Sys.Date(), "%m-%d")
+
+logo_src   <- 'pics/Logo_ClimeApp_Weiss_Font1.png'
+logo_id    <- "ClimeApp"
+logo_width <- "110px"
+
+if (current_month_day >= "01-01" && current_month_day <= "01-03") {
+  logo_src <- 'pics/Clim-year.png'
+  logo_id  <- "Clim-year"
+  logo_width <- "142px"
+} else if (current_month_day >= "03-22" && current_month_day <= "04-09") {
+  logo_src <- 'pics/Clim-ster.png'
+  logo_id  <- "Clim-ster"
+  logo_width <- "142px"
+} else if (current_month_day == "04-10") {
+  logo_src <- 'pics/Clim-vol.png'
+  logo_id  <- "Clim-vol"
+  logo_width <- "142px"
+} else if (current_month_day == "05-02") {
+  logo_src <- 'pics/Clim-bledore.png'
+  logo_id  <- "Clim-bledore"
+  logo_width <- "142px"
+} else if (current_month_day == "05-04") {
+  logo_src <- 'pics/Clim-wars.png'
+  logo_id  <- "Clim-wars"
+  logo_width <- "142px"
+} else if (current_month_day == "05-15") {
+  logo_src <- 'pics/Clim-day.png'
+  logo_id  <- "Clim-day"
+  logo_width <- "142px"
+} else if (current_month_day == "09-22") {
+  logo_src <- 'pics/Clim-lord.png'
+  logo_id  <- "Clim-lord"
+  logo_width <- "142px"
+} else if (current_month_day >= "10-15" && current_month_day <= "11-02") {
+  logo_src <- 'pics/Clim-ween.png'
+  logo_id  <- "Clim-ween"
+  logo_width <- "142px"
+} else if (current_month_day >= "12-01" && current_month_day <= "12-31") {
+  logo_src <- 'pics/Clim-mas.png'
+  logo_id  <- "Clim-mas"
+  logo_width <- "142px"
+}
+
 #### Internal Functions ####
 # (Functions used ONLY by other functions)
 

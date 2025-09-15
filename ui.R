@@ -11,14 +11,24 @@ ui <- navbarPage(
   
   useShinyjs(),  # Enable shinyjs
   
-  # --- Navbar title with logos and version ---
-  title = div(
-    style = "display: inline-flex; align-items: center; gap: 10px;",
-    uiOutput(outputId = "logo_output", inline = TRUE),
-    uiOutput(outputId = "logo_output2", inline = TRUE),
-    span("(v1.4)")
+  # shiny.tictoc: REMOVE later
+  tags$script(
+    src = "https://cdn.jsdelivr.net/gh/Appsilon/shiny.tictoc@v0.2.0/shiny-tic-toc.min.js"
   ),
   
+  # --- Navbar title with logos and version ---
+  title = div(
+    style = "display:inline-flex; align-items:center; gap:10px;",
+    tags$img(
+      src    = logo_src,
+      id     = logo_id,
+      height = "75px",
+      width  = logo_width,
+      style  = "height:75px; width:auto; margin-right:5px; display:inline-block;"
+    ),
+    span("(v1.4)")
+  ),
+
   # Global CSS injection for hiding Shiny errors
   tags$head(
     tags$style(HTML("
@@ -119,7 +129,9 @@ ui <- navbarPage(
         style = "margin-top: 20px; margin-bottom: 20px;"
       )
     ),
-  ), 
+  ),
+  
+  
   
   # --- Navbar styling and properties ---
   theme = bs_theme(version = 5, bootswatch = "united", primary = "#094030", navbar_bg = "#094030"),
@@ -521,7 +533,8 @@ ui <- navbarPage(
                                 label     = "Select the single year:",
                                 value     = NA,
                                 min       = 1422,
-                                max       = 2008)),
+                                max       = 2008,
+                                updateOn = "blur")),
                  
                  #Choose Season, Year or Months
                  radioButtons(inputId  = "season_selected",
@@ -560,7 +573,8 @@ ui <- navbarPage(
                                 label     = "Select the reference year:",
                                 value     = NA,
                                 min       = 1422,
-                                max       = 2008)),
+                                max       = 2008,
+                                updateOn = "blur")),
                  
                ), width = 12), br(),
                
@@ -670,9 +684,42 @@ ui <- navbarPage(
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
                                             
-                                            uiOutput(outputId = "vices", inline = TRUE),
-                                            uiOutput(outputId = "dev_team", inline = TRUE),
-                                            uiOutput(outputId = "ruebli", inline = TRUE),
+                                            conditionalPanel(
+                                              condition = "input.location == 'VICES'",
+                                              tags$img(
+                                                src = "pics/no_image.jpg",
+                                                id = "img_vices",
+                                                height = "450",
+                                                width = "600",
+                                                style = "display:block; margin:0 auto;",
+                                                loading = "lazy"
+                                              )
+                                            ),
+                                            
+                                            conditionalPanel(
+                                              condition = "input.title1_input == 'ClimeApp'",
+                                              tags$img(
+                                                src = "pics/zero_image.jpg",
+                                                id = "img_dev_team",
+                                                height = "450",
+                                                width = "600",
+                                                style = "display:block; margin:0 auto;",
+                                                loading = "lazy"
+                                              )
+                                            ),
+                                            
+                                            conditionalPanel(
+                                              condition = "input.title2_input == 'Rüebli'",
+                                              tags$img(
+                                                src = "pics/zero_ruebli.jpg",
+                                                id = "img_miau",
+                                                height = "600",
+                                                width = "338",
+                                                style = "display:block; margin:0 auto;",
+                                                loading = "lazy"
+                                              )
+                                            ),
+                                            
                                             
                                             #### Customization panels START ----       
                                             fluidRow(
@@ -737,17 +784,20 @@ ui <- navbarPage(
                                                                  
                                                                  textInput(inputId     = "title1_input",
                                                                            label       = "Custom map title:", 
-                                                                           width       = NULL),
+                                                                           width       = NULL,
+                                                                           updateOn = "blur"),
                                                                  
                                                                  textInput(inputId     = "title2_input",
                                                                            label       = "Custom map subtitle (e.g. Ref-Period)",
-                                                                           width       = NULL),
+                                                                           width       = NULL,
+                                                                           updateOn = "blur"),
                                                                  
                                                                  numericInput(inputId = "title_size_input",
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
-                                                                              max     = 40))),
+                                                                              max     = 40,
+                                                                              updateOn = "blur"))),
                                                            
                                                            br(), hr(),
                                                            
@@ -1045,13 +1095,15 @@ ui <- navbarPage(
                                                                            label       = "Custom plot title:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                           placeholder = "Custom title",
+                                                                           updateOn = "blur"),
                                                                  
                                                                  numericInput(inputId = "title_size_input_ts",
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
-                                                                              max     = 40)
+                                                                              max     = 40,
+                                                                              updateOn = "blur")
                                                                  )),
                                                            
                                                            radioButtons(inputId  = "axis_mode_ts",
@@ -1080,7 +1132,8 @@ ui <- navbarPage(
                                                                               label   = "Year axis intervals:",
                                                                               value   = 50,
                                                                               min     = 1,
-                                                                              max     = 500))),
+                                                                              max     = 500,
+                                                                              updateOn = "blur"))),
                                                            
                                                            checkboxInput(inputId = "show_key_ts",
                                                                          label   = "Show key",
@@ -1406,7 +1459,8 @@ ui <- navbarPage(
                                                 label   =  "Year",
                                                 value = 1422,
                                                 min = 1422,
-                                                max = 2008),
+                                                max = 2008,
+                                                updateOn = "blur"),
                                               
                                               # Enter Season                
                                               selectInput(inputId  = "fad_season",
@@ -1571,7 +1625,8 @@ ui <- navbarPage(
                                       label     = "Select the single year:",
                                       value     = NA,
                                       min       = 1422,
-                                      max       = 2008)),
+                                      max       = 2008,
+                                      updateOn = "blur")),
                    )),
                  
                  shinyjs::hidden(
@@ -1790,19 +1845,22 @@ ui <- navbarPage(
                                                                            label       = "Custom map title:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                           placeholder = "Custom title",
+                                                                           updateOn = "blur"),
                                                                  
                                                                  textInput(inputId     = "title2_input2",
                                                                            label       = "Custom map subtitle (e.g. Ref-Period):",
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                           placeholder = "Custom title",
+                                                                           updateOn = "blur"),
                                                                  
                                                                  numericInput(inputId = "title_size_input2",
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
-                                                                              max     = 40))),
+                                                                              max     = 40,
+                                                                              updateOn = "blur"))),
                                                            
                                                            br(), hr(),
                                                            
@@ -2119,13 +2177,15 @@ ui <- navbarPage(
                                                                            label       = "Custom plot title:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                           placeholder = "Custom title",
+                                                                           updateOn = "blur"),
                                                                  
                                                                  numericInput(inputId = "title_size_input_ts2",
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
-                                                                              max     = 40),
+                                                                              max     = 40,
+                                                                              updateOn = "blur"),
                                                              )),
                                                            
                                                            radioButtons(inputId  = "axis_mode_ts2",
@@ -2154,7 +2214,8 @@ ui <- navbarPage(
                                                                               label   = "Year axis intervals:",
                                                                               value   = 50,
                                                                               min     = 1,
-                                                                              max     = 500))),
+                                                                              max     = 500,
+                                                                              updateOn = "blur"))),
                                                            
                                                            checkboxInput(inputId = "show_key_ts2",
                                                                          label   = "Show key",
@@ -2451,7 +2512,8 @@ ui <- navbarPage(
                                                 label   =  "Year",
                                                 value = 1422,
                                                 min = 1422,
-                                                max = 2008),
+                                                max = 2008,
+                                                updateOn = "blur"),
                                               
                                               # Enter Season                
                                               selectInput(inputId  = "fad_season2",
@@ -2617,7 +2679,8 @@ ui <- navbarPage(
                                       label     = "Select the single year:",
                                       value     = NA,
                                       min       = 1422,
-                                      max       = 2008)),
+                                      max       = 2008,
+                                      updateOn = "blur")),
                        
                        #Choose Coordinates input 
                        radioButtons(inputId  = "coordinates_type_6",
@@ -3073,7 +3136,8 @@ ui <- navbarPage(
                                             label     = "Select the single year:",
                                             value     = NA,
                                             min       = 1422,
-                                            max       = 2008)),
+                                            max       = 2008,
+                                            updateOn = "blur")),
                              
                          )),
                        
@@ -3323,7 +3387,8 @@ ui <- navbarPage(
                                             label     = "Select the single year:",
                                             value     = NA,
                                             min       = 1422,
-                                            max       = 2008)),
+                                            max       = 2008,
+                                            updateOn = "blur")),
                              
                              
                          )),
@@ -3491,13 +3556,15 @@ ui <- navbarPage(
                                                                            label       = "Custom plot title:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                           placeholder = "Custom title",
+                                                                           updateOn = "blur"),
                                                                  
                                                                  numericInput(inputId = "title_size_input_ts3",
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
-                                                                              max     = 40),
+                                                                              max     = 40,
+                                                                              updateOn = "blur"),
                                                              )),
                                                            
                                                            radioButtons(inputId  = "axis_mode_ts3",
@@ -3526,7 +3593,8 @@ ui <- navbarPage(
                                                                               label   = "Year axis intervals:",
                                                                               value   = 50,
                                                                               min     = 1,
-                                                                              max     = 500))),
+                                                                              max     = 500,
+                                                                              updateOn = "blur"))),
                                                            
                                                            checkboxInput(inputId = "show_key_ts3",
                                                                          label   = "Show key",
@@ -3730,7 +3798,8 @@ ui <- navbarPage(
                                                                               label  = "Year moving average, centred:",
                                                                               value  = 11,
                                                                               min    = 3,
-                                                                              max    = 30),
+                                                                              max    = 30,
+                                                                              updateOn = "blur"),
                                                              )),
                                                            
                                                        )),
@@ -3848,7 +3917,18 @@ ui <- navbarPage(
                                             )),
                                             
                                             #Easter Calm
-                                            uiOutput(outputId = "keep_calm", inline = TRUE),
+                                            conditionalPanel(
+                                              condition = "input.title1_input_ts3 == 'Keep Calm'",
+                                              tags$img(
+                                                src = "pics/KCAUCA.png",
+                                                id = "img_britannia",
+                                                height = "514",
+                                                width = "488",
+                                                style = "display:block; margin:0 auto;",
+                                                loading = "lazy"
+                                              )
+                                            ),
+                                            
                                             
                                    ### Shared TS plot: End ----          
                                    ),
@@ -3882,7 +3962,17 @@ ui <- navbarPage(
                                             ), 
                                             
                                             #Easter Leaves
-                                            uiOutput(outputId = "leaves", inline = TRUE),
+                                            conditionalPanel(
+                                              condition = "input.title1_input3 == 'Leaves from the Vine'",
+                                              tags$img(
+                                                src = "pics/LeavesFromTheVine.jpg",
+                                                id = "img_leaves",
+                                                height = "450",
+                                                width = "600",
+                                                style = "display:block; margin:0 auto;",
+                                                loading = "lazy"
+                                              )
+                                            ),
                                             
                                             #### Customization panels START ----       
                                             fluidRow(
@@ -3951,19 +4041,22 @@ ui <- navbarPage(
                                                                            label       = "Custom map title:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                           placeholder = "Custom title",
+                                                                           updateOn = "blur"),
                                                                  
                                                                  textInput(inputId     = "title2_input3",
                                                                            label       = "Custom map subtitle (e.g. Ref-Period)",
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                           placeholder = "Custom title",
+                                                                           updateOn = "blur"),
                                                                  
                                                                  numericInput(inputId = "title_size_input3",
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
-                                                                              max     = 40))),
+                                                                              max     = 40,
+                                                                              updateOn = "blur"))),
                                                            
                                                            br(), hr(),
                                                            
@@ -4247,7 +4340,8 @@ ui <- navbarPage(
                                                 label   =  "Year",
                                                 value = 1422,
                                                 min = 1422,
-                                                max = 2008),
+                                                max = 2008,
+                                                updateOn = "blur"),
                                               
                                               # Enter Season                
                                               selectInput(inputId  = "fad_season3",
@@ -4421,7 +4515,8 @@ ui <- navbarPage(
                                             label     = "Select the single year:",
                                             value     = NA,
                                             min       = 1422,
-                                            max       = 2008)),
+                                            max       = 2008,
+                                            updateOn = "blur")),
                              
                          )),
                        
@@ -4645,7 +4740,8 @@ ui <- navbarPage(
                                             label     = "Select the single year:",
                                             value     = NA,
                                             min       = 1422,
-                                            max       = 2008)),
+                                            max       = 2008,
+                                            updateOn = "blur")),
                              
                          )),
                        
@@ -4810,19 +4906,22 @@ ui <- navbarPage(
                                                                            label       = "Custom plot title:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                           placeholder = "Custom title",
+                                                                           updateOn = "blur"),
                                                                  
                                                                  textInput(inputId     = "title2_input_ts4",
                                                                            label       = "Custom plot subtitle:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom subtitle"),
+                                                                           placeholder = "Custom subtitle",
+                                                                           updateOn = "blur"),
                                                                  
                                                                  numericInput(inputId = "title_size_input_ts4",
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
-                                                                              max     = 40),
+                                                                              max     = 40,
+                                                                              updateOn = "blur"),
                                                              )),
                                                            
                                                            radioButtons(inputId  = "axis_mode_ts4a",
@@ -4870,7 +4969,8 @@ ui <- navbarPage(
                                                                               label   = "Year axis intervals:",
                                                                               value   = 50,
                                                                               min     = 1,
-                                                                              max     = 500))),
+                                                                              max     = 500,
+                                                                              updateOn = "blur"))),
                                              
                                                                  radioButtons(inputId  = "key_position_ts4",
                                                                               label    = "Key position:",
@@ -5185,17 +5285,20 @@ ui <- navbarPage(
                                                                  
                                                                  textInput(inputId     = "title1_input_reg_coeff",
                                                                            label       = "Custom map title:",
-                                                                           width       = NULL),
+                                                                           width       = NULL,
+                                                                           updateOn = "blur"),
                                                                  
                                                                  textInput(inputId     = "title2_input_reg_coeff",
                                                                            label       = "Custom map subtitle (e.g. Ref-Period)",
-                                                                           width       = NULL),
+                                                                           width       = NULL,
+                                                                           updateOn = "blur"),
                                                                  
                                                                  numericInput(inputId = "title_size_input_reg_coeff",
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
-                                                                              max     = 40))),
+                                                                              max     = 40,
+                                                                              updateOn = "blur"))),
                                                            
                                                            br(), hr(),
                                                            
@@ -5515,17 +5618,20 @@ ui <- navbarPage(
                                                                  
                                                                  textInput(inputId     = "title1_input_reg_pval",
                                                                            label       = "Custom map title:", 
-                                                                           width       = NULL),
+                                                                           width       = NULL,
+                                                                           updateOn = "blur"),
                                                                  
                                                                  textInput(inputId     = "title2_input_reg_pval",
                                                                            label       = "Custom map subtitle (e.g. Ref-Period):",
-                                                                           width       = NULL),
+                                                                           width       = NULL,
+                                                                           updateOn = "blur"),
                                                                  
                                                                  numericInput(inputId = "title_size_input_reg_pval",
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
-                                                                              max     = 40))),
+                                                                              max     = 40,
+                                                                              updateOn = "blur"))),
                                                            
                                                            
                                                            
@@ -5775,14 +5881,27 @@ ui <- navbarPage(
                                                        label   =  "Year",
                                                        value = 2008,
                                                        min = 1422,
-                                                       max = 2008)),
+                                                       max = 2008,
+                                                       updateOn = "blur")),
                                             ),
                                             withSpinner(ui_element = plotOutput("plot_reg_resi", height = "auto",  dblclick = "map_dblclick_reg_res", brush = brushOpts(id = "map_brush_reg_res",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
                                             
-                                            uiOutput(outputId = "hope", inline = TRUE),
+                                            # REMOVE
+                                            # uiOutput(outputId = "hope", inline = TRUE),
+                                            
+                                            conditionalPanel(
+                                              condition = "input.title1_input_reg_res == 'Hope'",
+                                              tags$img(
+                                                src = "pics/hope.png",
+                                                id = "img_hope",
+                                                height = "450",
+                                                style = "display:block; margin:0 auto;",
+                                                loading = "lazy"
+                                              )
+                                            ),
                                             
                                             br(),
                                             br(),
@@ -5851,17 +5970,20 @@ ui <- navbarPage(
                                                                  
                                                                  textInput(inputId     = "title1_input_reg_res",
                                                                            label       = "Custom map title:", 
-                                                                           width       = NULL),
+                                                                           width       = NULL,
+                                                                           updateOn = "blur"),
                                                                  
                                                                  textInput(inputId     = "title2_input_reg_res",
                                                                            label       = "Custom map subtitle (e.g. Ref-Period):",
-                                                                           width       = NULL),
+                                                                           width       = NULL,
+                                                                           updateOn = "blur"),
                                                                  
                                                                  numericInput(inputId = "title_size_input_reg_res",
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
-                                                                              max     = 40))),
+                                                                              max     = 40,
+                                                                              updateOn = "blur"))),
                                                            
                                                            br(), hr(),
                                                            
@@ -6111,7 +6233,8 @@ ui <- navbarPage(
                                                 label   =  "Year",
                                                 value = 1422,
                                                 min = 1422,
-                                                max = 2008),
+                                                max = 2008,
+                                                updateOn = "blur"),
                                               
                                               # Enter Season                
                                               selectInput(inputId  = "fad_season4",
@@ -6235,7 +6358,8 @@ ui <- navbarPage(
                                       label     = "Select the single year:",
                                       value     = NA,
                                       min       = 1422,
-                                      max       = 2008)),
+                                      max       = 2008,
+                                      updateOn = "blur")),
                    )),
                  
                  #Choose a Type of plot: Average or Individual years
@@ -6438,13 +6562,15 @@ ui <- navbarPage(
                                                                            label       = "Custom plot title:", 
                                                                            value       = NA,
                                                                            width       = NULL,
-                                                                           placeholder = "Custom title"),
+                                                                           placeholder = "Custom title",
+                                                                           updateOn = "blur"),
                                                                  
                                                                  numericInput(inputId = "title_size_input_ts5",
                                                                               label   = "Font size:",
                                                                               value   = 18,
                                                                               min     = 1,
-                                                                              max     = 40),
+                                                                              max     = 40,
+                                                                              updateOn = "blur"),
                                                              )),
                                                            
                                                            checkboxInput(inputId = "show_key_ts5",
@@ -6679,7 +6805,8 @@ ui <- navbarPage(
                                                 label   =  "Year",
                                                 value = 1422,
                                                 min = 1422,
-                                                max = 2008),
+                                                max = 2008,
+                                                updateOn = "blur"),
                                               
                                               # Enter Season                
                                               selectInput(inputId  = "fad_season5",
@@ -6751,7 +6878,8 @@ ui <- navbarPage(
                                  label     = "Year",
                                  value     = 1422,
                                  min       = 1422,
-                                 max       = 2008),
+                                 max       = 2008,
+                                 updateOn = "blur"),
                     
                     # Enter Season                
                     selectInput(inputId  = "season_MES",
