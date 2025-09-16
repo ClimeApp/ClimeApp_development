@@ -1,4 +1,4 @@
-### ClimeApp_beta ###
+### ClimeApp ###
 # Source for helpers ----
 source("helpers.R")
 source("popovers.R")
