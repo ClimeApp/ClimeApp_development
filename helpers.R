@@ -1174,9 +1174,9 @@ plot_map <- function(data_input,
                      label_lakes = FALSE,
                      show_mountains = FALSE,
                      label_mountains = FALSE) {
-
+  
   # Define the color palette and unit based on the variable and mode
-  if (!is.null(variable)) {  # Check if variable is not NULL
+  if (!is.null(variable)) {
     if (variable == "Temperature") {
       v_col <- rev(brewer.pal(11, "RdBu"))
       v_unit <- "\u00B0C"
@@ -1189,10 +1189,11 @@ plot_map <- function(data_input,
     } else if (variable == "Z500") {
       v_col <- rev(brewer.pal(11, "PRGn"))
       v_unit <- "m"
-    }}
+    }
+  }
   
   # Handle the 'mode' condition as well
-  if (!is.null(mode)) {  # Ensure mode is not NULL
+  if (!is.null(mode)) {
     if (mode == "Correlation") {
       v_col <- rev(brewer.pal(11, "PuOr"))
       v_unit <- "r"
@@ -1201,7 +1202,7 @@ plot_map <- function(data_input,
       v_col <- viridis(11, option = "turbo")
       v_unit <- "Coefficient"
       titles$map_title <- titles$map_title_coeff
-      titles$map_subtitle <- titles$map_subtitle_coeff #overwrite titles$map_subtitle because ggplot uses it
+      titles$map_subtitle <- titles$map_subtitle_coeff
       titles$map_title_size <- titles$map_title_size_coeff
       
     } else if (mode == "Regression_p_values") {
@@ -1213,7 +1214,7 @@ plot_map <- function(data_input,
       titles$map_title_size <- titles$map_title_size_pvals
       
     } else if (mode == "Regression_residuals") {
-      v_unit <- paste("Residuals\n", v_unit)  # v_col and v_unit previously defined by variable
+      v_unit <- paste("Residuals\n", v_unit)
       titles$map_title <- titles$map_title_res
       titles$map_subtitle <- titles$map_subtitle_res
       titles$map_title_size <- titles$map_title_size_res
@@ -1221,11 +1222,11 @@ plot_map <- function(data_input,
     } else if (mode == "SD ratio") {
       v_col <- rev(brewer.pal(9, "Greens"))
       v_unit <- ""
-    }}
-  
+    }
+  }
   if (is.null(axis_range)) {
     if (!is.null(mode) && mode == "Regression_p_values") {
-      axis_range <- c(1e-3, 1)  # avoid log(0)
+      axis_range <- c(1e-3, 1)
     } else if (!is.null(mode) && mode == "SD ratio") {
       axis_range <- c(0, 1)
     } else {
@@ -1235,16 +1236,12 @@ plot_map <- function(data_input,
   }
   
   p <- ggplot() +
-    geom_spatraster_contour_filled(
-      data = data_input,
-      aes(fill = after_stat(level_mid)),
-      bins = 20
-    ) +
+    geom_spatraster_contour_filled(data = data_input, aes(fill = after_stat(level_mid)), bins = 20) +
     labs(fill = v_unit) +
     guides(
-      fill = if (hide_axis) {
+      fill = if (hide_axis)
         "none"
-      } else {
+      else
         guide_colorbar(
           barwidth = 2,
           barheight = unit(0.75, "npc"),
@@ -1261,7 +1258,6 @@ plot_map <- function(data_input,
           ticks.colour = "black",
           ticks.linewidth = 0.5
         )
-      }
     )
   
   if (!is.null(mode) && mode == "Regression_p_values") {
@@ -1282,26 +1278,22 @@ plot_map <- function(data_input,
         labels <- as.character(round(breaks, 2))
         labels[1] <- paste0("< ", labels[1])
         labels[length(labels)] <- paste0("> ", labels[length(labels)])
-        return(labels)
+        labels
       }
     )
   }
   
   # Theme
-  if(projection == "UTM (default)"){
-    p <- p + theme_bw()
-  } else {
-    p <- p + theme_minimal()
-  }
+  p <- p + if (projection == "UTM (default)")
+    theme_bw()
+  else
+    theme_minimal()
   
   # Add coastline and country borders without inheriting x and y aesthetics
   p <- p + geom_sf(data = coast, color = "#333333", size = 0.5, inherit.aes = FALSE)
-  if (white_ocean) {
-    p <- p + geom_sf(data = oceans, fill = "#DDDDDD", size = 0.5, inherit.aes = FALSE)}
-  if (white_land) {
-    p <- p + geom_sf(data = land, fill = "#DDDDDD", size = 0.5, inherit.aes = FALSE)}
-  if (c_borders) {
-    p <- p + geom_sf(data = countries, color = "#333333", fill = NA, size = 0.5, inherit.aes = FALSE)}
+  if (white_ocean) p <- p + geom_sf(data = oceans, fill = "#DDDDDD", size = 0.5, inherit.aes = FALSE)
+  if (white_land)  p <- p + geom_sf(data = land,   fill = "#DDDDDD", size = 0.5, inherit.aes = FALSE)
+  if (c_borders)   p <- p + geom_sf(data = countries, color = "#333333", fill = NA, size = 0.5, inherit.aes = FALSE)
   
   if (show_rivers) {
     p <- p + geom_sf(data = rivers, color = "#2A52BE", size = 0.2, inherit.aes = FALSE)
@@ -1309,10 +1301,7 @@ plot_map <- function(data_input,
       p <- p + geom_text(
         data = st_centroid(rivers),
         aes(label = name, geometry = geometry),
-        stat = "sf_coordinates",
-        size = 5,
-        color = "black",
-        inherit.aes = FALSE
+        stat = "sf_coordinates", size = 5, color = "black", inherit.aes = FALSE
       )
     }
   }
@@ -1322,107 +1311,86 @@ plot_map <- function(data_input,
       p <- p + geom_text(
         data = st_point_on_surface(lakes),
         aes(label = name, geometry = geometry),
-        stat = "sf_coordinates",
-        size = 5,
-        color = "black",
-        nudge_x = -1,  # leftward
+        stat = "sf_coordinates", size = 5, color = "black", nudge_x = -1,
         inherit.aes = FALSE
       )
     }
   }
-  
   if (show_mountains) {
     p <- p + geom_sf(data = mountains, color = "#333333", size = 3, shape = 17, inherit.aes = FALSE)
     if (label_mountains && "name" %in% names(mountains)) {
       p <- p + geom_text(
         data = mountains,
         aes(label = name, geometry = geometry),
-        stat = "sf_coordinates",
-        size = 5,
-        color = "black",
-        nudge_y = 0.75,  # upward
+        stat = "sf_coordinates", size = 5, color = "black", nudge_y = 0.75,
         inherit.aes = FALSE
       )
     }
   }
-  
   # Add shapefiles (if provided) based on plotOrder and shpPickers
   
   # Define color picker prefix for shapefiles
   color_picker_prefix <- plotType
-  
-  # Only run this block if both shpOrder and plotOrder are present and non-empty
-  if (!is.null(shpOrder) && !is.null(plotOrder) &&
+  if (!is.null(shpOrder) &&
+      !is.null(plotOrder) &&
       length(shpOrder) > 0 && length(plotOrder) > 0) {
-    
-    # Get full paths of selected shapefiles in plotting order
     selected_files <- plotOrder[match(shpOrder, tools::file_path_sans_ext(basename(plotOrder)))]
-    
     for (file in selected_files) {
       file_name <- tools::file_path_sans_ext(basename(file))
       message(paste("Adding shapefile to plot:", file_name))
-      
       shape <- sf::st_read(file, quiet = TRUE)
-      
-      # Ensure CRS is WGS84
-      if (is.na(sf::st_crs(shape))) {
+      if (is.na(sf::st_crs(shape)))
         shape <- sf::st_set_crs(shape, sf::st_crs(4326))
-      } else {
+      else
         shape <- sf::st_transform(shape, crs = sf::st_crs(4326))
-      }
-      
-      # Get color from color picker input (created with prefix "shp_colour_")
       color <- input[[paste0(color_picker_prefix, file_name)]]
-      
       geom_type <- sf::st_geometry_type(shape)
-      
       if (any(geom_type %in% c("POLYGON", "MULTIPOLYGON"))) {
-        p <- p + geom_sf(data = shape, fill = NA, color = color, size = 0.5, inherit.aes = FALSE)
+        p <- p + geom_sf(
+          data = shape,
+          fill = NA,
+          color = color,
+          size = 0.5,
+          inherit.aes = FALSE
+        )
       } else if (any(geom_type %in% c("LINESTRING", "MULTILINESTRING"))) {
-        p <- p + geom_sf(data = shape, color = color, size = 0.5, inherit.aes = FALSE)
+        p <- p + geom_sf(
+          data = shape,
+          color = color,
+          size = 0.5,
+          inherit.aes = FALSE
+        )
       } else if (any(geom_type %in% c("POINT", "MULTIPOINT"))) {
-        p <- p + geom_sf(data = shape, color = color, size = 2, inherit.aes = FALSE)
+        p <- p + geom_sf(
+          data = shape,
+          color = color,
+          size = 2,
+          inherit.aes = FALSE
+        )
       }
     }
   }
   
   # Set projection
   if (projection == "Robinson") {
-    p <- p + coord_sf(crs = st_crs("+proj=robin"))
-    
+    p <- p + coord_sf(crs = st_crs("+proj=robin"), clip = "on")
   } else if (projection == "Orthographic") {
-    formula = paste0("+proj=ortho +lat_0=", center_lat, " +lon_0=", center_lon, " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
-    p <- p + coord_sf(crs = st_crs(formula))
-  } else if (projection == "LAEA"){
-    formula = paste0("+proj=laea +lat_0=", 0, " +lon_0=", 0, " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
-    p <- p + coord_sf(crs = st_crs(formula))
-  } else { # if UTM (default)
-    # Edit lon_lat_range if its a point
-    if (lon_lat_range[1]==lon_lat_range[2]){
-      lon_lat_range[1] = lon_lat_range[1] - 0.5 
-      lon_lat_range[2] = lon_lat_range[2] + 0.5 
-    }
-    if (lon_lat_range[3]==lon_lat_range[4]){
-      lon_lat_range[3] = lon_lat_range[3] - 0.5
-      lon_lat_range[4] = lon_lat_range[4] + 0.5 
-    }
-    # Edit lon_lat_range if its at the edge of the map
-    if (lon_lat_range[1]<(-179.0625)){
-      lon_lat_range[1] = -179.0625
-    }
-    if (lon_lat_range[2]>177.1875){
-      lon_lat_range[2] = 177.1875
-    }
-    if (lon_lat_range[3]<(-87.64735)){
-      lon_lat_range[3] = -87.64735
-    }
-    if (lon_lat_range[4]>87.64735){
-      lon_lat_range[4] = 87.64735
-    }
-    # Set limits of plot to lon_lat range 
-    p <- p + coord_sf(xlim = lon_lat_range[1:2], ylim = lon_lat_range[3:4], expand = FALSE)
+    formula <- paste0("+proj=ortho +lat_0=", center_lat, " +lon_0=", center_lon,
+                      " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
+    p <- p + coord_sf(crs = st_crs(formula), clip = "on")
+  } else if (projection == "LAEA") {
+    formula <- paste0("+proj=laea +lat_0=0 +lon_0=0 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
+    p <- p + coord_sf(crs = st_crs(formula), clip = "on")
+  } else {
+    if (lon_lat_range[1]==lon_lat_range[2]) { lon_lat_range[1] <- lon_lat_range[1]-0.5; lon_lat_range[2] <- lon_lat_range[2]+0.5 }
+    if (lon_lat_range[3]==lon_lat_range[4]) { lon_lat_range[3] <- lon_lat_range[3]-0.5; lon_lat_range[4] <- lon_lat_range[4]+0.5 }
+    lon_lat_range[1] <- max(lon_lat_range[1], -179.0625)
+    lon_lat_range[2] <- min(lon_lat_range[2],  177.1875)
+    lon_lat_range[3] <- max(lon_lat_range[3],  -87.64735)
+    lon_lat_range[4] <- min(lon_lat_range[4],   87.64735)
+    p <- p + coord_sf(xlim = lon_lat_range[1:2], ylim = lon_lat_range[3:4], expand = FALSE, clip = "on")
   }
-
+  
   # Add title and subtitle if provided
   if (!is.null(titles)) {
     if (titles$map_title != " " || titles$map_subtitle != " ") {
@@ -1433,139 +1401,125 @@ plot_map <- function(data_input,
     }
     
     p <- p + theme(
-      plot.title = ggtext::element_textbox_simple(
-        size = titles$map_title_size,
-        face = "bold",
-        margin = margin(5, 0, 5, 0)),
-      
-      plot.subtitle = ggtext::element_textbox_simple(
-        size = titles$map_title_size / 1.3,
-        face = "plain",
-        margin = margin(9, 0, 12, 0)),
-      
+      plot.title = ggtext::element_textbox_simple(size = titles$map_title_size, face = "bold", margin = margin(5,0,5,0)),
+      plot.subtitle = ggtext::element_textbox_simple(size = titles$map_title_size/1.3, face = "plain", margin = margin(9,0,12,0)),
       axis.text = element_text(size = titles$map_title_size / 1.6)
     )
   }
   
-  # Transform statistical highlight points if projection is active
   if (projection != "UTM (default)" &&
       nrow(stat_highlights_data) > 0 &&
-      all(c("x_vals", "y_vals") %in% names(stat_highlights_data))) {
-    
+      all(c("x_vals","y_vals") %in% names(stat_highlights_data))) {
     stat_highlights_data <- transform_points_df(
       df = stat_highlights_data,
-      xcol = "x_vals",
-      ycol = "y_vals",
-      projection = projection,
-      center_lat = center_lat,
-      center_lon = center_lon
+      xcol = "x_vals", ycol = "y_vals",
+      projection = projection, center_lat = center_lat, center_lon = center_lon
     )
   }
   
-  # Add point and highlights (without legend)
-  if (nrow(stat_highlights_data) > 0) {
-    filtered_stat_highlights_data <- subset(stat_highlights_data, criteria_vals == 1) # if criteria_vals == 0, the point is not added to the map
+  built <- ggplot_build(p)
+  pp <- built$layout$panel_params[[1]]
+  get_range <- function(pp, axis = c("x","y")) {
+    axis <- match.arg(axis)
+    if (!is.null(pp[[paste0(axis, ".range")]])) {
+      pp[[paste0(axis, ".range")]]
+    } else if (!is.null(pp[[axis]]$range$range)) {
+      pp[[axis]]$range$range
+    } else if (!is.null(pp[[axis]]$range)) {
+      pp[[axis]]$range
+    } else c(-Inf, Inf)
+  }
+  xlim_cur <- get_range(pp, "x")
+  ylim_cur <- get_range(pp, "y")
+  
+  # Transform statistical highlight points if projection is active
+  if (projection != "UTM (default)" &&
+      nrow(points_data) > 0 &&
+      all(c("x_value","y_value") %in% names(points_data))) {
+    points_data <- transform_points_df(
+      df = points_data,
+      xcol = "x_value", ycol = "y_value",
+      projection = projection, center_lat = center_lat, center_lon = center_lon
+    )
+  }
+  
+  # Hard-filter points to the panel bounding box
+  if (nrow(points_data) > 0 && all(c("x_value","y_value","color","shape","size","label") %in% names(points_data))) {
     
+    points_data$x_value <- as.numeric(points_data$x_value)
+    points_data$y_value <- as.numeric(points_data$y_value)
+    
+    inside <- with(points_data,
+                   !is.na(x_value) & !is.na(y_value) &
+                     x_value >= xlim_cur[1] & x_value <= xlim_cur[2] &
+                     y_value >= ylim_cur[1] & y_value <= ylim_cur[2])
+    points_in <- points_data[inside, , drop = FALSE]
+    
+    if (nrow(points_in) > 0) {
+      p <- p +
+        geom_point(
+          data = points_in,
+          aes(x = x_value, y = y_value, color = color, shape = shape, size = size),
+          show.legend = FALSE
+        ) +
+        ggrepel::geom_text_repel(
+          data = points_in,
+          aes(x = x_value, y = y_value, label = label),
+          size = 5, fontface = "bold",
+          bg.color = "white", bg.r = 0.2,
+          point.padding = 10,
+          xlim = xlim_cur, ylim = ylim_cur,  # identische Grenzen wie Panel
+          na.rm = TRUE, max.overlaps = Inf,
+          show.legend = FALSE
+        ) +
+        scale_color_identity() +
+        scale_shape_identity() +
+        labs(x = NULL, y = NULL)
+    }
+  }
+  
+  # Transform highlight box coordinates if necessary
+  if (nrow(stat_highlights_data) > 0) {
+    filtered_stat_highlights_data <- subset(stat_highlights_data, criteria_vals == 1)
     if (nrow(filtered_stat_highlights_data) > 0) {
       p <- p +
         geom_point(
           data = filtered_stat_highlights_data,
           aes(x = x_vals, y = y_vals),
-          size = 1,
-          shape = 20,
-          show.legend = FALSE
+          size = 1, shape = 20, show.legend = FALSE
         ) +
         labs(x = NULL, y = NULL)
     }
   }
   
-  # Transform point data
-  if (projection != "UTM (default)" &&
-      nrow(points_data) > 0 &&
-      all(c("x_value", "y_value") %in% names(points_data))) {
-    points_data <- transform_points_df(
-      df = points_data,
-      xcol = "x_value",
-      ycol = "y_value",
-      projection = projection,
-      center_lat = center_lat,
-      center_lon = center_lon
-    )
-  }
-  
-  if (nrow(points_data) > 0 && all(c("x_value", "y_value", "color", "shape", "size", "label") %in% colnames(points_data))) {
-    p <- p + 
-      geom_point(
-        data = points_data,
-        aes(
-          x = x_value,
-          y = y_value,
-          color = color,
-          shape = shape,
-          size = size
-        ),
-        show.legend = FALSE
-      ) +
-      geom_text_repel(
-        data = points_data,
-        aes(x = x_value, y = y_value, label = label),
-        size = 5,
-        fontface = "bold",
-        bg.color = "white", # shadow color
-        bg.r = 0.2, # shadow radius
-        point.padding = 10,
-        show.legend = FALSE
-      ) +
-      scale_color_identity() +
-      scale_shape_identity() +
-      labs(x = NULL, y = NULL)
-  }
-  
-  # Transform highlight box coordinates if necessary
+  # Boxes
   if (projection != "UTM (default)" &&
       nrow(highlights_data) > 0 &&
-      all(c("x1", "x2", "y1", "y2") %in% names(highlights_data))) {
+      all(c("x1","x2","y1","y2") %in% names(highlights_data))) {
     highlights_data <- transform_box_df(
       df = highlights_data,
-      x1col = "x1",
-      x2col = "x2",
-      y1col = "y1",
-      y2col = "y2",
-      projection = projection,
-      center_lat = center_lat,
-      center_lon = center_lon
+      x1col = "x1", x2col = "x2", y1col = "y1", y2col = "y2",
+      projection = projection, center_lat = center_lat, center_lon = center_lon
     )
   }
-  
-  if (nrow(highlights_data) > 0 && all(c("x1", "x2", "y1", "y2", "color", "type") %in% colnames(highlights_data))) {
-    
-    # Boxes
+  if (nrow(highlights_data) > 0 && all(c("x1","x2","y1","y2","color","type") %in% colnames(highlights_data))) {
     if (any(highlights_data$type == "Box")) {
       p <- p +
         geom_rect(
           data = subset(highlights_data, type == "Box"),
           aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, color = color),
-          fill = NA,
-          size = 1,
-          show.legend = FALSE
-        ) +
-        scale_color_identity()
+          fill = NA, size = 1, show.legend = FALSE
+        ) + scale_color_identity()
     }
-    
-    # Filled boxes
     if (any(highlights_data$type == "Filled")) {
       p <- p +
         geom_rect(
           data = subset(highlights_data, type == "Filled"),
           aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, fill = color),
           fill = subset(highlights_data, type == "Filled")$color,
-          color = NA,
-          alpha = 0.5,
-          show.legend = FALSE
+          color = NA, alpha = 0.5, show.legend = FALSE
         )
     }
-    
-    # Hatched boxes
     if (any(highlights_data$type == "Hatched")) {
       p <- p +
         geom_rect_pattern(
@@ -1573,17 +1527,16 @@ plot_map <- function(data_input,
           aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2),
           pattern = "stripe",
           pattern_fill = subset(highlights_data, type == "Hatched")$color,
-          pattern_spacing = 0.01,
-          pattern_size = 0.1,
-          pattern_colour = NA,
-          fill = NA,
-          colour = NA,
+          pattern_spacing = 0.01, pattern_size = 0.1,
+          pattern_colour = NA, fill = NA, colour = NA,
           show.legend = FALSE
         )
     }
-   }
+  }
+  
   return(p)
 }
+
 
 
 #' (General) CREATE MAP DATATABLE
