@@ -9229,7 +9229,7 @@ server <- function(input, output, session) {
   
   # Update SD ratio data when required
   observe({
-    if((input$ref_map_mode == "SD Ratio")|(input$custom_statistic == "SD ratio")){
+    if((input$ref_map_mode == "SD ratio")|(input$custom_statistic == "SD ratio")){
       if (input$nav1 == "tab1"){ # check current tab
         if (!identical(SDratio_data_id()[3:4],data_id_primary()[3:4])){ # check to see if currently loaded variable & month range are the same
           if (data_id_primary()[1] != 0) { # check for preprocessed SD ratio data
