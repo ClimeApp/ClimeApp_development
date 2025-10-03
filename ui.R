@@ -365,8 +365,7 @@ ui <- navbarPage(
                                     h5(strong("ClimeApp desktop user guide", style = "color: #094030;")),
                                     br(),
                                     htmltools::includeHTML("ClimeApp Desktop User Guide.html")
-                                    # includeMarkdown("text/ClimeApp Desktop User Guide.md")
-                                    
+
                            ),
                            
                            #### Tab Version History ----
