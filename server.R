@@ -8,6 +8,23 @@ server <- function(input, output, session) {
     }
   )
   
+  # --- NEU: "committed" Koordinaten (steuern die Daten) ---
+  coords_committed <- reactiveVal(list(
+    lon = initial_lon_values,   # z.B. c(-20, 40)
+    lat = initial_lat_values    # z.B. c(30, 70)
+  ))
+  
+  # --- NEU: "pending" Brush-Bounding-Box (nur Vorschau bis Button-Klick) ---
+  pending_bbox <- reactiveVal(NULL)
+  
+  
+  # Optional: falls anderer Code lonlat_vals() erwartet
+  lonlat_vals <- reactive({
+    cc <- coords_committed()
+    c(cc$lon, cc$lat)  # c(lon_min, lon_max, lat_min, lat_max)
+  })
+  
+  
   # Set up custom data, preprocessed data and SDratio reactive variables ----
   preprocessed_data_primary = reactiveVal()
   preprocessed_data_id_primary = reactiveVal(c(NA,NA,NA,NA)) # data_ID for current preprocessed data
@@ -747,7 +764,6 @@ server <- function(input, output, session) {
   
   
   ####### Correlation ----
-  
   ###Sidebar V1
   
   observe({shinyjs::toggle(id = "upload_forcings_v1",
@@ -2118,6 +2134,59 @@ server <- function(input, output, session) {
     lonlat_vals(c(input$range_longitude,input$range_latitude))        
   })
   
+  
+  observeEvent(input$button_coord, {
+    # Bevorzugt: Brush-Box übernehmen, wenn vorhanden
+    bb <- pending_bbox()
+    
+    if (!is.null(bb)) {
+      lon <- bb$lon
+      lat <- bb$lat
+    } else {
+      # sonst Werte aus den Feldern nehmen
+      lon <- suppressWarnings(as.numeric(input$range_longitude))
+      lat <- suppressWarnings(as.numeric(input$range_latitude))
+      lon <- sort(lon); lat <- sort(lat)
+    }
+    
+    # Guards
+    req(length(lon) == 2, all(is.finite(lon)),
+        length(lat) == 2, all(is.finite(lat)))
+    
+    # 1) Commit setzen -> steuert deine Daten-Subsets
+    coords_committed(list(lon = lon, lat = lat))
+    
+    # 2) UI-Felder nachziehen (kosmetisch / für den Nutzer)
+    updateNumericRangeInput(session = session, inputId = "range_longitude", label = NULL, value = round(lon, 2))
+    updateNumericRangeInput(session = session, inputId = "range_latitude",  label = NULL, value = round(lat, 2))
+    
+    # 3) Pending-Box leeren (optional)
+    pending_bbox(NULL)
+  })
+  
+  observeEvent(input$map_brush1, {
+    br <- input$map_brush1
+    if (is.null(br)) return(NULL)
+    
+    # 1) Brush nur zwischenspeichern (pending), keine Daten-Reaktiven triggern
+    pending_bbox(list(
+      lon = sort(c(br$xmin, br$xmax)),
+      lat = sort(c(br$ymin, br$ymax))
+    ))
+    
+    # 2) Wenn Custom-Features aktiv sind, nur die Highlight-Inputs füllen (rein optisch)
+    if (isTRUE(input$custom_features)) {
+      updateRadioButtons(session = session, inputId = "feature", label = NULL, selected = "Highlight")
+      updateNumericRangeInput(session = session, inputId = "highlight_x_values", label = NULL,
+                              value = round(c(br$xmin, br$xmax), 2))
+      updateNumericRangeInput(session = session, inputId = "highlight_y_values", label = NULL,
+                              value = round(c(br$ymin, br$ymax), 2))
+    }
+    
+    # WICHTIG: KEIN updateNumericRangeInput auf range_longitude / range_latitude hier!
+  })
+
+  
   #Make continental buttons stay highlighted
   observe({
     if (input$range_longitude[1] == -180 && input$range_longitude[2] == 180 &&
@@ -2356,47 +2425,47 @@ server <- function(input, output, session) {
     }
   })
   
-  # Map coordinates/highlights setter
-  observeEvent(input$map_brush1,{
-    
-    x_brush_1 = input$map_brush1[[1]]
-    x_brush_2 = input$map_brush1[[2]]
-    
-    if (input$custom_features == FALSE){
-      updateNumericRangeInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_longitude",
-        label = NULL,
-        value = round(c(x_brush_1,x_brush_2), digits = 2))
-      
-      updateNumericRangeInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_latitude",
-        label = NULL,
-        value = round(c(input$map_brush1[[3]], input$map_brush1[[4]]), digits = 2)
-      )
-    } else {
-      updateRadioButtons(
-        session = getDefaultReactiveDomain(),
-        inputId = "feature",
-        label = NULL,
-        selected = "Highlight")
-      
-      updateNumericRangeInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "highlight_x_values",
-        label = NULL,
-        value = round(c(x_brush_1, x_brush_2), digits = 2))
-      
-      updateNumericRangeInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "highlight_y_values",
-        label = NULL,
-        value = round(c(input$map_brush1[[3]], input$map_brush1[[4]]), digits = 2)
-      )
-    }
-  })
-  
+  # # Map coordinates/highlights setter
+  # observeEvent(input$map_brush1,{
+  #   
+  #   x_brush_1 = input$map_brush1[[1]]
+  #   x_brush_2 = input$map_brush1[[2]]
+  #   
+  #   if (input$custom_features == FALSE){
+  #     updateNumericRangeInput(
+  #       session = getDefaultReactiveDomain(),
+  #       inputId = "range_longitude",
+  #       label = NULL,
+  #       value = round(c(x_brush_1,x_brush_2), digits = 2))
+  #     
+  #     updateNumericRangeInput(
+  #       session = getDefaultReactiveDomain(),
+  #       inputId = "range_latitude",
+  #       label = NULL,
+  #       value = round(c(input$map_brush1[[3]], input$map_brush1[[4]]), digits = 2)
+  #     )
+  #   } else {
+  #     updateRadioButtons(
+  #       session = getDefaultReactiveDomain(),
+  #       inputId = "feature",
+  #       label = NULL,
+  #       selected = "Highlight")
+  #     
+  #     updateNumericRangeInput(
+  #       session = getDefaultReactiveDomain(),
+  #       inputId = "highlight_x_values",
+  #       label = NULL,
+  #       value = round(c(x_brush_1, x_brush_2), digits = 2))
+  #     
+  #     updateNumericRangeInput(
+  #       session = getDefaultReactiveDomain(),
+  #       inputId = "highlight_y_values",
+  #       label = NULL,
+  #       value = round(c(input$map_brush1[[3]], input$map_brush1[[4]]), digits = 2)
+  #     )
+  #   }
+  # })
+  # 
   # Map projection center hidden/show
   observeEvent(input$projection, {
     if (input$projection == "Orthographic") {
@@ -9700,17 +9769,41 @@ server <- function(input, output, session) {
   
   ####### Downloads ----
   #Downloading General data
-  output$download_map       <- downloadHandler(filename = function() {paste(plot_titles()$file_title, "-map.", input$file_type_map, sep = "")},
-                                               content = function(file) {
-                                                 if (input$file_type_map == "png") {
-                                                   png(file, width = map_dimensions()[3], height = map_dimensions()[4], res = 200, bg = "transparent")
-                                                 } else if (input$file_type_map == "jpeg") {
-                                                   jpeg(file, width = map_dimensions()[3], height = map_dimensions()[4], res = 200, bg = "white")
-                                                 } else {
-                                                   pdf(file, width = map_dimensions()[3] / 200, height = map_dimensions()[4] / 200, bg = "transparent")
-                                                 }
-                                                 print(map_plot())  # Use print to ensure the plot is fully rendered
-                                                 dev.off()}
+  output$download_map       <- downloadHandler(
+    filename = function() {
+      paste(plot_titles()$file_title,
+            "-map.",
+            input$file_type_map,
+            sep = "")
+    },
+    content = function(file) {
+      if (input$file_type_map == "png") {
+        png(
+          file,
+          width = map_dimensions()[3],
+          height = map_dimensions()[4],
+          res = 200,
+          bg = "transparent"
+        )
+      } else if (input$file_type_map == "jpeg") {
+        jpeg(
+          file,
+          width = map_dimensions()[3],
+          height = map_dimensions()[4],
+          res = 200,
+          bg = "white"
+        )
+      } else {
+        pdf(
+          file,
+          width = map_dimensions()[3] / 200,
+          height = map_dimensions()[4] / 200,
+          bg = "transparent"
+        )
+      }
+      print(map_plot())  # Use print to ensure the plot is fully rendered
+      dev.off()
+    }
   )
   
   output$download_map_sec   <- downloadHandler(filename = function() {paste(plot_titles()$file_title, "-sec_map.", input$file_type_map_sec, sep = "")},
@@ -14091,7 +14184,7 @@ server <- function(input, output, session) {
       )
     }
   })
-  
+
   observe({
     if (!is.na(input$ref_period_sg)) {
       updateNumericRangeInput(
