@@ -2134,59 +2134,6 @@ server <- function(input, output, session) {
     lonlat_vals(c(input$range_longitude,input$range_latitude))        
   })
   
-  
-  observeEvent(input$button_coord, {
-    # Bevorzugt: Brush-Box übernehmen, wenn vorhanden
-    bb <- pending_bbox()
-    
-    if (!is.null(bb)) {
-      lon <- bb$lon
-      lat <- bb$lat
-    } else {
-      # sonst Werte aus den Feldern nehmen
-      lon <- suppressWarnings(as.numeric(input$range_longitude))
-      lat <- suppressWarnings(as.numeric(input$range_latitude))
-      lon <- sort(lon); lat <- sort(lat)
-    }
-    
-    # Guards
-    req(length(lon) == 2, all(is.finite(lon)),
-        length(lat) == 2, all(is.finite(lat)))
-    
-    # 1) Commit setzen -> steuert deine Daten-Subsets
-    coords_committed(list(lon = lon, lat = lat))
-    
-    # 2) UI-Felder nachziehen (kosmetisch / für den Nutzer)
-    updateNumericRangeInput(session = session, inputId = "range_longitude", label = NULL, value = round(lon, 2))
-    updateNumericRangeInput(session = session, inputId = "range_latitude",  label = NULL, value = round(lat, 2))
-    
-    # 3) Pending-Box leeren (optional)
-    pending_bbox(NULL)
-  })
-  
-  observeEvent(input$map_brush1, {
-    br <- input$map_brush1
-    if (is.null(br)) return(NULL)
-    
-    # 1) Brush nur zwischenspeichern (pending), keine Daten-Reaktiven triggern
-    pending_bbox(list(
-      lon = sort(c(br$xmin, br$xmax)),
-      lat = sort(c(br$ymin, br$ymax))
-    ))
-    
-    # 2) Wenn Custom-Features aktiv sind, nur die Highlight-Inputs füllen (rein optisch)
-    if (isTRUE(input$custom_features)) {
-      updateRadioButtons(session = session, inputId = "feature", label = NULL, selected = "Highlight")
-      updateNumericRangeInput(session = session, inputId = "highlight_x_values", label = NULL,
-                              value = round(c(br$xmin, br$xmax), 2))
-      updateNumericRangeInput(session = session, inputId = "highlight_y_values", label = NULL,
-                              value = round(c(br$ymin, br$ymax), 2))
-    }
-    
-    # WICHTIG: KEIN updateNumericRangeInput auf range_longitude / range_latitude hier!
-  })
-
-  
   #Make continental buttons stay highlighted
   observe({
     if (input$range_longitude[1] == -180 && input$range_longitude[2] == 180 &&
@@ -2425,47 +2372,47 @@ server <- function(input, output, session) {
     }
   })
   
-  # # Map coordinates/highlights setter
-  # observeEvent(input$map_brush1,{
-  #   
-  #   x_brush_1 = input$map_brush1[[1]]
-  #   x_brush_2 = input$map_brush1[[2]]
-  #   
-  #   if (input$custom_features == FALSE){
-  #     updateNumericRangeInput(
-  #       session = getDefaultReactiveDomain(),
-  #       inputId = "range_longitude",
-  #       label = NULL,
-  #       value = round(c(x_brush_1,x_brush_2), digits = 2))
-  #     
-  #     updateNumericRangeInput(
-  #       session = getDefaultReactiveDomain(),
-  #       inputId = "range_latitude",
-  #       label = NULL,
-  #       value = round(c(input$map_brush1[[3]], input$map_brush1[[4]]), digits = 2)
-  #     )
-  #   } else {
-  #     updateRadioButtons(
-  #       session = getDefaultReactiveDomain(),
-  #       inputId = "feature",
-  #       label = NULL,
-  #       selected = "Highlight")
-  #     
-  #     updateNumericRangeInput(
-  #       session = getDefaultReactiveDomain(),
-  #       inputId = "highlight_x_values",
-  #       label = NULL,
-  #       value = round(c(x_brush_1, x_brush_2), digits = 2))
-  #     
-  #     updateNumericRangeInput(
-  #       session = getDefaultReactiveDomain(),
-  #       inputId = "highlight_y_values",
-  #       label = NULL,
-  #       value = round(c(input$map_brush1[[3]], input$map_brush1[[4]]), digits = 2)
-  #     )
-  #   }
-  # })
-  # 
+  # Map coordinates/highlights setter
+  observeEvent(input$map_brush1,{
+
+    x_brush_1 = input$map_brush1[[1]]
+    x_brush_2 = input$map_brush1[[2]]
+
+    if (input$custom_features == FALSE){
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_longitude",
+        label = NULL,
+        value = round(c(x_brush_1,x_brush_2), digits = 2))
+
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_latitude",
+        label = NULL,
+        value = round(c(input$map_brush1[[3]], input$map_brush1[[4]]), digits = 2)
+      )
+    } else {
+      updateRadioButtons(
+        session = getDefaultReactiveDomain(),
+        inputId = "feature",
+        label = NULL,
+        selected = "Highlight")
+
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "highlight_x_values",
+        label = NULL,
+        value = round(c(x_brush_1, x_brush_2), digits = 2))
+
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "highlight_y_values",
+        label = NULL,
+        value = round(c(input$map_brush1[[3]], input$map_brush1[[4]]), digits = 2)
+      )
+    }
+  })
+
   # Map projection center hidden/show
   observeEvent(input$projection, {
     if (input$projection == "Orthographic") {
@@ -9448,15 +9395,127 @@ server <- function(input, output, session) {
       label_mountains = input$label_mountains)
   }
 
-  
-  output$map <- renderPlot({
+  ###### Cached Plot 
+  # Render cached plot output
+  output$map <- renderCachedPlot({
+    req(map_dimensions()[1], map_dimensions()[2])
+    
+    validate(
+      need(
+        !is.null(input$range_years) &&
+          length(input$range_years) == 2 &&
+          !any(is.na(input$range_years)) &&
+          input$range_years[1] >= 1422 &&
+          input$range_years[2] <= 2008 &&
+          input$range_years[1] <= input$range_years[2],
+        "Please select a valid year range between 1422 and 2008."
+      )
+    )
     map_plot()
-  }, width = function() {
-    map_dimensions()[1]
-  }, height = function() {
-    map_dimensions()[2]
-  })
+  },
   
+  # Add cache key expression arguments
+  cacheKeyExpr = {
+    points_key     <- tryCatch(overlay_key(map_points_data()),     error = function(e) "")
+    highlights_key <- tryCatch(overlay_key(map_highlights_data()), error = function(e) "")
+    stats_key      <- tryCatch(overlay_key(map_statistics()),      error = function(e) "")
+    
+    shpfile_key <- tryCatch({
+      f <- input$shpFile
+      if (is.null(f)) "no-upload" else paste(
+        paste(f$name, collapse = "|"),
+        paste(f$size, collapse = "|"),
+        paste(unname(tools::md5sum(f$datapath)), collapse = "|"),
+        sep = "::"
+      )
+    }, error = function(e) "no-upload")
+    
+    shp_ids_key  <- tryCatch({
+      ids <- input$shapes_order[input$shapes_order %in% input$shapes]
+      ids <- ids[!duplicated(ids)]
+      paste(ids, collapse = "|")
+    }, error = function(e) "")
+    
+    shp_style_key <- tryCatch({
+      ids <- input$shapes_order[input$shapes_order %in% input$shapes]
+      ids <- ids[!duplicated(ids)]
+      prefix <- "shp_colour_" 
+      paste(vapply(ids, function(id) {
+        val <- input[[paste0(prefix, id)]]
+        col <- if (is.null(val) || is.na(val) || !nzchar(val)) "#000000" else as.character(val)[1]
+        paste0(id, "=", col)
+      }, character(1L)), collapse = "|")
+    }, error = function(e) "")
+    
+    
+    plotorder_key <- tryCatch(digest::digest(plotOrder()), error = function(e) "")
+    shp_color_key <- tryCatch(digest::digest(shp_color_inputs()), error = function(e) "")
+    
+    sd_ratio_key <- if (identical(input$custom_statistic, "SD ratio")) {
+      round(as.numeric(input$sd_ratio %||% NA_real_), 4)
+    } else {
+      NA_real_
+    }
+    
+    months_key <- tryCatch({
+      if (identical(input$season_selected, "Custom")) {
+        paste(input$range_months %||% character(0), collapse = "->")
+      } else {
+        input$season_selected %||% "Annual"
+      }
+    }, error = function(e) "no-months")
+    
+    dim_key <- paste0(map_dimensions()[1], "x", map_dimensions()[2])
+    
+    list(
+      input$nav1,
+      input$value_type_map_data,
+      input$dataset_selected,
+      input$variable_selected,
+      input$range_years,
+      input$ref_period,
+      lonlat_vals(),
+      subset_lons_primary(),
+      subset_lats_primary(),
+      input$axis_input,
+      input$hide_axis,
+      points_key,
+      highlights_key,
+      stats_key,
+      shpfile_key,
+      plotorder_key,
+      shp_ids_key,
+      shp_style_key,
+      shp_color_key,
+      dim_key,
+      input$hide_borders,
+      input$white_ocean,
+      input$white_land,
+      input$projection,
+      input$center_lat,
+      input$center_lon,
+      input$show_rivers,
+      input$label_rivers,
+      input$show_lakes,
+      input$label_lakes,
+      input$show_mountains,
+      input$label_mountains,
+      plotOrder(),
+      input$shapes_order[input$shapes_order %in% input$shapes],
+      input$title_mode,
+      input$title_mode_ts,
+      input$title1_input,
+      input$title2_input,
+      input$title1_input_ts,
+      input$title_size_input,
+      input$title_size_input_ts,
+      input$custom_statistic,
+      months_key,
+      sd_ratio_key
+    )
+  },
+  width  = function() { map_dimensions()[1] },
+  height = function() { map_dimensions()[2] })
   
   
   #Ref/Absolute/SD ratio Map
@@ -10189,14 +10248,160 @@ server <- function(input, output, session) {
       label_mountains = input$label_mountains2
     )
   }
+
   
-  output$map2 <- renderPlot({
-    map_plot_2()
-  }, width = function() {
-    map_dimensions_2()[1]
-  }, height = function() {
-    map_dimensions_2()[2]
-  })
+  
+  
+  ###### Cached Plot
+  output$map2 <- renderCachedPlot({
+  req(map_dimensions_2()[1], map_dimensions_2()[2])
+
+  validate(need(
+    !is.null(input$ref_period2) &&
+      length(input$ref_period2) == 2 &&
+      !any(is.na(input$ref_period2)) &&
+      input$ref_period2[1] >= 1422 &&
+      input$ref_period2[2] <= 2008 &&
+      input$ref_period2[1] <= input$ref_period2[2],
+    "Please select a valid year range between 1422 and 2008."
+  ))
+
+  md  <- map_data_2()
+  ll  <- lonlat_vals2()
+  gtf <- .create_geotiff_mem(md, ll)
+
+  plot_map(
+    data_input          = gtf,
+    lon_lat_range       = ll,
+    variable            = input$variable_selected2,
+    mode                = input$mode_selected2,
+    titles              = plot_titles_composites(),
+    axis_range          = input$axis_input2,
+    hide_axis           = input$hide_axis2,
+    points_data         = map_points_data2(),
+    highlights_data     = map_highlights_data2(),
+    stat_highlights_data= map_statistics_2(),
+    c_borders           = input$hide_borders2,
+    white_ocean         = input$white_ocean2,
+    white_land          = input$white_land2,
+    plotOrder           = plotOrder2(),
+    shpOrder            = input$shapes2_order[input$shapes2_order %in% input$shapes2],
+    plotType            = "shp_colour2_",
+    projection          = input$projection2,
+    center_lat          = input$center_lat2,
+    center_lon          = input$center_lon2,
+    show_rivers         = input$show_rivers2,
+    label_rivers        = input$label_rivers2,
+    show_lakes          = input$show_lakes2,
+    label_lakes         = input$label_lakes2,
+    show_mountains      = input$show_mountains2,
+    label_mountains     = input$label_mountains2
+  )
+},
+cacheKeyExpr = {
+  points_key2     <- tryCatch(overlay_key(map_points_data2()),     error = function(e) "")
+  highlights_key2 <- tryCatch(overlay_key(map_highlights_data2()), error = function(e) "")
+  stats_key2      <- tryCatch(overlay_key(map_statistics_2()),     error = function(e) "")
+
+  shpfile_key2 <- tryCatch({
+    f <- input$shpFile2
+    if (is.null(f)) "no-upload" else paste(
+      paste(f$name, collapse = "|"),
+      paste(f$size, collapse = "|"),
+      paste(unname(tools::md5sum(f$datapath)), collapse = "|"),
+      sep = "::"
+    )
+  }, error = function(e) "no-upload")
+
+  shp_ids_key2 <- tryCatch({
+    ids <- input$shapes2_order[input$shapes2_order %in% input$shapes2]
+    ids <- ids[!duplicated(ids)]
+    paste(ids, collapse = "|")
+  }, error = function(e) "")
+
+  shp_style_key2 <- tryCatch({
+    ids <- input$shapes2_order[input$shapes2_order %in% input$shapes2]
+    ids <- ids[!duplicated(ids)]
+    prefix <- "shp_colour2_"
+    paste(vapply(ids, function(id) {
+      val <- input[[paste0(prefix, id)]]
+      col <- if (is.null(val) || is.na(val) || !nzchar(val)) "#000000" else as.character(val)[1]
+      paste0(id, "=", col)
+    }, character(1L)), collapse = "|")
+  }, error = function(e) "")
+
+  plotorder_key2 <- tryCatch(digest::digest(plotOrder2()), error = function(e) "")
+
+  sd_ratio_key2 <- if (identical(input$custom_statistic2, "SD ratio")) {
+    round(as.numeric(input$sd_ratio2 %||% NA_real_), 4)
+  } else {
+    NA_real_
+  }
+
+  months_key2 <- tryCatch({
+    if (identical(input$season_selected2, "Custom")) {
+      paste(input$range_months2 %||% character(0), collapse = "->")
+    } else {
+      input$season_selected2 %||% "Annual"
+    }
+  }, error = function(e) "no-months")
+
+  dim_key2 <- paste0(map_dimensions_2()[1], "x", map_dimensions_2()[2])
+
+  list(
+    input$nav1,
+    input$dataset_selected2,
+    input$variable_selected2,
+    input$mode_selected2,
+    input$range_years2,
+    input$ref_period2,
+    lonlat_vals2(),
+    subset_lons_primary(),
+    subset_lats_primary(),
+    input$axis_input2,
+    input$hide_axis2,
+    points_key2,
+    highlights_key2,
+    stats_key2,
+    shpfile_key2,
+    plotorder_key2,
+    shp_ids_key2,
+    shp_style_key2,
+    dim_key2,
+    input$hide_borders2,
+    input$white_ocean2,
+    input$white_land2,
+    input$projection2,
+    input$center_lat2,
+    input$center_lon2,
+    input$show_rivers2,
+    input$label_rivers2,
+    input$show_lakes2,
+    input$label_lakes2,
+    input$show_mountains2,
+    input$label_mountains2,
+    plotOrder2(),
+    input$shapes2_order[input$shapes2_order %in% input$shapes2],
+    input$title_mode2,
+    input$title_mode_ts2,
+    input$title1_input2,
+    input$title2_input2,
+    input$title1_input_ts2,
+    input$title_size_input2,
+    input$title_size_input_ts2,
+    input$custom_statistic2,
+    months_key2,
+    sd_ratio_key2,
+    input$upload_file2,
+    input$enter_upload2,
+    input$enter_upload2a,
+    input$upload_file2a
+  )
+},
+width  = function() map_dimensions_2()[1],
+height = function() map_dimensions_2()[2]
+)
+
   
   # code line below sets height as a function of the ratio of lat/lon 
   

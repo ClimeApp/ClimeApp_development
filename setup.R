@@ -91,12 +91,10 @@ library(readxl, lib.loc = lib_path)
 library(DT, lib.loc = lib_path)
 library(zoo, lib.loc = lib_path)
 library(colourpicker, lib.loc = lib_path)
-# library(shinylive, lib.loc = lib_path)
 library(ggplot2, lib.loc = lib_path)
 library(sf, lib.loc = lib_path)
 library(shinylogs, lib.loc = lib_path)
 library(shinycssloaders, lib.loc = lib_path)
-# library(profvis, lib.loc = lib_path)
 library(openxlsx, lib.loc = lib_path)  # Don't change order!
 library(xlsx, lib.loc = lib_path)
 library(leaflet, lib.loc = lib_path)
@@ -255,14 +253,18 @@ initial_year_values = century_years[,random_century]
 ## Load grid square weights for calculating means
 latlon_weights = as.matrix(read.csv("data/latlon_weights.csv"))
 
-# Load shapefiles for maps (rnaturalearth)
-coast <- st_read("data/geodata_maps/coast.shp") 
-countries <- st_read("data/geodata_maps/countries.shp")
-oceans <- st_read("data/geodata_maps/oceans.shp")
-land <- st_read("data/geodata_maps/land.shp")
+# # Load shapefiles for maps (rnaturalearth)
+# coast <- st_read("data/geodata_maps/coast.shp") 
+# countries <- st_read("data/geodata_maps/countries.shp")
+# oceans <- st_read("data/geodata_maps/oceans.shp")
+# land <- st_read("data/geodata_maps/land.shp")
+
+coast <- readRDS("data/geodata_maps/coast.rds")
+countries <- readRDS("data/geodata_maps/countries.rds")
+oceans <- readRDS("data/geodata_maps/oceans.rds")
+land <- readRDS("data/geodata_maps/land.rds")
 
 # Load RDS Files for map customization (rnaturalearth)
 lakes <- readRDS("data/geodata_custom_maps/lakes.rds")
 mountains <- readRDS("data/geodata_custom_maps/mountains.rds")
 rivers <- readRDS("data/geodata_custom_maps/rivers.rds")
-

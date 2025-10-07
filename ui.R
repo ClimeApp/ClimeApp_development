@@ -678,7 +678,7 @@ ui <- navbarPage(
                                    tabPanel("Map", br(),
                                             h4("Anomalies map", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("map", height = "auto", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
+                                            withSpinner(ui_element = plotOutput("map", height = "750px", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -745,12 +745,15 @@ ui <- navbarPage(
                                                                               label = "Center latitude:",
                                                                               value = 0,
                                                                               min = -90,
-                                                                              max = 90),
+                                                                              max = 90,
+                                                                              updateOn = "blur"),
                                                                  numericInput(inputId = "center_lon",
                                                                               label = "Center longitude:",
                                                                               value = 0,
                                                                               min = -180,
-                                                                              max = 180))),
+                                                                              max = 180,
+                                                                              updateOn = "blur"
+                                                                              ))),
                                                            
                                                            radioButtons(inputId  = "axis_mode",
                                                                         label    = "Axis customization:",
@@ -1003,7 +1006,8 @@ ui <- navbarPage(
                                                                           value  = 0.2,
                                                                           min    = 0,
                                                                           max    = 1,
-                                                                          step   = 0.1)
+                                                                          step   = 0.1,
+                                                                          updateOn = "blur")
                                                          ),
                                                      ),
                                               ),
@@ -1039,15 +1043,22 @@ ui <- navbarPage(
                                             #### Abs/Ref Map plot START ----
                                             h4("Reference map", style = "color: #094030;",reference_map_popover("pop_anomalies_refmap")), 
                                             
-                                            radioButtons(inputId  = "ref_map_mode",
-                                                         label    = NULL,
-                                                         choices  = c("None", "Absolute Values","Reference Values","SD ratio"),
-                                                         selected = "None" , inline = TRUE),
-                                            
-                                            withSpinner(ui_element = plotOutput("ref_map", height = "auto"), 
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height),
+                                            radioButtons(
+                                              inputId  = "ref_map_mode",
+                                              label    = NULL,
+                                              choices  = c("None", "Absolute Values", "Reference Values", "SD ratio"),
+                                              selected = "None" ,
+                                              inline = TRUE
+                                            ),
+                                            conditionalPanel(
+                                              condition = "input.ref_map_mode && input.ref_map_mode !== 'None'",
+                                              withSpinner(
+                                                ui_element = plotOutput("ref_map", height = "750px"),
+                                                image = spinner_image,
+                                                image.width = spinner_width,
+                                                image.height = spinner_height
+                                              )
+                                            ), 
                                             
                                             #### Download ref. map ----
                                             shinyjs::hidden(div(id ="hidden_sec_map_download",
@@ -1562,7 +1573,8 @@ ui <- navbarPage(
                                      textInput(inputId    = "range_years2",
                                                label     = "Enter your list of years, separated by commas:",
                                                value     = "1815, 1816",
-                                               placeholder = "1815"))),
+                                               placeholder = "1815",
+                                               updateOn = "blur"))),
                  
                  shinyjs::hidden(div(id = "optional2d",
                                      fileInput(inputId = "upload_file2",
@@ -1634,7 +1646,8 @@ ui <- navbarPage(
                                     label      = "X (number of years prior to composite years - max 50):",
                                     value      = 10,
                                     min        = 1,
-                                    max        = 50))),
+                                    max        = 50,
+                                    updateOn = "blur"))),
                  
                  #Reference period as list of years (manual or upload)
                  shinyjs::hidden(div(id = "optional2f",
@@ -1647,7 +1660,8 @@ ui <- navbarPage(
                                                          textInput(inputId    = "range_years2a",
                                                                    label     = "Enter your list of years, separated by commas:",
                                                                    value     = "1641, 1642",
-                                                                   placeholder = "1641"))),
+                                                                   placeholder = "1641",
+                                                                   updateOn = "blur"))),
                                      
                                      shinyjs::hidden(div(id = "optional2h",
                                                          fileInput(inputId = "upload_file2a",
@@ -1773,7 +1787,7 @@ ui <- navbarPage(
                                                                 textOutput("custom_years2")
                                             )),
                                             
-                                            withSpinner(ui_element = plotOutput("map2",height = "auto", dblclick = "map_dblclick2", brush = brushOpts(id = "map_brush2",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("map2",height = "750px", dblclick = "map_dblclick2", brush = brushOpts(id = "map_brush2",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),         
@@ -1804,12 +1818,14 @@ ui <- navbarPage(
                                                                               label = "Center latitude:",
                                                                               value = 0,
                                                                               min = -90,
-                                                                              max = 90),
+                                                                              max = 90,
+                                                                              updateOn = "blur"),
                                                                  numericInput(inputId = "center_lon2",
                                                                               label = "Center longitude:",
                                                                               value = 0,
                                                                               min = -180,
-                                                                              max = 180))),
+                                                                              max = 180,
+                                                                              updateOn = "blur"))),
                                                            
                                                            radioButtons(inputId  = "axis_mode2",
                                                                         label    = "Axis customization:",
@@ -2115,15 +2131,22 @@ ui <- navbarPage(
                                             #### Abs/Ref Map plot START ----
                                             h4("Reference map", style = "color: #094030;",reference_map_popover("pop_composites_refmap")), 
                                             
-                                            radioButtons(inputId  = "ref_map_mode2",
-                                                         label    = NULL,
-                                                         choices  = c("None", "Absolute Values","Reference Values","SD ratio"),
-                                                         selected = "None" , inline = TRUE),
-                                            
-                                            withSpinner(ui_element = plotOutput("ref_map2", height = "auto"),
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height),
+                                            radioButtons(
+                                              inputId  = "ref_map_mode2",
+                                              label    = NULL,
+                                              choices  = c("None", "Absolute Values", "Reference Values", "SD ratio"),
+                                              selected = "None" ,
+                                              inline = TRUE
+                                            ),
+                                            conditionalPanel(
+                                              condition = "input.ref_map_mode2 && input.ref_map_mode2 !== 'None'",
+                                              withSpinner(
+                                                ui_element = plotOutput("ref_map2", height = "750px"),
+                                                image = spinner_image,
+                                                image.width = spinner_width,
+                                                image.height = spinner_height
+                                              )
+                                            ), 
                                             
                                             #### Download ref. map ----
                                             shinyjs::hidden(div(id ="hidden_sec_map_download2",
@@ -3999,12 +4022,14 @@ ui <- navbarPage(
                                                                               label = "Center latitude:",
                                                                               value = 0,
                                                                               min = -90,
-                                                                              max = 90),
+                                                                              max = 90,
+                                                                              updateOn = "blur"),
                                                                  numericInput(inputId = "center_lon3",
                                                                               label = "Center longitude:",
                                                                               value = 0,
                                                                               min = -180,
-                                                                              max = 180))),
+                                                                              max = 180,
+                                                                              updateOn = "blur"))),
                                                            
                                                            radioButtons(inputId  = "axis_mode3",
                                                                         label    = "Axis customization:",
@@ -5246,12 +5271,14 @@ ui <- navbarPage(
                                                                               label = "Center latitude:",
                                                                               value = 0,
                                                                               min = -90,
-                                                                              max = 90),
+                                                                              max = 90,
+                                                                              updateOn = "blur"),
                                                                  numericInput(inputId = "center_lon_reg_coeff",
                                                                               label = "Center longitude:",
                                                                               value = 0,
                                                                               min = -180,
-                                                                              max = 180))),
+                                                                              max = 180,
+                                                                              updateOn = "blur"))),
                                                            
                                                            radioButtons(inputId  = "axis_mode_reg_coeff",
                                                                         label    = "Axis customization:",
@@ -5578,12 +5605,14 @@ ui <- navbarPage(
                                                                               label = "Center latitude:",
                                                                               value = 0,
                                                                               min = -90,
-                                                                              max = 90),
+                                                                              max = 90,
+                                                                              updateOn = "blur"),
                                                                  numericInput(inputId = "center_lon_reg_pval",
                                                                               label = "Center longitude:",
                                                                               value = 0,
                                                                               min = -180,
-                                                                              max = 180))),
+                                                                              max = 180,
+                                                                              updateOn = "blur"))),
                                                            
                                                            radioButtons(inputId  = "axis_mode_reg_pval",
                                                                         label    = "Axis customization:",
@@ -5930,12 +5959,14 @@ ui <- navbarPage(
                                                                               label = "Center latitude:",
                                                                               value = 0,
                                                                               min = -90,
-                                                                              max = 90),
+                                                                              max = 90,
+                                                                              updateOn = "blur"),
                                                                  numericInput(inputId = "center_lon_reg_res",
                                                                               label = "Center longitude:",
                                                                               value = 0,
                                                                               min = -180,
-                                                                              max = 180))),
+                                                                              max = 180,
+                                                                              updateOn = "blur"))),
                                                            
                                                            radioButtons(inputId  = "axis_mode_reg_res",
                                                                         label    = "Axis customization:",

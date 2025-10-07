@@ -1,5 +1,34 @@
 # Helper Functions of ClimeApp 
 
+
+#### Caching helpers for maps ####
+# Use ragg for crisp text/lines in Shiny plots
+options(shiny.useragg = TRUE)
+
+# In-memory GeoTIFF builder cached by its arguments
+.create_geotiff_mem <- memoise::memoise(function(md, lonlat) {
+  create_geotiff(map_data = md)
+})
+
+# Read and normalize a vector layer once and reuse it.
+.read_shape_mem <- memoise::memoise(function(path) {
+  sh <- sf::st_read(path, quiet = TRUE)
+  if (is.na(sf::st_crs(sh))) sh <- sf::st_set_crs(sh, 4326) else sh <- sf::st_transform(sh, 4326)
+  sh
+})
+
+# Serialize overlay data (points/highlights) into a compact, stable key
+overlay_key <- function(df) {
+  if (is.null(df) || !NROW(df)) return("")
+  lon <- df[[ if ("lon" %in% names(df)) "lon" else 1 ]]
+  lat <- df[[ if ("lat" %in% names(df)) "lat" else 2 ]]
+  # sort for stable ordering, round to reduce noise
+  ord <- order(lon, lat)
+  paste(paste(round(lon[ord], 3), round(lat[ord], 3), sep=","), collapse=";")
+}
+
+
+
 # Aus UI verschoben
 current_month_day <- format(Sys.Date(), "%m-%d")
 
@@ -1331,45 +1360,31 @@ plot_map <- function(data_input,
   
   # Define color picker prefix for shapefiles
   color_picker_prefix <- plotType
-  if (!is.null(shpOrder) &&
-      !is.null(plotOrder) &&
-      length(shpOrder) > 0 && length(plotOrder) > 0) {
+  if (!is.null(shpOrder) && !is.null(plotOrder) && length(shpOrder) > 0 && length(plotOrder) > 0) {
+    # keep once, preserve order-of-first-appearance
+    shpOrder <- shpOrder[!duplicated(shpOrder)]
     selected_files <- plotOrder[match(shpOrder, tools::file_path_sans_ext(basename(plotOrder)))]
+    
     for (file in selected_files) {
       file_name <- tools::file_path_sans_ext(basename(file))
       message(paste("Adding shapefile to plot:", file_name))
       shape <- sf::st_read(file, quiet = TRUE)
-      if (is.na(sf::st_crs(shape)))
-        shape <- sf::st_set_crs(shape, sf::st_crs(4326))
-      else
-        shape <- sf::st_transform(shape, crs = sf::st_crs(4326))
-      color <- input[[paste0(color_picker_prefix, file_name)]]
-      geom_type <- sf::st_geometry_type(shape)
+      if (is.na(sf::st_crs(shape))) shape <- sf::st_set_crs(shape, sf::st_crs(4326)) else shape <- sf::st_transform(shape, 4326)
+      
+      col_pick <- input[[paste0(color_picker_prefix, file_name)]]
+      if (is.null(col_pick) || is.na(col_pick) || !nzchar(col_pick)) col_pick <- "black"
+      
+      geom_type <- as.character(sf::st_geometry_type(shape))
       if (any(geom_type %in% c("POLYGON", "MULTIPOLYGON"))) {
-        p <- p + geom_sf(
-          data = shape,
-          fill = NA,
-          color = color,
-          size = 0.5,
-          inherit.aes = FALSE
-        )
+        p <- p + geom_sf(data = shape, fill = NA, colour = col_pick, linewidth = 0.5, inherit.aes = FALSE)
       } else if (any(geom_type %in% c("LINESTRING", "MULTILINESTRING"))) {
-        p <- p + geom_sf(
-          data = shape,
-          color = color,
-          size = 0.5,
-          inherit.aes = FALSE
-        )
+        p <- p + geom_sf(data = shape, colour = col_pick, linewidth = 0.5, inherit.aes = FALSE)
       } else if (any(geom_type %in% c("POINT", "MULTIPOINT"))) {
-        p <- p + geom_sf(
-          data = shape,
-          color = color,
-          size = 2,
-          inherit.aes = FALSE
-        )
+        p <- p + geom_sf(data = shape, colour = col_pick, size = 2, inherit.aes = FALSE)
       }
     }
   }
+  
   
   # Set projection
   if (projection == "Robinson") {
@@ -1459,8 +1474,8 @@ plot_map <- function(data_input,
       p <- p +
         geom_point(
           data = points_in,
-          aes(x = x_value, y = y_value, color = color, shape = shape, size = size),
-          show.legend = FALSE
+          aes(x = x_value, y = y_value, colour = I(color), shape = I(shape), size = I(size)),
+          show.legend = FALSE, inherit.aes = FALSE
         ) +
         ggrepel::geom_text_repel(
           data = points_in,
@@ -1468,14 +1483,12 @@ plot_map <- function(data_input,
           size = 5, fontface = "bold",
           bg.color = "white", bg.r = 0.2,
           point.padding = 10,
-          xlim = xlim_cur, ylim = ylim_cur,  # identische Grenzen wie Panel
+          xlim = xlim_cur, ylim = ylim_cur,
           na.rm = TRUE, max.overlaps = Inf,
-          show.legend = FALSE
-        ) +
-        scale_color_identity() +
-        scale_shape_identity() +
-        labs(x = NULL, y = NULL)
+          show.legend = FALSE, inherit.aes = FALSE
+        )
     }
+    
   }
   
   # Transform highlight box coordinates if necessary
@@ -1507,19 +1520,20 @@ plot_map <- function(data_input,
       p <- p +
         geom_rect(
           data = subset(highlights_data, type == "Box"),
-          aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, color = color),
-          fill = NA, size = 1, show.legend = FALSE
-        ) + scale_color_identity()
+          aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, colour = I(color)),
+          fill = NA, size = 1, show.legend = FALSE, inherit.aes = FALSE
+        )
     }
+    
     if (any(highlights_data$type == "Filled")) {
       p <- p +
         geom_rect(
           data = subset(highlights_data, type == "Filled"),
-          aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, fill = color),
-          fill = subset(highlights_data, type == "Filled")$color,
-          color = NA, alpha = 0.5, show.legend = FALSE
+          aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, fill = I(color)),
+          colour = NA, alpha = 0.5, show.legend = FALSE, inherit.aes = FALSE
         )
     }
+    
     if (any(highlights_data$type == "Hatched")) {
       p <- p +
         geom_rect_pattern(
@@ -1529,9 +1543,10 @@ plot_map <- function(data_input,
           pattern_fill = subset(highlights_data, type == "Hatched")$color,
           pattern_spacing = 0.01, pattern_size = 0.1,
           pattern_colour = NA, fill = NA, colour = NA,
-          show.legend = FALSE
+          show.legend = FALSE, inherit.aes = FALSE
         )
     }
+    
   }
   
   return(p)
@@ -3579,7 +3594,6 @@ create_new_highlights_data = function(highlight_x_values,
   
   return(new_h_data)
 }
-
 
 #' (Plot Features) CREATE NEW LINES DATA
 #'
