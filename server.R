@@ -13544,25 +13544,25 @@ height = function() map_dimensions_2()[2]
   
   ####### Leaflet Map ----
   
-  output$MES_leaflet <- renderLeaflet({
+  output$MES_leaflet <- leaflet::renderLeaflet({
     data <- MES_global_data()
     
-    leaflet(data) |>
+    leaflet::leaflet(data) |>
       # Base maps
-      addProviderTiles(providers$Esri.WorldGrayCanvas, group = "ESRI gray") |>
-      addTiles(group = "Open Street Map") |>
-      addProviderTiles(providers$Esri.WorldImagery, group = "ESRI Satellite") |>
-      setView(lng = 0, lat = 30, zoom = 1.6) |>
+      leaflet::addProviderTiles(leaflet::providers$Esri.WorldGrayCanvas, group = "ESRI gray") |>
+      leaflet::addTiles(group = "Open Street Map") |>
+      leaflet::addProviderTiles(leaflet::providers$Esri.WorldImagery, group = "ESRI Satellite") |>
+      leaflet::setView(lng = 0, lat = 30, zoom = 1.6) |>
       
       # Add layers control for filtering by TYPE
-      addLayersControl(
+      leaflet::addLayersControl(
         baseGroups = c("ESRI gray", "Open Street Map", "ESRI Satellite"),
         overlayGroups = type_names,  # Use readable names here too
-        options = layersControlOptions(collapsed = TRUE)
+        options = leaflet::layersControlOptions(collapsed = TRUE)
       ) |>
       
       # Add initial data points
-      addCircleMarkers(data = data,
+      leaflet::addCircleMarkers(data = data,
                        radius = 5,
                        fillColor = ~pal_type(data$TYPE),
                        stroke = TRUE,
@@ -13587,7 +13587,7 @@ height = function() map_dimensions_2()[2]
   observe({
     data <- MES_global_data()
     
-    proxy <- leafletProxy("MES_leaflet")
+    proxy <- leaflet::leafletProxy("MES_leaflet")
     
     if (input$legend_MES == TRUE && !is.null(data)) {
       proxy %>%
@@ -13604,7 +13604,7 @@ height = function() map_dimensions_2()[2]
           position = "bottomleft"
         )
     } else {
-      proxy %>% clearControls()
+      proxy %>% leaflet::clearControls()
     }
   })
   
@@ -13614,10 +13614,10 @@ height = function() map_dimensions_2()[2]
     data <- MES_global_data()
     
     if (!is.null(data)) {
-      proxy <- leafletProxy("MES_leaflet")
+      proxy <- leaflet::leafletProxy("MES_leaflet")
       
-      proxy %>% clearMarkers() %>%
-        addCircleMarkers(data = data,
+      proxy %>% leaflet::clearMarkers() %>%
+        leaflet::addCircleMarkers(data = data,
                          radius = 5,
                          fillColor = ~pal_type(data$TYPE),
                          stroke = TRUE,
@@ -13692,7 +13692,7 @@ height = function() map_dimensions_2()[2]
   data_sources[[year_column_sources]] <- as.numeric(data_sources[[year_column_sources]])
   
   # Render plot for selected lines using plotly
-  output$time_series_plot <- renderPlotly({
+  output$time_series_plot <- plotly::renderPlotly({
     selected_columns <- c("Total_global_sources_summer",
                           "Total_global_sources_winter",
                           "Total_global_sources")

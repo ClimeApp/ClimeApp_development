@@ -534,20 +534,20 @@ load_ModE_data = function(dataset,
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
     
-    data_nc = nc_open(paste0("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_",vname,"_abs_1421-2008_mon.nc"))
+    data_nc = ncdf4::nc_open(paste0("data/ModE-RA/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_",vname,"_abs_1421-2008_mon.nc"))
     
     # extract data and convert units if necessary                  
     if (variable == "Temperature"){
-      data_output = ncvar_get(data_nc,varid="temp2")-273.15 
+      data_output = ncdf4::ncvar_get(data_nc,varid="temp2")-273.15 
     } else if (variable == "Precipitation"){
-      data_output = ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
+      data_output = ncdf4::ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
     } else if (variable == "SLP"){
-      data_output = ncvar_get(data_nc,varid="slp")/100 
+      data_output = ncdf4::ncvar_get(data_nc,varid="slp")/100 
     } else {
-      data_output = ncvar_get(data_nc,varid="geopoth")
+      data_output = ncdf4::ncvar_get(data_nc,varid="geopoth")
     }
     
-    nc_close(data_nc)
+    ncdf4::nc_close(data_nc)
   } 
   # ModE-SIM
   else if (dataset == "ModE-Sim"){
@@ -558,23 +558,23 @@ load_ModE_data = function(dataset,
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
     
-    data_nc = nc_open(paste0("data/ModE-SIM/Monthly/ModE-Sim_ensmean_",vname,"_abs_1420-2009.nc"))
+    data_nc = ncdf4::nc_open(paste0("data/ModE-SIM/Monthly/ModE-Sim_ensmean_",vname,"_abs_1420-2009.nc"))
     
     # extract data and convert units if necessary                  
     if (variable == "Temperature"){
-      data_output = ncvar_get(data_nc,varid="temp2")-273.15 
+      data_output = ncdf4::ncvar_get(data_nc,varid="temp2")-273.15 
     } else if (variable == "Precipitation"){
-      data_output = ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
+      data_output = ncdf4::ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
     } else if (variable == "SLP"){
-      data_output = ncvar_get(data_nc,varid="slp")/100 
+      data_output = ncdf4::ncvar_get(data_nc,varid="slp")/100 
     } else {
-      data_output = ncvar_get(data_nc,varid="geopoth")
+      data_output = ncdf4::ncvar_get(data_nc,varid="geopoth")
     }
     
     # remove the first year (1421)
     data_output = data_output[,,13:7080]
     
-    nc_close(data_nc)
+    ncdf4::nc_close(data_nc)
   }
   # ModE-RAclim
   else if (dataset == "ModE-RAclim"){
@@ -584,20 +584,20 @@ load_ModE_data = function(dataset,
                     "Precipitation" = "totprec",
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
-    data_nc = nc_open(paste0("data/ModE-RAclim/Monthly/ModE-RAclim_ensmean_",vname,"_anom_1421-2008_mon.nc"))
+    data_nc = ncdf4::nc_open(paste0("data/ModE-RAclim/Monthly/ModE-RAclim_ensmean_",vname,"_anom_1421-2008_mon.nc"))
     
     # extract data and convert units if necessary                  
     if (variable == "Temperature"){
-      data_output = ncvar_get(data_nc,varid="temp2") 
+      data_output = ncdf4::ncvar_get(data_nc,varid="temp2") 
     } else if (variable == "Precipitation"){
-      data_output = ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
+      data_output = ncdf4::ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
     } else if (variable == "SLP"){
-      data_output = ncvar_get(data_nc,varid="slp")/100 
+      data_output = ncdf4::ncvar_get(data_nc,varid="slp")/100 
     } else {
-      data_output = ncvar_get(data_nc,varid="geopoth")
+      data_output = ncdf4::ncvar_get(data_nc,varid="geopoth")
     }
     
-    nc_close(data_nc)
+    ncdf4::nc_close(data_nc)
   }
   
   # SDratio
@@ -608,20 +608,20 @@ load_ModE_data = function(dataset,
                     "Precipitation" = "totprec",
                     "SLP"           = "slp",
                     "Z500"          = "geopoth_50000")
-    data_nc = nc_open(paste0("data/SD_ratio/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_sdratio_",vname,"_anom_wrt_1901-2000_1421-2008_mon.nc"))
+    data_nc = ncdf4::nc_open(paste0("data/SD_ratio/Monthly/ModE-RA_lowres_20mem_Set_1420-3_1850-1_sdratio_",vname,"_anom_wrt_1901-2000_1421-2008_mon.nc"))
     
     # extract data and convert units if necessary                  
     if (variable == "Temperature"){
-      data_output = ncvar_get(data_nc,varid="temp2") 
+      data_output = ncdf4::ncvar_get(data_nc,varid="temp2") 
     } else if (variable == "Precipitation"){
-      data_output = ncvar_get(data_nc,varid="totprec")
+      data_output = ncdf4::ncvar_get(data_nc,varid="totprec")
     } else if (variable == "SLP"){
-      data_output = ncvar_get(data_nc,varid="slp")
+      data_output = ncdf4::ncvar_get(data_nc,varid="slp")
     } else {
-      data_output = ncvar_get(data_nc,varid="geopoth")
+      data_output = ncdf4::ncvar_get(data_nc,varid="geopoth")
     }
     
-    nc_close(data_nc)
+    ncdf4::nc_close(data_nc)
   }
   
   
@@ -651,12 +651,12 @@ load_preprocessed_data = function(data_ID){
                    "5" = "year")
     
     # Open file
-    data_nc = nc_open(paste0("data/ModE-RA/",mname,"/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_",vname,"_abs_1421-2008_",mname,".nc"))
+    data_nc = ncdf4::nc_open(paste0("data/ModE-RA/",mname,"/ModE-RA_lowres_20mem_Set_1420-3_1850-1_ensmean_",vname,"_abs_1421-2008_",mname,".nc"))
     
     # extract data and convert units if necessary                  
-    data_output = ncvar_get(data_nc,varid="geopoth")
+    data_output = ncdf4::ncvar_get(data_nc,varid="geopoth")
     
-    nc_close(data_nc)
+    ncdf4::nc_close(data_nc)
   } 
   
   # ModE-SIM
@@ -675,23 +675,23 @@ load_preprocessed_data = function(data_ID){
                    "5" = "year")
     
     # open file
-    data_nc = nc_open(paste0("data/ModE-SIM/",mname,"/ModE-Sim_lowres_20mem_Set_1420-3_1850-1_ensmean_",vname,"_abs_1420-2009_",mname,".nc"))
+    data_nc = ncdf4::nc_open(paste0("data/ModE-SIM/",mname,"/ModE-Sim_lowres_20mem_Set_1420-3_1850-1_ensmean_",vname,"_abs_1420-2009_",mname,".nc"))
     
     # extract data and convert units if necessary                  
     if (data_ID[3] == 1){
-      data_output = ncvar_get(data_nc,varid="temp2")-273.15 
+      data_output = ncdf4::ncvar_get(data_nc,varid="temp2")-273.15 
     } else if (data_ID[3] == 2){
-      data_output = ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
+      data_output = ncdf4::ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
     } else if (data_ID[3] == 3){
-      data_output = ncvar_get(data_nc,varid="slp")/100 
+      data_output = ncdf4::ncvar_get(data_nc,varid="slp")/100 
     } else {
-      data_output = ncvar_get(data_nc,varid="geopoth")
+      data_output = ncdf4::ncvar_get(data_nc,varid="geopoth")
     }
     
     # remove the first year (1421)
     data_output = data_output[,,2:589]
     
-    nc_close(data_nc)
+    ncdf4::nc_close(data_nc)
   }
   
   # ModE-RAclim
@@ -710,20 +710,20 @@ load_preprocessed_data = function(data_ID){
                    "5" = "year")
     
     # Open file
-    data_nc = nc_open(paste0("data/ModE-RAclim/",mname,"/ModE-RAclim_ensmean_",vname,"_anom_1421-2008_",mname,".nc"))
+    data_nc = ncdf4::nc_open(paste0("data/ModE-RAclim/",mname,"/ModE-RAclim_ensmean_",vname,"_anom_1421-2008_",mname,".nc"))
     
     # extract data and convert units if necessary                  
     if (data_ID[3] == 1){
-      data_output = ncvar_get(data_nc,varid="temp2") 
+      data_output = ncdf4::ncvar_get(data_nc,varid="temp2") 
     } else if (data_ID[3] == 2){
-      data_output = ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
+      data_output = ncdf4::ncvar_get(data_nc,varid="totprec")*2629756.8 # Multiply by 30.437*24*60*60 to convert Kg m-2 s-2 to get mm/month 
     } else if (data_ID[3] == 3){
-      data_output = ncvar_get(data_nc,varid="slp")/100 
+      data_output = ncdf4::ncvar_get(data_nc,varid="slp")/100 
     } else {
-      data_output = ncvar_get(data_nc,varid="geopoth")
+      data_output = ncdf4::ncvar_get(data_nc,varid="geopoth")
     }
     
-    nc_close(data_nc)
+    ncdf4::nc_close(data_nc)
   }
   
   # SDratio
@@ -742,20 +742,20 @@ load_preprocessed_data = function(data_ID){
                    "5" = "year")
     
     # Open file
-    data_nc = nc_open(paste0("data/SD_ratio/",mname,"/ModE-RA_lowres_20mem_Set_1420-3_1850-1_sd_ratio_",vname,"_abs_1421-2008_",mname,".nc"))
+    data_nc = ncdf4::nc_open(paste0("data/SD_ratio/",mname,"/ModE-RA_lowres_20mem_Set_1420-3_1850-1_sd_ratio_",vname,"_abs_1421-2008_",mname,".nc"))
     
     # extract data and convert units if necessary                  
     if (data_ID[3] == 1){
-      data_output = ncvar_get(data_nc,varid="temp2") 
+      data_output = ncdf4::ncvar_get(data_nc,varid="temp2") 
     } else if (data_ID[3] == 2){
-      data_output = ncvar_get(data_nc,varid="totprec")
+      data_output = ncdf4::ncvar_get(data_nc,varid="totprec")
     } else if (data_ID[3] == 3){
-      data_output = ncvar_get(data_nc,varid="slp")
+      data_output = ncdf4::ncvar_get(data_nc,varid="slp")
     } else {
-      data_output = ncvar_get(data_nc,varid="geopoth")
+      data_output = ncdf4::ncvar_get(data_nc,varid="geopoth")
     }
     
-    nc_close(data_nc)
+    ncdf4::nc_close(data_nc)
     
     # Add an extra year at the start for djf
     if(mname == "djf"){
@@ -1228,7 +1228,7 @@ plot_map <- function(data_input,
       v_unit <- "r"
       
     } else if (mode == "Regression_coefficients") {
-      v_col <- viridis(11, option = "turbo")
+      v_col <- viridis::viridis(11, option = "turbo")
       v_unit <- "Coefficient"
       titles$map_title <- titles$map_title_coeff
       titles$map_subtitle <- titles$map_subtitle_coeff
@@ -1259,13 +1259,13 @@ plot_map <- function(data_input,
     } else if (!is.null(mode) && mode == "SD ratio") {
       axis_range <- c(0, 1)
     } else {
-      max_abs_z <- max(abs(values(data_input)), na.rm = TRUE)
+      max_abs_z <- max(abs(terra::values(data_input)), na.rm = TRUE)
       axis_range <- c(-max_abs_z, max_abs_z)
     }
   }
   
   p <- ggplot() +
-    geom_spatraster_contour_filled(data = data_input, aes(fill = after_stat(level_mid)), bins = 20) +
+    tidyterra::geom_spatraster_contour_filled(data = data_input, aes(fill = after_stat(level_mid)), bins = 20) +
     labs(fill = v_unit) +
     guides(
       fill = if (hide_axis)
@@ -2839,7 +2839,7 @@ plot_ts_modera_sources <- function(data,
   p <- p + scale_color_manual(values = line_colors)
   
   # Convert ggplot to plotly for interactivity
-  p <- ggplotly(p, tooltip = c("x","y"))
+  p <- plotly::ggplotly(p, tooltip = c("x","y"))
   
   return(p)
 }
@@ -2937,12 +2937,12 @@ generate_custom_netcdf = function(data_input,
   }
   
   # Define dimensions
-  londim <- ncdim_def("longitude","degrees_east",as.double(lon[subset_lon_IDs])) 
-  latdim <- ncdim_def("latitude","degrees_north",as.double(lat[subset_lat_IDs])) 
+  londim <- ncdf4::ncdim_def("longitude","degrees_east",as.double(lon[subset_lon_IDs])) 
+  latdim <- ncdf4::ncdim_def("latitude","degrees_north",as.double(lat[subset_lat_IDs])) 
   if (tab == "general"){
-    timedim <- ncdim_def("time","year",as.double(seq(year_range[1],year_range[2],1)))  
+    timedim <- ncdf4::ncdim_def("time","year",as.double(seq(year_range[1],year_range[2],1)))  
   } else { # for composites
-    timedim <- ncdim_def("time","year",as.double(year_range)) 
+    timedim <- ncdf4::ncdim_def("time","year",as.double(year_range)) 
   }
   
   # Create variable long_name additions:
@@ -2959,60 +2959,60 @@ generate_custom_netcdf = function(data_input,
   
   if ("Temperature" %in% user_nc_variables){
     dlname <- paste("air temperature at 2m",ln_extension, sep = "")
-    temp_def <- ncvar_def("air_temperature","deg_C",list(londim,latdim,timedim),missval=NULL,dlname,prec="single")
+    temp_def <- ncdf4::ncvar_def("air_temperature","deg_C",list(londim,latdim,timedim),missval=NULL,dlname,prec="single")
     variable_def_list = append(variable_def_list,list(temp_def))
   }
   if ("Precipitation" %in% user_nc_variables){
     dlname <- paste("total_precipitation (rain and snow)",ln_extension, sep = "")
-    prec_def <- ncvar_def("total_precipitation","mm/month",list(londim,latdim,timedim),missval=NULL,dlname,prec="single")
+    prec_def <- ncdf4::ncvar_def("total_precipitation","mm/month",list(londim,latdim,timedim),missval=NULL,dlname,prec="single")
     variable_def_list = append(variable_def_list,list(prec_def))
   }
   if ("SLP" %in% user_nc_variables){
     dlname <- paste("air pressure at sea level",ln_extension, sep = "")
-    SLP_def <- ncvar_def("air_pressure_at_sea_level","hPa",list(londim,latdim,timedim),missval=NULL,dlname,prec="single")
+    SLP_def <- ncdf4::ncvar_def("air_pressure_at_sea_level","hPa",list(londim,latdim,timedim),missval=NULL,dlname,prec="single")
     variable_def_list = append(variable_def_list,list(SLP_def))
   }
   if ("Z500" %in% user_nc_variables){
     dlname <- paste("500 hPa geopotential height",ln_extension, sep = "") 
-    Z500_def <- ncvar_def("geopotential_height","m",list(londim,latdim,timedim),missval=NULL,dlname,prec="single")# to check
+    Z500_def <- ncdf4::ncvar_def("geopotential_height","m",list(londim,latdim,timedim),missval=NULL,dlname,prec="single")# to check
     variable_def_list = append(variable_def_list,list(Z500_def))
   }  
   
   # Create netCDF file 
   ncfname <- paste("user_ncdf/netcdf_",ncdf_ID,".nc", sep="")
-  ncout <- nc_create(ncfname,variable_def_list,force_v4=TRUE)
+  ncout <- ncdf4::nc_create(ncfname,variable_def_list,force_v4=TRUE)
   
   # Add variable data to netcdf file
   if ("Temperature" %in% user_nc_variables){
-    ncvar_put(ncout,temp_def,temp_variable_data)
+    ncdf4::ncvar_put(ncout,temp_def,temp_variable_data)
   }
   if ("Precipitation" %in% user_nc_variables){
-    ncvar_put(ncout,prec_def,prec_variable_data)
+    ncdf4::ncvar_put(ncout,prec_def,prec_variable_data)
   }
   if ("SLP" %in% user_nc_variables){
-    ncvar_put(ncout,SLP_def,SLP_variable_data)
+    ncdf4::ncvar_put(ncout,SLP_def,SLP_variable_data)
   }
   if ("Z500" %in% user_nc_variables){
-    ncvar_put(ncout,Z500_def,Z500_variable_data)
+    ncdf4::ncvar_put(ncout,Z500_def,Z500_variable_data)
   }
   
   # Add additional attributes into dimension variables
-  ncatt_put(ncout,"longitude","axis","X") 
-  ncatt_put(ncout,"latitude","axis","Y")
-  ncatt_put(ncout,"time","axis","T")
+  ncdf4::ncatt_put(ncout,"longitude","axis","X") 
+  ncdf4::ncatt_put(ncout,"latitude","axis","Y")
+  ncdf4::ncatt_put(ncout,"time","axis","T")
   
   # Add global attributes
-  ncatt_put(ncout,0,"data","ModE-RA Project")
-  ncatt_put(ncout,0,"grid","1.875 deg_longitude, 1.865 deg_latitude")
-  ncatt_put(ncout,0,"institution","Institute of Geography,University of Bern")
-  ncatt_put(ncout,0,"source","ClimeApp") 
+  ncdf4::ncatt_put(ncout,0,"data","ModE-RA Project")
+  ncdf4::ncatt_put(ncout,0,"grid","1.875 deg_longitude, 1.865 deg_latitude")
+  ncdf4::ncatt_put(ncout,0,"institution","Institute of Geography,University of Bern")
+  ncdf4::ncatt_put(ncout,0,"source","ClimeApp") 
   #ncatt_put(ncout,0,"references","tbc") # to be completed
   history <- paste("Created", date(), sep=", ")
-  ncatt_put(ncout,0,"history",history)
-  ncatt_put(ncout,0,"Conventions","CF-1.4")
+  ncdf4::ncatt_put(ncout,0,"history",history)
+  ncdf4::ncatt_put(ncout,0,"Conventions","CF-1.4")
   
   # Export netcdf
-  nc_close(ncout)
+  ncdf4::nc_close(ncout)
 }
 
 
@@ -3040,15 +3040,15 @@ create_geotiff <- function(map_data,
     stop("Matrix dimensions do not match the provided longitude/latitude ranges")
   }
 
-  r <- rast(as.matrix(map_data))
-  ext(r) <- ext(min(x), max(x), min(y), max(y)) # define raster extent
+  r <- terra::rast(as.matrix(map_data))
+  terra::ext(r) <- terra::ext(min(x), max(x), min(y), max(y)) # define raster extent
 
-  crs(r) <- "EPSG:4326"  # EPSG:4326 = WGS84
+  terra::crs(r) <- "EPSG:4326"  # EPSG:4326 = WGS84
 
   # Save the raster as a georeferenced TIFF file (terra package)
   # This option is only executed if the argument output_file is provided (used for the download)
   if(!is.null(output_file)) {
-    writeRaster(r, output_file, filetype = "GTiff", overwrite = TRUE)
+    terra::writeRaster(r, output_file, filetype = "GTiff", overwrite = TRUE)
   }
 
   return(r)

@@ -6939,14 +6939,14 @@ ui <- navbarPage(
              column(10, div(id = "leaflet",
                             tags$style(type = "text/css", "#MES_leaflet {height: calc(80vh - 100px) !important;}"), # Adjust the height of the map
                             tags$style(type = "text/css", "div.leaflet-control {text-align: left;}"), # Makes sure that legend text is left-aligned
-                            withSpinner(ui_element = leafletOutput("MES_leaflet"), 
+                            withSpinner(ui_element = leaflet::leafletOutput("MES_leaflet"), 
                                         image = spinner_image,
                                         image.width = spinner_width,
                                         image.height = spinner_height)),
                     
                     br(), br(),
                     
-                    plotlyOutput("time_series_plot")  # Use plotlyOutput instead of plotOutput
+                    plotly::plotlyOutput("time_series_plot")  # Use plotlyOutput instead of plotOutput
                     
              )),
            
