@@ -1,19 +1,13 @@
 # ClimeApp Development
+ClimeApp is a data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis.
 
-* [Introduction](#Introduction)
-* [Authors](#Authors)
-* [Citations](#Citations)
-* [Contact](#Contact)
-* [Funding](#Funding)
+Visit ClimeApp here: [ClimeApp website](https://mode-ra.unibe.ch/climeapp/)
+To learn more about ClimeApp and the data behind it, watch our video tutorials: [ClimeApp tutorials](https://climeapp.github.io/ClimeApp_Tutorials/)
 
-## Introduction
-ClimeApp is a data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis. For more information, visit the [ClimeApp website](https://mode-ra.unibe.ch/climeapp/).
 
 ## Authors
 Created by Niklaus Bartlome & Richard Warren
 Co-developed by Noémie Wellinger & Tanja Falasca
-
-## Sources
 
 ## Citation
 To cite, please reference:
