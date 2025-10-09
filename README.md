@@ -1,19 +1,14 @@
 # ClimeApp Development
+ClimeApp is a data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis.
 
-* [Introduction](#Introduction)
-* [Authors](#Authors)
-* [Citations](#Citations)
-* [Contact](#Contact)
-* [Funding](#Funding)
+Visit ClimeApp here: [ClimeApp website](https://mode-ra.unibe.ch/climeapp/)
 
-## Introduction
-ClimeApp is a data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis. For more information, visit the [ClimeApp website](https://mode-ra.unibe.ch/climeapp/).
+To learn more about ClimeApp and the data behind it, watch our video tutorials: [ClimeApp tutorials](https://climeapp.github.io/ClimeApp_Tutorials/)
+
 
 ## Authors
 Created by Niklaus Bartlome & Richard Warren
 Co-developed by Noémie Wellinger & Tanja Falasca
-
-## Sources
 
 ## Citation
 To cite, please reference:
@@ -27,7 +22,9 @@ R. Hand, E. Samakinwa, L. Lipfert, and S. Brönnimann: ModE-Sim – a medium-siz
 ## Contact
 For feedback and suggestions on ClimeApp, please contact: climeapp.hist@unibe.ch
 
-For queries relating to the ModE-RA data, please contact: franke@giub.unibe.ch
+For queries relating to the ModE-RA data, please contact: joerg.franke@unibe.ch
+
+To report technical issues, please contact the Linux support team: linux.support.giub@unibe.ch
 
 ## Funding
 PALAEO-RA: H2020/ERC grant number 787574
