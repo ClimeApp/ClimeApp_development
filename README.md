@@ -22,7 +22,9 @@ R. Hand, E. Samakinwa, L. Lipfert, and S. Brönnimann: ModE-Sim – a medium-siz
 ## Contact
 For feedback and suggestions on ClimeApp, please contact: climeapp.hist@unibe.ch
 
-For queries relating to the ModE-RA data, please contact: franke@giub.unibe.ch
+For queries relating to the ModE-RA data, please contact: joerg.franke@unibe.ch
+
+To report technical issues, please contact the Linux support team: linux.support.giub@unibe.ch
 
 ## Funding
 PALAEO-RA: H2020/ERC grant number 787574
