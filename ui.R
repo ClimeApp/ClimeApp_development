@@ -5239,7 +5239,7 @@ ui <- navbarPage(
                                                         label    = "Choose a variable:",
                                                         choices  = NULL,
                                                         selected = NULL),
-                                            withSpinner(ui_element = plotOutput("plot_reg_coeff", height = "auto",  dblclick = "map_dblclick_reg_coeff", brush = brushOpts(id = "map_brush_reg_coeff",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("plot_reg_coeff", height = "750px",  dblclick = "map_dblclick_reg_coeff", brush = brushOpts(id = "map_brush_reg_coeff",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -5556,13 +5556,17 @@ ui <- navbarPage(
                                             br(),
                                             # Data table
                                             h4("Map Data", style = "color: #094030;"),
-                                            br(),
-                                            withSpinner(ui_element = tableOutput("data_reg_coeff"),
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height),
-                                              
-                                     ),
+                                            checkboxInput("show_reg_coeff_table", "Show regression coefficients table", FALSE),
+                                            conditionalPanel(
+                                              condition = "input.show_reg_coeff_table",
+                                              shinycssloaders::withSpinner(
+                                                ui_element   = tableOutput("data_reg_coeff"),
+                                                image        = spinner_image,
+                                                image.width  = spinner_width,
+                                                image.height = spinner_height
+                                              )
+                                            ),
+                                          ),
                                    
                                    ### Regression pvalues ----
                                    tabPanel("Regression p values",
@@ -5573,7 +5577,7 @@ ui <- navbarPage(
                                                         label    = "Choose a variable:",
                                                         choices  = NULL,
                                                         selected = NULL),
-                                            withSpinner(ui_element = plotOutput("plot_reg_pval", height = "auto",  dblclick = "map_dblclick_reg_pval", brush = brushOpts(id = "map_brush_reg_pval",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("plot_reg_pval", height = "750px",  dblclick = "map_dblclick_reg_pval", brush = brushOpts(id = "map_brush_reg_pval",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -5890,12 +5894,17 @@ ui <- navbarPage(
                                             br(),
                                             # Data table
                                             h4("Map Data", style = "color: #094030;"),
-                                            br(),
-                                            withSpinner(ui_element = tableOutput("data_reg_pval"),
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height)
-                                   ),
+                                            checkboxInput("show_reg_pval_table", "Show regression p values table", FALSE),
+                                            conditionalPanel(
+                                              condition = "input.show_reg_pval_table",
+                                              shinycssloaders::withSpinner(
+                                                ui_element   = tableOutput("data_reg_pval"),
+                                                image        = spinner_image,
+                                                image.width  = spinner_width,
+                                                image.height = spinner_height
+                                              )
+                                            ),
+                                          ),
                                    
                                    ### Regression residuals ----
                                    tabPanel("Regression residuals",
@@ -5912,7 +5921,7 @@ ui <- navbarPage(
                                                        max = 2008,
                                                        updateOn = "blur")),
                                             ),
-                                            withSpinner(ui_element = plotOutput("plot_reg_resi", height = "auto",  dblclick = "map_dblclick_reg_res", brush = brushOpts(id = "map_brush_reg_res",resetOnNew = TRUE)),
+                                            withSpinner(ui_element = plotOutput("plot_reg_resi", height = "750px",  dblclick = "map_dblclick_reg_res", brush = brushOpts(id = "map_brush_reg_res",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -6242,12 +6251,17 @@ ui <- navbarPage(
                                             br(),
                                             # Data table
                                             h4("Map Data", style = "color: #094030;"),
-                                            br(),
-                                            withSpinner(ui_element = tableOutput("data_reg_res"),
-                                                        image = spinner_image,
-                                                        image.width = spinner_width,
-                                                        image.height = spinner_height)
-                                   ),
+                                            checkboxInput("show_reg_res_table", "Show regression residuals table", FALSE),
+                                            conditionalPanel(
+                                              condition = "input.show_reg_res_table",
+                                              shinycssloaders::withSpinner(
+                                                ui_element   = tableOutput("data_reg_res"),
+                                                image        = spinner_image,
+                                                image.width  = spinner_width,
+                                                image.height = spinner_height
+                                              )
+                                            ),
+                                          ),
                                    
                                    ### Feedback archive documentation (FAD) ----
                                    tabPanel("ModE-RA sources", value = "reg_fad_tab", br(),

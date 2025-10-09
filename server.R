@@ -9347,9 +9347,7 @@ server <- function(input, output, session) {
     return(m_d)
   })
   
-  # --- Unified wrapper for map (Tab 1) ---
   map_plot <- function() {
-    # 1) Validate year range early
     validate(
       need(
         !is.null(input$range_years) &&
@@ -9362,12 +9360,10 @@ server <- function(input, output, session) {
       )
     )
     
-    # 2) Build GeoTIFF in memory (consistent with map2)
     md <- map_data()
     ll <- lonlat_vals()
     gtf <- .create_geotiff_mem(md, ll)
     
-    # 3) Draw plot
     plot_map(
       data_input           = gtf,
       lon_lat_range        = ll,
@@ -9404,21 +9400,17 @@ server <- function(input, output, session) {
   }
   
   ###### Cached Plot 
-  # Render cached plot output
   output$map <- renderCachedPlot({
-    # Ensure dimensions are available
     req(map_dimensions()[1], map_dimensions()[2])
     map_plot()
   },
   
-  # Cache key expression (unchanged, just English comments)
+  # Cache key expression
   cacheKeyExpr = {
-    # Overlay keys (points/highlights/stats)
     points_key     <- tryCatch(overlay_key(map_points_data()),     error = function(e) "")
     highlights_key <- tryCatch(overlay_key(map_highlights_data()), error = function(e) "")
     stats_key      <- tryCatch(overlay_key(map_statistics()),      error = function(e) "")
     
-    # Shapefile upload fingerprint
     shpfile_key <- tryCatch({
       f <- input$shpFile
       if (is.null(f)) "no-upload" else paste(
@@ -9429,14 +9421,12 @@ server <- function(input, output, session) {
       )
     }, error = function(e) "no-upload")
     
-    # Shape ID order (deduplicated)
     shp_ids_key  <- tryCatch({
       ids <- input$shapes_order[input$shapes_order %in% input$shapes]
       ids <- ids[!duplicated(ids)]
       paste(ids, collapse = "|")
     }, error = function(e) "")
     
-    # Shape color styles
     shp_style_key <- tryCatch({
       ids <- input$shapes_order[input$shapes_order %in% input$shapes]
       ids <- ids[!duplicated(ids)]
@@ -9448,18 +9438,15 @@ server <- function(input, output, session) {
       }, character(1L)), collapse = "|")
     }, error = function(e) "")
     
-    # Misc keys
     plotorder_key <- tryCatch(digest::digest(plotOrder()), error = function(e) "")
     shp_color_key <- tryCatch(digest::digest(shp_color_inputs()), error = function(e) "")
     
-    # Custom statistic parameters
     sd_ratio_key <- if (identical(input$custom_statistic, "SD ratio")) {
       round(as.numeric(input$sd_ratio %||% NA_real_), 4)
     } else {
       NA_real_
     }
     
-    # Month selector state
     months_key <- tryCatch({
       if (identical(input$season_selected, "Custom")) {
         paste(input$range_months %||% character(0), collapse = "->")
@@ -9468,10 +9455,8 @@ server <- function(input, output, session) {
       }
     }, error = function(e) "no-months")
     
-    # Pixel dimensions
     dim_key <- paste0(map_dimensions()[1], "x", map_dimensions()[2])
     
-    # Final key list
     list(
       input$nav1,
       input$value_type_map_data,
@@ -10208,9 +10193,7 @@ server <- function(input, output, session) {
     return(m_d_2)
   })
   
-  # --- Unified wrapper for map2 (Tab 2) ---
   map_plot_2 <- function() {
-    # Validate reference period range early
     validate(need(
       !is.null(input$ref_period2) &&
         length(input$ref_period2) == 2 &&
@@ -10221,12 +10204,10 @@ server <- function(input, output, session) {
       "Please select a valid year range between 1422 and 2008."
     ))
     
-    # Build GeoTIFF in memory
     md  <- map_data_2()
     ll  <- lonlat_vals2()
     gtf <- .create_geotiff_mem(md, ll)
     
-    # Draw plot
     plot_map(
       data_input           = gtf,
       lon_lat_range        = ll,
@@ -10264,17 +10245,14 @@ server <- function(input, output, session) {
   
   ###### Cached Plot
   output$map2 <- renderCachedPlot({
-    # Ensure dimensions are available
     req(map_dimensions_2()[1], map_dimensions_2()[2])
     map_plot_2()
   },
   cacheKeyExpr = {
-    # Overlay keys (points/highlights/stats)
     points_key2     <- tryCatch(overlay_key(map_points_data2()),     error = function(e) "")
     highlights_key2 <- tryCatch(overlay_key(map_highlights_data2()), error = function(e) "")
     stats_key2      <- tryCatch(overlay_key(map_statistics_2()),     error = function(e) "")
     
-    # Shapefile upload fingerprint
     shpfile_key2 <- tryCatch({
       f <- input$shpFile2
       if (is.null(f)) "no-upload" else paste(
@@ -10285,14 +10263,12 @@ server <- function(input, output, session) {
       )
     }, error = function(e) "no-upload")
     
-    # Shape ID order (deduplicated)
     shp_ids_key2 <- tryCatch({
       ids <- input$shapes2_order[input$shapes2_order %in% input$shapes2]
       ids <- ids[!duplicated(ids)]
       paste(ids, collapse = "|")
     }, error = function(e) "")
     
-    # Shape color styles
     shp_style_key2 <- tryCatch({
       ids <- input$shapes2_order[input$shapes2_order %in% input$shapes2]
       ids <- ids[!duplicated(ids)]
@@ -10304,17 +10280,14 @@ server <- function(input, output, session) {
       }, character(1L)), collapse = "|")
     }, error = function(e) "")
     
-    # Misc keys
     plotorder_key2 <- tryCatch(digest::digest(plotOrder2()), error = function(e) "")
     
-    # Custom statistic parameters
     sd_ratio_key2 <- if (identical(input$custom_statistic2, "SD ratio")) {
       round(as.numeric(input$sd_ratio2 %||% NA_real_), 4)
     } else {
       NA_real_
     }
     
-    # Month selector state
     months_key2 <- tryCatch({
       if (identical(input$season_selected2, "Custom")) {
         paste(input$range_months2 %||% character(0), collapse = "->")
@@ -10323,10 +10296,8 @@ server <- function(input, output, session) {
       }
     }, error = function(e) "no-months")
     
-    # Pixel dimensions
     dim_key2 <- paste0(map_dimensions_2()[1], "x", map_dimensions_2()[2])
     
-    # Final key list
     list(
       input$nav1,
       input$dataset_selected2,
@@ -12755,7 +12726,86 @@ server <- function(input, output, session) {
     )
   }
   
-  output$plot_reg_coeff = renderPlot({reg_coef_map()},width = function(){plot_dimensions_reg()[1]},height = function(){plot_dimensions_reg()[2]})
+  ###### Cached Regression Coefficient Plot
+  output$plot_reg_coeff <- renderCachedPlot({
+    req(input$nav1 == "tab4")
+    req(plot_dimensions_reg()[1], plot_dimensions_reg()[2])
+    
+    reg_coef_map()
+  },
+  
+  # Cache key expression
+  cacheKeyExpr = {
+    points_key     <- tryCatch(overlay_key(map_points_data_reg_coeff()),     error = function(e) "")
+    highlights_key <- tryCatch(overlay_key(map_highlights_data_reg_coeff()), error = function(e) "")
+    
+    shpfile_key <- tryCatch({
+      f <- input$shpFile_reg_coeff
+      if (is.null(f)) "no-upload" else paste(
+        paste(f$name, collapse = "|"),
+        paste(f$size, collapse = "|"),
+        paste(unname(tools::md5sum(f$datapath)), collapse = "|"),
+        sep = "::"
+      )
+    }, error = function(e) "no-upload")
+    
+    shp_ids_key  <- tryCatch({
+      ids <- input$shapes_reg_coeff_order[input$shapes_reg_coeff_order %in% input$shapes_reg_coeff]
+      ids <- ids[!duplicated(ids)]
+      paste(ids, collapse = "|")
+    }, error = function(e) "")
+    
+    shp_style_key <- tryCatch({
+      ids <- input$shapes_reg_coeff_order[input$shapes_reg_coeff_order %in% input$shapes_reg_coeff]
+      ids <- ids[!duplicated(ids)]
+      prefix <- "shp_colour_reg_coeff_"
+      paste(vapply(ids, function(id) {
+        val <- input[[paste0(prefix, id)]]
+        col <- if (is.null(val) || is.na(val) || !nzchar(val)) "#000000" else as.character(val)[1]
+        paste0(id, "=", col)
+      }, character(1L)), collapse = "|")
+    }, error = function(e) "")
+    
+    plotorder_key <- tryCatch(digest::digest(plotOrder_reg_coeff()), error = function(e) "")
+    shp_color_key <- tryCatch(digest::digest(shp_color_inputs_reg_coeff()), error = function(e) "")
+    
+    dim_key <- paste0(plot_dimensions_reg()[1], "x", plot_dimensions_reg()[2])
+    
+    list(
+      input$nav1,
+      variables_iv(), 
+      variable_dv(),    
+      lonlat_vals_dv(),
+      input$axis_input_reg_coeff,
+      input$hide_axis_reg_coeff,
+      points_key,
+      highlights_key,
+      shpfile_key,
+      plotorder_key,
+      shp_ids_key,
+      shp_style_key,
+      shp_color_key,
+      dim_key,
+      input$hide_borders_reg_coeff,
+      input$white_ocean_reg_coeff,
+      input$white_land_reg_coeff,
+      input$projection_reg_coeff,
+      input$center_lat_reg_coeff,
+      input$center_lon_reg_coeff,
+      input$show_rivers_reg_coeff,
+      input$label_rivers_reg_coeff,
+      input$show_lakes_reg_coeff,
+      input$label_lakes_reg_coeff,
+      input$show_mountains_reg_coeff,
+      input$label_mountains_reg_coeff,
+      plotOrder_reg_coeff(),
+      input$shapes_reg_coeff_order[input$shapes_reg_coeff_order %in% input$shapes_reg_coeff],
+      plot_titles_reg_coeff(),
+      "Regression_coefficients"
+    )
+  },
+  width  = function() { plot_dimensions_reg()[1] },
+  height = function() { plot_dimensions_reg()[2] })
   
   # Plot Table
   reg_coef_table = function() {
@@ -12776,7 +12826,6 @@ server <- function(input, output, session) {
   }
   
   output$data_reg_coeff = renderTable({reg_coef_table()}, rownames = TRUE)
-  
   
   ######### Regression pvalue plot
   
@@ -12834,9 +12883,89 @@ server <- function(input, output, session) {
     )
   }
   
-  output$plot_reg_pval = renderPlot({
+  ###### Cached Regression P-Value Plot
+  output$plot_reg_pval <- renderCachedPlot({
+    req(input$nav1 == "tab4")
+    req(plot_dimensions_reg()[1], plot_dimensions_reg()[2])
+    
     reg_pval_map()
-  }, width = function(){plot_dimensions_reg()[1]}, height = function(){plot_dimensions_reg()[2]})
+  },
+  
+  # Cache key expression
+  cacheKeyExpr = {
+    points_key     <- tryCatch(overlay_key(map_points_data_reg_pval()),     error = function(e) "")
+    highlights_key <- tryCatch(overlay_key(map_highlights_data_reg_pval()), error = function(e) "")
+    
+    shpfile_key <- tryCatch({
+      f <- input$shpFile_reg_pval
+      if (is.null(f)) "no-upload" else paste(
+        paste(f$name, collapse = "|"),
+        paste(f$size, collapse = "|"),
+        paste(unname(tools::md5sum(f$datapath)), collapse = "|"),
+        sep = "::"
+      )
+    }, error = function(e) "no-upload")
+    
+    shp_ids_key  <- tryCatch({
+      ids <- input$shapes_reg_pval_order[input$shapes_reg_pval_order %in% input$shapes_reg_pval]
+      ids <- ids[!duplicated(ids)]
+      paste(ids, collapse = "|")
+    }, error = function(e) "")
+    
+    shp_style_key <- tryCatch({
+      ids <- input$shapes_reg_pval_order[input$shapes_reg_pval_order %in% input$shapes_reg_pval]
+      ids <- ids[!duplicated(ids)]
+      prefix <- "shp_colour_reg_pval_"
+      paste(vapply(ids, function(id) {
+        val <- input[[paste0(prefix, id)]]
+        col <- if (is.null(val) || is.na(val) || !nzchar(val)) "#000000" else as.character(val)[1]
+        paste0(id, "=", col)
+      }, character(1L)), collapse = "|")
+    }, error = function(e) "")
+    
+    plotorder_key <- tryCatch(digest::digest(plotOrder_reg_pval()), error = function(e) "")
+    shp_color_key <- tryCatch(digest::digest(shp_color_inputs_reg_pval()), error = function(e) "")
+    
+    dim_key <- paste0(plot_dimensions_reg()[1], "x", plot_dimensions_reg()[2])
+    
+    list(
+      input$nav1,
+      variables_iv(),
+      variable_dv(), 
+      lonlat_vals_dv(),
+      input$axis_input_reg_pval,
+      input$hide_axis_reg_pval,
+      
+      # Overlays
+      points_key,
+      highlights_key,
+      shpfile_key,
+      plotorder_key,
+      shp_ids_key,
+      shp_style_key,
+      shp_color_key,
+      dim_key,
+      input$hide_borders_reg_pval,
+      input$white_ocean_reg_pval,
+      input$white_land_reg_pval,
+      input$projection_reg_pval,
+      input$center_lat_reg_pval,
+      input$center_lon_reg_pval,
+      input$show_rivers_reg_pval,
+      input$label_rivers_reg_pval,
+      input$show_lakes_reg_pval,
+      input$label_lakes_reg_pval,
+      input$show_mountains_reg_pval,
+      input$label_mountains_reg_pval,
+      plotOrder_reg_pval(),
+      input$shapes_reg_pval_order[input$shapes_reg_pval_order %in% input$shapes_reg_pval],
+      plot_titles_reg_pval(),
+      "Regression_p_values"
+    )
+  },
+  width  = function() { plot_dimensions_reg()[1] },
+  height = function() { plot_dimensions_reg()[2] })
+  
   
   reg_pval_table = function() {
     req(input$pvalue_variable)
@@ -12855,9 +12984,10 @@ server <- function(input, output, session) {
     
     return(rpd2)
   }
-  
-  output$data_reg_pval = renderTable({reg_pval_table()},rownames = TRUE)
 
+  output$data_reg_pval = renderTable({reg_pval_table()}, rownames = TRUE)
+  
+  
   
   ######### Regression residuals plot
   
@@ -12923,13 +13053,89 @@ server <- function(input, output, session) {
     )
   }
   
-  output$plot_reg_resi = renderPlot({
+  ###### Cached Regression Residuals Plot
+  output$plot_reg_resi <- renderCachedPlot({
+    req(input$nav1 == "tab4")
+    req(plot_dimensions_reg()[1], plot_dimensions_reg()[2])
+    
     reg_res_map()
-  }, width = function() {
-    plot_dimensions_reg()[1]
-  }, height = function() {
-    plot_dimensions_reg()[2]
-  })
+  },
+  
+  # Cache key expression
+  cacheKeyExpr = {
+    points_key     <- tryCatch(overlay_key(map_points_data_reg_res()),     error = function(e) "")
+    highlights_key <- tryCatch(overlay_key(map_highlights_data_reg_res()), error = function(e) "")
+    
+    shpfile_key <- tryCatch({
+      f <- input$shpFile_reg_res
+      if (is.null(f)) "no-upload" else paste(
+        paste(f$name, collapse = "|"),
+        paste(f$size, collapse = "|"),
+        paste(unname(tools::md5sum(f$datapath)), collapse = "|"),
+        sep = "::"
+      )
+    }, error = function(e) "no-upload")
+    
+    shp_ids_key  <- tryCatch({
+      ids <- input$shapes_reg_res_order[input$shapes_reg_res_order %in% input$shapes_reg_res]
+      ids <- ids[!duplicated(ids)]
+      paste(ids, collapse = "|")
+    }, error = function(e) "")
+    
+    shp_style_key <- tryCatch({
+      ids <- input$shapes_reg_res_order[input$shapes_reg_res_order %in% input$shapes_reg_res]
+      ids <- ids[!duplicated(ids)]
+      prefix <- "shp_colour_reg_res_"
+      paste(vapply(ids, function(id) {
+        val <- input[[paste0(prefix, id)]]
+        col <- if (is.null(val) || is.na(val) || !nzchar(val)) "#000000" else as.character(val)[1]
+        paste0(id, "=", col)
+      }, character(1L)), collapse = "|")
+    }, error = function(e) "")
+    
+    plotorder_key <- tryCatch(digest::digest(plotOrder_reg_res()), error = function(e) "")
+    shp_color_key <- tryCatch(digest::digest(shp_color_inputs_reg_res()), error = function(e) "")
+    
+    dim_key <- paste0(plot_dimensions_reg()[1], "x", plot_dimensions_reg()[2])
+    
+    list(
+      input$nav1,
+      variables_iv(),    
+      variable_dv(),
+      lonlat_vals_dv(),
+      reg_resi_year_val(),
+      input$reg_resi_year, 
+      input$axis_input_reg_res,
+      input$hide_axis_reg_res,
+      points_key,
+      highlights_key,
+      shpfile_key,
+      plotorder_key,
+      shp_ids_key,
+      shp_style_key,
+      shp_color_key,
+      dim_key,
+      input$hide_borders_reg_res,
+      input$white_ocean_reg_res,
+      input$white_land_reg_res,
+      input$projection_reg_res,
+      input$center_lat_reg_res,
+      input$center_lon_reg_res,
+      input$show_rivers_reg_res,
+      input$label_rivers_reg_res,
+      input$show_lakes_reg_res,
+      input$label_lakes_reg_res,
+      input$show_mountains_reg_res,
+      input$label_mountains_reg_res,
+      plotOrder_reg_res(),
+      input$shapes_reg_res_order[input$shapes_reg_res_order %in% input$shapes_reg_res],
+      plot_titles_reg_res(),
+      "Regression_residuals"
+    )
+  },
+  width  = function() { plot_dimensions_reg()[1] },
+  height = function() { plot_dimensions_reg()[2] })
+  
   
   reg_res_table = function() {
     # Find ID of year selected
@@ -12943,7 +13149,8 @@ server <- function(input, output, session) {
     )
   }
   
-  output$data_reg_res = renderTable({reg_res_table()},rownames = TRUE)
+
+  output$data_reg_res = renderTable({reg_res_table()}, rownames = TRUE)
 
   ####### ModE-RA sources ----
   
