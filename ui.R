@@ -233,7 +233,25 @@ ui <- navbarPage(
                tabsetPanel(id = "tabset0",
                            #### Tab Welcome ----
                            tabPanel("Welcome",
-                                    tags$img(src = 'pics/welcome_map.jpg', id = "welcome_map", class = "responsive-img"),
+                                    br(),
+                                    tags$video(
+                                      id = "welcome_video",
+                                      class = "responsive-video",
+                                      controls = NA,
+                                      poster = "pics/welcome_map.jpg",
+                                      tags$source(src = "pics/intro.mp4", type = "video/mp4"),
+                                      "Your browser does not support the video tag."
+                                    ),
+                                    br(),br(),
+                                    tags$a(
+                                      href   = "https://climeapp.github.io/ClimeApp_Tutorials/",
+                                      target = "_blank",
+                                      class  = "btn btn-primary",
+                                      style  = "width:200px;",
+                                      "Go to Video Tutorials"
+                                    ),
+                                    br(), br(), br(),
+                  
                                     h4("For more information on the ModE datasets and ClimeApp please see:", style = "color: #094030;"),
                                     h5(helpText(a("ModE-RA - a global monthly paleo-reanalysis of the modern era 1421 to 2008", href = "https://doi.org/10.1038/s41597-023-02733-8"), br(), a("ModE-RAclim - a version of the ModE-RA reanalysis with climatological prior for sensitivity studies", href = "https://www.wdc-climate.de/ui/entry?acronym=ModE-RAc"), br(),  a("ModE-Sim – a medium-sized atmospheric general circulation model (AGCM) ensemble to study climate variability during the modern era (1420 to 2009)", href = "https://gmd.copernicus.org/articles/16/4853/2023/"), br(), a("ClimeApp: data processing tool for monthly, global climate data from the ModE-RA palaeo-reanalysis, 1422 to 2008 CE", href = "https://doi.org/10.5194/cp-20-2645-2024"))),
                                     h4("To cite, please reference:", style = "color: #094030;"),
