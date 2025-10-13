@@ -11566,7 +11566,7 @@ server <- function(input, output, session) {
   
   # Get dynamically calculated axis values
   axis_range_dynamic <- reactive({
-    vals <- values(correlation_map_data_tiff())
+    vals <- terra::values(correlation_map_data_tiff())
     max_abs <- max(abs(vals), na.rm = TRUE)
     c(-max_abs, max_abs)
   })
