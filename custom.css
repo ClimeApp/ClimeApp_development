@@ -1,0 +1,177 @@
+
+/* Custom styles for Pagination and Info alignment */
+.dataTables_wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dataTables_paginate {
+  flex: 1 1 auto;
+  text-align: left;
+  width: auto;
+}
+
+.dataTables_info {
+  flex: 0 0 300px; /* Adjust the width as needed */
+  text-align: left;
+  margin-top: 40px;
+  width: 300px;
+}
+
+/* Custom styles for Navbar */
+.navbar {
+  height: 75px !important;
+}
+
+.navbar-footer {
+  display: flex;
+  align-items: left;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.navbar-footer .app-version {
+  display: flex;
+  justify-content: right;
+  color: darkgrey;
+} 
+  
+@media (max-width: 991.98px) {
+    .navbar-header {
+        margin-top: -17px;
+    }
+}
+
+.green-background {
+  color: #d9b166;
+  background-color: #094030 !important;
+}
+
+.green-background:hover {
+  color: #d9b166 !important;
+}
+
+.green-background:focus {
+  background-color: #094030 !important;
+  color: #d9b166 !important;
+}
+
+.collapsed-menu .navbar-collapse {
+  background-color: #094030; /* Change this to your desired background color */
+}
+
+.responsive-img {
+  max-width: 100%;
+  height: auto;
+}
+
+.responsive-video {
+  width: 90%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Custom styles for buttons */
+
+#button_global,
+#button_europe,
+#button_asia,
+#button_oceania,
+#button_africa,
+#button_n_america,
+#button_s_america,
+#button_global2,
+#button_europe2,
+#button_asia2,
+#button_oceania2,
+#button_africa2,
+#button_n_america2,
+#button_s_america2,
+#button_global_v1,
+#button_europe_v1,
+#button_asia_v1,
+#button_oceania_v1,
+#button_africa_v1,
+#button_n_america_v1,
+#button_s_america_v1,
+#button_global_v2,
+#button_europe_v2,
+#button_asia_v2,
+#button_oceania_v2,
+#button_africa_v2,
+#button_n_america_v2,
+#button_s_america_v2,
+#button_global_iv,
+#button_europe_iv,
+#button_asia_iv,
+#button_oceania_iv,
+#button_africa_iv,
+#button_n_america_iv,
+#button_s_america_iv,
+#button_global_dv,
+#button_europe_dv,
+#button_asia_dv,
+#button_oceania_dv,
+#button_africa_dv,
+#button_n_america_dv,
+#button_s_america_dv,
+#button_global_6,
+#button_europe_6,
+#button_asia_6,
+#button_oceania_6,
+#button_africa_6,
+#button_n_america_6,
+#button_s_america_6,
+#remove_last_point,
+#remove_all_points,
+#remove_last_highlight,
+#remove_all_highlights,
+#remove_last_point_ts,
+#remove_all_points_ts,
+#remove_last_highlight_ts,
+#remove_all_highlights_ts,
+#remove_last_line_ts,
+#remove_all_lines_ts,
+#remove_last_point2,
+#remove_all_points2,
+#remove_last_highlight2,
+#remove_all_highlights2,
+#remove_last_point_ts2,
+#remove_all_points_ts2,
+#remove_last_highlight_ts2,
+#remove_all_highlights_ts2,
+#remove_last_line_ts2,
+#remove_all_lines_ts2,
+#remove_last_point_ts3,
+#remove_all_points_ts3,
+#remove_last_highlight_ts3,
+#remove_all_highlights_ts3,
+#remove_last_line_ts3,
+#remove_all_lines_ts3,
+#remove_last_point3,
+#remove_all_points3,
+#remove_last_highlight3,
+#remove_all_highlights3,
+#button_global5,
+#button_europe5,
+#button_asia5,
+#button_oceania5,
+#button_africa5,
+#button_n_america5,
+#button_s_america5,
+#add_monthly_ts,
+#remove_last_monthly_ts,
+#remove_all_monthly_ts,
+#add_point_ts5,
+#remove_last_point_ts5,
+#remove_all_points_ts5,
+#add_highlight_ts5,
+#remove_last_highlight_ts5,
+#remove_all_highlights_ts5,
+#add_line_ts5,
+#remove_last_line_ts5 {
+  margin-top: 10px;
+}
