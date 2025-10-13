@@ -27,9 +27,7 @@ overlay_key <- function(df) {
   paste(paste(round(lon[ord], 3), round(lat[ord], 3), sep=","), collapse=";")
 }
 
-
-
-# Aus UI verschoben
+# Logos and pictures
 current_month_day <- format(Sys.Date(), "%m-%d")
 
 logo_src   <- 'pics/Logo_ClimeApp_Weiss_Font1.png'

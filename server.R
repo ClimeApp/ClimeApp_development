@@ -8,22 +8,18 @@ server <- function(input, output, session) {
     }
   )
   
-  # --- NEU: "committed" Koordinaten (steuern die Daten) ---
   coords_committed <- reactiveVal(list(
-    lon = initial_lon_values,   # z.B. c(-20, 40)
-    lat = initial_lat_values    # z.B. c(30, 70)
+    lon = initial_lon_values,
+    lat = initial_lat_values 
   ))
   
-  # --- NEU: "pending" Brush-Bounding-Box (nur Vorschau bis Button-Klick) ---
   pending_bbox <- reactiveVal(NULL)
   
   
-  # Optional: falls anderer Code lonlat_vals() erwartet
   lonlat_vals <- reactive({
     cc <- coords_committed()
-    c(cc$lon, cc$lat)  # c(lon_min, lon_max, lat_min, lat_max)
+    c(cc$lon, cc$lat)
   })
-  
   
   # Set up custom data, preprocessed data and SDratio reactive variables ----
   preprocessed_data_primary = reactiveVal()
