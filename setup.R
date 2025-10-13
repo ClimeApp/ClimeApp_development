@@ -126,6 +126,7 @@ library(shinyjqui, lib.loc = lib_path)
 
 # Source for images
 addResourcePath(prefix = 'pics', directoryPath = "www")
+addResourcePath(prefix = 'videos', directoryPath = "videos")
 
 # Choosing theme and making colouring changes
 my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")

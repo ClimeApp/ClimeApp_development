@@ -239,7 +239,7 @@ ui <- navbarPage(
                                       class = "responsive-video",
                                       controls = NA,
                                       poster = "pics/welcome_map.jpg",
-                                      tags$source(src = "pics/intro.mp4", type = "video/mp4"),
+                                      tags$source(src = "videos/intro.mp4", type = "video/mp4"),
                                       "Your browser does not support the video tag."
                                     ),
                                     br(),br(),
