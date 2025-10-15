@@ -13975,7 +13975,7 @@ server <- function(input, output, session) {
     
     if (input$legend_MES == TRUE && !is.null(data)) {
       proxy %>%
-        addLegend(pal = pal_type,
+        leaflet::addLegend(pal = pal_type,
                   values = data$TYPE,  # use actual data
                   title = "Legend",
                   position = "bottomleft",
@@ -13983,7 +13983,7 @@ server <- function(input, output, session) {
                   labFormat = function(type, values) {
                     named_types[values]  # display names instead of codes
                   }) %>%
-        addControl(
+        leaflet::addControl(
           html = sprintf("<strong>Total global sources: %d</strong>", nrow(data)),
           position = "bottomleft"
         )

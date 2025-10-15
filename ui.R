@@ -1369,7 +1369,8 @@ ui <- navbarPage(
                                                                               label  = "Year moving average, centred:",
                                                                               value  = 11,
                                                                               min    = 3,
-                                                                              max    = 30),
+                                                                              max    = 30,
+                                                                              updateOn = "blur"),
 
                                                              )),
                                                            
@@ -2106,7 +2107,8 @@ ui <- navbarPage(
                                                                             label  = "% of years in range with matching sign:",
                                                                             value  = 90,
                                                                             min    = 1,
-                                                                            max    = 100)
+                                                                            max    = 100,
+                                                                            updateOn = "blur")
                                                            ),
                                                            
                                                            div(id = "hidden_SD_ratio2",  
@@ -2115,7 +2117,8 @@ ui <- navbarPage(
                                                                             value  = 0.2,
                                                                             min    = 0,
                                                                             max    = 1,
-                                                                            step = 0.1)
+                                                                            step = 0.1,
+                                                                            updateOn = "blur")
                                                            ),
                                                            
                                                        )),
@@ -2935,13 +2938,15 @@ ui <- navbarPage(
                                                                    label       = "Custom plot title:", 
                                                                    value       = NA,
                                                                    width       = NULL,
-                                                                   placeholder = "Custom title"),
+                                                                   placeholder = "Custom title",
+                                                                   updateOn = "blur"),
                                                          
                                                          textInput(inputId    = "y_label_6",
                                                                    label     = "Custom y-axis label:",
                                                                    value     = NA,
                                                                    width       = NULL,
-                                                                   placeholder = "Custom lable"),
+                                                                   placeholder = "Custom lable",
+                                                                   updateOn = "blur"),
                                                      )),
 
                                                    radioButtons(inputId  = "axis_mode_6",
@@ -2997,7 +3002,8 @@ ui <- navbarPage(
                                                                 label     = "Size of random sample",
                                                                 value     = 1000,
                                                                 min       = 100,
-                                                                max       = 100000000000),
+                                                                max       = 100000000000,
+                                                                updateOn = "blur"),
                                                    
                                                    checkboxInput(inputId = "show_means_6",
                                                                  label   = "Show sample means",
@@ -3925,7 +3931,8 @@ ui <- navbarPage(
                                                                                         min         = 1,
                                                                                         max         = 10,
                                                                                         step        = 0.1,
-                                                                                        width       = "50%")
+                                                                                        width       = "50%",
+                                                                                        updateOn = "blur")
                                                                       )),
                                                                     
                                                                     shinyjs::hidden( 
@@ -3937,7 +3944,8 @@ ui <- navbarPage(
                                                                                         min         = 1,
                                                                                         max         = 10,
                                                                                         step        = 0.1,
-                                                                                        width       = "50%")
+                                                                                        width       = "50%",
+                                                                                        updateOn = "blur")
                                                                       )),
                                                                     
                                                                     checkboxInput(inputId = "show_key_ref_ts3",
