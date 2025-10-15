@@ -9504,6 +9504,26 @@ server <- function(input, output, session) {
   height = function() { map_dimensions()[2] })
   
   
+  # Disable Grey land and Grey ocean for the Orthographic and LAEA projections
+  allowed_projs <- c("UTM (default)", "Robinson")
+  
+  observeEvent(input$projection, {
+    proj <- input$projection
+    
+    if (!is.null(proj) && proj %in% allowed_projs) {
+      shinyjs::enable("white_ocean")
+      shinyjs::enable("white_land")
+    } else {
+
+      try(updateCheckboxInput(session, "white_ocean", value = FALSE), silent = TRUE)
+      try(updateCheckboxInput(session, "white_land", value = FALSE), silent = TRUE)
+      
+      shinyjs::disable("white_ocean")
+      shinyjs::disable("white_land")
+    }
+  }, ignoreNULL = TRUE, ignoreInit = FALSE)
+  
+  
   
   #Ref/Absolute/SD ratio Map
   ref_map_data <- function() {
@@ -10347,6 +10367,25 @@ server <- function(input, output, session) {
   width  = function() map_dimensions_2()[1],
   height = function() map_dimensions_2()[2]
   )
+  
+  # Disable Grey land and Grey ocean for the Orthographic and LAEA projections
+  allowed_projs <- c("UTM (default)", "Robinson")
+  
+  observeEvent(input$projection2, {
+    proj <- input$projection2
+    
+    if (!is.null(proj) && proj %in% allowed_projs) {
+      shinyjs::enable("white_ocean2")
+      shinyjs::enable("white_land2")
+    } else {
+      
+      try(updateCheckboxInput(session, "white_ocean2", value = FALSE), silent = TRUE)
+      try(updateCheckboxInput(session, "white_land2", value = FALSE), silent = TRUE)
+      
+      shinyjs::disable("white_ocean2")
+      shinyjs::disable("white_land2")
+    }
+  }, ignoreNULL = TRUE, ignoreInit = FALSE)
   
 
   
@@ -11699,17 +11738,119 @@ server <- function(input, output, session) {
   }
   
   
-  output$correlation_map = renderPlot({
+  ###### Cached Correlation Map
+  output$correlation_map <- renderCachedPlot({
+    req(input$nav1 == "tab3")
+    req(correlation_map_dimensions()[1], correlation_map_dimensions()[2])
+    
     corr_m1()
-  }, width = function() {
-    correlation_map_dimensions()[1]
-  }, height = function() {
-    correlation_map_dimensions()[2]
-  })
+  },
+  # Cache key expression
+  cacheKeyExpr = {
+    points_key     <- tryCatch(overlay_key(map_points_data3()),     error = function(e) "")
+    highlights_key <- tryCatch(overlay_key(map_highlights_data3()), error = function(e) "")
+    
+    shpfile_key <- tryCatch({
+      f <- input$shpFile3
+      if (is.null(f)) "no-upload" else paste(
+        paste(f$name, collapse = "|"),
+        paste(f$size, collapse = "|"),
+        paste(unname(tools::md5sum(f$datapath)), collapse = "|"),
+        sep = "::"
+      )
+    }, error = function(e) "no-upload")
+    
+    shp_ids_key  <- tryCatch({
+      ids <- input$shapes3_order[input$shapes3_order %in% input$shapes3]
+      ids <- ids[!duplicated(ids)]
+      paste(ids, collapse = "|")
+    }, error = function(e) "")
+    
+    shp_style_key <- tryCatch({
+      ids <- input$shapes3_order[input$shapes3_order %in% input$shapes3]
+      ids <- ids[!duplicated(ids)]
+      prefix <- "shp_colour3_"
+      paste(vapply(ids, function(id) {
+        val <- input[[paste0(prefix, id)]]
+        col <- if (is.null(val) || is.na(val) || !nzchar(val)) "#000000" else as.character(val)[1]
+        paste0(id, "=", col)
+      }, character(1L)), collapse = "|")
+    }, error = function(e) "")
+    
+    plotorder_key <- tryCatch(digest::digest(plotOrder3()), error = function(e) "")
+    shp_color_key <- tryCatch(digest::digest(shp_color_inputs3()), error = function(e) "")
+    
+    corr_data_key <- tryCatch(digest::digest(correlation_map_data()), error = function(e) "")
+    
+    dim_key <- paste0(correlation_map_dimensions()[1], "x", correlation_map_dimensions()[2])
+    
+    axis_input_used <- tryCatch({
+      a <- input$axis_input3
+      if (is.null(a) || any(is.na(a)) || length(a) != 2) "dynamic" else paste(a, collapse = "_")
+    }, error = function(e) "axis-error")
+    
+    list(
+      input$nav1,
+      input$type_v1,
+      input$type_v2,
+      input$source_v1,
+      input$source_v2,
+      corr_data_key,
+      input$cor_method_map,
+      lonlat_vals_v1()[1:4],
+      lonlat_vals_v2()[1:4],
+      axis_input_used,
+      input$hide_axis3,
+      points_key,
+      highlights_key,
+      shpfile_key,
+      plotorder_key,
+      shp_ids_key,
+      shp_style_key,
+      shp_color_key,
+      dim_key,
+      input$hide_borders3,
+      input$white_ocean3,
+      input$white_land3,
+      input$projection3,
+      input$center_lat3,
+      input$center_lon3,
+      input$show_rivers3,
+      input$label_rivers3,
+      input$show_lakes3,
+      input$label_lakes3,
+      input$show_mountains3,
+      input$label_mountains3,
+      plotOrder3(),
+      input$shapes3_order[input$shapes3_order %in% input$shapes3],
+      plot_titles_cor(),
+      "Correlation_map"
+    )
+  },
+  width  = function() { correlation_map_dimensions()[1] },
+  height = function() { correlation_map_dimensions()[2] })
 
   
   
   
+  # Disable Grey land and Grey ocean for the Orthographic and LAEA projections
+  allowed_projs <- c("UTM (default)", "Robinson")
+  
+  observeEvent(input$projection3, {
+    proj <- input$projection3
+    
+    if (!is.null(proj) && proj %in% allowed_projs) {
+      shinyjs::enable("white_ocean3")
+      shinyjs::enable("white_land3")
+    } else {
+      
+      try(updateCheckboxInput(session, "white_ocean3", value = FALSE), silent = TRUE)
+      try(updateCheckboxInput(session, "white_land3", value = FALSE), silent = TRUE)
+      
+      shinyjs::disable("white_ocean3")
+      shinyjs::disable("white_land3")
+    }
+  }, ignoreNULL = TRUE, ignoreInit = FALSE)
   
   
   
@@ -12803,6 +12944,27 @@ server <- function(input, output, session) {
   width  = function() { plot_dimensions_reg()[1] },
   height = function() { plot_dimensions_reg()[2] })
   
+  
+  # Disable Grey land and Grey ocean for the Orthographic and LAEA projections
+  allowed_projs <- c("UTM (default)", "Robinson")
+  
+  observeEvent(input$projection_reg_coeff, {
+    proj <- input$projection_reg_coeff
+    
+    if (!is.null(proj) && proj %in% allowed_projs) {
+      shinyjs::enable("white_ocean_reg_coeff")
+      shinyjs::enable("white_land_reg_coeff")
+    } else {
+      
+      try(updateCheckboxInput(session, "white_ocean_reg_coeff", value = FALSE), silent = TRUE)
+      try(updateCheckboxInput(session, "white_land_reg_coeff", value = FALSE), silent = TRUE)
+      
+      shinyjs::disable("white_ocean_reg_coeff")
+      shinyjs::disable("white_land_reg_coeff")
+    }
+  }, ignoreNULL = TRUE, ignoreInit = FALSE)
+  
+  
   # Plot Table
   reg_coef_table = function() {
     req(input$coeff_variable)
@@ -12961,6 +13123,25 @@ server <- function(input, output, session) {
   },
   width  = function() { plot_dimensions_reg()[1] },
   height = function() { plot_dimensions_reg()[2] })
+  
+  # Disable Grey land and Grey ocean for the Orthographic and LAEA projections
+  allowed_projs <- c("UTM (default)", "Robinson")
+  
+  observeEvent(input$projection_reg_pval, {
+    proj <- input$projection_reg_pval
+    
+    if (!is.null(proj) && proj %in% allowed_projs) {
+      shinyjs::enable("white_ocean_reg_pval")
+      shinyjs::enable("white_land_reg_pval")
+    } else {
+      
+      try(updateCheckboxInput(session, "white_ocean_reg_pval", value = FALSE), silent = TRUE)
+      try(updateCheckboxInput(session, "white_land_reg_pval", value = FALSE), silent = TRUE)
+      
+      shinyjs::disable("white_ocean_reg_pval")
+      shinyjs::disable("white_land_reg_pval")
+    }
+  }, ignoreNULL = TRUE, ignoreInit = FALSE)
   
   
   reg_pval_table = function() {
@@ -13131,6 +13312,26 @@ server <- function(input, output, session) {
   },
   width  = function() { plot_dimensions_reg()[1] },
   height = function() { plot_dimensions_reg()[2] })
+  
+  
+  # Disable Grey land and Grey ocean for the Orthographic and LAEA projections
+  allowed_projs <- c("UTM (default)", "Robinson")
+  
+  observeEvent(input$projection_reg_res, {
+    proj <- input$projection_reg_res
+    
+    if (!is.null(proj) && proj %in% allowed_projs) {
+      shinyjs::enable("white_ocean_reg_res")
+      shinyjs::enable("white_land_reg_res")
+    } else {
+      
+      try(updateCheckboxInput(session, "white_ocean_reg_res", value = FALSE), silent = TRUE)
+      try(updateCheckboxInput(session, "white_land_reg_res", value = FALSE), silent = TRUE)
+      
+      shinyjs::disable("white_ocean_reg_res")
+      shinyjs::disable("white_land_reg_res")
+    }
+  }, ignoreNULL = TRUE, ignoreInit = FALSE)
   
   
   reg_res_table = function() {

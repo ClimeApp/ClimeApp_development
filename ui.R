@@ -11,7 +11,7 @@ ui <- navbarPage(
   
   useShinyjs(),  # Enable shinyjs
   
-  # shiny.tictoc to test performance
+  # shiny.tictoc to track performance
   tags$script(
     src = "https://cdn.jsdelivr.net/gh/Appsilon/shiny.tictoc@v0.2.0/shiny-tic-toc.min.js"
   ),
@@ -3992,7 +3992,7 @@ ui <- navbarPage(
                                             withSpinner(
                                               ui_element = plotOutput(
                                                 "correlation_map",
-                                                height = "auto",
+                                                height = "750px",
                                                 dblclick = "map_dblclick3",
                                                 brush = brushOpts(id = "map_brush3", resetOnNew = TRUE)
                                               ),
