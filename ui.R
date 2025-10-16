@@ -26,7 +26,7 @@ ui <- navbarPage(
       width  = logo_width,
       style  = "height:75px; width:auto; margin-right:5px; display:inline-block;"
     ),
-    span("(v1.4)")
+    span("(v1.5)")
   ),
 
   # Global CSS injection for hiding Shiny errors
@@ -55,22 +55,44 @@ ui <- navbarPage(
   ),
   
   # --- Head content: Favicon, JS for resizing, JS for collapsing, CSS fixes ---
+  # header = tagList(
+  #   tags$head(
+  #     # Set window icon
+  #     tags$link(rel = "icon", type = "image/png", href = "pics/Logo_Favicon.png"),
+  #     
+  #     # JavaScript: navbar toggle tracking
+  #     tags$script(HTML('
+  #       $(document).ready(function() {
+  #         $(".navbar-toggle").click(function() {
+  #           $(".navbar").toggleClass("collapsed-menu");
+  #         });
+  #       });
+  #     ')),
+  #     
+  #     # Offset for fixed-top navbar
+  #     tags$style(HTML("body { padding-top: 90px; }"))
+  #   )
+  # ),
+  
   header = tagList(
     tags$head(
-      # Set window icon
       tags$link(rel = "icon", type = "image/png", href = "pics/Logo_Favicon.png"),
-      
-      # JavaScript: navbar toggle tracking
       tags$script(HTML('
-        $(document).ready(function() {
-          $(".navbar-toggle").click(function() {
-            $(".navbar").toggleClass("collapsed-menu");
-          });
+      $(document).ready(function() {
+        $(".navbar-toggle").click(function() {
+          $(".navbar").toggleClass("collapsed-menu");
         });
-      ')),
-      
-      # Offset for fixed-top navbar
-      tags$style(HTML("body { padding-top: 90px; }"))
+      });
+    ')),
+      tags$style(HTML("
+      body { padding-top: 90px; }
+      .navbar-header {
+        line-height: 0 !important;
+      }
+      .navbar-header .navbar-brand {
+        line-height: 0 !important;
+      }
+    "))
     )
   ),
   
@@ -136,7 +158,7 @@ ui <- navbarPage(
   # --- Navbar styling and properties ---
   theme = bs_theme(version = 5, bootswatch = "united", primary = "#094030", navbar_bg = "#094030"),
   position = "fixed-top",
-  windowTitle = "ClimeApp (v1.4)",
+  windowTitle = "ClimeApp (v1.5)",
   collapsible = TRUE,
   
   # Welcome START ----                             

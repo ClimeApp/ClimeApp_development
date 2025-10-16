@@ -13941,7 +13941,6 @@ server <- function(input, output, session) {
       # Add layers control for filtering by TYPE
       leaflet::addLayersControl(
         baseGroups = c("ESRI gray", "Open Street Map", "ESRI Satellite"),
-        overlayGroups = type_names,  # Use readable names here too
         options = leaflet::layersControlOptions(collapsed = TRUE)
       ) |>
       
