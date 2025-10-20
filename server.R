@@ -4398,19 +4398,55 @@ server <- function(input, output, session) {
     )
   })
 
+  # observeEvent({
+  #   input$source_v1
+  #   input$source_v2
+  #   year_range_cor()
+  # }, {
+  #   req(year_range_cor(), length(year_range_cor()) >= 2)
+  #   
+  #   if (input$source_v1 == "User data" || input$source_v2 == "User data") {
+  #     updateNumericRangeInput(
+  #       session = getDefaultReactiveDomain(),
+  #       inputId = "range_years3",
+  #       label = paste("Select the range of years (", year_range_cor()[7], "-", year_range_cor()[8], ")"),
+  #       value = year_range_cor()[1:2]
+  #     )
+  #   }
+  # })
+  
   observeEvent({
     input$source_v1
     input$source_v2
     year_range_cor()
   }, {
-    req(year_range_cor(), length(year_range_cor()) >= 2)
+    req(year_range_cor(), length(year_range_cor()) >= 6)
     
-    if (input$source_v1 == "User data" || input$source_v2 == "User data") {
+    yr <- year_range_cor()
+    
+    if (input$source_v1 == "User data" && input$source_v2 == "User data") {
+      # both user data → show shared range
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years3",
-        label = paste("Select the range of years (", year_range_cor()[7], "-", year_range_cor()[8], ")"),
-        value = year_range_cor()[1:2]
+        label = paste("Select the overlapping range of years (", yr[5], "-", yr[6], ")"),
+        value = yr[5:6]
+      )
+    } else if (input$source_v1 == "User data") {
+      # only variable 1 is user data
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_years3",
+        label = paste("Select the range of years (", yr[7], "-", yr[8], ")"),
+        value = yr[1:2]
+      )
+    } else if (input$source_v2 == "User data") {
+      # only variable 2 is user data
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_years3",
+        label = paste("Select the range of years (", yr[9], "-", yr[10], ")"),
+        value = yr[3:4]
       )
     }
   })
@@ -5781,19 +5817,52 @@ server <- function(input, output, session) {
   })
   
   # Update year range
+  # observeEvent({
+  #   input$source_iv
+  #   input$source_dv
+  #   year_range_reg()
+  # }, {
+  #   req(year_range_reg(), length(year_range_reg()) >= 2)
+  #   
+  #   if (input$source_iv == "User data" || input$source_dv == "User data") {
+  #     updateNumericRangeInput(
+  #       session = getDefaultReactiveDomain(),
+  #       inputId = "range_years4",
+  #       label = paste("Select the range of years (", year_range_reg()[7], "-", year_range_reg()[8], ")"),
+  #       value = year_range_reg()[1:2]
+  #     )
+  #   }
+  # })
+  
   observeEvent({
     input$source_iv
     input$source_dv
     year_range_reg()
   }, {
-    req(year_range_reg(), length(year_range_reg()) >= 4)
+    req(year_range_reg(), length(year_range_reg()) >= 6)
     
-    if (input$source_iv == "User data" || input$source_dv == "User data") {
+    yr <- year_range_reg()
+    
+    if (input$source_iv == "User data" && input$source_dv == "User data") {
       updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years4",
-        label = paste("Select the range of years (", year_range_reg()[3], "-", year_range_reg()[4], ")"),
-        value = year_range_reg()[1:2]
+        label = paste("Select the overlapping range of years (", yr[5], "-", yr[6], ")"),
+        value = yr[5:6]
+      )
+    } else if (input$source_iv == "User data") {
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_years4",
+        label = paste("Select the range of years (", yr[7], "-", yr[8], ")"),
+        value = yr[1:2]
+      )
+    } else if (input$source_dv == "User data") {
+      updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "range_years4",
+        label = paste("Select the range of years (", yr[9], "-", yr[10], ")"),
+        value = yr[3:4]
       )
     }
   })
@@ -12159,30 +12228,31 @@ server <- function(input, output, session) {
   ####### User data processing ----
   
   # Extract Shared year range
-  year_range_reg = reactive({
-    
+  year_range_reg <- reactive({
+
     result <- tryCatch({
-      res <- extract_year_range(
+      # Extract year ranges for all selected IVs and DV
+      year_range <- extract_year_range(
         variable1_source = input$source_iv,
         variable2_source = input$source_dv,
         variable1_data_filepath = input$user_file_iv$datapath,
-        variable2_data_filepath = input$user_file_dv$datapath
+        variable2_data_filepath = input$user_file_dv$datapath,
+        variable1_name = input$user_variable_iv,  # can be multiple
+        variable2_name = input$user_variable_dv
       )
 
-    },
-    error = function(e) {
+      return(year_range)
+    }, error = function(e) {
       showModal(
         modalDialog(
           title = "Error",
-          "There was an error in processing your uploaded data. 
-          \nPlease check if the file has the correct format.",
+          "There was an error processing your uploaded data.\nPlease check the file format.",
           easyClose = FALSE,
           footer = tagList(modalButton("OK"))
         )
       )
       return(NULL)
-    }
-    )
+    })
     
     return(result)
   })

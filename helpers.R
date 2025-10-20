@@ -4233,16 +4233,24 @@ extract_year_range = function(variable1_source,
     all_years <- df$Year[!is.na(df$Year)]
     range_all <- if (length(all_years) > 0) c(min(all_years), max(all_years)) else NULL
     
-    # Year range for selected variable
-    if (!is.null(variable_name) && variable_name %in% names(df)) {
-      valid_years <- df$Year[!is.na(df[[variable_name]])]
-      range_var <- if (length(valid_years) > 0) c(min(valid_years), max(valid_years)) else NULL
-    } else {
-      range_var <- NULL
+    # Year range for selected variable(s)
+    range_var <- NULL
+    if (!is.null(variable_name)) {
+      # Keep only valid variable names
+      variable_name <- variable_name[variable_name %in% names(df)]
+      
+      if (length(variable_name) > 0) {
+        # Collect all years where any selected variable has non-NA values
+        valid_years <- unlist(lapply(variable_name, function(v) df$Year[!is.na(df[[v]])]))
+        if (length(valid_years) > 0) {
+          range_var <- c(min(valid_years), max(valid_years))
+        }
+      }
     }
     
     return(list(var = range_var, all = range_all))
   }
+  
   
   # Variable 1
   if (variable1_source == "User data") {
@@ -4296,64 +4304,6 @@ extract_year_range = function(variable1_source,
     V2_max_tot  # [10]
   ))
 }
-
-
-# extract_year_range = function(variable1_source,
-#                               variable2_source,
-#                               variable1_data_filepath,
-#                               variable2_data_filepath,
-#                               variable1_name = NULL,
-#                               variable2_name = NULL,
-#                               variable1_lag = 0,
-#                               variable2_lag = 0) {
-#   # Set initial values of V1_min/max and V2_min/max to ModE-RA defaults
-#   V1_min = 1422
-#   V1_max = 2008
-#   V2_min = 1422
-#   V2_max = 2008
-#   
-#   # Set V1_min/max from user data
-#   if (variable1_source == "User data" &
-#       !is.null(variable1_data_filepath)) {
-#     if (grepl(".xls", variable1_data_filepath, fixed = TRUE) == TRUE) {
-#       years = read_excel(variable1_data_filepath, range = cell_cols("A"))
-#       V1_min = min(years)
-#       V1_max = max(years)
-#     }
-#     else if (grepl(".csv", variable1_data_filepath, fixed = TRUE) == TRUE) {
-#       years = read.csv(variable1_data_filepath)[, 1]
-#       V1_min = min(years)
-#       V1_max = max(years)
-#     }
-#   }
-#   
-#   # Set V2_min/max from user data
-#   if (variable2_source == "User data" &
-#       !is.null(variable2_data_filepath)) {
-#     if (grepl(".xls", variable2_data_filepath, fixed = TRUE) == TRUE) {
-#       years = read_excel(variable2_data_filepath, range = cell_cols("A"))
-#       V2_min = min(years)
-#       V2_max = max(years)
-#     }
-#     else if (grepl(".csv", variable2_data_filepath, fixed = TRUE) == TRUE) {
-#       years = read.csv(variable2_data_filepath)[, 1]
-#       V2_min = min(years)
-#       V2_max = max(years)
-#     }
-#   }
-#   
-#   # Adjust V_min/max for lag years
-#   V1_min_adjusted = V1_min - variable1_lag
-#   V1_max_adjusted = V1_max - variable1_lag
-#   V2_min_adjusted = V2_min - variable2_lag
-#   V2_max_adjusted = V2_max - variable2_lag
-#   
-#   # Find shared year range
-#   YR_min = max(c(V1_min_adjusted, V2_min_adjusted))
-#   YR_max = min(c(V1_max_adjusted, V2_max_adjusted))
-#   
-#   return(c(YR_min, YR_max, V1_min, V1_max, V2_min, V2_max))
-# }  
 
 
 #' (Regression/Correlation) Create User data Subset
@@ -5292,10 +5242,10 @@ create_ME_timeseries_data = function(dataset,
   
   # Cycle through each variable
   for (i in variables){
-    
+
     # Generate data_ID for new variable
     data_ref = generate_data_ID(dataset,i,month_range)
-    
+
     # Access variable base data (if pp data not available)
     if (data_ref[1]==0){
       data1 = load_ModE_data(dataset,i)
@@ -5308,7 +5258,7 @@ create_ME_timeseries_data = function(dataset,
     data2 =  create_latlon_subset(data1, data_ref, subset_lon_IDs, subset_lat_IDs)
     # Generate yearly subset data
     data3 = create_yearly_subset(data2, data_ref, year_range, month_range)
-    # Generate reference data 
+    # Generate reference data
     refd = create_yearly_subset(data2, data_ref, baseline_range, month_range)
     data4 = apply(refd,c(1:2),mean)
     # Generate anomalies data
@@ -5317,17 +5267,17 @@ create_ME_timeseries_data = function(dataset,
     } else {
       data5 = convert_subset_to_anomalies(data3,data4)
     }
-    
+
     # Weight yearly means
     data_weighted = apply(data5,c(3),weight_function, t(latlon_weights_reduced))
-    
+
     # Create TS data
-    variable_ts_data = data.frame(apply(data_weighted,c(2),sum)) 
-    
+    variable_ts_data = data.frame(apply(data_weighted,c(2),sum))
+
     # Add to MEts timeseries dataframe
     MEts_data = data.frame(MEts_data,variable_ts_data)
   }
-  
+
   # Name columns
   colnames(MEts_data) = c("Year",variables)
   
@@ -5763,9 +5713,27 @@ generate_regression_titles_ts = function(independent_source,
 create_regression_summary_data = function(independent_variable_data,
                                           dependent_variable_data,
                                           independent_variables) {
-  x = as.matrix(independent_variable_data[, independent_variables])
-  y = as.matrix(dependent_variable_data[, 2])
+  # --- Ensure both datasets have a 'Year' column ---
+  if (!"Year" %in% colnames(independent_variable_data) ||
+      !"Year" %in% colnames(dependent_variable_data)) {
+    stop("Both datasets must contain a 'Year' column.")
+  }
+  
+  # --- Align by Year ---
+  merged_data = merge(
+    x = dependent_variable_data,
+    y = independent_variable_data,
+    by = "Year",
+    all = FALSE # only keep overlapping years
+  )
+  
+  # --- Extract y (dependent) and x (independent) ---
+  y = as.matrix(merged_data[, 2, drop = FALSE])
+  x = as.matrix(merged_data[, independent_variables, drop = FALSE])
+  
+  # --- Perform regression (handles internal NAs gracefully) ---
   regression_data = lm(y ~ x, na.action = na.exclude)
+  
   return(regression_data)
 }
 
@@ -5887,98 +5855,42 @@ create_regression_map_datatable = function(data_input,
 #'
 #' @return A data frame with columns for Year, Original, Trend, and Residuals, labeled with appropriate units.
 
-# create_regression_timeseries_datatable = function(dependent_variable_data,
-#                                                   summary_data,
-#                                                   regression_titles){
-#   
-#   # Extract original timeseries
-#   years = dependent_variable_data$Year
-#   original_ts = signif(dependent_variable_data[,2],digits = 3)
-#   
-#   # Exract residuals timeseries
-#   residuals_ts = signif(summary_data$residuals,digits = 3)  
-#   
-#   # Create trend timeseries
-#   trend_ts = signif((original_ts - residuals_ts),digits = 3) 
-#   
-#   # Create dataframe
-#   regression_ts_df = data.frame(years,original_ts,trend_ts,residuals_ts)
-#   colnames(regression_ts_df) = c("Year",paste(c("Original","Trend","Residuals"),regression_titles$unit_d))
-#   
-#   return(regression_ts_df)                               
-# }
-
-# create_regression_timeseries_datatable = function(dependent_variable_data,
-#                                                   summary_data,
-#                                                   regression_titles) {
-#   
-#   # Extract original series and year
-#   years_all <- dependent_variable_data$Year
-#   original_all <- dependent_variable_data[, 2]
-#   
-#   # Find which rows were used in regression (i.e., non-NA complete cases)
-#   valid_rows <- which(!is.na(original_all))  # or use model.frame() from lm
-#   if (length(summary_data$residuals) != length(valid_rows)) {
-#     stop("Length mismatch: residuals and non-missing original data do not align.")
-#   }
-#   
-#   # Extract only the rows used for regression
-#   years <- years_all[valid_rows]
-#   original_ts <- signif(original_all[valid_rows], digits = 3)
-#   residuals_ts <- signif(summary_data$residuals, digits = 3)
-#   trend_ts <- signif((original_ts - residuals_ts), digits = 3)
-# 
-#   # Create final data frame
-#   regression_ts_df <- data.frame(years, original_ts, trend_ts, residuals_ts)
-#   colnames(regression_ts_df) <- c("Year", paste(c("Original", "Trend", "Residuals"), regression_titles$unit_d))
-#   
-#   return(regression_ts_df)
-# }
-
 create_regression_timeseries_datatable = function(dependent_variable_data,
                                                   summary_data,
                                                   regression_titles) {
+  # Extract original timeseries
+  years = dependent_variable_data$Year
+  original_ts = signif(dependent_variable_data[, 2], digits = 3)
   
-  # Extract original series and years
-  years_all <- dependent_variable_data$Year
-  original_all <- dependent_variable_data[, 2]
+  # Extract residuals and fitted values
+  residuals_ts = signif(summary_data$residuals, digits = 3)
+  fitted_ts = signif(summary_data$fitted.values, digits = 3)
   
-  # Find which rows were used in regression (i.e., non-NA complete cases)
-  valid_rows <- which(!is.na(original_all))
-  if (length(summary_data$residuals) != length(valid_rows)) {
-    stop("Length mismatch: residuals and non-missing original data do not align.")
-  }
+  # Align lengths safely
+  n = min(length(years), length(fitted_ts), length(residuals_ts))
+  years = years[seq_len(n)]
+  original_ts = original_ts[seq_len(n)]
+  fitted_ts = fitted_ts[seq_len(n)]
+  residuals_ts = residuals_ts[seq_len(n)]
   
-  # Prepare full-length output with NAs
-  trend_full <- rep(NA, length(years_all))
-  residuals_full <- rep(NA, length(years_all))
-  
-  # Fill only valid rows
-  original_ts <- signif(original_all, digits = 3)
-  residuals_ts <- signif(summary_data$residuals, digits = 3)
-  trend_ts <- signif(original_all[valid_rows] - residuals_ts, digits = 3)
-  
-  residuals_full[valid_rows] <- residuals_ts
-  trend_full[valid_rows] <- trend_ts
-  
-  # Final data frame includes all years
-  regression_ts_df <- data.frame(
-    Year = years_all,
+  # Create dataframe
+  regression_ts_df = data.frame(
+    Year = years,
     Original = original_ts,
-    Trend = trend_full,
-    Residuals = residuals_full
+    Trend = fitted_ts,
+    Residuals = residuals_ts
   )
   
-  colnames(regression_ts_df) <- c("Year", 
-                                  paste("Original", regression_titles$unit_d), 
-                                  paste("Trend", regression_titles$unit_d), 
-                                  paste("Residuals", regression_titles$unit_d))
+  # Rename columns with units
+  colnames(regression_ts_df) = c(
+    "Year",
+    paste0("Original", regression_titles$unit_d),
+    paste0("Trend", regression_titles$unit_d),
+    paste0("Residuals", regression_titles$unit_d)
+  )
   
   return(regression_ts_df)
 }
-
-
-
 
 #' (Regression) Generate Metadata for Regression Visualization
 #'
