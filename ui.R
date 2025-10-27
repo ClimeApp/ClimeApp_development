@@ -265,13 +265,24 @@ ui <- navbarPage(
                                       "Your browser does not support the video tag."
                                     ),
                                     br(),br(),
-                                    tags$a(
-                                      href   = "https://climeapp.github.io/ClimeApp_Tutorials/",
-                                      target = "_blank",
-                                      class  = "btn btn-primary",
-                                      style  = "width:200px;",
-                                      "Go to Video Tutorials"
+                                    
+                                    fluidRow(
+                                      tags$a(
+                                        href   = "https://climeapp.github.io/ClimeApp_Tutorials/",
+                                        target = "_blank",
+                                        class  = "btn btn-primary",
+                                        style  = "width:200px; margin-right:20px; margin-left:20px;",
+                                        "Go to video tutorials"
+                                      ),
+                                      
+                                      actionButton(
+                                        "go_desktop", 
+                                        "Download ClimeApp desktop version",
+                                        class = "btn btn-primary",
+                                        style = "width:300px;"
+                                      )
                                     ),
+                                    
                                     br(), br(), br(),
                   
                                     h4("For more information on the ModE datasets and ClimeApp please see:", style = "color: #094030;"),
@@ -395,7 +406,7 @@ ui <- navbarPage(
                            ),
                            
                            #### Offline version ----
-                           tabPanel("ClimeApp desktop",
+                           tabPanel("ClimeApp desktop", value = "desktop_tab",
                                     br(), br(),
                                     h5(strong("An offline version ClimeApp for Windows - CLIMEAPP DESKTOP - is available to download here:", style = "color: #094030;")),
                                     br(),

@@ -14691,6 +14691,11 @@ server <- function(input, output, session) {
   
   ### Concerning all modes (mainly updating Ui) ----
   
+  # Jumps to Desktop Version Download Tab
+  observeEvent(input$go_desktop, {
+    updateTabsetPanel(session, "tabset0", selected = "desktop_tab")
+  })
+  
   #Updates Values outside of min / max (numericInput)
   
   updateNumericInputRange1 <- function(inputId, minValue, maxValue) {
