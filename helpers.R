@@ -1648,15 +1648,38 @@ plot_map <- function(data_input,
       axis_range <- c(-max_abs_z, max_abs_z)
     }
   }
+
+  # # --- Disable pre-plot clipping to avoid seams/missing geometry ---
+  # crop_sf <- function(x) x
   
-  # --- BBox für Vektor-Clipping (reduziert Geometrie-Menge, gleiche Ansicht) ---
-  bbox_clip <- sf::st_bbox(c(
-    xmin = lon_lat_range[1], xmax = lon_lat_range[2],
-    ymin = lon_lat_range[3], ymax = lon_lat_range[4]
-  ), crs = sf::st_crs(4326))
+  # --- Light clipping for speed (keeps smooth rendering, no seams) ---
   crop_sf <- function(x) {
     if (is.null(x) || nrow(x) == 0) return(x)
-    suppressWarnings(sf::st_crop(x, bbox_clip))
+    
+    # Determine current visible extent
+    lon_min <- lon_lat_range[1]; lon_max <- lon_lat_range[2]
+    lat_min <- lon_lat_range[3]; lat_max <- lon_lat_range[4]
+    lon_span <- abs(lon_max - lon_min); lat_span <- abs(lat_max - lat_min)
+    
+    # Skip cropping for world-wide or non-UTM projections
+    if (!identical(projection, "UTM (default)") ||
+        lon_span >= 100 || lat_span >= 70) {
+      return(x)
+    }
+    
+    # Compute a slightly padded bounding box (to avoid edge cuts)
+    pad <- 2.0
+    bb <- sf::st_bbox(c(
+      xmin = lon_min - pad, xmax = lon_max + pad,
+      ymin = lat_min - pad, ymax = lat_max + pad
+    ), crs = sf::st_crs(4326))
+    
+    # Crop safely in planar mode
+    old_s2 <- sf::sf_use_s2()
+    on.exit(sf::sf_use_s2(old_s2), add = TRUE)
+    sf::sf_use_s2(FALSE)
+    
+    suppressWarnings(tryCatch(sf::st_crop(x, bb), error = function(e) x))
   }
   
   p <- ggplot() +
