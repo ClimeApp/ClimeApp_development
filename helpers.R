@@ -1653,35 +1653,95 @@ plot_map <- function(data_input,
   # crop_sf <- function(x) x
   
   # --- Light clipping for speed (keeps smooth rendering, no seams) ---
-  crop_sf <- function(x) {
-    if (is.null(x) || nrow(x) == 0) return(x)
-    
-    # Determine current visible extent
+  # crop_sf <- function(x) {
+  #   if (is.null(x) || nrow(x) == 0) return(x)
+  #   
+  #   # Determine current visible extent
+  #   lon_min <- lon_lat_range[1]; lon_max <- lon_lat_range[2]
+  #   lat_min <- lon_lat_range[3]; lat_max <- lon_lat_range[4]
+  #   lon_span <- abs(lon_max - lon_min); lat_span <- abs(lat_max - lat_min)
+  #   
+  #   # Skip cropping for world-wide or non-UTM projections
+  #   if (!identical(projection, "UTM (default)") ||
+  #       lon_span >= 100 || lat_span >= 70) {
+  #     return(x)
+  #   }
+  #   
+  #   # Compute a slightly padded bounding box (to avoid edge cuts)
+  #   pad <- 2.0
+  #   bb <- sf::st_bbox(c(
+  #     xmin = lon_min - pad, xmax = lon_max + pad,
+  #     ymin = lat_min - pad, ymax = lat_max + pad
+  #   ), crs = sf::st_crs(4326))
+  #   
+  #   # Crop safely in planar mode
+  #   old_s2 <- sf::sf_use_s2()
+  #   on.exit(sf::sf_use_s2(old_s2), add = TRUE)
+  #   sf::sf_use_s2(FALSE)
+  #   
+  #   suppressWarnings(tryCatch(sf::st_crop(x, bb), error = function(e) x))
+  # }
+  
+  ## Let's Test THIS ## !!!!!!!!!!!!!!!!!!!!!!
+  
+  # ---- Smart, artifact-safe clipping & simplification ----
+  
+  .should_clip <- function(lon_lat_range, projection) {
+    # never clip for non-UTM projections (orthographic/robin/laea often cross seams)
+    if (!identical(projection, "UTM (default)")) return(FALSE)
+
     lon_min <- lon_lat_range[1]; lon_max <- lon_lat_range[2]
     lat_min <- lon_lat_range[3]; lat_max <- lon_lat_range[4]
-    lon_span <- abs(lon_max - lon_min); lat_span <- abs(lat_max - lat_min)
-    
-    # Skip cropping for world-wide or non-UTM projections
-    if (!identical(projection, "UTM (default)") ||
-        lon_span >= 100 || lat_span >= 70) {
-      return(x)
-    }
-    
-    # Compute a slightly padded bounding box (to avoid edge cuts)
-    pad <- 2.0
-    bb <- sf::st_bbox(c(
-      xmin = lon_min - pad, xmax = lon_max + pad,
-      ymin = lat_min - pad, ymax = lat_max + pad
-    ), crs = sf::st_crs(4326))
-    
-    # Crop safely in planar mode
+
+    # treat huge extents as "world": don't clip (prevents continent cuts & seam lines)
+    lon_span <- abs(lon_max - lon_min)
+    lat_span <- abs(lat_max - lat_min)
+    if (lon_span >= 120 || lat_span >= 80) return(FALSE)
+
+    # if bbox touches antimeridian or crosses it -> don't clip
+    if (lon_min <= -170 || lon_max >= 170) return(FALSE)
+
+    TRUE
+  }
+
+  .safe_crop <- function(x, lon_lat_range, projection) {
+    if (is.null(x) || !.should_clip(lon_lat_range, projection)) return(x)
+    bbox <- sf::st_bbox(
+      c(xmin = lon_lat_range[1], xmax = lon_lat_range[2],
+        ymin = lon_lat_range[3], ymax = lon_lat_range[4]),
+      crs = sf::st_crs(4326)
+    )
+    # Crop in planar math to avoid s2/antimeridian artifacts;
+    # switch off s2 just for the crop, then restore previous setting.
     old_s2 <- sf::sf_use_s2()
     on.exit(sf::sf_use_s2(old_s2), add = TRUE)
     sf::sf_use_s2(FALSE)
-    
-    suppressWarnings(tryCatch(sf::st_crop(x, bb), error = function(e) x))
+    suppressWarnings({
+      y <- tryCatch(sf::st_crop(x, bbox), error = function(e) x)
+      # Make valid to prevent hairline issues from invalid rings
+      tryCatch(sf::st_make_valid(y), error = function(e) y)
+    })
+  }
+
+  # Simplify only when zoomed in a bit; tolerance tied to bbox span
+  .maybe_simplify <- function(x, lon_lat_range, projection) {
+    if (is.null(x) || nrow(x) == 0) return(x)
+    if (!.should_clip(lon_lat_range, projection)) return(x)
+
+    lon_span <- abs(lon_lat_range[2] - lon_lat_range[1])
+    # modest tolerance (degrees); smaller at tight zooms, larger at mid zooms
+    tol <- max(0.02, min(0.2, lon_span / 200))  # ~0.02°–0.2°
+    suppressWarnings(sf::st_simplify(x, dTolerance = tol, preserveTopology = TRUE))
+  }
+
+  # Unified helper used everywhere
+  crop_sf <- function(x) {
+    x <- .safe_crop(x, lon_lat_range, projection)
+    .maybe_simplify(x, lon_lat_range, projection)
   }
   
+  ## Let's Test THIS ## !!!!!!!!!!!!!!!!!!!!!! UP HERE ^
+
   p <- ggplot() +
     # behalten: gefüllte Konturen (wie zuvor; optisch identisch)
     tidyterra::geom_spatraster_contour_filled(
