@@ -1740,6 +1740,27 @@ plot_map <- function(data_input,
     .maybe_simplify(x, lon_lat_range, projection)
   }
   
+  # 1) Crop-only helper: NO simplify (avoids s2 path entirely)
+  crop_sf_nosimplify <- function(x) {
+    .safe_crop(x, lon_lat_range, projection)
+  }
+  
+  # 2) Robust fixer for uploaded shapefiles (planar, make valid, drop Z/M)
+  .fix_user_geom <- function(g) {
+    if (is.null(g)) return(g)
+    old <- sf::sf_use_s2()
+    on.exit(sf::sf_use_s2(old), add = TRUE)
+    sf::sf_use_s2(FALSE)  # avoid s2 during repair
+    
+    g <- tryCatch(sf::st_make_valid(g), error = function(e) g)
+    # drop Z/M if present (some historic sets have Z/M that confuse simplification)
+    g <- tryCatch(sf::st_zm(g, drop = TRUE, what = "ZM"), error = function(e) g)
+    # if it’s a geometry collection, extract polygons/lines safely
+    g <- tryCatch(sf::st_collection_extract(g, "GEOMETRY"), error = function(e) g)
+    
+    g
+  }
+  
   ## Let's Test THIS ## !!!!!!!!!!!!!!!!!!!!!! UP HERE ^
 
   p <- ggplot() +
@@ -1795,7 +1816,9 @@ plot_map <- function(data_input,
   # --- statische Layer (vorher bbox-clipping) ---
   p <- p + ggplot2::geom_sf(data = crop_sf(coast), color = "#333333", size = 0.5, inherit.aes = FALSE)
   if (isTRUE(white_ocean)) p <- p + ggplot2::geom_sf(data = crop_sf(oceans), fill = "#DDDDDD", size = 0.5, inherit.aes = FALSE)
-  if (isTRUE(white_land))  p <- p + ggplot2::geom_sf(data = crop_sf(land),   fill = "#DDDDDD", size = 0.5, inherit.aes = FALSE)
+  if (isTRUE(white_land))
+    p <- p + ggplot2::geom_sf(data = crop_sf_nosimplify(land),
+                              fill = "#DDDDDD", color = NA, inherit.aes = FALSE)
   if (isTRUE(c_borders))   p <- p + ggplot2::geom_sf(data = crop_sf(countries), color = "#333333", fill = NA, size = 0.5, inherit.aes = FALSE)
   
   # --- optionale Features (robust gegen NA via isTRUE) ---
@@ -1844,7 +1867,9 @@ plot_map <- function(data_input,
       message(paste("Adding shapefile to plot:", file_name))
       shape <- sf::st_read(file, quiet = TRUE)
       if (is.na(sf::st_crs(shape))) shape <- sf::st_set_crs(shape, sf::st_crs(4326)) else shape <- sf::st_transform(shape, 4326)
-      shape <- crop_sf(shape) # clip to bbox
+      
+      shape <- .fix_user_geom(shape)          # <-- new
+      shape <- crop_sf_nosimplify(shape)      # <-- new (no simplify for user layers)
       
       col_pick <- input[[paste0(color_picker_prefix, file_name)]]
       if (is.null(col_pick) || is.na(col_pick) || !nzchar(col_pick)) col_pick <- "black"
