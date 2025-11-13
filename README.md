@@ -1,9 +1,11 @@
 # ClimeApp Development
 ClimeApp is a data processing tool for the state-of-the-art ModE-RA Global Climate Reanalysis. This repository provides the R files, CSS, images, and an introductory video used to create ClimeApp.
 
-To access the underlying data, visit: [https://www.wdc-climate.de/ui/project?acronym=ModE](https://www.wdc-climate.de/ui/project?acronym=ModE)
+To access all functionalities of ClimeApp, download the **offline version** here: [Download ClimeApp (Full Version)](https://mode-ra.unibe.ch/climeapp/session/bdeb3acc7f9b9b2444a36ce59e59d91c/download/climeapp_desktop_download?w=)
 
-Visit ClimeApp here: [ClimeApp website](https://mode-ra.unibe.ch/climeapp/)
+Visit the **online version** of ClimeApp here: [ClimeApp website](https://mode-ra.unibe.ch/climeapp/)
+
+To access the underlying data, visit: [World Data Center for Climate](https://www.wdc-climate.de/ui/project?acronym=ModE)
 
 To learn more about ClimeApp and the data behind it, watch our video tutorials: [ClimeApp tutorials](https://climeapp.github.io/ClimeApp_Tutorials/)
 
