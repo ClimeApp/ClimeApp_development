@@ -2578,7 +2578,7 @@ ui <- navbarPage(
                                    tabPanel("ModE-RA sources", br(),
                                             
                                             # Title & help pop up
-                                            MEsource_popover("pop_anomalies_mesource"),
+                                            MEsource_popover("pop_composites_mesource"),
                                             
                                             fluidRow(
                                               
@@ -3614,7 +3614,7 @@ ui <- navbarPage(
                                               
                                               #### Timeseries customization ----
                                               column(width = 4,
-                                                     h4("Customize your timeseries", style = "color: #094030;",timeseries_customization_popover("pop_correlation_custime")),  
+                                                     h4("Customize your timeseries", style = "color: #094030;",timeseries_customization_popover("pop_correlation_ts_custime")),  
                                                      
                                                      checkboxInput(inputId = "custom_ts3",
                                                                    label   = "Timeseries customization",
@@ -3692,7 +3692,7 @@ ui <- navbarPage(
                                               
                                               #### Add Custom features (points, highlights, lines) ----                        
                                               column(width = 4,
-                                                     h4("Custom features", style = "color: #094030;",timeseries_features_popover("pop_correlation_timefeat")),
+                                                     h4("Custom features", style = "color: #094030;",timeseries_features_popover("pop_correlation_ts_timefeat")),
                                                      
                                                      checkboxInput(inputId = "custom_features_ts3",
                                                                    label   = "Enable custom features",
@@ -4413,7 +4413,7 @@ ui <- navbarPage(
                                    tabPanel("ModE-RA sources", value = "corr_fad_tab", br(),
                                             
                                             # Title & help pop up
-                                            MEsource_popover("pop_anomalies_mesource"),
+                                            MEsource_popover("pop_correlation_mesource"),
                                             
                                             fluidRow(
                                               
@@ -4968,7 +4968,7 @@ ui <- navbarPage(
                                               
                                               #### Timeseries customization ----
                                               column(width = 4,
-                                                     h4("Customize your timeseries", style = "color: #094030;",timeseries_customization_popover("pop_correlation_custime")),  
+                                                     h4("Customize your timeseries", style = "color: #094030;",timeseries_customization_popover("pop_regression_custime")),  
                                                      
                                                      checkboxInput(inputId = "custom_ts4",
                                                                    label   = "Timeseries customization",
@@ -5066,7 +5066,7 @@ ui <- navbarPage(
                                               
                                               #### Add Custom features (points, highlights, lines) ----                        
                                               column(width = 4,
-                                                     h4("Custom features", style = "color: #094030;",timeseries_features_popover("pop_correlation_timefeat")),
+                                                     h4("Custom features", style = "color: #094030;",timeseries_features_popover("pop_regression_timefeat")),
                                                      
                                                      checkboxInput(inputId = "custom_features_ts4",
                                                                    label   = "Enable custom features",
@@ -5083,7 +5083,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_points_ts4",
                                                                  
-                                                                 h4(helpText("Add custom points",timeseries_points_popover("pop_correlation_timepoint"))),
+                                                                 h4(helpText("Add custom points",timeseries_points_popover("pop_regression_timepoint"))),
                                                                  h6(helpText("Enter position manually or click on plot")),
                                                                  
                                                                  textInput(inputId = "point_label_ts4", 
@@ -5136,7 +5136,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_highlights_ts4",
                                                                  
-                                                                 h4(helpText("Add custom highlights",timeseries_highlights_popover("pop_correlation_timehl"))),
+                                                                 h4(helpText("Add custom highlights",timeseries_highlights_popover("pop_regression_timehl"))),
                                                                  h6(helpText("Enter values manually or draw a box on plot")),
                                                                  
                                                                  numericRangeInput(inputId = "highlight_x_values_ts4",
@@ -5184,7 +5184,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_line_ts4",
                                                                  
-                                                                 h4(helpText("Add custom lines",timeseries_lines_popover("pop_correlation_timelines"))),
+                                                                 h4(helpText("Add custom lines",timeseries_lines_popover("pop_regression_timelines"))),
                                                                  h6(helpText("Enter position manually or click on plot, double click to change orientation")),
                                                                  
                                                                  radioButtons(inputId      = "line_orientation_ts4",
@@ -5309,7 +5309,7 @@ ui <- navbarPage(
                                             fluidRow(
                                               #### Map customization ----       
                                               column(width = 4,
-                                                     h4("Customize your map", style = "color: #094030;",map_customization_popover("pop_regression_cusmap")),  
+                                                     h4("Customize your map", style = "color: #094030;",map_customization_popover("pop_reg_coeff_cusmap")),  
                                                      
                                                      checkboxInput(inputId = "custom_map_reg_coeff",
                                                                    label   = "Map customization",
@@ -5387,7 +5387,7 @@ ui <- navbarPage(
                                                            
                                                            br(), hr(),
                                                            
-                                                           h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_anomalies_layers"))),
+                                                           h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_reg_coeff_layers"))),
                                                            
                                                            checkboxInput(inputId = "custom_topo_reg_coeff",
                                                                          label   = "Topographical customization",
@@ -5448,7 +5448,7 @@ ui <- navbarPage(
                                               
                                               #### Add Custom features (points and highlights) ----                        
                                               column(width = 4,
-                                                     h4("Custom features", style = "color: #094030;",map_features_popover("pop_anomalies_mapfeat")),
+                                                     h4("Custom features", style = "color: #094030;",map_features_popover("pop_reg_coef_mapfeat")),
                                                      
                                                      checkboxInput(inputId = "custom_features_reg_coeff",
                                                                    label   = "Enable custom features",
@@ -5463,7 +5463,7 @@ ui <- navbarPage(
                                                            
                                                            #Custom Points
                                                            div(id = "hidden_custom_points_reg_coeff",
-                                                               h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
+                                                               h4(helpText("Add custom points",map_points_popover("pop_reg_coef_mappoint"))),
                                                                
                                                                h6(helpText("Enter location/coordinates or double click on map")),
                                                                
@@ -5527,7 +5527,7 @@ ui <- navbarPage(
                                                            
                                                            #Custom Highlights
                                                            div(id = "hidden_custom_highlights_reg_coeff",
-                                                               h4(helpText("Add custom highlights",map_highlights_popover("pop_anomalies_maphl"))),
+                                                               h4(helpText("Add custom highlights",map_highlights_popover("pop_reg_coeff_maphl"))),
                                                                
                                                                h6(helpText("Enter coordinate or draw a box on map")),
                                                                
@@ -5574,7 +5574,7 @@ ui <- navbarPage(
                                             br(),
                                             
                                             #### Download and Upload Regression Coefficients Map ----
-                                            h4("Downloads", style = "color: #094030;", downloads_popover("pop_composites_map_downloads")),
+                                            h4("Downloads", style = "color: #094030;", downloads_popover("pop_coeff_map_downloads")),
                                             checkboxInput(
                                               inputId = "download_options_coeff",
                                               label = "Enable download options",
@@ -5647,7 +5647,7 @@ ui <- navbarPage(
                                             fluidRow(
                                               #### Map customization ----       
                                               column(width = 4,
-                                                     h4("Customize your map", style = "color: #094030;",map_customization_popover("pop_regression_cusmap")),  
+                                                     h4("Customize your map", style = "color: #094030;",map_customization_popover("pop_reg_pval_cusmap")),  
                                                      
                                                      checkboxInput(inputId = "custom_map_reg_pval",
                                                                    label   = "Map customization",
@@ -5728,7 +5728,7 @@ ui <- navbarPage(
                                                            
                                                            br(), hr(),
                                                            
-                                                           h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_anomalies_layers"))),
+                                                           h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_reg_pval_layers"))),
                                                            
                                                            checkboxInput(inputId = "custom_topo_reg_pval",
                                                                          label   = "Topographical customization",
@@ -5789,7 +5789,7 @@ ui <- navbarPage(
                                               
                                               #### Add Custom features (points and highlights) ----                        
                                               column(width = 4,
-                                                     h4("Custom features", style = "color: #094030;",map_features_popover("pop_anomalies_mapfeat")),
+                                                     h4("Custom features", style = "color: #094030;",map_features_popover("pop_reg_pval_mapfeat")),
                                                      
                                                      checkboxInput(inputId = "custom_features_reg_pval",
                                                                    label   = "Enable custom features",
@@ -5804,7 +5804,7 @@ ui <- navbarPage(
                                                            
                                                            #Custom Points
                                                            div(id = "hidden_custom_points_reg_pval",
-                                                               h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
+                                                               h4(helpText("Add custom points",map_points_popover("pop_reg_pval_mappoint"))),
                                                                
                                                                h6(helpText("Enter location/coordinates or double click on map")),
                                                                
@@ -5868,7 +5868,7 @@ ui <- navbarPage(
                                                            
                                                            #Custom Highlights
                                                            div(id = "hidden_custom_highlights_reg_pval",
-                                                               h4(helpText("Add custom highlights",map_highlights_popover("pop_anomalies_maphl"))),
+                                                               h4(helpText("Add custom highlights",map_highlights_popover("pop_reg_pval_maphl"))),
                                                                
                                                                h6(helpText("Enter coordinate or draw a box on map")),
                                                                
@@ -5915,7 +5915,7 @@ ui <- navbarPage(
                                             br(),
                                             
                                             #### Downloads Regression p values ----
-                                            h4("Downloads", style = "color: #094030;",downloads_popover("pop_composites_map_downloads")),
+                                            h4("Downloads", style = "color: #094030;",downloads_popover("pop_pval_map_downloads")),
                                             checkboxInput(inputId = "download_options_pval",
                                                           label   = "Enable download options",
                                                           value   = FALSE),
@@ -6006,7 +6006,7 @@ ui <- navbarPage(
                                             fluidRow(
                                               #### Map customization ----       
                                               column(width = 4,
-                                                     h4("Customize your map", style = "color: #094030;",map_customization_popover("pop_regression_cusmap")),  
+                                                     h4("Customize your map", style = "color: #094030;",map_customization_popover("pop_reg_res_cusmap")),  
                                                      
                                                      checkboxInput(inputId = "custom_map_reg_res",
                                                                    label   = "Map customization",
@@ -6085,7 +6085,7 @@ ui <- navbarPage(
                                                            
                                                            br(), hr(),
                                                            
-                                                           h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_anomalies_layers"))),
+                                                           h4(helpText("Topography options and GIS upload (.shp)", map_customization_layers_popover("pop_reg_res_layers"))),
                                                            
                                                            checkboxInput(inputId = "custom_topo_reg_res",
                                                                          label   = "Topographical customization",
@@ -6146,7 +6146,7 @@ ui <- navbarPage(
                                               
                                               #### Add Custom features (points and highlights) ----                        
                                               column(width = 4,
-                                                     h4("Custom features", style = "color: #094030;",map_features_popover("pop_anomalies_mapfeat")),
+                                                     h4("Custom features", style = "color: #094030;",map_features_popover("pop_reg_re_mapfeat")),
                                                      
                                                      checkboxInput(inputId = "custom_features_reg_res",
                                                                    label   = "Enable custom features",
@@ -6161,7 +6161,7 @@ ui <- navbarPage(
                                                            
                                                            #Custom Points
                                                            div(id = "hidden_custom_points_reg_res",
-                                                               h4(helpText("Add custom points",map_points_popover("pop_anomalies_mappoint"))),
+                                                               h4(helpText("Add custom points",map_points_popover("pop_reg_res_mappoint"))),
                                                                
                                                                h6(helpText("Enter location/coordinates or double click on map")),
                                                                
@@ -6225,7 +6225,7 @@ ui <- navbarPage(
                                                            
                                                            #Custom Highlights
                                                            div(id = "hidden_custom_highlights_reg_res",
-                                                               h4(helpText("Add custom highlights",map_highlights_popover("pop_anomalies_maphl"))),
+                                                               h4(helpText("Add custom highlights",map_highlights_popover("pop_reg_res_maphl"))),
                                                                
                                                                h6(helpText("Enter coordinate or draw a box on map")),
                                                                
@@ -6272,7 +6272,7 @@ ui <- navbarPage(
                                             br(),
                                             
                                             #### Downloads Map Regression Residuals ----
-                                            h4("Downloads", style = "color: #094030;",downloads_popover("pop_composites_map_downloads")),
+                                            h4("Downloads", style = "color: #094030;",downloads_popover("pop_reg_res_map_downloads")),
                                             checkboxInput(inputId = "download_options_reg_res",
                                                           label   = "Enable download options",
                                                           value   = FALSE),
@@ -6326,7 +6326,7 @@ ui <- navbarPage(
                                    tabPanel("ModE-RA sources", value = "reg_fad_tab", br(),
                                             
                                             # Title & help pop up
-                                            MEsource_popover("pop_anomalies_mesource"),
+                                            MEsource_popover("pop_regression_mesource"),
                                             
                                             fluidRow(
                                               
@@ -6898,7 +6898,7 @@ ui <- navbarPage(
                                    tabPanel("ModE-RA sources", br(),
                                             
                                             # Title & help pop up
-                                            MEsource_popover("pop_anomalies_mesource"),
+                                            MEsource_popover("pop_anncyc_mesource"),
                                             
                                             fluidRow(
                                               

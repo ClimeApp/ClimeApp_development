@@ -55,7 +55,7 @@ year_season_ref_popover = function(popover_ID){
 #### CUSTOMIZATION ----
 
 ## MAP CUSTOMIZATION 
-## popover_IDs = pop_anomalies_cusmap, pop_composites_cusmap, pop_correlation_cusmap, pop_regression_cusmap
+## popover_IDs = pop_anomalies_cusmap, pop_composites_cusmap, pop_correlation_cusmap, pop_regression_cusmap, pop_reg_coeff_cusmap, pop_reg_pval_cusmap, pop_reg_res_cusmap
 
 map_customization_popover = function(popover_ID){
   popover(
@@ -68,7 +68,7 @@ map_customization_popover = function(popover_ID){
 }
 
 ## MAP CUSTOMIZATION LAYERS
-## popover_IDs = pop_anomalies_layers, pop_composites_layers, pop_correlation_layers
+## popover_IDs = pop_anomalies_layers, pop_composites_layers, pop_correlation_layers, pop_reg_coeff_layers, pop_reg_pval_layers, pop_reg_res_layers
 
 map_customization_layers_popover = function(popover_ID){
   popover(
@@ -82,7 +82,7 @@ map_customization_layers_popover = function(popover_ID){
 }
 
 ## CUSTOM MAP FEATURES
-## popover_IDs = pop_anomalies_mapfeat, pop_composites_mapfeat, pop_correlation_mapfeat
+## popover_IDs = pop_anomalies_mapfeat, pop_composites_mapfeat, pop_correlation_mapfeat, pop_reg_coef_mapfeat, pop_reg_pval_mapfeat, pop_reg_re_mapfeat
 
 map_features_popover = function(popover_ID){
   popover(
@@ -94,7 +94,7 @@ map_features_popover = function(popover_ID){
 }
 
 ## CUSTOM MAP POINTS 
-## popover_IDs = pop_anomalies_mappoint, pop_composites_mappoint, pop_correlation_mappoint
+## popover_IDs = pop_anomalies_mappoint, pop_composites_mappoint, pop_correlation_mappoint, pop_reg_coef_mappoint, pop_reg_pval_mappoint, pop_reg_res_mappoint
 
 map_points_popover = function(popover_ID){
   popover(
@@ -107,7 +107,7 @@ map_points_popover = function(popover_ID){
 }
 
 ## CUSTOM MAP HIGHLIGHTS
-## popover_IDs = pop_anomalies_maphl, pop_composites_maphl, pop_correlation_maphl
+## popover_IDs = pop_anomalies_maphl, pop_composites_maphl, pop_correlation_maphl, pop_reg_coeff_maphl, pop_reg_pval_maphl, pop_reg_res_maphl
 
 map_highlights_popover = function(popover_ID){
   popover(
@@ -160,7 +160,7 @@ map_choose_statistic_popover = function(popover_ID){
 
 #### TIMESERIES ----
 ## TIMESERIES CUSTOMIZATION
-## popover_IDs = pop_anomalies_custime, pop_composites_custime, pop_correlation_custime, pop_annualcycles_custime, pop_sea_custime
+## popover_IDs = pop_anomalies_custime, pop_composites_custime, pop_correlation_custime, pop_annualcycles_custime, pop_sea_custime, pop_regression_custime, pop_correlation_ts_custime
 
 timeseries_customization_popover = function(popover_ID){
   if (popover_ID == "pop_correlation_custime"|popover_ID == "pop_annualcycles_custime"){
@@ -183,7 +183,7 @@ timeseries_customization_popover = function(popover_ID){
 }
 
 ## CUSTOM TIMESERIES FEATURES
-## popover_IDs = pop_anomalies_timefeat, pop_composites_timefeat, pop_correlation_timefeat, pop_annualcycles_timefeat, pop_sea_timefeat
+## popover_IDs = pop_anomalies_timefeat, pop_composites_timefeat, pop_correlation_timefeat, pop_annualcycles_timefeat, pop_sea_timefeat, pop_regression_timefeat, pop_correlation_ts_timefeat
 
 timeseries_features_popover = function(popover_ID){
   popover(
@@ -195,7 +195,7 @@ timeseries_features_popover = function(popover_ID){
 }
 
 ## TIMESERIES POINTS
-## popover_IDs = pop_anomalies_timepoint, pop_composites_timepoint, pop_correlation_timepoint, pop_annualcycles_timepoint, pop_sea_timepoint
+## popover_IDs = pop_anomalies_timepoint, pop_composites_timepoint, pop_correlation_timepoint, pop_annualcycles_timepoint, pop_sea_timepoint, pop_regression_timepoint
 
 timeseries_points_popover = function(popover_ID){
   popover(
@@ -208,7 +208,7 @@ timeseries_points_popover = function(popover_ID){
 }
 
 ## TIMESERIES HIGHLIGHTS
-## popover_IDs = pop_anomalies_timehl, pop_composites_timehl, pop_correlation_timehl, pop_annualcycles_timehl, pop_sea_timehl
+## popover_IDs = pop_anomalies_timehl, pop_composites_timehl, pop_correlation_timehl, pop_annualcycles_timehl, pop_sea_timehl, pop_regression_timehl
 
 timeseries_highlights_popover = function(popover_ID){
   popover(
@@ -221,7 +221,7 @@ timeseries_highlights_popover = function(popover_ID){
 }
 
 ## TIMESERIES LINES
-## popover_IDs = pop_anomalies_timelines, pop_composites_timelines, pop_correlation_timelines, pop_annualcycles_timelines, pop_sea_timelines
+## popover_IDs = pop_anomalies_timelines, pop_composites_timelines, pop_correlation_timelines, pop_annualcycles_timelines, pop_sea_timelines, pop_regression_timelines
 
 timeseries_lines_popover = function(popover_ID){
   popover(
@@ -572,7 +572,7 @@ annualcycles_region_popover = function(popover_ID){
 #### REST ----
 
 ## DOWNLOADS
-## popover_IDs = pop_anomalies_map_downloads,pop_anomalies_ts_downloads, pop_composites_map_downloads, pop_composites_ts_downloads,
+## popover_IDs = pop_anomalies_map_downloads,pop_anomalies_ts_downloads, pop_composites_map_downloads, pop_composites_ts_downloads, pop_coeff_map_downloads, pop_pval_map_downloads, pop_reg_res_map_downloads
 ##               pop_correlation_map_downloads, pop_correlation_ts_downloads, pop_sea_ts_downloads, pop_regression_ts_downloads, pop_annual_cycles_ts_downloads
 
 downloads_popover = function(popover_ID){
