@@ -83,14 +83,16 @@ setup_user_environment()
 
 #Core Packages
 library(shiny, lib.loc = lib_path)
+library(htmltools, lib.loc = lib_path)
+library(ggplot2, lib.loc = lib_path)
+
+#Very Important Packages to be loaded
 library(shinyWidgets, lib.loc = lib_path)
 library(shinyjs, lib.loc = lib_path)
 library(bslib, lib.loc = lib_path)
-library(ggplot2, lib.loc = lib_path)
 library(sf, lib.loc = lib_path)
 library(shinycssloaders, lib.loc = lib_path)
 library(openxlsx, lib.loc = lib_path)  # Don't change order!
-library(htmltools, lib.loc = lib_path)
 library(xlsx, lib.loc = lib_path)
 library(ncdf4, lib.loc = lib_path)
 
@@ -113,10 +115,10 @@ library(tidyterra, lib.loc = lib_path)
 #library(burnr, lib.loc = lib_path)
 #library(shinyjqui, lib.loc = lib_path)
 #library(viridisLite, lib.loc = lib_path)
-#library(viridis, lib.loc = lib_path)
 #library(plotly, lib.loc = lib_path)
 #library(leaflet, lib.loc = lib_path)
 #library(tmaptools, lib.loc = lib_path)
+
 #library(mapdata, lib.loc = lib_path) #Zero Functions Used
 #library(markdown, lib.loc = lib_path) #Zero Functions Used
 #library(leaflet.providers, lib.loc = lib_path) #Zero Functions Used
