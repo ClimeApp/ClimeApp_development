@@ -1205,16 +1205,16 @@ set_ts_axis_values = function(data_input) {
 #   # Define the color palette and unit based on the variable and mode
 #   if (!is.null(variable)) {
 #     if (variable == "Temperature") {
-#       v_col <- rev(brewer.pal(11, "RdBu"))
+#       v_col <- rev(RColorBrewer::brewer.pal(11, "RdBu"))
 #       v_unit <- "\u00B0C"
 #     } else if (variable == "Precipitation") {
-#       v_col <- brewer.pal(11, "BrBG")
+#       v_col <- RColorBrewer::brewer.pal(11, "BrBG")
 #       v_unit <- "mm/mon."
 #     } else if (variable == "SLP") {
-#       v_col <- rev(brewer.pal(11, "PRGn"))
+#       v_col <- rev(RColorBrewer::brewer.pal(11, "PRGn"))
 #       v_unit <- "hPa"
 #     } else if (variable == "Z500") {
-#       v_col <- rev(brewer.pal(11, "PRGn"))
+#       v_col <- rev(RColorBrewer::brewer.pal(11, "PRGn"))
 #       v_unit <- "m"
 #     }
 #   }
@@ -1222,7 +1222,7 @@ set_ts_axis_values = function(data_input) {
 #   # Handle the 'mode' condition as well
 #   if (!is.null(mode)) {
 #     if (mode == "Correlation") {
-#       v_col <- rev(brewer.pal(11, "PuOr"))
+#       v_col <- rev(RColorBrewer::brewer.pal(11, "PuOr"))
 #       v_unit <- "r"
 #       
 #     } else if (mode == "Regression_coefficients") {
@@ -1233,7 +1233,7 @@ set_ts_axis_values = function(data_input) {
 #       titles$map_title_size <- titles$map_title_size_coeff
 #       
 #     } else if (mode == "Regression_p_values") {
-#       v_col <- rev(brewer.pal(5, "Greens"))
+#       v_col <- rev(RColorBrewer::brewer.pal(5, "Greens"))
 #       v_unit <- "p\nValues"
 #       v_lev <- c(0, 0.01, 0.05, 0.1, 0.2, 1)
 #       titles$map_title <- titles$map_title_pvals
@@ -1247,7 +1247,7 @@ set_ts_axis_values = function(data_input) {
 #       titles$map_title_size <- titles$map_title_size_res
 #       
 #     } else if (mode == "SD ratio") {
-#       v_col <- rev(brewer.pal(9, "Greens"))
+#       v_col <- rev(RColorBrewer::brewer.pal(9, "Greens"))
 #       v_unit <- ""
 #     }
 #   }
@@ -1326,7 +1326,7 @@ set_ts_axis_values = function(data_input) {
 #     p <- p + geom_sf(data = rivers, color = "#2A52BE", size = 0.2, inherit.aes = FALSE)
 #     if (label_rivers && "name" %in% names(rivers)) {
 #       p <- p + geom_text(
-#         data = st_centroid(rivers),
+#         data = sf::st_centroid(rivers),
 #         aes(label = name, geometry = geometry),
 #         stat = "sf_coordinates", size = 5, color = "black", inherit.aes = FALSE
 #       )
@@ -1336,7 +1336,7 @@ set_ts_axis_values = function(data_input) {
 #     p <- p + geom_sf(data = lakes, fill = "#DDDDDD", color = NA, inherit.aes = FALSE)
 #     if (label_lakes && "name" %in% names(lakes)) {
 #       p <- p + geom_text(
-#         data = st_point_on_surface(lakes),
+#         data = sf::st_point_on_surface(lakes),
 #         aes(label = name, geometry = geometry),
 #         stat = "sf_coordinates", size = 5, color = "black", nudge_x = -1,
 #         inherit.aes = FALSE
@@ -1390,10 +1390,10 @@ set_ts_axis_values = function(data_input) {
 #   } else if (projection == "Orthographic") {
 #     formula <- paste0("+proj=ortho +lat_0=", center_lat, " +lon_0=", center_lon,
 #                       " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
-#     p <- p + coord_sf(crs = st_crs(formula), clip = "on")
+#     p <- p + coord_sf(crs = sf::st_crs(formula), clip = "on")
 #   } else if (projection == "LAEA") {
 #     formula <- paste0("+proj=laea +lat_0=0 +lon_0=0 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs")
-#     p <- p + coord_sf(crs = st_crs(formula), clip = "on")
+#     p <- p + coord_sf(crs = sf::st_crs(formula), clip = "on")
 #   } else {
 #     if (lon_lat_range[1]==lon_lat_range[2]) { lon_lat_range[1] <- lon_lat_range[1]-0.5; lon_lat_range[2] <- lon_lat_range[2]+0.5 }
 #     if (lon_lat_range[3]==lon_lat_range[4]) { lon_lat_range[3] <- lon_lat_range[3]-0.5; lon_lat_range[4] <- lon_lat_range[4]+0.5 }
@@ -1534,7 +1534,7 @@ set_ts_axis_values = function(data_input) {
 #     
 #     if (any(highlights_data$type == "Hatched")) {
 #       p <- p +
-#         geom_rect_pattern(
+#         ggpattern::geom_rect_pattern(
 #           data = subset(highlights_data, type == "Hatched"),
 #           aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2),
 #           pattern = "stripe",
@@ -1636,7 +1636,6 @@ plot_map <- function(data_input,
     }
   }
   
-  # --- Achsenbereich schnell & identisch (kein terra::values) ---
   if (is.null(axis_range)) {
     if (!is.null(mode) && mode == "Regression_p_values") {
       axis_range <- c(1e-3, 1)
@@ -2163,7 +2162,7 @@ add_stats_to_TS_datatable = function(data_input,
   # Create moving average column
   Moving_Average = NULL
   if (add_moving_average == TRUE){
-    Moving_Average = rollmean(Mean, k=moving_average_range, fill=NA, align=moving_average_alignment)
+    Moving_Average = zoo:rollmean(Mean, k=moving_average_range, fill=NA, align=moving_average_alignment)
   }
   
   # Create percentile columns
@@ -3758,7 +3757,7 @@ plot_modera_sources = function(ME_source_data,
     coord_sf(
       xlim = minmax_lonlat[c(1, 2)],
       ylim = minmax_lonlat[c(3, 4)],
-      crs = st_crs(4326),
+      crs = sf::st_crs(4326),
       expand = FALSE
     ) +
     geom_point(
@@ -3857,7 +3856,7 @@ plot_ts_modera_sources <- function(data,
   )
   
   # Calculate the maximum value of the selected columns
-  max_value <- data %>% select(all_of(selected_columns)) %>% max(na.rm = TRUE)
+  max_value <- data %>% dplyr::select(dplyr::all_of(selected_columns)) %>% max(na.rm = TRUE)
   
   # Determine appropriate breaks based on the maximum value (rounded up to next whole number)
   y_breaks <- ceiling(seq(0, max_value, length.out = 10))
@@ -4348,12 +4347,12 @@ process_uploaded_metadata <- function(
   # === Shared Inputs ===
   updateSelectInput(session, "dataset_selected", selected = meta[1, "dataset_selected"])
   updateSelectInput(session, "variable_selected", selected = meta[1, "variable_selected"])
-  updateNumericRangeInput(session, "range_years", value = split_numeric_range(meta[1, "range_years"]))
-  updateNumericRangeInput(session, "range_latitude", value = split_numeric_range(meta[1, "range_latitude"]))
-  updateNumericRangeInput(session, "range_longitude", value = split_numeric_range(meta[1, "range_longitude"]))
-  updateSliderTextInput(session, "range_months", selected = split_text_vector(meta[1, "range_months"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_years", value = split_numeric_range(meta[1, "range_years"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_latitude", value = split_numeric_range(meta[1, "range_latitude"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_longitude", value = split_numeric_range(meta[1, "range_longitude"]))
+  shinyWidgets::updateSliderTextInput(session, "range_months", selected = split_text_vector(meta[1, "range_months"]))
   updateNumericInput(session, "ref_period_sg", value = meta[1, "ref_period_sg"])
-  updateNumericRangeInput(session, "ref_period", value = split_numeric_range(meta[1, "ref_period"]))
+  shinyWidgets::updateNumericRangeInput(session, "ref_period", value = split_numeric_range(meta[1, "ref_period"]))
   updateCheckboxInput(session, "ref_single_year", value = as.logical(meta[1, "ref_single_year"]))
   updateRadioButtons(session, "season_selected", selected = meta[1, "season_selected"])
   updateCheckboxInput(session, "single_year", value = as.logical(meta[1, "single_year"]))
@@ -4363,7 +4362,7 @@ process_uploaded_metadata <- function(
   if (mode == "map") {
 
     updateRadioButtons(session, "axis_mode", selected = meta[1, "axis_mode"])
-    updateNumericRangeInput(session, "axis_input", value = split_numeric_range(meta[1, "axis_input"]))
+    shinyWidgets::updateNumericRangeInput(session, "axis_input", value = split_numeric_range(meta[1, "axis_input"]))
     updateCheckboxInput(session, "hide_axis", value = as.logical(meta[1, "hide_axis"]))
     updateRadioButtons(session, "title_mode", selected = meta[1, "title_mode"])
     updateTextInput(session, "title1_input", value = meta[1, "title1_input"])
@@ -4414,7 +4413,7 @@ process_uploaded_metadata <- function(
   
   # === TS Only ===
   if (mode == "ts") {
-    updateNumericRangeInput(session, "axis_input_ts", value = split_numeric_range(meta[1, "axis_input_ts"]))
+    shinyWidgets::updateNumericRangeInput(session, "axis_input_ts", value = split_numeric_range(meta[1, "axis_input_ts"]))
     updateRadioButtons(session, "axis_mode_ts", selected = meta[1, "axis_mode_ts"])
     updateCheckboxInput(session, "custom_ts", value = as.logical(meta[1, "custom_ts"]))
     updateCheckboxInput(session, "download_options_ts", value = as.logical(meta[1, "download_options_ts"]))
@@ -4762,7 +4761,7 @@ read_composite_data = function(data_input_manual,
   } else if (grepl(".csv",data_input_filepath, fixed = TRUE)==TRUE){
     year_set = read.csv(data_input_filepath)[[1]]
   } else {
-    year_set = read_excel(data_input_filepath)[[1]]
+    year_set = readxl::read_excel(data_input_filepath)[[1]]
   }
   
   # Check for header and remove
@@ -5104,11 +5103,11 @@ process_uploaded_metadata_composite <- function(
   updateTextInput(session, "range_years2", value = meta[1, "range_years2"])
   updateTextInput(session, "range_years2a", value = meta[1, "range_years2a"])
   updateSelectInput(session, "dataset_selected2", selected = meta[1, "dataset_selected2"])
-  updateNumericRangeInput(session, "range_latitude2", value = split_numeric_range(meta[1, "range_latitude2"]))
-  updateNumericRangeInput(session, "range_longitude2", value = split_numeric_range(meta[1, "range_longitude2"]))
-  updateSliderTextInput(session, "range_months2", selected = split_text_vector(meta[1, "range_months2"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_latitude2", value = split_numeric_range(meta[1, "range_latitude2"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_longitude2", value = split_numeric_range(meta[1, "range_longitude2"]))
+  shinyWidgets::updateSliderTextInput(session, "range_months2", selected = split_text_vector(meta[1, "range_months2"]))
   updateNumericInput(session, "ref_period_sg2", value = meta[1, "ref_period_sg2"])
-  updateNumericRangeInput(session, "ref_period2", value = split_numeric_range(meta[1, "ref_period2"]))
+  shinyWidgets::updateNumericRangeInput(session, "ref_period2", value = split_numeric_range(meta[1, "ref_period2"]))
   updateCheckboxInput(session, "ref_single_year2", value = as.logical(meta[1, "ref_single_year2"]))
   updateRadioButtons(session, "season_selected2", selected = meta[1, "season_selected2"])
   updateSelectInput(session, "variable_selected2", selected = meta[1, "variable_selected2"])
@@ -5120,7 +5119,7 @@ process_uploaded_metadata_composite <- function(
   if (mode == "map") {
     # === Map UI ===
     updateRadioButtons(session, "axis_mode2", selected = meta[1, "axis_mode2"])
-    updateNumericRangeInput(session, "axis_input2", value = split_numeric_range(meta[1, "axis_input2"]))
+    shinyWidgets::updateNumericRangeInput(session, "axis_input2", value = split_numeric_range(meta[1, "axis_input2"]))
     updateNumericInput(session, "center_lat2", value = meta[1, "center_lat2"])
     updateNumericInput(session, "center_lon2", value = meta[1, "center_lon2"])
     updateCheckboxInput(session, "custom_map2", value = as.logical(meta[1, "custom_map2"]))
@@ -5172,7 +5171,7 @@ process_uploaded_metadata_composite <- function(
   
   if (mode == "ts") {
     # === TS UI ===
-    updateNumericRangeInput(session, "axis_input_ts2", value = split_numeric_range(meta[1, "axis_input_ts2"]))
+    shinyWidgets::updateNumericRangeInput(session, "axis_input_ts2", value = split_numeric_range(meta[1, "axis_input_ts2"]))
     updateRadioButtons(session, "axis_mode_ts2", selected = meta[1, "axis_mode_ts2"])
     updateCheckboxInput(session, "custom_percentile_ts2", value = as.logical(meta[1, "custom_percentile_ts2"]))
     updateCheckboxInput(session, "custom_ts2", value = as.logical(meta[1, "custom_ts2"]))
@@ -5232,7 +5231,7 @@ read_regcomp_data = function(data_input_filepath) {
   if (grepl(".csv", data_input_filepath, fixed = TRUE) == TRUE) {
     user_data = read.csv(data_input_filepath)
   } else {
-    user_data = read_excel(data_input_filepath)
+    user_data = readxl::read_excel(data_input_filepath)
   }
   
   user_data = replace(user_data, user_data == -999.9, NA)
@@ -5283,7 +5282,7 @@ extract_year_range = function(variable1_source,
     
     # Read file
     if (grepl(".xls", filepath, fixed = TRUE)) {
-      df <- read_excel(filepath)
+      df <- readxl::read_excel(filepath)
     } else if (grepl(".csv", filepath, fixed = TRUE)) {
       df <- read_csv(filepath, show_col_types = FALSE)
     } else return(list(var = NULL, all = NULL))
@@ -5488,7 +5487,7 @@ plot_user_timeseries = function(data_input,
   )
   
   # Create plot
-  p <- ggplot(data_input, aes(x = Year, y = !!sym(colnames(data_input)[2]))) +
+  p <- ggplot(data_input, aes(x = Year, y = !!dplyr::sym(colnames(data_input)[2]))) +
     geom_line(color = color, linewidth = 1.2, na.rm = TRUE) +
     labs(
       x = "Year",
@@ -5811,8 +5810,8 @@ generate_correlation_map_data = function(variable1_data,
   # If variable 1 & 2 are fields
   else {
     # Find shared lon/lat
-    shared_lon_IDs = intersect(subset_lon_IDs1,subset_lon_IDs2)
-    shared_lat_IDs = intersect(subset_lat_IDs1,subset_lat_IDs2)
+    shared_lon_IDs = dplyr::intersect(subset_lon_IDs1,subset_lon_IDs2)
+    shared_lat_IDs = dplyr::intersect(subset_lat_IDs1,subset_lat_IDs2)
     # Cut data to new shared lon/lat
     cut_variable1_data = variable1_data[match(shared_lon_IDs,subset_lon_IDs1),
                                         match(shared_lat_IDs,subset_lat_IDs1),]
@@ -6137,7 +6136,7 @@ process_uploaded_metadata_correlation <- function(
   }
   
   # === Shared Inputs ===
-  updateNumericRangeInput(session, "range_years3", value = split_numeric_range(meta[1, "range_years3"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_years3", value = split_numeric_range(meta[1, "range_years3"]))
   updateSelectInput(session, "dataset_selected_v1", selected = meta[1, "dataset_selected_v1"])
   updateSelectInput(session, "dataset_selected_v2", selected = meta[1, "dataset_selected_v2"])
   updateSelectInput(session, "ME_variable_v1", selected = meta[1, "ME_variable_v1"])
@@ -6148,16 +6147,16 @@ process_uploaded_metadata_correlation <- function(
   updateRadioButtons(session, "mode_selected_v2", selected = meta[1, "mode_selected_v2"])
   updateRadioButtons(session, "season_selected_v1", selected = meta[1, "season_selected_v1"])
   updateRadioButtons(session, "season_selected_v2", selected = meta[1, "season_selected_v2"])
-  updateSliderTextInput(session, "range_months_v1", selected = split_text_vector(meta[1, "range_months_v1"]))
-  updateSliderTextInput(session, "range_months_v2", selected = split_text_vector(meta[1, "range_months_v2"]))
-  updateNumericRangeInput(session, "range_latitude_v1", value = split_numeric_range(meta[1, "range_latitude_v1"]))
-  updateNumericRangeInput(session, "range_latitude_v2", value = split_numeric_range(meta[1, "range_latitude_v2"]))
-  updateNumericRangeInput(session, "range_longitude_v1", value = split_numeric_range(meta[1, "range_longitude_v1"]))
-  updateNumericRangeInput(session, "range_longitude_v2", value = split_numeric_range(meta[1, "range_longitude_v2"]))
+  shinyWidgets::updateSliderTextInput(session, "range_months_v1", selected = split_text_vector(meta[1, "range_months_v1"]))
+  shinyWidgets::updateSliderTextInput(session, "range_months_v2", selected = split_text_vector(meta[1, "range_months_v2"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_latitude_v1", value = split_numeric_range(meta[1, "range_latitude_v1"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_latitude_v2", value = split_numeric_range(meta[1, "range_latitude_v2"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_longitude_v1", value = split_numeric_range(meta[1, "range_longitude_v1"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_longitude_v2", value = split_numeric_range(meta[1, "range_longitude_v2"]))
   updateNumericInput(session, "ref_period_sg_v1", value = meta[1, "ref_period_sg_v1"])
   updateNumericInput(session, "ref_period_sg_v2", value = meta[1, "ref_period_sg_v2"])
-  updateNumericRangeInput(session, "ref_period_v1", value = split_numeric_range(meta[1, "ref_period_v1"]))
-  updateNumericRangeInput(session, "ref_period_v2", value = split_numeric_range(meta[1, "ref_period_v2"]))
+  shinyWidgets::updateNumericRangeInput(session, "ref_period_v1", value = split_numeric_range(meta[1, "ref_period_v1"]))
+  shinyWidgets::updateNumericRangeInput(session, "ref_period_v2", value = split_numeric_range(meta[1, "ref_period_v2"]))
   updateCheckboxInput(session, "ref_single_year_v1", value = as.logical(meta[1, "ref_single_year_v1"]))
   updateCheckboxInput(session, "ref_single_year_v2", value = as.logical(meta[1, "ref_single_year_v2"]))
   updateRadioButtons(session, "source_v1", selected = meta[1, "source_v1"])
@@ -6170,7 +6169,7 @@ process_uploaded_metadata_correlation <- function(
   if (mode == "map") {
     # === Map UI ===
     updateRadioButtons(session, "axis_mode3", selected = meta[1, "axis_mode3"])
-    updateNumericRangeInput(session, "axis_input3", value = split_numeric_range(meta[1, "axis_input3"]))
+    shinyWidgets::updateNumericRangeInput(session, "axis_input3", value = split_numeric_range(meta[1, "axis_input3"]))
     updateNumericInput(session, "center_lat3", value = meta[1, "center_lat3"])
     updateNumericInput(session, "center_lon3", value = meta[1, "center_lon3"])
     updateCheckboxInput(session, "custom_map3", value = as.logical(meta[1, "custom_map3"]))
@@ -6219,7 +6218,7 @@ process_uploaded_metadata_correlation <- function(
   if (mode == "ts") {
     # TS specific
     updateRadioButtons(session, "axis_mode_ts3", selected = meta[1, "axis_mode_ts3"])
-    updateNumericRangeInput(session, "axis_input_ts3", value = split_numeric_range(meta[1, "axis_input_ts3"]))
+    shinyWidgets::updateNumericRangeInput(session, "axis_input_ts3", value = split_numeric_range(meta[1, "axis_input_ts3"]))
     updateRadioButtons(session, "cor_method_ts", selected = meta[1, "cor_method_ts"])
     updateCheckboxInput(session, "custom_ts3", value = as.logical(meta[1, "custom_ts3"]))
     updateCheckboxInput(session, "custom_ref_ts3", value = as.logical(meta[1, "custom_ref_ts3"]))
@@ -7191,7 +7190,7 @@ process_uploaded_metadata_regression <- function(
   }
   
   # === Shared Inputs ===
-  updateNumericRangeInput(session, "range_years4", value = split_numeric_range(meta[1, "range_years4"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_years4", value = split_numeric_range(meta[1, "range_years4"]))
   updateSelectInput(session, "dataset_selected_dv", selected = meta[1, "dataset_selected_dv"])
   updateSelectInput(session, "dataset_selected_iv", selected = split_text_vector(meta[1, "dataset_selected_iv"]))
   updateSelectInput(session, "ME_variable_dv", selected = meta[1, "ME_variable_dv"])
@@ -7202,16 +7201,16 @@ process_uploaded_metadata_regression <- function(
   updateRadioButtons(session, "mode_selected_iv", selected = meta[1, "mode_selected_iv"])
   updateRadioButtons(session, "season_selected_dv", selected = meta[1, "season_selected_dv"])
   updateRadioButtons(session, "season_selected_iv", selected = meta[1, "season_selected_iv"])
-  updateSliderTextInput(session, "range_months_dv", selected = split_text_vector(meta[1, "range_months_dv"]))
-  updateSliderTextInput(session, "range_months_iv", selected = split_text_vector(meta[1, "range_months_iv"]))
-  updateNumericRangeInput(session, "range_latitude_dv", value = split_numeric_range(meta[1, "range_latitude_dv"]))
-  updateNumericRangeInput(session, "range_longitude_dv", value = split_numeric_range(meta[1, "range_longitude_dv"]))
-  updateNumericRangeInput(session, "range_latitude_iv", value = split_numeric_range(meta[1, "range_latitude_iv"]))
-  updateNumericRangeInput(session, "range_longitude_iv", value = split_numeric_range(meta[1, "range_longitude_iv"]))
+  shinyWidgets::updateSliderTextInput(session, "range_months_dv", selected = split_text_vector(meta[1, "range_months_dv"]))
+  shinyWidgets::updateSliderTextInput(session, "range_months_iv", selected = split_text_vector(meta[1, "range_months_iv"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_latitude_dv", value = split_numeric_range(meta[1, "range_latitude_dv"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_longitude_dv", value = split_numeric_range(meta[1, "range_longitude_dv"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_latitude_iv", value = split_numeric_range(meta[1, "range_latitude_iv"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_longitude_iv", value = split_numeric_range(meta[1, "range_longitude_iv"]))
   updateNumericInput(session, "ref_period_sg_dv", value = meta[1, "ref_period_sg_dv"])
   updateNumericInput(session, "ref_period_sg_iv", value = meta[1, "ref_period_sg_iv"])
-  updateNumericRangeInput(session, "ref_period_dv", value = split_numeric_range(meta[1, "ref_period_dv"]))
-  updateNumericRangeInput(session, "ref_period_iv", value = split_numeric_range(meta[1, "ref_period_iv"]))
+  shinyWidgets::updateNumericRangeInput(session, "ref_period_dv", value = split_numeric_range(meta[1, "ref_period_dv"]))
+  shinyWidgets::updateNumericRangeInput(session, "ref_period_iv", value = split_numeric_range(meta[1, "ref_period_iv"]))
   updateCheckboxInput(session, "ref_single_year_dv", value = as.logical(meta[1, "ref_single_year_dv"]))
   updateCheckboxInput(session, "ref_single_year_iv", value = as.logical(meta[1, "ref_single_year_iv"]))
   updateRadioButtons(session, "source_dv", selected = meta[1, "source_dv"])
@@ -7221,8 +7220,8 @@ process_uploaded_metadata_regression <- function(
   if (mode == "ts") {
     updateRadioButtons(session, "axis_mode_ts4a", selected = meta[1, "axis_mode_ts4a"])
     updateRadioButtons(session, "axis_mode_ts4b", selected = meta[1, "axis_mode_ts4b"])
-    updateNumericRangeInput(session, "axis_input_ts4a", value = split_numeric_range(meta[1, "axis_input_ts4a"]))
-    updateNumericRangeInput(session, "axis_input_ts4b", value = split_numeric_range(meta[1, "axis_input_ts4b"]))
+    shinyWidgets::updateNumericRangeInput(session, "axis_input_ts4a", value = split_numeric_range(meta[1, "axis_input_ts4a"]))
+    shinyWidgets::updateNumericRangeInput(session, "axis_input_ts4b", value = split_numeric_range(meta[1, "axis_input_ts4b"]))
     updateCheckboxInput(session, "custom_ts4", value = as.logical(meta[1, "custom_ts4"]))
     updateRadioButtons(session, "key_position_ts4", selected = meta[1, "key_position_ts4"])
     updateCheckboxInput(session, "show_ticks_ts4", value = as.logical(meta[1, "show_ticks_ts4"]))
@@ -7256,7 +7255,7 @@ process_uploaded_metadata_regression <- function(
                      res = "res"
     )
     
-    updateNumericRangeInput(session, paste0("axis_input_reg_", suffix), value = split_numeric_range(meta[1, "axis_input_reg"]))
+    shinyWidgets::updateNumericRangeInput(session, paste0("axis_input_reg_", suffix), value = split_numeric_range(meta[1, "axis_input_reg"]))
     updateRadioButtons(session, paste0("axis_mode_reg_", suffix), selected = meta[1, "axis_mode_reg"])
     updateNumericInput(session, paste0("center_lat_reg_", suffix), value = meta[1, "center_lat_reg"])
     updateNumericInput(session, paste0("center_lon_reg_", suffix), value = meta[1, "center_lon_reg"])
@@ -7532,11 +7531,11 @@ plot_monthly_timeseries <- function(data = NA,
   
   # Generate colors
   if (nrow(data) < 3) {
-    color_set = brewer.pal(3, "Dark2")
+    color_set = RColorBrewer::brewer.pal(3, "Dark2")
   } else if (nrow(data) < 13) {
-    color_set = brewer.pal(nrow(data), "Dark2")
+    color_set = RColorBrewer::brewer.pal(nrow(data), "Dark2")
   } else {
-    color_set = colorRampPalette(brewer.pal(12, "Dark2"))(nrow(data))
+    color_set = colorRampPalette(RColorBrewer::brewer.pal(12, "Dark2"))(nrow(data))
   }
   
   # Convert data to plotting format
@@ -7550,9 +7549,9 @@ plot_monthly_timeseries <- function(data = NA,
       lwidth = 1
     }
     
-    x = as.Date(c())
+    x = zoo:as.Date(c())
     for (j in 5:16){
-      x = c(x,as.Date(paste0("2000-",j-4,"-01")))
+      x = c(x,zoo:as.Date(paste0("2000-",j-4,"-01")))
     }
     
     new_line = data.frame(
@@ -7695,8 +7694,8 @@ plot_monthly_timeseries <- function(data = NA,
     for (i in 1:(fID-1)){
       fill_data = subset(fills_data, ID == i)
       # Convert x values to dates
-      fill_data$x1 = as.Date(fill_data$x1)
-      fill_data$x2 = as.Date(fill_data$x2)
+      fill_data$x1 = zoo:as.Date(fill_data$x1)
+      fill_data$x2 = zoo:as.Date(fill_data$x2)
       
       if (fill_data$key_show){ # Show on legend
         p = p +  geom_rect(
@@ -7762,8 +7761,8 @@ plot_monthly_timeseries <- function(data = NA,
     for (i in 1:(bID-1)){
       box_data = subset(boxes_data, ID == i)
       # Convert x values to dates
-      box_data$x1 = as.Date(box_data$x1)
-      box_data$x2 = as.Date(box_data$x2)
+      box_data$x1 = zoo:as.Date(box_data$x1)
+      box_data$x2 = zoo:as.Date(box_data$x2)
       
       if (box_data$key_show){ # Show on legend
         p = p +  geom_rect(
@@ -7796,7 +7795,7 @@ plot_monthly_timeseries <- function(data = NA,
     for (i in 1:nrow(points_data)){
       point_data = points_data[i,]
       # Convert points_data x value to date
-      point_data$x = as.Date(point_data$x)
+      point_data$x = zoo:as.Date(point_data$x)
       
       if (point_data$key_show){ # Show on legend
         p = p + geom_point(
@@ -8029,9 +8028,9 @@ process_uploaded_metadata_cycles <- function(
   updateRadioButtons(session, "title_mode_ts5", selected = meta[1, "title_mode_ts5"])
   updateRadioButtons(session, "file_type_timeseries5", selected = meta[1, "file_type_timeseries5"])
   
-  updateNumericRangeInput(session, "range_latitude5", value = split_numeric_range(meta[1, "range_latitude5"]))
-  updateNumericRangeInput(session, "range_longitude5", value = split_numeric_range(meta[1, "range_longitude5"]))
-  updateNumericRangeInput(session, "ref_period5", value = split_numeric_range(meta[1, "ref_period5"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_latitude5", value = split_numeric_range(meta[1, "range_latitude5"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_longitude5", value = split_numeric_range(meta[1, "range_longitude5"]))
+  shinyWidgets::updateNumericRangeInput(session, "ref_period5", value = split_numeric_range(meta[1, "ref_period5"]))
   
   updateNumericInput(session, "ref_period_sg5", value = meta[1, "ref_period_sg5"])
   updateNumericInput(session, "title_size_input_ts5", value = meta[1, "title_size_input_ts5"])
@@ -8244,13 +8243,13 @@ process_uploaded_metadata_sea <- function(
   updateRadioButtons(session, "show_confidence_bands_6", selected = meta[1, "show_confidence_bands_6"])
   updateRadioButtons(session, "title_mode_6", selected = meta[1, "title_mode_6"])
   
-  updateNumericRangeInput(session, "range_latitude_6", value = split_numeric_range(meta[1, "range_latitude_6"]))
-  updateNumericRangeInput(session, "range_longitude_6", value = split_numeric_range(meta[1, "range_longitude_6"]))
-  updateNumericRangeInput(session, "lag_years_6", value = split_numeric_range(meta[1, "lag_years_6"]))
-  updateNumericRangeInput(session, "axis_input_6", value = split_numeric_range(meta[1, "axis_input_6"]))
-  updateNumericRangeInput(session, "ref_period_6", value = split_numeric_range(meta[1, "ref_period_6"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_latitude_6", value = split_numeric_range(meta[1, "range_latitude_6"]))
+  shinyWidgets::updateNumericRangeInput(session, "range_longitude_6", value = split_numeric_range(meta[1, "range_longitude_6"]))
+  shinyWidgets::updateNumericRangeInput(session, "lag_years_6", value = split_numeric_range(meta[1, "lag_years_6"]))
+  shinyWidgets::updateNumericRangeInput(session, "axis_input_6", value = split_numeric_range(meta[1, "axis_input_6"]))
+  shinyWidgets::updateNumericRangeInput(session, "ref_period_6", value = split_numeric_range(meta[1, "ref_period_6"]))
   
-  updateSliderTextInput(session, "range_months_6", selected = split_text_vector(meta[1, "range_months_6"]))
+  shinyWidgets::updateSliderTextInput(session, "range_months_6", selected = split_text_vector(meta[1, "range_months_6"]))
   
   updateTextInput(session, "event_years_6", value = meta[1, "event_years_6"])
   updateTextInput(session, "title1_input_6", value = meta[1, "title1_input_6"])

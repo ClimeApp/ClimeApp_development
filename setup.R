@@ -80,47 +80,50 @@ setup_user_environment()
 
 # Load only REQUIRED functions/libraries:
 #Packages
+
+#Core Packages
 library(shiny, lib.loc = lib_path)
-library(maps, lib.loc = lib_path)
 library(shinyWidgets, lib.loc = lib_path)
-library(RColorBrewer, lib.loc = lib_path)
 library(shinyjs, lib.loc = lib_path)
 library(bslib, lib.loc = lib_path)
-library(readxl, lib.loc = lib_path)
-library(DT, lib.loc = lib_path)
-library(zoo, lib.loc = lib_path)
-library(colourpicker, lib.loc = lib_path)
 library(ggplot2, lib.loc = lib_path)
 library(sf, lib.loc = lib_path)
-library(shinylogs, lib.loc = lib_path)
 library(shinycssloaders, lib.loc = lib_path)
 library(openxlsx, lib.loc = lib_path)  # Don't change order!
 library(htmltools, lib.loc = lib_path)
-library(mapdata, lib.loc = lib_path)
-library(dplyr, lib.loc = lib_path)
+library(xlsx, lib.loc = lib_path)
+library(ncdf4, lib.loc = lib_path)
+
+#Important Packages
+library(terra, lib.loc = lib_path)
+library(RColorBrewer, lib.loc = lib_path)
+library(ggtext, lib.loc = lib_path)
+library(ggrepel, lib.loc = lib_path)
 library(ggpattern, lib.loc = lib_path)
-library(markdown, lib.loc = lib_path)
-library(tmaptools, lib.loc = lib_path)
-library(dplR, lib.loc = lib_path)
-library(burnr, lib.loc = lib_path)
-library(shinyjqui, lib.loc = lib_path)
+library(viridis, lib.loc = lib_path)
+library(tidyterra, lib.loc = lib_path)
 
-
-# library(tidyterra, lib.loc = lib_path)
-# library(viridisLite, lib.loc = lib_path)
-# library(viridis, lib.loc = lib_path)
-# library(ggtext, lib.loc = lib_path)
-# library(ggrepel, lib.loc = lib_path)
-# library(plotly, lib.loc = lib_path)
-# library(leaflet, lib.loc = lib_path)
-# library(leaflet.providers, lib.loc = lib_path)
-# library(xlsx, lib.loc = lib_path)
-# library(ncdf4, lib.loc = lib_path)
-# library(rnaturalearth, lib.loc = lib_path)
-# library(rnaturalearthdata, lib.loc = lib_path)
-# library(terra, lib.loc = lib_path)
-
-
+#Less Important Packages
+#library(colourpicker, lib.loc = lib_path)
+#library(dplyr, lib.loc = lib_path)
+#library(readxl, lib.loc = lib_path)
+#library(zoo, lib.loc = lib_path)
+#library(DT, lib.loc = lib_path)
+#library(dplR, lib.loc = lib_path)
+#library(burnr, lib.loc = lib_path)
+#library(shinyjqui, lib.loc = lib_path)
+#library(viridisLite, lib.loc = lib_path)
+#library(viridis, lib.loc = lib_path)
+#library(plotly, lib.loc = lib_path)
+#library(leaflet, lib.loc = lib_path)
+#library(tmaptools, lib.loc = lib_path)
+#library(mapdata, lib.loc = lib_path) #Zero Functions Used
+#library(markdown, lib.loc = lib_path) #Zero Functions Used
+#library(leaflet.providers, lib.loc = lib_path) #Zero Functions Used
+#library(shinylogs, lib.loc = lib_path) #Zero Functions Used
+#library(rnaturalearth, lib.loc = lib_path) #Zero Functions Used
+#library(rnaturalearthdata, lib.loc = lib_path) #Zero Functions Used
+#library(maps, lib.loc = lib_path) #Zero Functions Used
 
 #### Design ----
 
@@ -129,7 +132,7 @@ addResourcePath(prefix = 'pics', directoryPath = "www")
 addResourcePath(prefix = 'videos', directoryPath = "videos")
 
 # Choosing theme and making colouring changes
-my_theme <- bs_theme(version = 5, bootswatch = "united", primary = "#094030")
+my_theme <- bslib::bs_theme(version = 5, bootswatch = "united", primary = "#094030")
 
 # Colour palette and variable names for ModE-RA source leaflet
 type_list <- c("bivalve_proxy", "coral_proxy", "documentary_proxy", "glacier_ice_proxy", "ice_proxy", "instrumental_data", "lake_sediment_proxy", "other_proxy", "speleothem_proxy", "tree_proxy")
@@ -258,10 +261,10 @@ initial_year_values = century_years[,random_century]
 latlon_weights = as.matrix(read.csv("data/latlon_weights.csv"))
 
 # # Load shapefiles for maps (rnaturalearth)
-# coast <- st_read("data/geodata_maps/coast.shp") 
-# countries <- st_read("data/geodata_maps/countries.shp")
-# oceans <- st_read("data/geodata_maps/oceans.shp")
-# land <- st_read("data/geodata_maps/land.shp")
+# coast <- sf::st_read("data/geodata_maps/coast.shp") 
+# countries <- sf::st_read("data/geodata_maps/countries.shp")
+# oceans <- sf::st_read("data/geodata_maps/oceans.shp")
+# land <- sf::st_read("data/geodata_maps/land.shp")
 
 coast <- readRDS("data/geodata_maps/coast.rds")
 countries <- readRDS("data/geodata_maps/countries.rds")

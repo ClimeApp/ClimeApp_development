@@ -9,7 +9,7 @@ source("setup.R")
 ui <- navbarPage(
   id = "nav1",
   
-  useShinyjs(),  # Enable shinyjs
+  shinyjs::useShinyjs(),  # Enable shinyjs
   
   # shiny.tictoc to track performance
   tags$script(
@@ -156,7 +156,7 @@ ui <- navbarPage(
   
   
   # --- Navbar styling and properties ---
-  theme = bs_theme(version = 5, bootswatch = "united", primary = "#094030", navbar_bg = "#094030"),
+  theme = bslib::bs_theme(version = 5, bootswatch = "united", primary = "#094030", navbar_bg = "#094030"),
   position = "fixed-top",
   windowTitle = "ClimeApp (v1.5)",
   collapsible = TRUE,
@@ -563,8 +563,8 @@ ui <- navbarPage(
                  h4("Select a year range, season and reference period", style = "color: #094030;",year_season_ref_popover("pop_anomalies_time")),
                  
                  #Choose your year of interest        
-                 hidden(
-                   numericRangeInput(inputId    = "range_years",
+                 shinyjs::hidden(
+                   shinyWidgets::numericRangeInput(inputId    = "range_years",
                                      label     = "Select the range of years (1422-2008):",
                                      value     = initial_year_values,
                                      separator = " to ",
@@ -578,7 +578,7 @@ ui <- navbarPage(
                                       value   = FALSE)),
                  
                  
-                 hidden(
+                 shinyjs::hidden(
                    numericInput(inputId   = "range_years_sg",
                                 label     = "Select the single year:",
                                 value     = NA,
@@ -595,7 +595,7 @@ ui <- navbarPage(
                  #Choose your range of months (Slider)
                  shinyjs::hidden(
                    div(id = "season",
-                       sliderTextInput(inputId = "range_months",
+                       shinyWidgets::sliderTextInput(inputId = "range_months",
                                        label = "Select custom months:",
                                        choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                        #Initially selected = 1 year (annual mean)
@@ -603,8 +603,8 @@ ui <- navbarPage(
                    )),      
                  
                  #Choose reference period
-                 hidden(
-                   numericRangeInput(inputId = "ref_period",
+                 shinyjs::hidden(
+                   shinyWidgets::numericRangeInput(inputId = "ref_period",
                                      label      = "Select the reference period:",
                                      value      = c(1961,1990),
                                      separator  = " to ",
@@ -618,7 +618,7 @@ ui <- navbarPage(
                                       value   = FALSE)),
                  
                  
-                 hidden(
+                 shinyjs::hidden(
                    numericInput(inputId   = "ref_period_sg",
                                 label     = "Select the reference year:",
                                 value     = NA,
@@ -696,7 +696,7 @@ ui <- navbarPage(
                  column(width = 12, br()),
                  
                  #Choose Longitude and Latitude Range          
-                 numericRangeInput(inputId = "range_longitude",
+                 shinyWidgets::numericRangeInput(inputId = "range_longitude",
                                    label = "Longitude range (-180 to 180):",
                                    value = initial_lon_values,
                                    separator = " to ",
@@ -705,7 +705,7 @@ ui <- navbarPage(
                  
                  
                  #Choose Longitude and Latitude Range          
-                 numericRangeInput(inputId = "range_latitude",
+                 shinyWidgets::numericRangeInput(inputId = "range_latitude",
                                    label = "Latitude range (-90 to 90):",
                                    value = initial_lat_values,
                                    separator = " to ",
@@ -729,7 +729,7 @@ ui <- navbarPage(
                                    tabPanel("Map", br(),
                                             h4("Anomalies map", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("map", height = "750px", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("map", height = "750px", dblclick = "map_dblclick1", brush = brushOpts(id = "map_brush1",resetOnNew = TRUE)), 
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -814,7 +814,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_axis",
                                                                  
-                                                                 numericRangeInput(inputId    = "axis_input",
+                                                                 shinyWidgets::numericRangeInput(inputId    = "axis_input",
                                                                                    label      = "Set your axis values:",
                                                                                    value      = c(NULL, NULL),
                                                                                    separator  = " to ",
@@ -968,7 +968,7 @@ ui <- navbarPage(
                                                                             inline       = TRUE,
                                                                             choices      = c("\u25CF", "\u25B2", "\u25A0")),
                                                                
-                                                               colourInput(inputId = "point_colour", 
+                                                               colourpicker::colourInput(inputId = "point_colour", 
                                                                            label   = "Point colour:",
                                                                            showColour = "background",
                                                                            value = "#27408B",
@@ -997,19 +997,19 @@ ui <- navbarPage(
                                                                
                                                                h6(helpText("Enter coordinate or draw a box on map")),
                                                                
-                                                               numericRangeInput(inputId = "highlight_x_values",
+                                                               shinyWidgets::numericRangeInput(inputId = "highlight_x_values",
                                                                                  label  = "Longitude:",
                                                                                  value  = "",
                                                                                  min    = -180,
                                                                                  max    = 180),
                                                                
-                                                               numericRangeInput(inputId = "highlight_y_values",
+                                                               shinyWidgets::numericRangeInput(inputId = "highlight_y_values",
                                                                                  label  = "Latitude:",
                                                                                  value  = "",
                                                                                  min    = -90,
                                                                                  max    = 90),
                                                                
-                                                               colourInput(inputId = "highlight_colour", 
+                                                               colourpicker::colourInput(inputId = "highlight_colour", 
                                                                            label   = "Highlight colour:",
                                                                            showColour = "background",
                                                                            value = "#27408B",
@@ -1103,7 +1103,7 @@ ui <- navbarPage(
                                             ),
                                             conditionalPanel(
                                               condition = "input.ref_map_mode && input.ref_map_mode !== 'None'",
-                                              withSpinner(
+                                              shinycssloaders::withSpinner(
                                                 ui_element = plotOutput("ref_map", height = "750px"),
                                                 image = spinner_image,
                                                 image.width = spinner_width,
@@ -1127,7 +1127,7 @@ ui <- navbarPage(
                                    tabPanel("Timeseries", br(),
                                             h4("Anomalies timeseries", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("timeseries", click = "ts_click1",dblclick = "ts_dblclick1",brush = brushOpts(id = "ts_brush1",resetOnNew = TRUE)),
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("timeseries", click = "ts_click1",dblclick = "ts_dblclick1",brush = brushOpts(id = "ts_brush1",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -1175,7 +1175,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_axis_ts",
                                                                  
-                                                                 numericRangeInput(inputId    = "axis_input_ts",
+                                                                 shinyWidgets::numericRangeInput(inputId    = "axis_input_ts",
                                                                                    label      = "Set your y-axis values:",
                                                                                    value      = c(NULL, NULL),
                                                                                    separator  = " to ",
@@ -1262,7 +1262,7 @@ ui <- navbarPage(
                                                                               inline       = TRUE,
                                                                               choices      = c("\u25CF", "\u25B2", "\u25A0")),
                                                                  
-                                                                 colourInput(inputId = "point_colour_ts", 
+                                                                 colourpicker::colourInput(inputId = "point_colour_ts", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -1292,15 +1292,15 @@ ui <- navbarPage(
                                                                  h4(helpText("Add custom highlights", timeseries_highlights_popover("pop_anomalies_timehl"))),
                                                                  h6(helpText("Enter values manually or draw a box on plot")),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_x_values_ts",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_x_values_ts",
                                                                                    label  = "X values:",
                                                                                    value  = ""),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_y_values_ts",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_y_values_ts",
                                                                                    label  = "Y values:",
                                                                                    value  = ""),
                                                                  
-                                                                 colourInput(inputId = "highlight_colour_ts", 
+                                                                 colourpicker::colourInput(inputId = "highlight_colour_ts", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -1316,7 +1316,7 @@ ui <- navbarPage(
                                                                                label   = "Show on key",
                                                                                value   = FALSE),
                                                                  
-                                                                 hidden(
+                                                                 shinyjs::hidden(
                                                                    textInput(inputId = "highlight_label_ts", 
                                                                              label   = "Label:",
                                                                              value   = "")),
@@ -1349,7 +1349,7 @@ ui <- navbarPage(
                                                                            value   = "",
                                                                            placeholder = "1830, 1832"),
                                                                  
-                                                                 colourInput(inputId = "line_colour_ts", 
+                                                                 colourpicker::colourInput(inputId = "line_colour_ts", 
                                                                              label   = "Line colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -1364,7 +1364,7 @@ ui <- navbarPage(
                                                                                label   = "Show on key",
                                                                                value   = FALSE),
                                                                  
-                                                                 hidden(
+                                                                 shinyjs::hidden(
                                                                    textInput(inputId = "line_label_ts", 
                                                                              label   = "Label:",
                                                                              value   = "")),
@@ -1481,7 +1481,7 @@ ui <- navbarPage(
                                             ),
                                             
                                             br(), 
-                                            withSpinner(ui_element = tableOutput("data1"),
+                                            shinycssloaders::withSpinner(ui_element = tableOutput("data1"),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height)),
@@ -1496,7 +1496,7 @@ ui <- navbarPage(
                                             ),
                                             
                                             br(), column(width = 3, 
-                                                         withSpinner(ui_element = dataTableOutput("data2"),
+                                                         shinycssloaders::withSpinner(ui_element = DT::dataTableOutput("data2"),
                                                                      image = spinner_image,
                                                                      image.width = spinner_width,
                                                                      image.height = spinner_height))),                                      
@@ -1504,7 +1504,7 @@ ui <- navbarPage(
                                    tabPanel("Download NETcdf data",
                                             br(), h4("Download NETcdf with one or more variable", style = "color: #094030;", netcdf_popover("pop_anomalies_netcdf")),
                                             #NETcdf download pickerInput checkboxGroupInput
-                                            column(3, pickerInput(inputId = "netcdf_variables", label = "Choose one or multiple variables:", choices = NULL, selected = NULL, inline = TRUE, multiple = TRUE,)),
+                                            column(3, shinyWidgets::pickerInput(inputId = "netcdf_variables", label = "Choose one or multiple variables:", choices = NULL, selected = NULL, inline = TRUE, multiple = TRUE,)),
                                             column(3, downloadButton(outputId = "download_netcdf", label = "Download NETcdf"))),
                                    
                                    ### Feedback archive documentation (FAD) ----
@@ -1533,7 +1533,7 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(
+                                            shinycssloaders::withSpinner(
                                               ui_element = plotOutput(
                                                 "fad_map",
                                                 height = "auto",
@@ -1652,7 +1652,7 @@ ui <- navbarPage(
                  #Choose your range of months (Slider)
                  shinyjs::hidden(
                    div(id = "season2",
-                       sliderTextInput(inputId = "range_months2",
+                       shinyWidgets::sliderTextInput(inputId = "range_months2",
                                        label = "Select custom months:",
                                        choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                        #Initially selected = 1 year (annual mean)
@@ -1668,8 +1668,8 @@ ui <- navbarPage(
                  #Choose reference period for either Fixed Anomaly or enter X years (1-50) for Anomalies compared to X years prior (Hidden objects)      
                  shinyjs::hidden(
                    div(id = "optional2a",
-                       hidden(
-                         numericRangeInput(inputId = "ref_period2",
+                       shinyjs::hidden(
+                         shinyWidgets::numericRangeInput(inputId = "ref_period2",
                                            label      = "Reference period:",
                                            value      = c(1961,1990),
                                            separator  = " to ",
@@ -1683,7 +1683,7 @@ ui <- navbarPage(
                                             value   = FALSE)),
                        
                        
-                       hidden(
+                       shinyjs::hidden(
                          numericInput(inputId   = "ref_period_sg2",
                                       label     = "Select the single year:",
                                       value     = NA,
@@ -1800,7 +1800,7 @@ ui <- navbarPage(
                  column(width = 12, br()),
                  
                  #Choose Longitude and Latitude Range          
-                 numericRangeInput(inputId = "range_longitude2",
+                 shinyWidgets::numericRangeInput(inputId = "range_longitude2",
                                    label = "Longitude range (-180 to 180):",
                                    value = initial_lon_values,
                                    separator = " to ",
@@ -1808,7 +1808,7 @@ ui <- navbarPage(
                                    max = 180),
                  
                  #Choose Longitude and Latitude Range          
-                 numericRangeInput(inputId = "range_latitude2",
+                 shinyWidgets::numericRangeInput(inputId = "range_latitude2",
                                    label = "Latitude range (-90 to 90):",
                                    value = initial_lat_values,
                                    separator = " to ",
@@ -1839,7 +1839,7 @@ ui <- navbarPage(
                                                                 textOutput("custom_years2")
                                             )),
                                             
-                                            withSpinner(ui_element = plotOutput("map2",height = "750px", dblclick = "map_dblclick2", brush = brushOpts(id = "map_brush2",resetOnNew = TRUE)),
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("map2",height = "750px", dblclick = "map_dblclick2", brush = brushOpts(id = "map_brush2",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),         
@@ -1887,7 +1887,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_axis2",
                                                                  
-                                                                 numericRangeInput(inputId    = "axis_input2",
+                                                                 shinyWidgets::numericRangeInput(inputId    = "axis_input2",
                                                                                    label      = "Set your axis values:",
                                                                                    value      = c(NULL, NULL),
                                                                                    separator  = " to ",
@@ -2048,7 +2048,7 @@ ui <- navbarPage(
                                                                               inline       = TRUE,
                                                                               choices      = c("\u25CF", "\u25B2", "\u25A0")),
                                                                  
-                                                                 colourInput(inputId = "point_colour2", 
+                                                                 colourpicker::colourInput(inputId = "point_colour2", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -2079,19 +2079,19 @@ ui <- navbarPage(
                                                                  h4(helpText("Add custom highlights",map_highlights_popover("pop_composites_maphl"))),
                                                                  h6(helpText("Enter coordinate or draw a box on map")),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_x_values2",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_x_values2",
                                                                                    label  = "Longitude:",
                                                                                    value  = "",
                                                                                    min    = -180,
                                                                                    max    = 180),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_y_values2",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_y_values2",
                                                                                    label  = "Latitude:",
                                                                                    value  = "",
                                                                                    min    = -90,
                                                                                    max    = 90),
                                                                  
-                                                                 colourInput(inputId = "highlight_colour2", 
+                                                                 colourpicker::colourInput(inputId = "highlight_colour2", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -2194,7 +2194,7 @@ ui <- navbarPage(
                                             ),
                                             conditionalPanel(
                                               condition = "input.ref_map_mode2 && input.ref_map_mode2 !== 'None'",
-                                              withSpinner(
+                                              shinycssloaders::withSpinner(
                                                 ui_element = plotOutput("ref_map2", height = "750px"),
                                                 image = spinner_image,
                                                 image.width = spinner_width,
@@ -2222,7 +2222,7 @@ ui <- navbarPage(
                                                                 h4(textOutput("text_custom_years2b"), style = "color: #094030;"),
                                                                 textOutput("custom_years2b")
                                             )),
-                                            withSpinner(ui_element = plotOutput("timeseries2", click = "ts_click2", dblclick = "ts_dblclick2", brush = brushOpts(id = "ts_brush2",resetOnNew = TRUE)),
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("timeseries2", click = "ts_click2", dblclick = "ts_dblclick2", brush = brushOpts(id = "ts_brush2",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -2272,7 +2272,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_axis_ts2",
                                                                  
-                                                                 numericRangeInput(inputId    = "axis_input_ts2",
+                                                                 shinyWidgets::numericRangeInput(inputId    = "axis_input_ts2",
                                                                                    label      = "Set your axis values:",
                                                                                    value      = c(NULL, NULL),
                                                                                    separator  = " to ",
@@ -2356,7 +2356,7 @@ ui <- navbarPage(
                                                                               inline       = TRUE,
                                                                               choices      = c("\u25CF", "\u25B2", "\u25A0")),
                                                                  
-                                                                 colourInput(inputId = "point_colour_ts2", 
+                                                                 colourpicker::colourInput(inputId = "point_colour_ts2", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -2387,15 +2387,15 @@ ui <- navbarPage(
                                                                  h4(helpText("Add custom highlights",timeseries_highlights_popover("pop_composites_timehl"))),
                                                                  h6(helpText("Enter values manually or draw a box on plot")),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_x_values_ts2",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_x_values_ts2",
                                                                                    label  = "X values:",
                                                                                    value  = ""),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_y_values_ts2",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_y_values_ts2",
                                                                                    label  = "Y values:",
                                                                                    value  = ""),
                                                                  
-                                                                 colourInput(inputId = "highlight_colour_ts2", 
+                                                                 colourpicker::colourInput(inputId = "highlight_colour_ts2", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -2411,7 +2411,7 @@ ui <- navbarPage(
                                                                                label   = "Show on key",
                                                                                value   = FALSE),
                                                                  
-                                                                 hidden(
+                                                                 shinyjs::hidden(
                                                                    textInput(inputId = "highlight_label_ts2", 
                                                                              label   = "Label:",
                                                                              value   = "")),
@@ -2445,7 +2445,7 @@ ui <- navbarPage(
                                                                            value   = "",
                                                                            placeholder = "1830, 1832"),
                                                                  
-                                                                 colourInput(inputId = "line_colour_ts2", 
+                                                                 colourpicker::colourInput(inputId = "line_colour_ts2", 
                                                                              label   = "Line colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -2460,7 +2460,7 @@ ui <- navbarPage(
                                                                                label   = "Show on key",
                                                                                value   = FALSE),
                                                                  
-                                                                 hidden(
+                                                                 shinyjs::hidden(
                                                                    textInput(inputId = "line_label_ts2", 
                                                                              label   = "Label:",
                                                                              value   = "")),
@@ -2556,7 +2556,7 @@ ui <- navbarPage(
                                                      ))
                                             ),
                                             
-                                            br(), withSpinner(ui_element = tableOutput("data3"),
+                                            br(), shinycssloaders::withSpinner(ui_element = tableOutput("data3"),
                                                               image = spinner_image,
                                                               image.width = spinner_width,
                                                               image.height = spinner_height)),
@@ -2569,7 +2569,7 @@ ui <- navbarPage(
                                             ),
                                             
                                             br(), column(width = 3, 
-                                                         withSpinner(ui_element = dataTableOutput("data4"),
+                                                         shinycssloaders::withSpinner(ui_element = DT::dataTableOutput("data4"),
                                                                      image = spinner_image,
                                                                      image.width = spinner_width,
                                                                      image.height = spinner_height))),
@@ -2600,7 +2600,7 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(
+                                            shinycssloaders::withSpinner(
                                               ui_element = plotOutput(
                                                 "fad_map2",
                                                 height = "auto",
@@ -2727,7 +2727,7 @@ ui <- navbarPage(
                        #Choose your range of months (Slider)
                        shinyjs::hidden(
                          div(id = "season_6",
-                             sliderTextInput(inputId = "range_months_6",
+                             shinyWidgets::sliderTextInput(inputId = "range_months_6",
                                              label = "Select custom months:",
                                              choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                              #Initially selected = 1 year (annual mean)
@@ -2735,8 +2735,8 @@ ui <- navbarPage(
                          )), 
                        
                        #Choose reference period      
-                       hidden(
-                         numericRangeInput(inputId = "ref_period_6",
+                       shinyjs::hidden(
+                         shinyWidgets::numericRangeInput(inputId = "ref_period_6",
                                            label      = "Reference period:",
                                            value      = c(1961,1990),
                                            separator  = " to ",
@@ -2750,7 +2750,7 @@ ui <- navbarPage(
                                             value   = FALSE)),
                        
                        
-                       hidden(
+                       shinyjs::hidden(
                          numericInput(inputId   = "ref_period_sg_6",
                                       label     = "Select the single year:",
                                       value     = NA,
@@ -2830,7 +2830,7 @@ ui <- navbarPage(
                          )),
                        
                        #Choose Longitude and Latitude Range          
-                       numericRangeInput(inputId = "range_longitude_6",
+                       shinyWidgets::numericRangeInput(inputId = "range_longitude_6",
                                          label = "Longitude range (-180 to 180):",
                                          value = c(4,12),
                                          separator = " to ",
@@ -2838,7 +2838,7 @@ ui <- navbarPage(
                                          max = 180),
                        
                        #Choose Longitude and Latitude Range          
-                       numericRangeInput(inputId = "range_latitude_6",
+                       shinyWidgets::numericRangeInput(inputId = "range_latitude_6",
                                          label = "Latitude range (-90 to 90):",
                                          value = c(43,50),
                                          separator = " to ",
@@ -2867,7 +2867,7 @@ ui <- navbarPage(
                  #Choose your lag years
                  column(width = 8,
                         
-                        numericRangeInput(inputId = "lag_years_6",
+                        shinyWidgets::numericRangeInput(inputId = "lag_years_6",
                                           label      = "Set lag years:",
                                           value      = c(-10,10),
                                           separator  = " to ",
@@ -2939,7 +2939,7 @@ ui <- navbarPage(
                                           
                                           br(),
                                           
-                                          withSpinner(ui_element = plotOutput("SEA_plot_6",click = "ts_click6", dblclick = "ts_dblclick6", brush = brushOpts(id = "ts_brush6", resetOnNew = TRUE)),
+                                          shinycssloaders::withSpinner(ui_element = plotOutput("SEA_plot_6",click = "ts_click6", dblclick = "ts_dblclick6", brush = brushOpts(id = "ts_brush6", resetOnNew = TRUE)),
                                                       image = spinner_image,
                                                       image.width = spinner_width,
                                                       image.height = spinner_height),
@@ -2990,7 +2990,7 @@ ui <- navbarPage(
                                                    shinyjs::hidden(
                                                      div(id = "hidden_custom_axis_6",
                                                          
-                                                         numericRangeInput(inputId    = "axis_input_6",
+                                                         shinyWidgets::numericRangeInput(inputId    = "axis_input_6",
                                                                            label      = "Set your axis values:",
                                                                            value      = c(NULL, NULL),
                                                                            separator  = " to ",
@@ -3185,7 +3185,7 @@ ui <- navbarPage(
                        #Choose your range of months (Slider)
                        shinyjs::hidden(
                          div(id = "season_v1",
-                             sliderTextInput(inputId = "range_months_v1",
+                             shinyWidgets::sliderTextInput(inputId = "range_months_v1",
                                              label = "Select custom months:",
                                              choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                              #Initially selected = 1 year (annual mean)
@@ -3195,8 +3195,8 @@ ui <- navbarPage(
                        #Choose reference period if Anomaly values are chosen (Hidden object)      
                        shinyjs::hidden(
                          div(id = "optional_v1",
-                             hidden(
-                               numericRangeInput(inputId = "ref_period_v1",
+                             shinyjs::hidden(
+                               shinyWidgets::numericRangeInput(inputId = "ref_period_v1",
                                                  label      = "Reference period:",
                                                  value      = c(1961,1990),
                                                  separator  = " to ",
@@ -3210,7 +3210,7 @@ ui <- navbarPage(
                                                   value   = FALSE)),
                              
                              
-                             hidden(
+                             shinyjs::hidden(
                                numericInput(inputId   = "ref_period_sg_v1",
                                             label     = "Select the single year:",
                                             value     = NA,
@@ -3292,7 +3292,7 @@ ui <- navbarPage(
                          )),
                        
                        #Choose Longitude and Latitude Range          
-                       numericRangeInput(inputId = "range_longitude_v1",
+                       shinyWidgets::numericRangeInput(inputId = "range_longitude_v1",
                                          label = "Longitude range (-180 to 180):",
                                          value = c(4,12),
                                          separator = " to ",
@@ -3300,7 +3300,7 @@ ui <- navbarPage(
                                          max = 180),
                        
                        #Choose Longitude and Latitude Range          
-                       numericRangeInput(inputId = "range_latitude_v1",
+                       shinyWidgets::numericRangeInput(inputId = "range_latitude_v1",
                                          label = "Latitude range (-90 to 90):",
                                          value = c(43,50),
                                          separator = " to ",
@@ -3329,7 +3329,7 @@ ui <- navbarPage(
                  #Choose your year of interest
                  column(width = 8,
                         
-                        numericRangeInput(inputId    = "range_years3",
+                        shinyWidgets::numericRangeInput(inputId    = "range_years3",
                                           label     = "Select the range of years (1422 - 2008):",
                                           value     = initial_year_values,
                                           separator = " to ",
@@ -3436,7 +3436,7 @@ ui <- navbarPage(
                        #Choose your range of months (Slider)
                        shinyjs::hidden(
                          div(id = "season_v2",
-                             sliderTextInput(inputId = "range_months_v2",
+                             shinyWidgets::sliderTextInput(inputId = "range_months_v2",
                                              label = "Select custom months:",
                                              choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                              #Initially selected = 1 year (annual mean)
@@ -3446,8 +3446,8 @@ ui <- navbarPage(
                        #Choose reference period if Anomaly values are chosen (Hidden object)      
                        shinyjs::hidden(
                          div(id = "optional_v2",
-                             hidden(
-                               numericRangeInput(inputId = "ref_period_v2",
+                             shinyjs::hidden(
+                               shinyWidgets::numericRangeInput(inputId = "ref_period_v2",
                                                  label      = "Reference period:",
                                                  value      = c(1961,1990),
                                                  separator  = " to ",
@@ -3461,7 +3461,7 @@ ui <- navbarPage(
                                                   value   = FALSE)),
                              
                              
-                             hidden(
+                             shinyjs::hidden(
                                numericInput(inputId   = "ref_period_sg_v2",
                                             label     = "Select the single year:",
                                             value     = NA,
@@ -3544,7 +3544,7 @@ ui <- navbarPage(
                          )),
                        
                        #Choose Longitude and Latitude Range          
-                       numericRangeInput(inputId = "range_longitude_v2",
+                       shinyWidgets::numericRangeInput(inputId = "range_longitude_v2",
                                          label = "Longitude range (-180 to 180):",
                                          value = initial_lon_values,
                                          separator = " to ",
@@ -3552,7 +3552,7 @@ ui <- navbarPage(
                                          max = 180),
                        
                        #Choose Longitude and Latitude Range          
-                       numericRangeInput(inputId = "range_latitude_v2",
+                       shinyWidgets::numericRangeInput(inputId = "range_latitude_v2",
                                          label = "Latitude range (-90 to 90):",
                                          value = initial_lat_values,
                                          separator = " to ",
@@ -3575,13 +3575,13 @@ ui <- navbarPage(
                                    ### v1, v2 plot: ----
                                    tabPanel("Variables", br(),
                                             h4("Variable 1", style = "color: #094030;"),
-                                            withSpinner(ui_element = plotOutput("plot_v1", height = "auto"),
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("plot_v1", height = "auto"),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
 
                                                                                         h4("Variable 2", style = "color: #094030;"),
-                                            withSpinner(ui_element = plotOutput("plot_v2", height = "auto"),
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("plot_v2", height = "auto"),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height)),
@@ -3604,7 +3604,7 @@ ui <- navbarPage(
                                             textOutput("correlation_r_value"),
                                             textOutput("correlation_p_value"),
                                             br(),
-                                            withSpinner(ui_element = plotOutput("correlation_ts",click = "ts_click3", dblclick = "ts_dblclick3", brush = brushOpts(id = "ts_brush3",resetOnNew = TRUE)),
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("correlation_ts",click = "ts_click3", dblclick = "ts_dblclick3", brush = brushOpts(id = "ts_brush3",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -3654,7 +3654,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_axis_ts3",
                                                                  
-                                                                 numericRangeInput(inputId    = "axis_input_ts3",
+                                                                 shinyWidgets::numericRangeInput(inputId    = "axis_input_ts3",
                                                                                    label      = "Set your axis values for V1:",
                                                                                    value      = c(NULL, NULL),
                                                                                    separator  = " to ",
@@ -3734,7 +3734,7 @@ ui <- navbarPage(
                                                                               inline       = TRUE,
                                                                               choices      = c("\u25CF", "\u25B2", "\u25A0")),
                                                                  
-                                                                 colourInput(inputId = "point_colour_ts3", 
+                                                                 colourpicker::colourInput(inputId = "point_colour_ts3", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -3765,15 +3765,15 @@ ui <- navbarPage(
                                                                  h4(helpText("Add custom highlights",timeseries_highlights_popover("pop_correlation_timehl"))),
                                                                  h6(helpText("Enter values manually or draw a box on plot")),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_x_values_ts3",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_x_values_ts3",
                                                                                    label  = "X values:",
                                                                                    value  = ""),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_y_values_ts3",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_y_values_ts3",
                                                                                    label  = "Y values:",
                                                                                    value  = ""),
                                                                  
-                                                                 colourInput(inputId = "highlight_colour_ts3", 
+                                                                 colourpicker::colourInput(inputId = "highlight_colour_ts3", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -3789,7 +3789,7 @@ ui <- navbarPage(
                                                                                label   = "Show on key",
                                                                                value   = FALSE),
                                                                  
-                                                                 hidden(
+                                                                 shinyjs::hidden(
                                                                    textInput(inputId = "highlight_label_ts3", 
                                                                              label   = "Label:",
                                                                              value   = "")),
@@ -3823,7 +3823,7 @@ ui <- navbarPage(
                                                                            value   = "",
                                                                            placeholder = "1830, 1832"),
                                                                  
-                                                                 colourInput(inputId = "line_colour_ts3", 
+                                                                 colourpicker::colourInput(inputId = "line_colour_ts3", 
                                                                              label   = "Line colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -3838,7 +3838,7 @@ ui <- navbarPage(
                                                                                label   = "Show on key",
                                                                                value   = FALSE),
                                                                  
-                                                                 hidden(
+                                                                 shinyjs::hidden(
                                                                    textInput(inputId = "line_label_ts3", 
                                                                              label   = "Label:",
                                                                              value   = "")),
@@ -3929,7 +3929,7 @@ ui <- navbarPage(
                                             
                                             shinyjs::hidden(div(id ="hidden_sec_map_download3",
                                                                 
-                                                                withSpinner(ui_element = plotOutput("ref_map3"), 
+                                                                shinycssloaders::withSpinner(ui_element = plotOutput("ref_map3"), 
                                                                             image = spinner_image,
                                                                             image.width = spinner_width,
                                                                             image.height = spinner_height),
@@ -4030,7 +4030,7 @@ ui <- navbarPage(
                                               selected = "pearson" ,
                                               inline = TRUE
                                             ),
-                                            withSpinner(
+                                            shinycssloaders::withSpinner(
                                               ui_element = plotOutput(
                                                 "correlation_map",
                                                 height = "750px",
@@ -4098,7 +4098,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_axis3",
                                                                  
-                                                                 numericRangeInput(inputId    = "axis_input3",
+                                                                 shinyWidgets::numericRangeInput(inputId    = "axis_input3",
                                                                                    label      = "Set your axis values:",
                                                                                    value      = c(NULL, NULL),
                                                                                    separator  = " to ",
@@ -4259,7 +4259,7 @@ ui <- navbarPage(
                                                                               inline       = TRUE,
                                                                               choices      = c("\u25CF", "\u25B2", "\u25A0")),
                                                                  
-                                                                 colourInput(inputId = "point_colour3", 
+                                                                 colourpicker::colourInput(inputId = "point_colour3", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -4290,19 +4290,19 @@ ui <- navbarPage(
                                                                  h4(helpText("Add custom highlights",map_highlights_popover("pop_correlation_maphl"))),
                                                                  h6(helpText("Enter coordinate or draw a box on map")),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_x_values3",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_x_values3",
                                                                                    label  = "Longitude:",
                                                                                    value  = "",
                                                                                    min    = -180,
                                                                                    max    = 180),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_y_values3",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_y_values3",
                                                                                    label  = "Latitude:",
                                                                                    value  = "",
                                                                                    min    = -90,
                                                                                    max    = 90),
                                                                  
-                                                                 colourInput(inputId = "highlight_colour3", 
+                                                                 colourpicker::colourInput(inputId = "highlight_colour3", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -4378,7 +4378,7 @@ ui <- navbarPage(
                                             ),
                                             
                                             br(), column(width = 3, 
-                                                         withSpinner(ui_element = dataTableOutput("correlation_ts_data"),
+                                                         shinycssloaders::withSpinner(ui_element = DT::dataTableOutput("correlation_ts_data"),
                                                                      image = spinner_image,
                                                                      image.width = spinner_width,
                                                                      image.height = spinner_height))),
@@ -4404,7 +4404,7 @@ ui <- navbarPage(
                                                      ))
                                             ),
                                             
-                                            br(), withSpinner(ui_element = tableOutput("correlation_map_data"),
+                                            br(), shinycssloaders::withSpinner(ui_element = tableOutput("correlation_map_data"),
                                                               image = spinner_image,
                                                               image.width = spinner_width,
                                                               image.height = spinner_height)),
@@ -4435,7 +4435,7 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(
+                                            shinycssloaders::withSpinner(
                                               ui_element = plotOutput(
                                                 "fad_map3",
                                                 height = "auto",
@@ -4524,7 +4524,7 @@ ui <- navbarPage(
                  #Choose a variable (USER)
                  shinyjs::hidden(
                    div(id = "hidden_user_variable_iv",
-                       pickerInput(inputId  = "user_variable_iv",
+                       shinyWidgets::pickerInput(inputId  = "user_variable_iv",
                                    label    = "Choose a variable:",
                                    choices  = NULL,
                                    selected = NULL,
@@ -4541,7 +4541,7 @@ ui <- navbarPage(
                                      selected = "ModE-RA"),
                          
                          #Choose a variable (Mod-ERA) 
-                         pickerInput(inputId  = "ME_variable_iv",
+                         shinyWidgets::pickerInput(inputId  = "ME_variable_iv",
                                      label    = "Choose one or multiple variables:",
                                      choices  = c("Temperature", "Precipitation", "SLP", "Z500"),
                                      selected = "Temperature",
@@ -4568,7 +4568,7 @@ ui <- navbarPage(
                        #Choose your range of months (Slider)
                        shinyjs::hidden(
                          div(id = "season_iv",
-                             sliderTextInput(inputId = "range_months_iv",
+                             shinyWidgets::sliderTextInput(inputId = "range_months_iv",
                                              label = "Select custom months:",
                                              choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                              #Initially selected = 1 year (annual mean)
@@ -4578,8 +4578,8 @@ ui <- navbarPage(
                        #Choose reference period if Anomaly values are chosen (Hidden object)      
                        shinyjs::hidden(
                          div(id = "optional_iv",
-                             hidden(
-                               numericRangeInput(inputId = "ref_period_iv",
+                             shinyjs::hidden(
+                               shinyWidgets::numericRangeInput(inputId = "ref_period_iv",
                                                  label      = "Reference period:",
                                                  value      = c(1961,1990),
                                                  separator  = " to ",
@@ -4593,7 +4593,7 @@ ui <- navbarPage(
                                                   value   = FALSE)),
                              
                              
-                             hidden(
+                             shinyjs::hidden(
                                numericInput(inputId   = "ref_period_sg_iv",
                                             label     = "Select the single year:",
                                             value     = NA,
@@ -4675,7 +4675,7 @@ ui <- navbarPage(
                          )),
                        
                        #Choose Longitude and Latitude Range          
-                       numericRangeInput(inputId = "range_longitude_iv",
+                       shinyWidgets::numericRangeInput(inputId = "range_longitude_iv",
                                          label = "Longitude range (-180 to 180):",
                                          value = c(4,12),
                                          separator = " to ",
@@ -4683,7 +4683,7 @@ ui <- navbarPage(
                                          max = 180),
                        
                        #Choose Longitude and Latitude Range          
-                       numericRangeInput(inputId = "range_latitude_iv",
+                       shinyWidgets::numericRangeInput(inputId = "range_latitude_iv",
                                          label = "Latitude range (-90 to 90):",
                                          value = c(43,50),
                                          separator = " to ",
@@ -4706,7 +4706,7 @@ ui <- navbarPage(
                
                sidebarPanel(fluidRow(
                  #Choose your year of interest   
-                 numericRangeInput(inputId    = "range_years4",
+                 shinyWidgets::numericRangeInput(inputId    = "range_years4",
                                    label     = "Select the range of years (1422-2008):",
                                    value     = initial_year_values,
                                    separator = " to ",
@@ -4792,7 +4792,7 @@ ui <- navbarPage(
                        #Choose your range of months (Slider)
                        shinyjs::hidden(
                          div(id = "season_dv",
-                             sliderTextInput(inputId = "range_months_dv",
+                             shinyWidgets::sliderTextInput(inputId = "range_months_dv",
                                              label = "Select custom months:",
                                              choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                              #Initially selected = 1 year (annual mean)
@@ -4803,8 +4803,8 @@ ui <- navbarPage(
                        shinyjs::hidden(
                          div(id = "optional_dv",
                              
-                             hidden(
-                               numericRangeInput(inputId = "ref_period_dv",
+                             shinyjs::hidden(
+                               shinyWidgets::numericRangeInput(inputId = "ref_period_dv",
                                                  label      = "Reference period:",
                                                  value      = c(1961,1990),
                                                  separator  = " to ",
@@ -4818,7 +4818,7 @@ ui <- navbarPage(
                                                   value   = FALSE)),
                              
                              
-                             hidden(
+                             shinyjs::hidden(
                                numericInput(inputId   = "ref_period_sg_dv",
                                             label     = "Select the single year:",
                                             value     = NA,
@@ -4900,7 +4900,7 @@ ui <- navbarPage(
                          )),
                        
                        #Choose Longitude and Latitude Range          
-                       numericRangeInput(inputId = "range_longitude_dv",
+                       shinyWidgets::numericRangeInput(inputId = "range_longitude_dv",
                                          label = "Longitude range (-180 to 180):",
                                          value = initial_lon_values,
                                          separator = " to ",
@@ -4908,7 +4908,7 @@ ui <- navbarPage(
                                          max = 180),
                        
                        #Choose Longitude and Latitude Range          
-                       numericRangeInput(inputId = "range_latitude_dv",
+                       shinyWidgets::numericRangeInput(inputId = "range_latitude_dv",
                                          label = "Latitude range (-90 to 90):",
                                          value = initial_lat_values,
                                          separator = " to ",
@@ -4930,12 +4930,12 @@ ui <- navbarPage(
                                    ### Independent / dependent variable ----
                                    tabPanel("Variables", br(),
                                             h4("Independent variable", style = "color: #094030;"),
-                                            withSpinner(ui_element = plotOutput("plot_iv", height = "auto"),
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("plot_iv", height = "auto"),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
                                             h4("Dependent variable", style = "color: #094030;"),
-                                            withSpinner(ui_element = plotOutput("plot_dv", height = "auto"),
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("plot_dv", height = "auto"),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -4946,7 +4946,7 @@ ui <- navbarPage(
                                             br(),
                                             regression_timeseries_popover("pop_regression_timeseries"),
                                             
-                                            withSpinner(
+                                            shinycssloaders::withSpinner(
                                               ui_element = plotOutput(
                                                 "plot_reg_ts1",
                                                 click = "ts_click4",
@@ -4956,7 +4956,7 @@ ui <- navbarPage(
                                               image = spinner_image,
                                               image.width = spinner_width,
                                               image.height = spinner_height
-                                            ), withSpinner(
+                                            ), shinycssloaders::withSpinner(
                                               ui_element = plotOutput("plot_reg_ts2"),
                                               image = spinner_image,
                                               image.width = spinner_width,
@@ -5015,7 +5015,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_axis_ts4a",
                                                                  
-                                                                 numericRangeInput(inputId    = "axis_input_ts4a",
+                                                                 shinyWidgets::numericRangeInput(inputId    = "axis_input_ts4a",
                                                                                    label      = "Set your axis values for trend plot:",
                                                                                    value      = c(NULL, NULL),
                                                                                    separator  = " to ",
@@ -5032,7 +5032,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_axis_ts4b",
                                                                  
-                                                                 numericRangeInput(inputId    = "axis_input_ts4b",
+                                                                 shinyWidgets::numericRangeInput(inputId    = "axis_input_ts4b",
                                                                                    label      = "Set your axis values for residual plot:",
                                                                                    value      = c(NULL, NULL),
                                                                                    separator  = " to ",
@@ -5108,7 +5108,7 @@ ui <- navbarPage(
                                                                               inline       = TRUE,
                                                                               choices      = c("\u25CF", "\u25B2", "\u25A0")),
                                                                  
-                                                                 colourInput(inputId = "point_colour_ts4", 
+                                                                 colourpicker::colourInput(inputId = "point_colour_ts4", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -5139,15 +5139,15 @@ ui <- navbarPage(
                                                                  h4(helpText("Add custom highlights",timeseries_highlights_popover("pop_regression_timehl"))),
                                                                  h6(helpText("Enter values manually or draw a box on plot")),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_x_values_ts4",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_x_values_ts4",
                                                                                    label  = "X values:",
                                                                                    value  = ""),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_y_values_ts4",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_y_values_ts4",
                                                                                    label  = "Y values:",
                                                                                    value  = ""),
                                                                  
-                                                                 colourInput(inputId = "highlight_colour_ts4", 
+                                                                 colourpicker::colourInput(inputId = "highlight_colour_ts4", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -5163,7 +5163,7 @@ ui <- navbarPage(
                                                                                label   = "Show on key",
                                                                                value   = FALSE),
                                                                  
-                                                                 hidden(
+                                                                 shinyjs::hidden(
                                                                    textInput(inputId = "highlight_label_ts4", 
                                                                              label   = "Label:",
                                                                              value   = "")),
@@ -5197,7 +5197,7 @@ ui <- navbarPage(
                                                                            value   = "",
                                                                            placeholder = "1830, 1832"),
                                                                  
-                                                                 colourInput(inputId = "line_colour_ts4", 
+                                                                 colourpicker::colourInput(inputId = "line_colour_ts4", 
                                                                              label   = "Line colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -5212,7 +5212,7 @@ ui <- navbarPage(
                                                                                label   = "Show on key",
                                                                                value   = FALSE),
                                                                  
-                                                                 hidden(
+                                                                 shinyjs::hidden(
                                                                    textInput(inputId = "line_label_ts4", 
                                                                              label   = "Label:",
                                                                              value   = "")),
@@ -5261,13 +5261,13 @@ ui <- navbarPage(
                                                 )), br(), 
                                             splitLayout(
                                               column(width = 4,
-                                                     withSpinner(ui_element = dataTableOutput("data_reg_ts"),
+                                                     shinycssloaders::withSpinner(ui_element = DT::dataTableOutput("data_reg_ts"),
                                                                  image = spinner_image,
                                                                  image.width = spinner_width,
                                                                  image.height = spinner_height)),
                                               verticalLayout(       
                                                 h4("Statistical summary", style = "color: #094030;"),
-                                                withSpinner(ui_element = verbatimTextOutput("regression_summary_data"),
+                                                shinycssloaders::withSpinner(ui_element = verbatimTextOutput("regression_summary_data"),
                                                             image = spinner_image,
                                                             image.width = spinner_width,
                                                             image.height = spinner_height)
@@ -5298,7 +5298,7 @@ ui <- navbarPage(
                                                         label    = "Choose a variable:",
                                                         choices  = NULL,
                                                         selected = NULL),
-                                            withSpinner(ui_element = plotOutput("plot_reg_coeff", height = "750px",  dblclick = "map_dblclick_reg_coeff", brush = brushOpts(id = "map_brush_reg_coeff",resetOnNew = TRUE)),
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("plot_reg_coeff", height = "750px",  dblclick = "map_dblclick_reg_coeff", brush = brushOpts(id = "map_brush_reg_coeff",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -5347,7 +5347,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_axis_reg_coeff",
                                                                  
-                                                                 numericRangeInput(inputId    = "axis_input_reg_coeff",
+                                                                 shinyWidgets::numericRangeInput(inputId    = "axis_input_reg_coeff",
                                                                                    label      = "Set your axis values:",
                                                                                    value      = c(NULL, NULL),
                                                                                    separator  = " to ",
@@ -5501,7 +5501,7 @@ ui <- navbarPage(
                                                                             inline       = TRUE,
                                                                             choices      = c("\u25CF", "\u25B2", "\u25A0")),
                                                                
-                                                               colourInput(inputId = "point_colour_reg_coeff",
+                                                               colourpicker::colourInput(inputId = "point_colour_reg_coeff",
                                                                            label   = "Point colour:",
                                                                            showColour = "background",
                                                                            value = "#27408B",
@@ -5531,19 +5531,19 @@ ui <- navbarPage(
                                                                
                                                                h6(helpText("Enter coordinate or draw a box on map")),
                                                                
-                                                               numericRangeInput(inputId = "highlight_x_values_reg_coeff",
+                                                               shinyWidgets::numericRangeInput(inputId = "highlight_x_values_reg_coeff",
                                                                                  label  = "Longitude:",
                                                                                  value  = "",
                                                                                  min    = -180,
                                                                                  max    = 180),
                                                                
-                                                               numericRangeInput(inputId = "highlight_y_values_reg_coeff",
+                                                               shinyWidgets::numericRangeInput(inputId = "highlight_y_values_reg_coeff",
                                                                                  label  = "Latitude:",
                                                                                  value  = "",
                                                                                  min    = -90,
                                                                                  max    = 90),
                                                                
-                                                               colourInput(inputId = "highlight_colour_reg_coeff",
+                                                               colourpicker::colourInput(inputId = "highlight_colour_reg_coeff",
                                                                            label   = "Highlight colour:",
                                                                            showColour = "background",
                                                                            value = "#27408B",
@@ -5636,7 +5636,7 @@ ui <- navbarPage(
                                                         label    = "Choose a variable:",
                                                         choices  = NULL,
                                                         selected = NULL),
-                                            withSpinner(ui_element = plotOutput("plot_reg_pval", height = "750px",  dblclick = "map_dblclick_reg_pval", brush = brushOpts(id = "map_brush_reg_pval",resetOnNew = TRUE)),
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("plot_reg_pval", height = "750px",  dblclick = "map_dblclick_reg_pval", brush = brushOpts(id = "map_brush_reg_pval",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -5685,7 +5685,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_axis_reg_pvals",
                                                                  
-                                                                 numericRangeInput(inputId    = "axis_input_reg_pval",
+                                                                 shinyWidgets::numericRangeInput(inputId    = "axis_input_reg_pval",
                                                                                    label      = "Set your axis values:",
                                                                                    value      = c(NULL, NULL),
                                                                                    separator  = " to ",
@@ -5842,7 +5842,7 @@ ui <- navbarPage(
                                                                             inline       = TRUE,
                                                                             choices      = c("\u25CF", "\u25B2", "\u25A0")),
                                                                
-                                                               colourInput(inputId = "point_colour_reg_pval",
+                                                               colourpicker::colourInput(inputId = "point_colour_reg_pval",
                                                                            label   = "Point colour:",
                                                                            showColour = "background",
                                                                            value = "#27408B",
@@ -5872,19 +5872,19 @@ ui <- navbarPage(
                                                                
                                                                h6(helpText("Enter coordinate or draw a box on map")),
                                                                
-                                                               numericRangeInput(inputId = "highlight_x_values_reg_pval",
+                                                               shinyWidgets::numericRangeInput(inputId = "highlight_x_values_reg_pval",
                                                                                  label  = "Longitude:",
                                                                                  value  = "",
                                                                                  min    = -180,
                                                                                  max    = 180),
                                                                
-                                                               numericRangeInput(inputId = "highlight_y_values_reg_pval",
+                                                               shinyWidgets::numericRangeInput(inputId = "highlight_y_values_reg_pval",
                                                                                  label  = "Latitude:",
                                                                                  value  = "",
                                                                                  min    = -90,
                                                                                  max    = 90),
                                                                
-                                                               colourInput(inputId = "highlight_colour_reg_pval",
+                                                               colourpicker::colourInput(inputId = "highlight_colour_reg_pval",
                                                                            label   = "Highlight colour:",
                                                                            showColour = "background",
                                                                            value = "#27408B",
@@ -5980,7 +5980,7 @@ ui <- navbarPage(
                                                        max = 2008,
                                                        updateOn = "blur")),
                                             ),
-                                            withSpinner(ui_element = plotOutput("plot_reg_resi", height = "750px",  dblclick = "map_dblclick_reg_res", brush = brushOpts(id = "map_brush_reg_res",resetOnNew = TRUE)),
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("plot_reg_resi", height = "750px",  dblclick = "map_dblclick_reg_res", brush = brushOpts(id = "map_brush_reg_res",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -6044,7 +6044,7 @@ ui <- navbarPage(
                                                            shinyjs::hidden(
                                                              div(id = "hidden_custom_axis_reg_res",
                                                                  
-                                                                 numericRangeInput(inputId    = "axis_input_reg_res",
+                                                                 shinyWidgets::numericRangeInput(inputId    = "axis_input_reg_res",
                                                                                    label      = "Set your axis values:",
                                                                                    value      = c(NULL, NULL),
                                                                                    separator  = " to ",
@@ -6199,7 +6199,7 @@ ui <- navbarPage(
                                                                             inline       = TRUE,
                                                                             choices      = c("\u25CF", "\u25B2", "\u25A0")),
                                                                
-                                                               colourInput(inputId = "point_colour_reg_res",
+                                                               colourpicker::colourInput(inputId = "point_colour_reg_res",
                                                                            label   = "Point colour:",
                                                                            showColour = "background",
                                                                            value = "#27408B",
@@ -6229,19 +6229,19 @@ ui <- navbarPage(
                                                                
                                                                h6(helpText("Enter coordinate or draw a box on map")),
                                                                
-                                                               numericRangeInput(inputId = "highlight_x_values_reg_res",
+                                                               shinyWidgets::numericRangeInput(inputId = "highlight_x_values_reg_res",
                                                                                  label  = "Longitude:",
                                                                                  value  = "",
                                                                                  min    = -180,
                                                                                  max    = 180),
                                                                
-                                                               numericRangeInput(inputId = "highlight_y_values_reg_res",
+                                                               shinyWidgets::numericRangeInput(inputId = "highlight_y_values_reg_res",
                                                                                  label  = "Latitude:",
                                                                                  value  = "",
                                                                                  min    = -90,
                                                                                  max    = 90),
                                                                
-                                                               colourInput(inputId = "highlight_colour_reg_res",
+                                                               colourpicker::colourInput(inputId = "highlight_colour_reg_res",
                                                                            label   = "Highlight colour:",
                                                                            showColour = "background",
                                                                            value = "#27408B",
@@ -6348,7 +6348,7 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(
+                                            shinycssloaders::withSpinner(
                                               ui_element = plotOutput(
                                                 "fad_map4",
                                                 height = "auto",
@@ -6441,8 +6441,8 @@ ui <- navbarPage(
                  #Choose reference period if Anomaly values are chosen (Hidden object)      
                  shinyjs::hidden(
                    div(id = "optional5",
-                       hidden(
-                         numericRangeInput(inputId = "ref_period5",
+                       shinyjs::hidden(
+                         shinyWidgets::numericRangeInput(inputId = "ref_period5",
                                            label      = "Reference period:",
                                            value      = c(1961,1990),
                                            separator  = " to ",
@@ -6456,7 +6456,7 @@ ui <- navbarPage(
                                             value   = FALSE)),
                        
                        
-                       hidden(
+                       shinyjs::hidden(
                          numericInput(inputId   = "ref_period_sg5",
                                       label     = "Select the single year:",
                                       value     = NA,
@@ -6543,7 +6543,7 @@ ui <- navbarPage(
                                      column(width = 12, br()),
                                      
                                      #Choose Longitude and Latitude Range          
-                                     numericRangeInput(inputId = "range_longitude5",
+                                     shinyWidgets::numericRangeInput(inputId = "range_longitude5",
                                                        label = "Longitude range (-180/180):",
                                                        value = initial_lon_values,
                                                        separator = " to ",
@@ -6552,7 +6552,7 @@ ui <- navbarPage(
                                      
                                      
                                      #Choose Longitude and Latitude Range          
-                                     numericRangeInput(inputId = "range_latitude5",
+                                     shinyWidgets::numericRangeInput(inputId = "range_latitude5",
                                                        label = "Latitude range (-90/90):",
                                                        value = initial_lat_values,
                                                        separator = " to ",
@@ -6635,7 +6635,7 @@ ui <- navbarPage(
                                    tabPanel("Timeseries", br(),
                                             h4("Annual cycle plot", style = "color: #094030;"),
                                             
-                                            withSpinner(ui_element = plotOutput("timeseries5", click = "ts_click5",dblclick = "ts_dblclick5",brush = brushOpts(id = "ts_brush5",resetOnNew = TRUE)),
+                                            shinycssloaders::withSpinner(ui_element = plotOutput("timeseries5", click = "ts_click5",dblclick = "ts_dblclick5",brush = brushOpts(id = "ts_brush5",resetOnNew = TRUE)),
                                                         image = spinner_image,
                                                         image.width = spinner_width,
                                                         image.height = spinner_height),
@@ -6735,7 +6735,7 @@ ui <- navbarPage(
                                                                               inline       = TRUE,
                                                                               choices      = c("\u25CF", "\u25B2", "\u25A0")),
                                                                  
-                                                                 colourInput(inputId = "point_colour_ts5", 
+                                                                 colourpicker::colourInput(inputId = "point_colour_ts5", 
                                                                              label   = "Point colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -6765,15 +6765,15 @@ ui <- navbarPage(
                                                                  h4(helpText("Add custom highlights",timeseries_highlights_popover("pop_annualcycles_timehl"))),
                                                                  h6(helpText("Enter values manually or draw a box on plot")),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_x_values_ts5",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_x_values_ts5",
                                                                                    label  = "X values:",
                                                                                    value  = ""),
                                                                  
-                                                                 numericRangeInput(inputId = "highlight_y_values_ts5",
+                                                                 shinyWidgets::numericRangeInput(inputId = "highlight_y_values_ts5",
                                                                                    label  = "Y values:",
                                                                                    value  = ""),
                                                                  
-                                                                 colourInput(inputId = "highlight_colour_ts5", 
+                                                                 colourpicker::colourInput(inputId = "highlight_colour_ts5", 
                                                                              label   = "Highlight colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -6789,7 +6789,7 @@ ui <- navbarPage(
                                                                                label   = "Show on key",
                                                                                value   = FALSE),
                                                                  
-                                                                 hidden(
+                                                                 shinyjs::hidden(
                                                                    textInput(inputId = "highlight_label_ts5", 
                                                                              label   = "Label:",
                                                                              value   = "")),
@@ -6821,7 +6821,7 @@ ui <- navbarPage(
                                                                            value   = "",
                                                                            placeholder = "Click on plot"),
                                                                  
-                                                                 colourInput(inputId = "line_colour_ts5", 
+                                                                 colourpicker::colourInput(inputId = "line_colour_ts5", 
                                                                              label   = "Line colour:",
                                                                              showColour = "background",
                                                                              value = "#27408B",
@@ -6836,7 +6836,7 @@ ui <- navbarPage(
                                                                                label   = "Show on key",
                                                                                value   = FALSE),
                                                                  
-                                                                 hidden(
+                                                                 shinyjs::hidden(
                                                                    textInput(inputId = "line_label_ts5", 
                                                                              label   = "Label:",
                                                                              value   = "")),
@@ -6892,7 +6892,7 @@ ui <- navbarPage(
                                             ),
                                             br(),
                                             
-                                            column(width = 3, dataTableOutput("data5"))),
+                                            column(width = 3, DT::dataTableOutput("data5"))),
                                    
                                    ### Feedback archive documentation (FAD) ----
                                    tabPanel("ModE-RA sources", br(),
@@ -6920,7 +6920,7 @@ ui <- navbarPage(
                                             
                                             h6("Use the Explore ModE-RA sources tab for more information", style = "color: #094030;"),
                                             
-                                            withSpinner(
+                                            shinycssloaders::withSpinner(
                                               ui_element = plotOutput(
                                                 "fad_map5",
                                                 height = "auto",
@@ -7003,7 +7003,7 @@ ui <- navbarPage(
                     #Modera Time Series
                     h4("Total sources", style = "color: #094030;", sourcesandobservations_popover("pop_sourcesandobservation")),
                     
-                    numericRangeInput(inputId = "year_range_sources",
+                    shinyWidgets::numericRangeInput(inputId = "year_range_sources",
                                       label = "Select year range:", 
                                       value = c(1421, 2009), 
                                       min = 1421, max = 2009, step = 1)
@@ -7012,7 +7012,7 @@ ui <- navbarPage(
              column(10, div(id = "leaflet",
                             tags$style(type = "text/css", "#MES_leaflet {height: calc(80vh - 100px) !important;}"), # Adjust the height of the map
                             tags$style(type = "text/css", "div.leaflet-control {text-align: left;}"), # Makes sure that legend text is left-aligned
-                            withSpinner(ui_element = leaflet::leafletOutput("MES_leaflet"), 
+                            shinycssloaders::withSpinner(ui_element = leaflet::leafletOutput("MES_leaflet"), 
                                         image = spinner_image,
                                         image.width = spinner_width,
                                         image.height = spinner_height)),

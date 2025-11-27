@@ -1998,13 +1998,13 @@ server <- function(input, output, session) {
   
   # Continent buttons - updates range inputs and lonlat_values
   observeEvent(input$button_global,{
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude",
       label = NULL,
       value = c(-180,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude",
       label = NULL,
@@ -2015,13 +2015,13 @@ server <- function(input, output, session) {
   
   observeEvent(input$projection, { # also update to global if projection is changed
     if (input$projection != "UTM (default)") {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude",
         label = NULL,
         value = c(-180, 180))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude",
         label = NULL,
@@ -2031,13 +2031,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_europe, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude",
       label = NULL,
       value = c(-30,40))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude",
       label = NULL,
@@ -2047,13 +2047,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_asia, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude",
       label = NULL,
       value = c(25,170))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude",
       label = NULL,
@@ -2063,13 +2063,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_oceania, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude",
       label = NULL,
       value = c(90,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude",
       label = NULL,
@@ -2079,13 +2079,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_africa, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude",
       label = NULL,
       value = c(-25,55))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude",
       label = NULL,
@@ -2095,13 +2095,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_n_america, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude",
       label = NULL,
       value = c(-175,-10))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude",
       label = NULL,
@@ -2111,13 +2111,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_s_america, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude",
       label = NULL,
       value = c(-90,-30))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude",
       label = NULL,
@@ -2134,70 +2134,70 @@ server <- function(input, output, session) {
   observe({
     if (input$range_longitude[1] == -180 && input$range_longitude[2] == 180 &&
         input$range_latitude[1] == -90 && input$range_latitude[2] == 90) {
-      addClass("button_global", "green-background")
+      shinyjs::addClass("button_global", "green-background")
     } else {
-      removeClass("button_global", "green-background")
+      shinyjs::removeClass("button_global", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude[1] == -30 && input$range_longitude[2] == 40 &&
         input$range_latitude[1] == 30 && input$range_latitude[2] == 75) {
-      addClass("button_europe", "green-background")
+      shinyjs::addClass("button_europe", "green-background")
     } else {
-      removeClass("button_europe", "green-background")
+      shinyjs::removeClass("button_europe", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude[1] == 25 && input$range_longitude[2] == 170 &&
         input$range_latitude[1] == 5 && input$range_latitude[2] == 80) {
-      addClass("button_asia", "green-background")
+      shinyjs::addClass("button_asia", "green-background")
     } else {
-      removeClass("button_asia", "green-background")
+      shinyjs::removeClass("button_asia", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude[1] == 90 && input$range_longitude[2] == 180 &&
         input$range_latitude[1] == -55 && input$range_latitude[2] == 20) {
-      addClass("button_oceania", "green-background")
+      shinyjs::addClass("button_oceania", "green-background")
     } else {
-      removeClass("button_oceania", "green-background")
+      shinyjs::removeClass("button_oceania", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude[1] == -25 && input$range_longitude[2] == 55 &&
         input$range_latitude[1] == -40 && input$range_latitude[2] == 40) {
-      addClass("button_africa", "green-background")
+      shinyjs::addClass("button_africa", "green-background")
     } else {
-      removeClass("button_africa", "green-background")
+      shinyjs::removeClass("button_africa", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude[1] == -175 && input$range_longitude[2] == -10 &&
         input$range_latitude[1] == 5 && input$range_latitude[2] == 85) {
-      addClass("button_n_america", "green-background")
+      shinyjs::addClass("button_n_america", "green-background")
     } else {
-      removeClass("button_n_america", "green-background")
+      shinyjs::removeClass("button_n_america", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude[1] == -90 && input$range_longitude[2] == -30 &&
         input$range_latitude[1] == -60 && input$range_latitude[2] == 15) {
-      addClass("button_s_america", "green-background")
+      shinyjs::addClass("button_s_america", "green-background")
     } else {
-      removeClass("button_s_america", "green-background")
+      shinyjs::removeClass("button_s_america", "green-background")
     }
   })
   
   #Month Range Updater
   observe({
     if (input$season_selected == "Annual"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months",
         label = NULL,
@@ -2207,7 +2207,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected == "DJF"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months",
         label = NULL,
@@ -2217,7 +2217,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected == "MAM"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months",
         label = NULL,
@@ -2227,7 +2227,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected == "JJA"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months",
         label = NULL,
@@ -2237,7 +2237,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected == "SON"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months",
         label = NULL,
@@ -2248,7 +2248,7 @@ server <- function(input, output, session) {
   # Axis values updater MAP
   observe({
     if (input$axis_mode == "Automatic"){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input",
         value = c(NA,NA))
@@ -2257,7 +2257,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$axis_mode == "Fixed" & is.null(input$axis_input)) {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input",
         value = set_axis_values(data_input = final_map_data(), mode = "Anomaly")
@@ -2268,7 +2268,7 @@ server <- function(input, output, session) {
   # Axis values updater TS
   observe({
     if (input$axis_mode_ts == "Automatic"){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts",
         value = c(NA,NA))
@@ -2277,7 +2277,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$axis_mode_ts == "Fixed" & is.null(input$axis_input_ts)){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts",
         value = set_ts_axis_values(data_input = timeseries_data()$Mean))
@@ -2289,7 +2289,7 @@ server <- function(input, output, session) {
     
     choices  = c("Temperature", "Precipitation", "SLP", "Z500")
     
-    updatePickerInput(
+    shinyWidgets::updatePickerInput(
       session, "netcdf_variables",
       choices = choices,
       selected = input$variable_selected
@@ -2344,14 +2344,14 @@ server <- function(input, output, session) {
       result <- NULL
       
       if (projection == "UTM (default)") {
-        result <- geocode_OSM(location_encoded)
+        result <- tmaptools::geocode_OSM(location_encoded)
       } else if (projection == "Robinson") {
-        result <- geocode_OSM(location_encoded, projection = "+proj=robin")
+        result <- tmaptools::geocode_OSM(location_encoded, projection = "+proj=robin")
       } else if (projection == "Orthographic") {
-        result <- geocode_OSM(location_encoded,
+        result <- tmaptools::geocode_OSM(location_encoded,
                               projection = ortho_proj(input$center_lat, input$center_lon))
       } else if (projection == "LAEA") {
-        result <- geocode_OSM(location_encoded, projection = laea_proj)
+        result <- tmaptools::geocode_OSM(location_encoded, projection = laea_proj)
       }
       
       if (!is.null(result$coords)) {
@@ -2375,13 +2375,13 @@ server <- function(input, output, session) {
     x_brush_2 = input$map_brush1[[2]]
 
     if (input$custom_features == FALSE){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude",
         label = NULL,
         value = round(c(x_brush_1,x_brush_2), digits = 2))
 
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude",
         label = NULL,
@@ -2394,13 +2394,13 @@ server <- function(input, output, session) {
         label = NULL,
         selected = "Highlight")
 
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values",
         label = NULL,
         value = round(c(x_brush_1, x_brush_2), digits = 2))
 
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values",
         label = NULL,
@@ -2545,13 +2545,13 @@ server <- function(input, output, session) {
   observeEvent(input$ts_brush1,{
     if (input$custom_features_ts == TRUE & input$feature_ts == "Highlight"){
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values_ts",
         label = NULL,
         value = round(c(input$ts_brush1[[1]],input$ts_brush1[[2]]), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values_ts",
         label = NULL,
@@ -2620,13 +2620,13 @@ server <- function(input, output, session) {
   observeEvent(input$ts_brush4,{
     if (input$custom_features_ts4 == TRUE & input$feature_ts4 == "Highlight"){
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values_ts4",
         label = NULL,
         value = round(c(input$ts_brush4[[1]],input$ts_brush4[[2]]), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values_ts4",
         label = NULL,
@@ -3127,7 +3127,7 @@ server <- function(input, output, session) {
       file_name <- tools::file_path_sans_ext(basename(file))
       input_id <- paste0("shp_colour_", file_name)
       last_val <- isolate(input[[input_id]])  # <-- Get the current color if set, otherwise NULL
-      colourInput(
+      colourpicker::colourInput(
         inputId = input_id,
         label   = paste("Border Color for", file_name),
         value   = if (!is.null(last_val)) last_val else "black",
@@ -3149,13 +3149,13 @@ server <- function(input, output, session) {
   
   # Continent buttons - updates range inputs and lonlat_values
   observeEvent(input$button_global2,{
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude2",
       label = NULL,
       value = c(-180,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude2",
       label = NULL,
@@ -3166,13 +3166,13 @@ server <- function(input, output, session) {
   
   observeEvent(input$projection2, { # also update to global if projection is changed
     if (input$projection2 != "UTM (default)") {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude2",
         label = NULL,
         value = c(-180, 180))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude2",
         label = NULL,
@@ -3182,13 +3182,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_europe2, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude2",
       label = NULL,
       value = c(-30,40))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude2",
       label = NULL,
@@ -3198,13 +3198,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_asia2, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude2",
       label = NULL,
       value = c(25,170))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude2",
       label = NULL,
@@ -3214,13 +3214,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_oceania2, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude2",
       label = NULL,
       value = c(90,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude2",
       label = NULL,
@@ -3230,13 +3230,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_africa2, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude2",
       label = NULL,
       value = c(-25,55))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude2",
       label = NULL,
@@ -3246,13 +3246,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_n_america2, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude2",
       label = NULL,
       value = c(-175,-10))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude2",
       label = NULL,
@@ -3262,13 +3262,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_s_america2, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude2",
       label = NULL,
       value = c(-90,-30))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude2",
       label = NULL,
@@ -3285,70 +3285,70 @@ server <- function(input, output, session) {
   observe({
     if (input$range_longitude2[1] == -180 && input$range_longitude2[2] == 180 &&
         input$range_latitude2[1] == -90 && input$range_latitude2[2] == 90) {
-      addClass("button_global2", "green-background")
+      shinyjs::addClass("button_global2", "green-background")
     } else {
-      removeClass("button_global2", "green-background")
+      shinyjs::removeClass("button_global2", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude2[1] == -30 && input$range_longitude2[2] == 40 &&
         input$range_latitude2[1] == 30 && input$range_latitude2[2] == 75) {
-      addClass("button_europe2", "green-background")
+      shinyjs::addClass("button_europe2", "green-background")
     } else {
-      removeClass("button_europe2", "green-background")
+      shinyjs::removeClass("button_europe2", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude2[1] == 25 && input$range_longitude2[2] == 170 &&
         input$range_latitude2[1] == 5 && input$range_latitude2[2] == 80) {
-      addClass("button_asia2", "green-background")
+      shinyjs::addClass("button_asia2", "green-background")
     } else {
-      removeClass("button_asia2", "green-background")
+      shinyjs::removeClass("button_asia2", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude2[1] == 90 && input$range_longitude2[2] == 180 &&
         input$range_latitude2[1] == -55 && input$range_latitude2[2] == 20) {
-      addClass("button_oceania2", "green-background")
+      shinyjs::addClass("button_oceania2", "green-background")
     } else {
-      removeClass("button_oceania2", "green-background")
+      shinyjs::removeClass("button_oceania2", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude2[1] == -25 && input$range_longitude2[2] == 55 &&
         input$range_latitude2[1] == -40 && input$range_latitude2[2] == 40) {
-      addClass("button_africa2", "green-background")
+      shinyjs::addClass("button_africa2", "green-background")
     } else {
-      removeClass("button_africa2", "green-background")
+      shinyjs::removeClass("button_africa2", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude2[1] == -175 && input$range_longitude2[2] == -10 &&
         input$range_latitude2[1] == 5 && input$range_latitude2[2] == 85) {
-      addClass("button_n_america2", "green-background")
+      shinyjs::addClass("button_n_america2", "green-background")
     } else {
-      removeClass("button_n_america2", "green-background")
+      shinyjs::removeClass("button_n_america2", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude2[1] == -90 && input$range_longitude2[2] == -30 &&
         input$range_latitude2[1] == -60 && input$range_latitude2[2] == 15) {
-      addClass("button_s_america2", "green-background")
+      shinyjs::addClass("button_s_america2", "green-background")
     } else {
-      removeClass("button_s_america2", "green-background")
+      shinyjs::removeClass("button_s_america2", "green-background")
     }
   })
   
   #Month Range Updater
   observe({
     if (input$season_selected2 == "Annual"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months2",
         label = NULL,
@@ -3358,7 +3358,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected2 == "DJF"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months2",
         label = NULL,
@@ -3368,7 +3368,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected2 == "MAM"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months2",
         label = NULL,
@@ -3378,7 +3378,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected2 == "JJA"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months2",
         label = NULL,
@@ -3388,7 +3388,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected2 == "SON"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months2",
         label = NULL,
@@ -3399,7 +3399,7 @@ server <- function(input, output, session) {
   # Composite Axis values updater MAP
   observe({
     if (input$axis_mode2 == "Automatic"){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input2",
         value = c(NA,NA))
@@ -3408,7 +3408,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$axis_mode2 == "Fixed" & is.null(input$axis_input2)){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input2",
         value = set_axis_values(data_input = map_data_2(), mode = input$mode_selected2))
@@ -3418,7 +3418,7 @@ server <- function(input, output, session) {
   # Composite Axis values updater TS
   observe({
     if (input$axis_mode_ts2 == "Automatic"){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts2",
         value = c(NA,NA))
@@ -3427,7 +3427,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$axis_mode_ts2 == "Fixed" & is.null(input$axis_input_ts2)){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts2",
         value = set_ts_axis_values(data_input = timeseries_data_2()$Mean))
@@ -3500,14 +3500,14 @@ server <- function(input, output, session) {
       result <- NULL
       
       if (projection == "UTM (default)") {
-        result <- geocode_OSM(location_encoded2)
+        result <- tmaptools::geocode_OSM(location_encoded2)
       } else if (projection == "Robinson") {
-        result <- geocode_OSM(location_encoded2, projection = "+proj=robin")
+        result <- tmaptools::geocode_OSM(location_encoded2, projection = "+proj=robin")
       } else if (projection == "Orthographic") {
-        result <- geocode_OSM(location_encoded2,
+        result <- tmaptools::geocode_OSM(location_encoded2,
                               projection = ortho_proj(input$center_lat2, input$center_lon2))
       } else if (projection == "LAEA") {
-        result <- geocode_OSM(location_encoded2, projection = laea_proj)
+        result <- tmaptools::geocode_OSM(location_encoded2, projection = laea_proj)
       }
       
       if (!is.null(result$coords)) {
@@ -3531,13 +3531,13 @@ server <- function(input, output, session) {
     x_brush_2 = input$map_brush2[[2]]
     
     if (input$custom_features2 == FALSE){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude2",
         label = NULL,
         value = round(c(x_brush_1,x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude2",
         label = NULL,
@@ -3550,13 +3550,13 @@ server <- function(input, output, session) {
         label = NULL,
         selected = "Highlight")
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values2",
         label = NULL,
         value = round(c(x_brush_1, x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values2",
         label = NULL,
@@ -3652,13 +3652,13 @@ server <- function(input, output, session) {
   observeEvent(input$ts_brush2,{
     if (input$custom_features_ts2 == TRUE & input$feature_ts2 == "Highlight"){
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values_ts2",
         label = NULL,
         value = round(c(input$ts_brush2[[1]],input$ts_brush2[[2]]), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values_ts2",
         label = NULL,
@@ -4151,7 +4151,7 @@ server <- function(input, output, session) {
       file_name2 <- tools::file_path_sans_ext(basename(file2))
       input_id2 <- paste0("shp_colour2_", file_name2)
       last_val2 <- isolate(input[[input_id2]])
-      colourInput(
+      colourpicker::colourInput(
         inputId = input_id2,
         label   = paste("Border Color for", file_name2),
         value   = if (!is.null(last_val2)) last_val2 else "black",
@@ -4284,7 +4284,7 @@ server <- function(input, output, session) {
   #Month Range Updater
   observe({
     if (input$season_selected_v1 == "Annual"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_v1",
         label = NULL,
@@ -4294,7 +4294,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_v1 == "DJF"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_v1",
         label = NULL,
@@ -4304,7 +4304,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_v1 == "MAM"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_v1",
         label = NULL,
@@ -4314,7 +4314,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_v1 == "JJA"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_v1",
         label = NULL,
@@ -4324,7 +4324,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_v1 == "SON"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_v1",
         label = NULL,
@@ -4334,7 +4334,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_v2 == "Annual"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_v2",
         label = NULL,
@@ -4344,7 +4344,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_v2 == "DJF"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_v2",
         label = NULL,
@@ -4354,7 +4354,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_v2 == "MAM"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_v2",
         label = NULL,
@@ -4364,7 +4364,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_v2 == "JJA"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_v2",
         label = NULL,
@@ -4374,7 +4374,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_v2 == "SON"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_v2",
         label = NULL,
@@ -4406,7 +4406,7 @@ server <- function(input, output, session) {
   #   req(year_range_cor(), length(year_range_cor()) >= 2)
   #   
   #   if (input$source_v1 == "User data" || input$source_v2 == "User data") {
-  #     updateNumericRangeInput(
+  #     shinyWidgets::updateNumericRangeInput(
   #       session = getDefaultReactiveDomain(),
   #       inputId = "range_years3",
   #       label = paste("Select the range of years (", year_range_cor()[7], "-", year_range_cor()[8], ")"),
@@ -4426,7 +4426,7 @@ server <- function(input, output, session) {
     
     if (input$source_v1 == "User data" && input$source_v2 == "User data") {
       # both user data → show shared range
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years3",
         label = paste("Select the overlapping range of years (", yr[5], "-", yr[6], ")"),
@@ -4434,7 +4434,7 @@ server <- function(input, output, session) {
       )
     } else if (input$source_v1 == "User data") {
       # only variable 1 is user data
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years3",
         label = paste("Select the range of years (", yr[7], "-", yr[8], ")"),
@@ -4442,7 +4442,7 @@ server <- function(input, output, session) {
       )
     } else if (input$source_v2 == "User data") {
       # only variable 2 is user data
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years3",
         label = paste("Select the range of years (", yr[9], "-", yr[10], ")"),
@@ -4457,13 +4457,13 @@ server <- function(input, output, session) {
   
   # Continent buttons - updates range inputs and lonlat_values
   observeEvent(input$button_global_v1,{
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v1",
       label = NULL,
       value = c(-180,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v1",
       label = NULL,
@@ -4473,13 +4473,13 @@ server <- function(input, output, session) {
   }) 
   
   observeEvent(input$button_europe_v1, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v1",
       label = NULL,
       value = c(-30,40))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v1",
       label = NULL,
@@ -4489,13 +4489,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_asia_v1, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v1",
       label = NULL,
       value = c(25,170))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v1",
       label = NULL,
@@ -4505,13 +4505,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_oceania_v1, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v1",
       label = NULL,
       value = c(90,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v1",
       label = NULL,
@@ -4521,13 +4521,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_africa_v1, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v1",
       label = NULL,
       value = c(-25,55))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v1",
       label = NULL,
@@ -4537,13 +4537,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_n_america_v1, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v1",
       label = NULL,
       value = c(-175,-10))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v1",
       label = NULL,
@@ -4553,13 +4553,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_s_america_v1, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v1",
       label = NULL,
       value = c(-90,-30))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v1",
       label = NULL,
@@ -4576,63 +4576,63 @@ server <- function(input, output, session) {
   observe({
     if (input$range_longitude_v1[1] == -180 && input$range_longitude_v1[2] == 180 &&
         input$range_latitude_v1[1] == -90 && input$range_latitude_v1[2] == 90) {
-      addClass("button_global_v1", "green-background")
+      shinyjs::addClass("button_global_v1", "green-background")
     } else {
-      removeClass("button_global_v1", "green-background")
+      shinyjs::removeClass("button_global_v1", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_v1[1] == -30 && input$range_longitude_v1[2] == 40 &&
         input$range_latitude_v1[1] == 30 && input$range_latitude_v1[2] == 75) {
-      addClass("button_europe_v1", "green-background")
+      shinyjs::addClass("button_europe_v1", "green-background")
     } else {
-      removeClass("button_europe_v1", "green-background")
+      shinyjs::removeClass("button_europe_v1", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_v1[1] == 25 && input$range_longitude_v1[2] == 170 &&
         input$range_latitude_v1[1] == 5 && input$range_latitude_v1[2] == 80) {
-      addClass("button_asia_v1", "green-background")
+      shinyjs::addClass("button_asia_v1", "green-background")
     } else {
-      removeClass("button_asia_v1", "green-background")
+      shinyjs::removeClass("button_asia_v1", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_v1[1] == 90 && input$range_longitude_v1[2] == 180 &&
         input$range_latitude_v1[1] == -55 && input$range_latitude_v1[2] == 20) {
-      addClass("button_oceania_v1", "green-background")
+      shinyjs::addClass("button_oceania_v1", "green-background")
     } else {
-      removeClass("button_oceania_v1", "green-background")
+      shinyjs::removeClass("button_oceania_v1", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_v1[1] == -25 && input$range_longitude_v1[2] == 55 &&
         input$range_latitude_v1[1] == -40 && input$range_latitude_v1[2] == 40) {
-      addClass("button_africa_v1", "green-background")
+      shinyjs::addClass("button_africa_v1", "green-background")
     } else {
-      removeClass("button_africa_v1", "green-background")
+      shinyjs::removeClass("button_africa_v1", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_v1[1] == -175 && input$range_longitude_v1[2] == -10 &&
         input$range_latitude_v1[1] == 5 && input$range_latitude_v1[2] == 85) {
-      addClass("button_n_america_v1", "green-background")
+      shinyjs::addClass("button_n_america_v1", "green-background")
     } else {
-      removeClass("button_n_america_v1", "green-background")
+      shinyjs::removeClass("button_n_america_v1", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_v1[1] == -90 && input$range_longitude_v1[2] == -30 &&
         input$range_latitude_v1[1] == -60 && input$range_latitude_v1[2] == 15) {
-      addClass("button_s_america_v1", "green-background")
+      shinyjs::addClass("button_s_america_v1", "green-background")
     } else {
-      removeClass("button_s_america_v1", "green-background")
+      shinyjs::removeClass("button_s_america_v1", "green-background")
     }
   })
   
@@ -4658,13 +4658,13 @@ server <- function(input, output, session) {
   
   # Continent buttons - updates range inputs and lonlat_values
   observeEvent(input$button_global_v2,{
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v2",
       label = NULL,
       value = c(-180,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v2",
       label = NULL,
@@ -4674,13 +4674,13 @@ server <- function(input, output, session) {
   }) 
   
   observeEvent(input$button_europe_v2, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v2",
       label = NULL,
       value = c(-30,40))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v2",
       label = NULL,
@@ -4690,13 +4690,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_asia_v2, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v2",
       label = NULL,
       value = c(25,170))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v2",
       label = NULL,
@@ -4706,13 +4706,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_oceania_v2, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v2",
       label = NULL,
       value = c(90,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v2",
       label = NULL,
@@ -4722,13 +4722,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_africa_v2, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v2",
       label = NULL,
       value = c(-25,55))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v2",
       label = NULL,
@@ -4738,13 +4738,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_n_america_v2, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v2",
       label = NULL,
       value = c(-175,-10))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v2",
       label = NULL,
@@ -4754,13 +4754,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_s_america_v2, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_v2",
       label = NULL,
       value = c(-90,-30))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_v2",
       label = NULL,
@@ -4777,70 +4777,70 @@ server <- function(input, output, session) {
   observe({
     if (input$range_longitude_v2[1] == -180 && input$range_longitude_v2[2] == 180 &&
         input$range_latitude_v2[1] == -90 && input$range_latitude_v2[2] == 90) {
-      addClass("button_global_v2", "green-background")
+      shinyjs::addClass("button_global_v2", "green-background")
     } else {
-      removeClass("button_global_v2", "green-background")
+      shinyjs::removeClass("button_global_v2", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_v2[1] == -30 && input$range_longitude_v2[2] == 40 &&
         input$range_latitude_v2[1] == 30 && input$range_latitude_v2[2] == 75) {
-      addClass("button_europe_v2", "green-background")
+      shinyjs::addClass("button_europe_v2", "green-background")
     } else {
-      removeClass("button_europe_v2", "green-background")
+      shinyjs::removeClass("button_europe_v2", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_v2[1] == 25 && input$range_longitude_v2[2] == 170 &&
         input$range_latitude_v2[1] == 5 && input$range_latitude_v2[2] == 80) {
-      addClass("button_asia_v2", "green-background")
+      shinyjs::addClass("button_asia_v2", "green-background")
     } else {
-      removeClass("button_asia_v2", "green-background")
+      shinyjs::removeClass("button_asia_v2", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_v2[1] == 90 && input$range_longitude_v2[2] == 180 &&
         input$range_latitude_v2[1] == -55 && input$range_latitude_v2[2] == 20) {
-      addClass("button_oceania_v2", "green-background")
+      shinyjs::addClass("button_oceania_v2", "green-background")
     } else {
-      removeClass("button_oceania_v2", "green-background")
+      shinyjs::removeClass("button_oceania_v2", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_v2[1] == -25 && input$range_longitude_v2[2] == 55 &&
         input$range_latitude_v2[1] == -40 && input$range_latitude_v2[2] == 40) {
-      addClass("button_africa_v2", "green-background")
+      shinyjs::addClass("button_africa_v2", "green-background")
     } else {
-      removeClass("button_africa_v2", "green-background")
+      shinyjs::removeClass("button_africa_v2", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_v2[1] == -175 && input$range_longitude_v2[2] == -10 &&
         input$range_latitude_v2[1] == 5 && input$range_latitude_v2[2] == 85) {
-      addClass("button_n_america_v2", "green-background")
+      shinyjs::addClass("button_n_america_v2", "green-background")
     } else {
-      removeClass("button_n_america_v2", "green-background")
+      shinyjs::removeClass("button_n_america_v2", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_v2[1] == -90 && input$range_longitude_v2[2] == -30 &&
         input$range_latitude_v2[1] == -60 && input$range_latitude_v2[2] == 15) {
-      addClass("button_s_america_v2", "green-background")
+      shinyjs::addClass("button_s_america_v2", "green-background")
     } else {
-      removeClass("button_s_america_v2", "green-background")
+      shinyjs::removeClass("button_s_america_v2", "green-background")
     }
   })
   
   # Correlation axis values updater Map
   observe({
     if (input$axis_mode3 == "Automatic"){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input3",
         value = c(NA,NA))
@@ -4849,7 +4849,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$axis_mode3 == "Fixed" & is.null(input$axis_input3)){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input3",
         value = set_axis_values(data_input = correlation_map_data()[[3]], mode = "Anomaly"))
@@ -4859,7 +4859,7 @@ server <- function(input, output, session) {
   # Correlation Axis values updater TS
   observe({
     if (input$axis_mode_ts3 == "Automatic"){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts3",
         value = c(NA,NA))
@@ -4868,7 +4868,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$axis_mode_ts3 == "Fixed" & is.null(input$axis_input_ts3)){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts3",
         value = set_ts_axis_values(data_input = timeseries_data_v1()$Mean))
@@ -4910,14 +4910,14 @@ server <- function(input, output, session) {
       result <- NULL
       
       if (projection3 == "UTM (default)") {
-        result <- geocode_OSM(location_encoded3)
+        result <- tmaptools::geocode_OSM(location_encoded3)
       } else if (projection3 == "Robinson") {
-        result <- geocode_OSM(location_encoded3, projection = "+proj=robin")
+        result <- tmaptools::geocode_OSM(location_encoded3, projection = "+proj=robin")
       } else if (projection3 == "Orthographic") {
-        result <- geocode_OSM(location_encoded3,
+        result <- tmaptools::geocode_OSM(location_encoded3,
                               projection = ortho_proj(input$center_lat3, input$center_lon3))
       } else if (projection3 == "LAEA") {
-        result <- geocode_OSM(location_encoded3, projection = laea_proj)
+        result <- tmaptools::geocode_OSM(location_encoded3, projection = laea_proj)
       }
       
       if (!is.null(result$coords)) {
@@ -4943,25 +4943,25 @@ server <- function(input, output, session) {
     y_brush_2 = input$map_brush3[[4]]
     
     if (input$custom_features3 == FALSE){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude_v2",
         label = NULL,
         value = round(c(x_brush_1,x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude_v2",
         label = NULL,
         value = round(c(y_brush_1, y_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude_v1",
         label = NULL,
         value = round(c(x_brush_1,x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude_v1",
         label = NULL,
@@ -4975,14 +4975,14 @@ server <- function(input, output, session) {
         label = NULL,
         selected = "Highlight")
 
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values3",
         label = NULL,
         value = round(c(x_brush_1, x_brush_2), digits = 2))
 
 
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values3",
         label = NULL,
@@ -5078,13 +5078,13 @@ server <- function(input, output, session) {
   observeEvent(input$ts_brush3,{
     if (input$custom_features_ts3 == TRUE & input$feature_ts3 == "Highlight"){
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values_ts3",
         label = NULL,
         value = round(c(input$ts_brush3[[1]],input$ts_brush3[[2]]), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values_ts3",
         label = NULL,
@@ -5611,7 +5611,7 @@ server <- function(input, output, session) {
       file_name3 <- tools::file_path_sans_ext(basename(file3))
       input_id3 <- paste0("shp_colour3_", file_name3)
       last_val3 <- isolate(input[[input_id3]])
-      colourInput(
+      colourpicker::colourInput(
         inputId = input_id3,
         label   = paste("Border Color for", file_name3),
         value   = if (!is.null(last_val3)) last_val3 else "black",
@@ -5637,7 +5637,7 @@ server <- function(input, output, session) {
       
       user_vs = names(user_data_iv())[-1]
       
-      updatePickerInput(
+      shinyWidgets::updatePickerInput(
         session = getDefaultReactiveDomain(),
         inputId = "user_variable_iv",
         selected = user_vs[1],
@@ -5718,7 +5718,7 @@ server <- function(input, output, session) {
   #Month Range Updater
   observe({
     if (input$season_selected_iv == "Annual"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_iv",
         label = NULL,
@@ -5728,7 +5728,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_iv == "DJF"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_iv",
         label = NULL,
@@ -5738,7 +5738,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_iv == "MAM"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_iv",
         label = NULL,
@@ -5748,7 +5748,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_iv == "JJA"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_iv",
         label = NULL,
@@ -5758,7 +5758,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_iv == "SON"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_iv",
         label = NULL,
@@ -5768,7 +5768,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_dv == "Annual"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_dv",
         label = NULL,
@@ -5778,7 +5778,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_dv == "DJF"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_dv",
         label = NULL,
@@ -5788,7 +5788,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_dv == "MAM"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_dv",
         label = NULL,
@@ -5798,7 +5798,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_dv == "JJA"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_dv",
         label = NULL,
@@ -5808,7 +5808,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_dv == "SON"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_dv",
         label = NULL,
@@ -5825,7 +5825,7 @@ server <- function(input, output, session) {
   #   req(year_range_reg(), length(year_range_reg()) >= 2)
   #   
   #   if (input$source_iv == "User data" || input$source_dv == "User data") {
-  #     updateNumericRangeInput(
+  #     shinyWidgets::updateNumericRangeInput(
   #       session = getDefaultReactiveDomain(),
   #       inputId = "range_years4",
   #       label = paste("Select the range of years (", year_range_reg()[7], "-", year_range_reg()[8], ")"),
@@ -5844,21 +5844,21 @@ server <- function(input, output, session) {
     yr <- year_range_reg()
     
     if (input$source_iv == "User data" && input$source_dv == "User data") {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years4",
         label = paste("Select the overlapping range of years (", yr[5], "-", yr[6], ")"),
         value = yr[5:6]
       )
     } else if (input$source_iv == "User data") {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years4",
         label = paste("Select the range of years (", yr[7], "-", yr[8], ")"),
         value = yr[1:2]
       )
     } else if (input$source_dv == "User data") {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years4",
         label = paste("Select the range of years (", yr[9], "-", yr[10], ")"),
@@ -5872,13 +5872,13 @@ server <- function(input, output, session) {
   
   # Continent buttons - updates range inputs and lonlat_values
   observeEvent(input$button_global_iv,{
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_iv",
       label = NULL,
       value = c(-180,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_iv",
       label = NULL,
@@ -5888,13 +5888,13 @@ server <- function(input, output, session) {
   }) 
   
   observeEvent(input$button_europe_iv, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_iv",
       label = NULL,
       value = c(-30,40))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_iv",
       label = NULL,
@@ -5904,13 +5904,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_asia_iv, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_iv",
       label = NULL,
       value = c(25,170))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_iv",
       label = NULL,
@@ -5920,13 +5920,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_oceania_iv, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_iv",
       label = NULL,
       value = c(90,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_iv",
       label = NULL,
@@ -5936,13 +5936,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_africa_iv, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_iv",
       label = NULL,
       value = c(-25,55))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_iv",
       label = NULL,
@@ -5952,13 +5952,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_n_america_iv, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_iv",
       label = NULL,
       value = c(-175,-10))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_iv",
       label = NULL,
@@ -5968,13 +5968,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_s_america_iv, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_iv",
       label = NULL,
       value = c(-90,-30))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_iv",
       label = NULL,
@@ -5991,63 +5991,63 @@ server <- function(input, output, session) {
   observe({
     if (input$range_longitude_iv[1] == -180 && input$range_longitude_iv[2] == 180 &&
         input$range_latitude_iv[1] == -90 && input$range_latitude_iv[2] == 90) {
-      addClass("button_global_iv", "green-background")
+      shinyjs::addClass("button_global_iv", "green-background")
     } else {
-      removeClass("button_global_iv", "green-background")
+      shinyjs::removeClass("button_global_iv", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_iv[1] == -30 && input$range_longitude_iv[2] == 40 &&
         input$range_latitude_iv[1] == 30 && input$range_latitude_iv[2] == 75) {
-      addClass("button_europe_iv", "green-background")
+      shinyjs::addClass("button_europe_iv", "green-background")
     } else {
-      removeClass("button_europe_iv", "green-background")
+      shinyjs::removeClass("button_europe_iv", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_iv[1] == 25 && input$range_longitude_iv[2] == 170 &&
         input$range_latitude_iv[1] == 5 && input$range_latitude_iv[2] == 80) {
-      addClass("button_asia_iv", "green-background")
+      shinyjs::addClass("button_asia_iv", "green-background")
     } else {
-      removeClass("button_asia_iv", "green-background")
+      shinyjs::removeClass("button_asia_iv", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_iv[1] == 90 && input$range_longitude_iv[2] == 180 &&
         input$range_latitude_iv[1] == -55 && input$range_latitude_iv[2] == 20) {
-      addClass("button_oceania_iv", "green-background")
+      shinyjs::addClass("button_oceania_iv", "green-background")
     } else {
-      removeClass("button_oceania_iv", "green-background")
+      shinyjs::removeClass("button_oceania_iv", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_iv[1] == -25 && input$range_longitude_iv[2] == 55 &&
         input$range_latitude_iv[1] == -40 && input$range_latitude_iv[2] == 40) {
-      addClass("button_africa_iv", "green-background")
+      shinyjs::addClass("button_africa_iv", "green-background")
     } else {
-      removeClass("button_africa_iv", "green-background")
+      shinyjs::removeClass("button_africa_iv", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_iv[1] == -175 && input$range_longitude_iv[2] == -10 &&
         input$range_latitude_iv[1] == 5 && input$range_latitude_iv[2] == 85) {
-      addClass("button_n_america_iv", "green-background")
+      shinyjs::addClass("button_n_america_iv", "green-background")
     } else {
-      removeClass("button_n_america_iv", "green-background")
+      shinyjs::removeClass("button_n_america_iv", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_iv[1] == -90 && input$range_longitude_iv[2] == -30 &&
         input$range_latitude_iv[1] == -60 && input$range_latitude_iv[2] == 15) {
-      addClass("button_s_america_iv", "green-background")
+      shinyjs::addClass("button_s_america_iv", "green-background")
     } else {
-      removeClass("button_s_america_iv", "green-background")
+      shinyjs::removeClass("button_s_america_iv", "green-background")
     }
   })
   
@@ -6056,13 +6056,13 @@ server <- function(input, output, session) {
   
   # Continent buttons - updates range inputs and lonlat_values
   observeEvent(input$button_global_dv,{
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_dv",
       label = NULL,
       value = c(-180,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_dv",
       label = NULL,
@@ -6072,13 +6072,13 @@ server <- function(input, output, session) {
   }) 
   
   observeEvent(input$button_europe_dv, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_dv",
       label = NULL,
       value = c(-30,40))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_dv",
       label = NULL,
@@ -6088,13 +6088,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_asia_dv, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_dv",
       label = NULL,
       value = c(25,170))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_dv",
       label = NULL,
@@ -6104,13 +6104,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_oceania_dv, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_dv",
       label = NULL,
       value = c(90,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_dv",
       label = NULL,
@@ -6120,13 +6120,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_africa_dv, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_dv",
       label = NULL,
       value = c(-25,55))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_dv",
       label = NULL,
@@ -6136,13 +6136,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_n_america_dv, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_dv",
       label = NULL,
       value = c(-175,-10))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_dv",
       label = NULL,
@@ -6152,13 +6152,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_s_america_dv, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_dv",
       label = NULL,
       value = c(-90,-30))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_dv",
       label = NULL,
@@ -6175,70 +6175,70 @@ server <- function(input, output, session) {
   observe({
     if (input$range_longitude_dv[1] == -180 && input$range_longitude_dv[2] == 180 &&
         input$range_latitude_dv[1] == -90 && input$range_latitude_dv[2] == 90) {
-      addClass("button_global_dv", "green-background")
+      shinyjs::addClass("button_global_dv", "green-background")
     } else {
-      removeClass("button_global_dv", "green-background")
+      shinyjs::removeClass("button_global_dv", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_dv[1] == -30 && input$range_longitude_dv[2] == 40 &&
         input$range_latitude_dv[1] == 30 && input$range_latitude_dv[2] == 75) {
-      addClass("button_europe_dv", "green-background")
+      shinyjs::addClass("button_europe_dv", "green-background")
     } else {
-      removeClass("button_europe_dv", "green-background")
+      shinyjs::removeClass("button_europe_dv", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_dv[1] == 25 && input$range_longitude_dv[2] == 170 &&
         input$range_latitude_dv[1] == 5 && input$range_latitude_dv[2] == 80) {
-      addClass("button_asia_dv", "green-background")
+      shinyjs::addClass("button_asia_dv", "green-background")
     } else {
-      removeClass("button_asia_dv", "green-background")
+      shinyjs::removeClass("button_asia_dv", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_dv[1] == 90 && input$range_longitude_dv[2] == 180 &&
         input$range_latitude_dv[1] == -55 && input$range_latitude_dv[2] == 20) {
-      addClass("button_oceania_dv", "green-background")
+      shinyjs::addClass("button_oceania_dv", "green-background")
     } else {
-      removeClass("button_oceania_dv", "green-background")
+      shinyjs::removeClass("button_oceania_dv", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_dv[1] == -25 && input$range_longitude_dv[2] == 55 &&
         input$range_latitude_dv[1] == -40 && input$range_latitude_dv[2] == 40) {
-      addClass("button_africa_dv", "green-background")
+      shinyjs::addClass("button_africa_dv", "green-background")
     } else {
-      removeClass("button_africa_dv", "green-background")
+      shinyjs::removeClass("button_africa_dv", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_dv[1] == -175 && input$range_longitude_dv[2] == -10 &&
         input$range_latitude_dv[1] == 5 && input$range_latitude_dv[2] == 85) {
-      addClass("button_n_america_dv", "green-background")
+      shinyjs::addClass("button_n_america_dv", "green-background")
     } else {
-      removeClass("button_n_america_dv", "green-background")
+      shinyjs::removeClass("button_n_america_dv", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_dv[1] == -90 && input$range_longitude_dv[2] == -30 &&
         input$range_latitude_dv[1] == -60 && input$range_latitude_dv[2] == 15) {
-      addClass("button_s_america_dv", "green-background")
+      shinyjs::addClass("button_s_america_dv", "green-background")
     } else {
-      removeClass("button_s_america_dv", "green-background")
+      shinyjs::removeClass("button_s_america_dv", "green-background")
     }
   })
   
   # Regression Trend Axis values updater TS
   observe({
     if (input$axis_mode_ts4a == "Automatic") {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts4a",
         value = c(NA, NA)
@@ -6248,7 +6248,7 @@ server <- function(input, output, session) {
 
   observe({
     if (input$axis_mode_ts4a == "Fixed" && is.null(input$axis_input_ts4a)) {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts4a",
         value = set_ts_axis_values(data_input = regression_ts_data()[,2])  # Original
@@ -6259,7 +6259,7 @@ server <- function(input, output, session) {
   # Regression Residual Axis values updater TS
   observe({
     if (input$axis_mode_ts4b == "Automatic") {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts4b",
         value = c(NA, NA)
@@ -6269,7 +6269,7 @@ server <- function(input, output, session) {
 
   observe({
     if (input$axis_mode_ts4b == "Fixed" && is.null(input$axis_input_ts4b)) {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_ts4b",
         value = set_ts_axis_values(data_input = regression_ts_data()[,4])  # Residuals
@@ -6320,25 +6320,25 @@ server <- function(input, output, session) {
     y_brush_2 = input$map_brush_reg_coeff[[4]]
     
     if (input$custom_features_reg_coeff == FALSE){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude_dv",
         label = NULL,
         value = round(c(x_brush_1,x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude_dv",
         label = NULL,
         value = round(c(y_brush_1, y_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude_iv",
         label = NULL,
         value = round(c(x_brush_1,x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude_iv",
         label = NULL,
@@ -6351,13 +6351,13 @@ server <- function(input, output, session) {
         label = NULL,
         selected = "Highlight")
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values_reg_coeff",
         label = NULL,
         value = round(c(x_brush_1, x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values_reg_coeff",
         label = NULL,
@@ -6442,25 +6442,25 @@ server <- function(input, output, session) {
     y_brush_2 = input$map_brush_reg_res[[4]]
     
     if (input$custom_features_reg_res == FALSE){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude_dv",
         label = NULL,
         value = round(c(x_brush_1,x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude_dv",
         label = NULL,
         value = round(c(y_brush_1, y_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude_iv",
         label = NULL,
         value = round(c(x_brush_1,x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude_iv",
         label = NULL,
@@ -6473,13 +6473,13 @@ server <- function(input, output, session) {
         label = NULL,
         selected = "Highlight")
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values_reg_res",
         label = NULL,
         value = round(c(x_brush_1, x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values_reg_res",
         label = NULL,
@@ -6497,25 +6497,25 @@ server <- function(input, output, session) {
     y_brush_2 = input$map_brush_reg_pval[[4]]
     
     if (input$custom_features_reg_pval == FALSE){
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude_dv",
         label = NULL,
         value = round(c(x_brush_1,x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude_dv",
         label = NULL,
         value = round(c(y_brush_1, y_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_longitude_iv",
         label = NULL,
         value = round(c(x_brush_1,x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_latitude_iv",
         label = NULL,
@@ -6528,13 +6528,13 @@ server <- function(input, output, session) {
         label = NULL,
         selected = "Highlight")
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values_reg_pval",
         label = NULL,
         value = round(c(x_brush_1, x_brush_2), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values_reg_pval",
         label = NULL,
@@ -6750,16 +6750,16 @@ server <- function(input, output, session) {
       result <- NULL
       
       if (projection == "UTM (default)") {
-        result <- geocode_OSM(location_encoded_reg_coeff)
+        result <- tmaptools::geocode_OSM(location_encoded_reg_coeff)
       } else if (projection == "Robinson") {
-        result <- geocode_OSM(location_encoded_reg_coeff, projection = "+proj=robin")
+        result <- tmaptools::geocode_OSM(location_encoded_reg_coeff, projection = "+proj=robin")
       } else if (projection == "Orthographic") {
         result <- geocode_OSM(
           location_encoded_reg_coeff,
           projection = ortho_proj(input$center_lat_reg_coeff, input$center_lon_reg_coeff)
         )
       } else if (projection == "LAEA") {
-        result <- geocode_OSM(location_encoded_reg_coeff, projection = laea_proj)
+        result <- tmaptools::geocode_OSM(location_encoded_reg_coeff, projection = laea_proj)
       }
       
       if (!is.null(result$coords)) {
@@ -6915,16 +6915,16 @@ server <- function(input, output, session) {
       result <- NULL
       
       if (projection == "UTM (default)") {
-        result <- geocode_OSM(location_encoded_reg_pval)
+        result <- tmaptools::geocode_OSM(location_encoded_reg_pval)
       } else if (projection == "Robinson") {
-        result <- geocode_OSM(location_encoded_reg_pval, projection = "+proj=robin")
+        result <- tmaptools::geocode_OSM(location_encoded_reg_pval, projection = "+proj=robin")
       } else if (projection == "Orthographic") {
         result <- geocode_OSM(
           location_encoded_reg_pval,
           projection = ortho_proj(input$center_lat_reg_pval, input$center_lon_reg_pval)
         )
       } else if (projection == "LAEA") {
-        result <- geocode_OSM(location_encoded_reg_pval, projection = laea_proj)
+        result <- tmaptools::geocode_OSM(location_encoded_reg_pval, projection = laea_proj)
       }
       
       if (!is.null(result$coords)) {
@@ -6998,16 +6998,16 @@ server <- function(input, output, session) {
       result <- NULL
       
       if (projection == "UTM (default)") {
-        result <- geocode_OSM(location_encoded_reg_res)
+        result <- tmaptools::geocode_OSM(location_encoded_reg_res)
       } else if (projection == "Robinson") {
-        result <- geocode_OSM(location_encoded_reg_res, projection = "+proj=robin")
+        result <- tmaptools::geocode_OSM(location_encoded_reg_res, projection = "+proj=robin")
       } else if (projection == "Orthographic") {
         result <- geocode_OSM(
           location_encoded_reg_res,
           projection = ortho_proj(input$center_lat_reg_res, input$center_lon_reg_res)
         )
       } else if (projection == "LAEA") {
-        result <- geocode_OSM(location_encoded_reg_res, projection = laea_proj)
+        result <- tmaptools::geocode_OSM(location_encoded_reg_res, projection = laea_proj)
       }
       
       if (!is.null(result$coords)) {
@@ -7687,7 +7687,7 @@ server <- function(input, output, session) {
       file_name <- tools::file_path_sans_ext(basename(file))
       input_id <- paste0("shp_colour_reg_coeff_", file_name)
       last_val <- isolate(input[[input_id]])
-      colourInput(
+      colourpicker::colourInput(
         inputId = input_id,
         label   = paste("Border Color for", file_name),
         value   = if (!is.null(last_val)) last_val else "black",
@@ -7747,7 +7747,7 @@ server <- function(input, output, session) {
       file_name <- tools::file_path_sans_ext(basename(file))
       input_id <- paste0("shp_colour_reg_pval_", file_name)
       last_val <- isolate(input[[input_id]])
-      colourInput(
+      colourpicker::colourInput(
         inputId = input_id,
         label   = paste("Border Color for", file_name),
         value   = if (!is.null(last_val)) last_val else "black",
@@ -7807,7 +7807,7 @@ server <- function(input, output, session) {
       file_name <- tools::file_path_sans_ext(basename(file))
       input_id <- paste0("shp_colour_reg_res_", file_name)
       last_val <- isolate(input[[input_id]])
-      colourInput(
+      colourpicker::colourInput(
         inputId = input_id,
         label   = paste("Border Color for", file_name),
         value   = if (!is.null(last_val)) last_val else "black",
@@ -7956,13 +7956,13 @@ server <- function(input, output, session) {
   
   # Continent buttons - updates range inputs and lonlat_values
   observeEvent(input$button_global5,{
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude5",
       label = NULL,
       value = c(-180,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude5",
       label = NULL,
@@ -7972,13 +7972,13 @@ server <- function(input, output, session) {
   }) 
   
   observeEvent(input$button_europe5, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude5",
       label = NULL,
       value = c(-30,40))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude5",
       label = NULL,
@@ -7988,13 +7988,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_asia5, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude5",
       label = NULL,
       value = c(25,170))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude5",
       label = NULL,
@@ -8004,13 +8004,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_oceania5, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude5",
       label = NULL,
       value = c(90,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude5",
       label = NULL,
@@ -8020,13 +8020,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_africa5, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude5",
       label = NULL,
       value = c(-25,55))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude5",
       label = NULL,
@@ -8036,13 +8036,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_n_america5, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude5",
       label = NULL,
       value = c(-175,-10))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude5",
       label = NULL,
@@ -8052,13 +8052,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_s_america5, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude5",
       label = NULL,
       value = c(-90,-30))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude5",
       label = NULL,
@@ -8075,63 +8075,63 @@ server <- function(input, output, session) {
   observe({
     if (input$range_longitude5[1] == -180 && input$range_longitude5[2] == 180 &&
         input$range_latitude5[1] == -90 && input$range_latitude5[2] == 90) {
-      addClass("button_global5", "green-background")
+      shinyjs::addClass("button_global5", "green-background")
     } else {
-      removeClass("button_global5", "green-background")
+      shinyjs::removeClass("button_global5", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude5[1] == -30 && input$range_longitude5[2] == 40 &&
         input$range_latitude5[1] == 30 && input$range_latitude5[2] == 75) {
-      addClass("button_europe5", "green-background")
+      shinyjs::addClass("button_europe5", "green-background")
     } else {
-      removeClass("button_europe5", "green-background")
+      shinyjs::removeClass("button_europe5", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude5[1] == 25 && input$range_longitude5[2] == 170 &&
         input$range_latitude5[1] == 5 && input$range_latitude5[2] == 80) {
-      addClass("button_asia5", "green-background")
+      shinyjs::addClass("button_asia5", "green-background")
     } else {
-      removeClass("button_asia5", "green-background")
+      shinyjs::removeClass("button_asia5", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude5[1] == 90 && input$range_longitude5[2] == 180 &&
         input$range_latitude5[1] == -55 && input$range_latitude5[2] == 20) {
-      addClass("button_oceania5", "green-background")
+      shinyjs::addClass("button_oceania5", "green-background")
     } else {
-      removeClass("button_oceania5", "green-background")
+      shinyjs::removeClass("button_oceania5", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude5[1] == -25 && input$range_longitude5[2] == 55 &&
         input$range_latitude5[1] == -40 && input$range_latitude5[2] == 40) {
-      addClass("button_africa5", "green-background")
+      shinyjs::addClass("button_africa5", "green-background")
     } else {
-      removeClass("button_africa5", "green-background")
+      shinyjs::removeClass("button_africa5", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude5[1] == -175 && input$range_longitude5[2] == -10 &&
         input$range_latitude5[1] == 5 && input$range_latitude5[2] == 85) {
-      addClass("button_n_america5", "green-background")
+      shinyjs::addClass("button_n_america5", "green-background")
     } else {
-      removeClass("button_n_america5", "green-background")
+      shinyjs::removeClass("button_n_america5", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude5[1] == -90 && input$range_longitude5[2] == -30 &&
         input$range_latitude5[1] == -60 && input$range_latitude5[2] == 15) {
-      addClass("button_s_america5", "green-background")
+      shinyjs::addClass("button_s_america5", "green-background")
     } else {
-      removeClass("button_s_america5", "green-background")
+      shinyjs::removeClass("button_s_america5", "green-background")
     }
   })
   
@@ -8142,7 +8142,7 @@ server <- function(input, output, session) {
     location5 <- input$location5
     if (!is.null(location5) && nchar(location5) > 0) {
       location_encoded5 <- URLencode(location5)
-      result <- geocode_OSM(location_encoded5)
+      result <- tmaptools::geocode_OSM(location_encoded5)
       if (!is.null(result$coords)) {
         longitude5 <- result$coords[1]
         latitude5 <- result$coords[2]
@@ -8165,14 +8165,14 @@ server <- function(input, output, session) {
       single_y = as.numeric(input$point_location_y5)
       
       if(!is.na(single_x)){
-        updateNumericRangeInput(inputId = "range_longitude5",
+        shinyWidgets::updateNumericRangeInput(inputId = "range_longitude5",
                                 session = getDefaultReactiveDomain(),
                                 label = NULL,
                                 value = c(single_x, single_x))
       }
       
       if(!is.na(single_y)){
-        updateNumericRangeInput(inputId = "range_latitude5",
+        shinyWidgets::updateNumericRangeInput(inputId = "range_latitude5",
                                 session = getDefaultReactiveDomain(),
                                 label = NULL,
                                 value = c(single_y, single_y))
@@ -8239,13 +8239,13 @@ server <- function(input, output, session) {
   observeEvent(input$ts_brush5,{
     if (input$custom_features_ts5 == TRUE & input$feature_ts5 == "Highlight"){
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_x_values_ts5",
         label = NULL,
         value = round(c(input$ts_brush5[[1]],input$ts_brush5[[2]]), digits = 2))
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "highlight_y_values_ts5",
         label = NULL,
@@ -8426,13 +8426,13 @@ server <- function(input, output, session) {
   
   # Continent buttons - updates range inputs and lonlat_values
   observeEvent(input$button_global_6,{
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_6",
       label = NULL,
       value = c(-180,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_6",
       label = NULL,
@@ -8442,13 +8442,13 @@ server <- function(input, output, session) {
   }) 
   
   observeEvent(input$button_europe_6, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_6",
       label = NULL,
       value = c(-30,40))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_6",
       label = NULL,
@@ -8458,13 +8458,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_asia_6, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_6",
       label = NULL,
       value = c(25,170))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_6",
       label = NULL,
@@ -8474,13 +8474,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_oceania_6, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_6",
       label = NULL,
       value = c(90,180))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_6",
       label = NULL,
@@ -8490,13 +8490,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_africa_6, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_6",
       label = NULL,
       value = c(-25,55))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_6",
       label = NULL,
@@ -8506,13 +8506,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_n_america_6, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_6",
       label = NULL,
       value = c(-175,-10))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_6",
       label = NULL,
@@ -8522,13 +8522,13 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$button_s_america_6, {
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_longitude_6",
       label = NULL,
       value = c(-90,-30))
     
-    updateNumericRangeInput(
+    shinyWidgets::updateNumericRangeInput(
       session = getDefaultReactiveDomain(),
       inputId = "range_latitude_6",
       label = NULL,
@@ -8545,70 +8545,70 @@ server <- function(input, output, session) {
   observe({
     if (input$range_longitude_6[1] == -180 && input$range_longitude_6[2] == 180 &&
         input$range_latitude_6[1] == -90 && input$range_latitude_6[2] == 90) {
-      addClass("button_global_6", "green-background")
+      shinyjs::addClass("button_global_6", "green-background")
     } else {
-      removeClass("button_global_6", "green-background")
+      shinyjs::removeClass("button_global_6", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_6[1] == -30 && input$range_longitude_6[2] == 40 &&
         input$range_latitude_6[1] == 30 && input$range_latitude_6[2] == 75) {
-      addClass("button_europe_6", "green-background")
+      shinyjs::addClass("button_europe_6", "green-background")
     } else {
-      removeClass("button_europe_6", "green-background")
+      shinyjs::removeClass("button_europe_6", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_6[1] == 25 && input$range_longitude_6[2] == 170 &&
         input$range_latitude_6[1] == 5 && input$range_latitude_6[2] == 80) {
-      addClass("button_asia_6", "green-background")
+      shinyjs::addClass("button_asia_6", "green-background")
     } else {
-      removeClass("button_asia_6", "green-background")
+      shinyjs::removeClass("button_asia_6", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_6[1] == 90 && input$range_longitude_6[2] == 180 &&
         input$range_latitude_6[1] == -55 && input$range_latitude_6[2] == 20) {
-      addClass("button_oceania_6", "green-background")
+      shinyjs::addClass("button_oceania_6", "green-background")
     } else {
-      removeClass("button_oceania_6", "green-background")
+      shinyjs::removeClass("button_oceania_6", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_6[1] == -25 && input$range_longitude_6[2] == 55 &&
         input$range_latitude_6[1] == -40 && input$range_latitude_6[2] == 40) {
-      addClass("button_africa_6", "green-background")
+      shinyjs::addClass("button_africa_6", "green-background")
     } else {
-      removeClass("button_africa_6", "green-background")
+      shinyjs::removeClass("button_africa_6", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_6[1] == -175 && input$range_longitude_6[2] == -10 &&
         input$range_latitude_6[1] == 5 && input$range_latitude_6[2] == 85) {
-      addClass("button_n_america_6", "green-background")
+      shinyjs::addClass("button_n_america_6", "green-background")
     } else {
-      removeClass("button_n_america_6", "green-background")
+      shinyjs::removeClass("button_n_america_6", "green-background")
     }
   })
   
   observe({
     if (input$range_longitude_6[1] == -90 && input$range_longitude_6[2] == -30 &&
         input$range_latitude_6[1] == -60 && input$range_latitude_6[2] == 15) {
-      addClass("button_s_america_6", "green-background")
+      shinyjs::addClass("button_s_america_6", "green-background")
     } else {
-      removeClass("button_s_america_6", "green-background")
+      shinyjs::removeClass("button_s_america_6", "green-background")
     }
   })
   
   #Month Range Updater
   observe({
     if (input$season_selected_6 == "Annual"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_6",
         label = NULL,
@@ -8618,7 +8618,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_6 == "DJF"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_6",
         label = NULL,
@@ -8628,7 +8628,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_6 == "MAM"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_6",
         label = NULL,
@@ -8638,7 +8638,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_6 == "JJA"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_6",
         label = NULL,
@@ -8648,7 +8648,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$season_selected_6 == "SON"){
-      updateSliderTextInput(
+      shinyWidgets::updateSliderTextInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_months_6",
         label = NULL,
@@ -8659,7 +8659,7 @@ server <- function(input, output, session) {
   # Y-axis updater for SEA plot
   observe({
     if (input$axis_mode_6 == "Automatic") {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_6",
         value = c(NA, NA)
@@ -8676,7 +8676,7 @@ server <- function(input, output, session) {
       
       padded_range <- set_sea_axis_values(data_input = relevant_cols)
       
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "axis_input_6",
         value = padded_range
@@ -9759,7 +9759,7 @@ server <- function(input, output, session) {
     return(output_ts_table)
   })
   
-  output$data2 <- renderDataTable({timeseries_data_output()}, rownames = FALSE, options = list(
+  output$data2 <- DT::renderDataTable({timeseries_data_output()}, rownames = FALSE, options = list(
     autoWidth = TRUE, 
     searching = FALSE,
     paging = TRUE,
@@ -10635,7 +10635,7 @@ server <- function(input, output, session) {
     return(output_ts_table)
   })
   
-  output$data4 <- renderDataTable({timeseries_data_output_2()}, rownames = FALSE, options = list(
+  output$data4 <- DT::renderDataTable({timeseries_data_output_2()}, rownames = FALSE, options = list(
     autoWidth = TRUE, 
     searching = FALSE,
     paging = TRUE,
@@ -11958,7 +11958,7 @@ server <- function(input, output, session) {
     return(ctd)
   })
   
-  output$correlation_ts_data = renderDataTable({correlation_ts_datatable()}, rownames = FALSE, options = list(
+  output$correlation_ts_data = DT::renderDataTable({correlation_ts_datatable()}, rownames = FALSE, options = list(
     autoWidth = TRUE, 
     searching = FALSE,
     paging = TRUE,
@@ -12849,7 +12849,7 @@ server <- function(input, output, session) {
   
   output$plot_reg_ts2 = renderPlot({timeseries_plot_reg2()},height=400)
   
-  output$data_reg_ts= renderDataTable({regression_ts_data()}, rownames = FALSE, options = list(
+  output$data_reg_ts= DT::renderDataTable({regression_ts_data()}, rownames = FALSE, options = list(
     autoWidth = TRUE, 
     searching = FALSE,
     paging = TRUE,
@@ -13824,7 +13824,7 @@ server <- function(input, output, session) {
   
   # Show variable, unit and data
   
-  output$data5 = renderDataTable({monthly_ts_data()}, rownames = FALSE, options = list(
+  output$data5 = DT::renderDataTable({monthly_ts_data()}, rownames = FALSE, options = list(
     autoWidth = TRUE, 
     searching = FALSE,
     paging = TRUE,
@@ -13991,8 +13991,8 @@ server <- function(input, output, session) {
     if (input$year_MES >= 1422 && input$year_MES <= 2008) {
       load_modera_source_data(year = input$year_MES, season = season_MES_short()) |>
         dplyr::select(LON, LAT, VARIABLE, TYPE, Name_Database, Paper_Database, Code_Proxy, Reference_Proxy, Reference_Proxy_Database, Omitted_Duplicates) |>
-        st_as_sf(coords = c('LON', 'LAT')) |>
-        st_set_crs(4326)
+        sf::st_as_sf(coords = c('LON', 'LAT')) |>
+        sf::st_set_crs(4326)
     } else {
       NULL
     }
@@ -14143,7 +14143,7 @@ server <- function(input, output, session) {
                            "Total_global_sources" = "Global sources total")
   
   # Read data from Excel once and reuse it
-  data_sources <- read_excel(file_path_sources, sheet = sheet_name_sources)
+  data_sources <- readxl::read_excel(file_path_sources, sheet = sheet_name_sources)
   data_sources[[year_column_sources]] <- as.numeric(data_sources[[year_column_sources]])
   
   # Render plot for selected lines using plotly
@@ -14702,7 +14702,7 @@ server <- function(input, output, session) {
     observe({
       input_values <- input[[inputId]]
 
-      delay(3000, {
+      shinyjs::delay(3000, {
         if (is.null(input_values) || is.na(input_values)) {
         } else if (!is.numeric(input_values)) {
           updateNumericInput(inputId = inputId, value = minValue)
@@ -14794,7 +14794,7 @@ server <- function(input, output, session) {
       new_right <- if (!is.numeric(right) || is.na(right) || right < minValue || right > maxValue) maxValue else right
 
       if (!identical(c(left, right), c(new_left, new_right))) {
-        updateNumericRangeInput(inputId = inputId, value = c(new_left, new_right))
+        shinyWidgets::updateNumericRangeInput(inputId = inputId, value = c(new_left, new_right))
       }
     })
   }
@@ -14843,7 +14843,7 @@ server <- function(input, output, session) {
   #Single Year inputs update
   observe({
     if (!is.na(input$range_years_sg)) {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         inputId = "range_years",
         value   = c(input$range_years_sg, input$range_years_sg)
       )
@@ -14852,7 +14852,7 @@ server <- function(input, output, session) {
 
   observe({
     if (!is.na(input$ref_period_sg)) {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         inputId = "ref_period",
         value   = c(input$ref_period_sg, input$ref_period_sg)
       )
@@ -14861,7 +14861,7 @@ server <- function(input, output, session) {
   
   observe({
     if (!is.na(input$ref_period_sg2)) {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         inputId = "ref_period2",
         value   = c(input$ref_period_sg2, input$ref_period_sg2)
       )
@@ -14870,7 +14870,7 @@ server <- function(input, output, session) {
   
   observe({
     if (!is.na(input$ref_period_sg_6)) {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         inputId = "ref_period_6",
         value   = c(input$ref_period_sg_6, input$ref_period_sg_6)
       )
@@ -14879,7 +14879,7 @@ server <- function(input, output, session) {
   
   observe({
     if (!is.na(input$ref_period_sg_v1)) {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         inputId = "ref_period_v1",
         value   = c(input$ref_period_sg_v1, input$ref_period_sg_v1)
       )
@@ -14888,7 +14888,7 @@ server <- function(input, output, session) {
   
   observe({
     if (!is.na(input$ref_period_sg_v2)) {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         inputId = "ref_period_v2",
         value   = c(input$ref_period_sg_v2, input$ref_period_sg_v2)
       )
@@ -14897,7 +14897,7 @@ server <- function(input, output, session) {
   
   observe({
     if (!is.na(input$ref_period_sg_iv)) {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         inputId = "ref_period_iv",
         value   = c(input$ref_period_sg_iv, input$ref_period_sg_iv)
       )
@@ -14906,7 +14906,7 @@ server <- function(input, output, session) {
   
   observe({
     if (!is.na(input$ref_period_sg_dv)) {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         inputId = "ref_period_dv",
         value   = c(input$ref_period_sg_dv, input$ref_period_sg_dv)
       )
@@ -14915,7 +14915,7 @@ server <- function(input, output, session) {
   
   observe({
     if (!is.na(input$ref_period_sg5)) {
-      updateNumericRangeInput(
+      shinyWidgets::updateNumericRangeInput(
         inputId = "ref_period5",
         value   = c(input$ref_period_sg5, input$ref_period_sg5)
       )
