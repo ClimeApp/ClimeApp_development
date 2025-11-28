@@ -2162,7 +2162,7 @@ add_stats_to_TS_datatable = function(data_input,
   # Create moving average column
   Moving_Average = NULL
   if (add_moving_average == TRUE){
-    Moving_Average = zoo:rollmean(Mean, k=moving_average_range, fill=NA, align=moving_average_alignment)
+    Moving_Average = zoo::rollmean(Mean, k=moving_average_range, fill=NA, align=moving_average_alignment)
   }
   
   # Create percentile columns
@@ -7549,9 +7549,9 @@ plot_monthly_timeseries <- function(data = NA,
       lwidth = 1
     }
     
-    x = zoo:as.Date(c())
+    x = zoo::as.Date(c())
     for (j in 5:16){
-      x = c(x,zoo:as.Date(paste0("2000-",j-4,"-01")))
+      x = c(x,zoo::as.Date(paste0("2000-",j-4,"-01")))
     }
     
     new_line = data.frame(
@@ -7694,8 +7694,8 @@ plot_monthly_timeseries <- function(data = NA,
     for (i in 1:(fID-1)){
       fill_data = subset(fills_data, ID == i)
       # Convert x values to dates
-      fill_data$x1 = zoo:as.Date(fill_data$x1)
-      fill_data$x2 = zoo:as.Date(fill_data$x2)
+      fill_data$x1 = zoo::as.Date(fill_data$x1)
+      fill_data$x2 = zoo::as.Date(fill_data$x2)
       
       if (fill_data$key_show){ # Show on legend
         p = p +  geom_rect(
@@ -7761,8 +7761,8 @@ plot_monthly_timeseries <- function(data = NA,
     for (i in 1:(bID-1)){
       box_data = subset(boxes_data, ID == i)
       # Convert x values to dates
-      box_data$x1 = zoo:as.Date(box_data$x1)
-      box_data$x2 = zoo:as.Date(box_data$x2)
+      box_data$x1 = zoo::as.Date(box_data$x1)
+      box_data$x2 = zoo::as.Date(box_data$x2)
       
       if (box_data$key_show){ # Show on legend
         p = p +  geom_rect(
@@ -7795,7 +7795,7 @@ plot_monthly_timeseries <- function(data = NA,
     for (i in 1:nrow(points_data)){
       point_data = points_data[i,]
       # Convert points_data x value to date
-      point_data$x = zoo:as.Date(point_data$x)
+      point_data$x = zoo::as.Date(point_data$x)
       
       if (point_data$key_show){ # Show on legend
         p = p + geom_point(
