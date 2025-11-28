@@ -422,6 +422,17 @@ ui <- navbarPage(
                            #### Tab Version History ----
                            tabPanel("Version history",
                                     br(), br(),
+                                    h5(strong("v1.5 (28.11.2025)", style = "color: #094030;")),
+                                    tags$ul(
+                                      tags$li("Addition of tutorials"),
+                                      tags$li("Balanced library loading"),
+                                      tags$li("Plot caching"),
+                                      tags$li("Improved map plotting function"),
+                                      tags$li(a("View code on GitHub", 
+                                                href = "https://github.com/ClimeApp/ClimeApp_development/tree/ClimeApp_v1.5", 
+                                                target = "_blank")),
+                                    ),
+                                    br(),
                                     h5(strong("v1.4 (18.07.2025)", style = "color: #094030;")),
                                     tags$ul(
                                       tags$li("General overhaul of ClimeApp"),
