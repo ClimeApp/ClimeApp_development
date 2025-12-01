@@ -1971,6 +1971,10 @@ plot_map <- function(data_input,
           show.legend = FALSE, inherit.aes = FALSE
         )
     }
+    
+    p <- p + labs(x = NULL, y = NULL) +
+      theme(axis.title.x = element_blank(),
+            axis.title.y = element_blank())
   }
   
   # --- stat highlights / boxes (wie zuvor) ---
