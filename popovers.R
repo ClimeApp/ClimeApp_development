@@ -160,7 +160,7 @@ map_choose_statistic_popover = function(popover_ID){
 
 #### TIMESERIES ----
 ## TIMESERIES CUSTOMIZATION
-## popover_IDs = pop_anomalies_custime, pop_composites_custime, pop_correlation_custime, pop_annualcycles_custime, pop_sea_custime, pop_regression_custime, pop_correlation_ts_custime
+## popover_IDs = pop_anomalies_custime, pop_composites_custime, pop_correlation_custime, pop_annualcycles_custime, pop_sea_custime, pop_regression_custime
 
 timeseries_customization_popover = function(popover_ID){
   if (popover_ID == "pop_correlation_custime"|popover_ID == "pop_annualcycles_custime"){
@@ -183,7 +183,7 @@ timeseries_customization_popover = function(popover_ID){
 }
 
 ## CUSTOM TIMESERIES FEATURES
-## popover_IDs = pop_anomalies_timefeat, pop_composites_timefeat, pop_correlation_timefeat, pop_annualcycles_timefeat, pop_sea_timefeat, pop_regression_timefeat, pop_correlation_ts_timefeat
+## popover_IDs = pop_anomalies_timefeat, pop_composites_timefeat, pop_correlation_timefeat, pop_annualcycles_timefeat, pop_sea_timefeat, pop_regression_timefeat
 
 timeseries_features_popover = function(popover_ID){
   bslib::popover(

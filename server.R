@@ -9263,7 +9263,7 @@ server <- function(input, output, session) {
   })
   
   # Processed SD data
-  SDratio_subset = reactive({
+  SDratio_subset <- reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
     
     req(((input$ref_map_mode == "SD ratio") |
@@ -9404,6 +9404,8 @@ server <- function(input, output, session) {
   #Plotting the Map
   map_dimensions <- reactive({
     req(input$nav1 == "tab1") # Only run code if in the current tab
+    req(!is.null(session$clientData$output_map_width))
+    
     m_d = generate_map_dimensions(
       subset_lon_IDs = subset_lons_primary(),
       subset_lat_IDs = subset_lats_primary(),
@@ -14093,7 +14095,7 @@ server <- function(input, output, session) {
     proxy <- leaflet::leafletProxy("MES_leaflet")
     
     if (input$legend_MES == TRUE && !is.null(data)) {
-      proxy %>%
+      proxy |>
         leaflet::addLegend(pal = pal_type,
                   values = data$TYPE,  # use actual data
                   title = "Legend",
@@ -14101,13 +14103,13 @@ server <- function(input, output, session) {
                   opacity = 1.0,
                   labFormat = function(type, values) {
                     named_types[values]  # display names instead of codes
-                  }) %>%
+                  }) |>
         leaflet::addControl(
           html = sprintf("<strong>Total global sources: %d</strong>", nrow(data)),
           position = "bottomleft"
         )
     } else {
-      proxy %>% leaflet::clearControls()
+      proxy |> leaflet::clearControls()
     }
   })
   
@@ -14119,7 +14121,7 @@ server <- function(input, output, session) {
     if (!is.null(data)) {
       proxy <- leaflet::leafletProxy("MES_leaflet")
       
-      proxy %>% leaflet::clearMarkers() %>%
+      proxy |> leaflet::clearMarkers() |>
         leaflet::addCircleMarkers(data = data,
                          radius = 5,
                          fillColor = ~pal_type(data$TYPE),
@@ -14976,6 +14978,3 @@ server <- function(input, output, session) {
   })
   # Close server function ----
 }
-
-# Run the app with profiling
-# profvis({runApp(app)})

@@ -156,7 +156,7 @@ ui <- navbarPage(
   
   
   # --- Navbar styling and properties ---
-  theme = bslib::bs_theme(version = 5, bootswatch = "united", primary = "#094030", navbar_bg = "#094030"),
+  theme = my_theme,
   position = "fixed-top",
   windowTitle = "ClimeApp (v1.5)",
   collapsible = TRUE,
@@ -424,7 +424,7 @@ ui <- navbarPage(
                                     br(), br(),
                                     h5(strong("v1.5 (28.11.2025)", style = "color: #094030;")),
                                     tags$ul(
-                                      tags$li("Addition of tutorials"),
+                                      tags$li("Addition of welcome video and tutorials"),
                                       tags$li("Balanced library loading"),
                                       tags$li("Plot caching"),
                                       tags$li("Improved map plotting function"),
@@ -3626,7 +3626,7 @@ ui <- navbarPage(
                                               
                                               #### Timeseries customization ----
                                               column(width = 4,
-                                                     h4("Customize your timeseries", style = "color: #094030;",timeseries_customization_popover("pop_correlation_ts_custime")),  
+                                                     h4("Customize your timeseries", style = "color: #094030;",timeseries_customization_popover("pop_correlation_custime")),  
                                                      
                                                      checkboxInput(inputId = "custom_ts3",
                                                                    label   = "Timeseries customization",
@@ -3704,7 +3704,7 @@ ui <- navbarPage(
                                               
                                               #### Add Custom features (points, highlights, lines) ----                        
                                               column(width = 4,
-                                                     h4("Custom features", style = "color: #094030;",timeseries_features_popover("pop_correlation_ts_timefeat")),
+                                                     h4("Custom features", style = "color: #094030;",timeseries_features_popover("pop_correlation_timefeat")),
                                                      
                                                      checkboxInput(inputId = "custom_features_ts3",
                                                                    label   = "Enable custom features",
