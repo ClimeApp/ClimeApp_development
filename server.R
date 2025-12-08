@@ -1550,12 +1550,12 @@ server <- function(input, output, session) {
                            condition = input$custom_map_reg_pval == TRUE,
                            asis = FALSE)})
   
-  observe({shinyjs::toggle(id = "hidden_custom_axis_reg_pvals",
+  observe({shinyjs::toggle(id = "hidden_custom_axis_reg_pval",
                            anim = TRUE,
                            animType = "slide",
                            time = 0.5,
                            selector = NULL,
-                           condition = input$axis_mode_reg_pvals == "Fixed",
+                           condition = input$axis_mode_reg_pval == "Fixed",
                            asis = FALSE)})
   
   observe({shinyjs::toggle(id = "hidden_custom_title_reg_pval",
@@ -3937,6 +3937,7 @@ server <- function(input, output, session) {
       
       process_uploaded_metadata_composite(
         file_path           = file_path,
+        mode                = "map",
         metadata_sheet      = "custom_meta",
         df_ts_points        = NULL,
         df_ts_highlights    = NULL,
@@ -4075,6 +4076,7 @@ server <- function(input, output, session) {
       
       process_uploaded_metadata_composite(
         file_path           = file_path,
+        mode                = "ts",
         metadata_sheet      = "custom_meta",
         df_ts_points        = "custom_points",
         df_ts_highlights    = "custom_highlights",
@@ -4398,50 +4400,40 @@ server <- function(input, output, session) {
     )
   })
 
-  # observeEvent({
-  #   input$source_v1
-  #   input$source_v2
-  #   year_range_cor()
-  # }, {
-  #   req(year_range_cor(), length(year_range_cor()) >= 2)
-  #   
-  #   if (input$source_v1 == "User data" || input$source_v2 == "User data") {
-  #     shinyWidgets::updateNumericRangeInput(
-  #       session = getDefaultReactiveDomain(),
-  #       inputId = "range_years3",
-  #       label = paste("Select the range of years (", year_range_cor()[7], "-", year_range_cor()[8], ")"),
-  #       value = year_range_cor()[1:2]
-  #     )
-  #   }
-  # })
-  
   observeEvent({
     input$source_v1
     input$source_v2
-    year_range_cor()
+    input$user_file_v1$datapath
+    input$user_file_v2$datapath
+    input$user_variable_v1
+    input$user_variable_v2
   }, {
-    req(year_range_cor(), length(year_range_cor()) >= 6)
-    
+    # year_range_cor() wird hier nur gelesen → kein eigener Trigger,
+    # weil observeEvent den Handler isoliert ausführt.
     yr <- year_range_cor()
+    req(yr, length(yr) >= 10)
     
+    # Nur falls überhaupt User-Daten im Spiel sind
     if (input$source_v1 == "User data" && input$source_v2 == "User data") {
-      # both user data → show shared range
+      # beide User-Daten → Überschneidungsbereich
       shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years3",
         label = paste("Select the overlapping range of years (", yr[5], "-", yr[6], ")"),
         value = yr[5:6]
       )
+      
     } else if (input$source_v1 == "User data") {
-      # only variable 1 is user data
+      # nur v1 User-Daten
       shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years3",
         label = paste("Select the range of years (", yr[7], "-", yr[8], ")"),
         value = yr[1:2]
       )
+      
     } else if (input$source_v2 == "User data") {
-      # only variable 2 is user data
+      # nur v2 User-Daten
       shinyWidgets::updateNumericRangeInput(
         session = getDefaultReactiveDomain(),
         inputId = "range_years3",
@@ -4450,7 +4442,6 @@ server <- function(input, output, session) {
       )
     }
   })
-  
   
   # Set iniital lon/lat values and update on button press
   lonlat_vals_v1 = reactiveVal(c(4,12,43,50))
@@ -4856,7 +4847,7 @@ server <- function(input, output, session) {
     }
   })
   
-  # Correlation Axis values updater TS
+  # Correlation axis values updater TS
   observe({
     if (input$axis_mode_ts3 == "Automatic"){
       shinyWidgets::updateNumericRangeInput(
@@ -5817,23 +5808,6 @@ server <- function(input, output, session) {
   })
   
   # Update year range
-  # observeEvent({
-  #   input$source_iv
-  #   input$source_dv
-  #   year_range_reg()
-  # }, {
-  #   req(year_range_reg(), length(year_range_reg()) >= 2)
-  #   
-  #   if (input$source_iv == "User data" || input$source_dv == "User data") {
-  #     shinyWidgets::updateNumericRangeInput(
-  #       session = getDefaultReactiveDomain(),
-  #       inputId = "range_years4",
-  #       label = paste("Select the range of years (", year_range_reg()[7], "-", year_range_reg()[8], ")"),
-  #       value = year_range_reg()[1:2]
-  #     )
-  #   }
-  # })
-  
   observeEvent({
     input$source_iv
     input$source_dv
@@ -6274,6 +6248,44 @@ server <- function(input, output, session) {
         inputId = "axis_input_ts4b",
         value = set_ts_axis_values(data_input = regression_ts_data()[,4])  # Residuals
       )
+    }
+  })
+  
+  # # Regression axis values updater Map (Reg Coeff)
+  observe({
+    if (input$axis_mode_reg_coeff == "Automatic"){
+      shinyWidgets::updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_reg_coeff",
+        value = c(NA,NA))
+    }
+  })
+
+  observe({
+    if (input$axis_mode_reg_coeff == "Fixed" & is.null(input$axis_input_reg_coeff)){
+      shinyWidgets::updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_reg_coeff",
+        value = set_axis_values(data_input = regression_coeff_data(), mode = "Anomaly"))
+    }
+  })
+  
+  # # Regression axis values updater Map (Reg Res)
+  observe({
+    if (input$axis_mode_reg_res == "Automatic"){
+      shinyWidgets::updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_reg_res",
+        value = c(NA,NA))
+    }
+  })
+  
+  observe({
+    if (input$axis_mode_reg_res == "Fixed" & is.null(input$axis_input_reg_res)){
+      shinyWidgets::updateNumericRangeInput(
+        session = getDefaultReactiveDomain(),
+        inputId = "axis_input_reg_res",
+        value = set_axis_values(data_input = reg_res_table(), mode = "Anomaly"))
     }
   })
   
@@ -6754,7 +6766,7 @@ server <- function(input, output, session) {
       } else if (projection == "Robinson") {
         result <- tmaptools::geocode_OSM(location_encoded_reg_coeff, projection = "+proj=robin")
       } else if (projection == "Orthographic") {
-        result <- geocode_OSM(
+        result <- tmaptools::geocode_OSM(
           location_encoded_reg_coeff,
           projection = ortho_proj(input$center_lat_reg_coeff, input$center_lon_reg_coeff)
         )
@@ -6919,7 +6931,7 @@ server <- function(input, output, session) {
       } else if (projection == "Robinson") {
         result <- tmaptools::geocode_OSM(location_encoded_reg_pval, projection = "+proj=robin")
       } else if (projection == "Orthographic") {
-        result <- geocode_OSM(
+        result <- tmaptools::geocode_OSM(
           location_encoded_reg_pval,
           projection = ortho_proj(input$center_lat_reg_pval, input$center_lon_reg_pval)
         )
@@ -7002,7 +7014,7 @@ server <- function(input, output, session) {
       } else if (projection == "Robinson") {
         result <- tmaptools::geocode_OSM(location_encoded_reg_res, projection = "+proj=robin")
       } else if (projection == "Orthographic") {
-        result <- geocode_OSM(
+        result <- tmaptools::geocode_OSM(
           location_encoded_reg_res,
           projection = ortho_proj(input$center_lat_reg_res, input$center_lon_reg_res)
         )
@@ -7411,7 +7423,7 @@ server <- function(input, output, session) {
       
       # Map-specific inputs
       axis_input_reg       = input$axis_input_reg_pval,
-      axis_mode_reg        = input$axis_mode_reg_pval,
+      axis_mode_reg        = NA,
       center_lat_reg       = input$center_lat_reg_pval,
       center_lon_reg       = input$center_lon_reg_pval,
       coeff_variable       = input$pvalue_variable,
@@ -9244,8 +9256,11 @@ server <- function(input, output, session) {
     if ((input$ref_map_mode == "SD ratio") |
         (input$custom_statistic == "SD ratio") |
         (input$value_type_map_data == "SD ratio")) {
+      
       if (input$nav1 == "tab1"){ # check current tab
+        
         if (!identical(SDratio_data_id()[3:4],data_id_primary()[3:4])){ # check to see if currently loaded variable & month range are the same
+          
           if (data_id_primary()[1] != 0) { # check for preprocessed SD ratio data
             new_data_id = data_id_primary()
             new_data_id[2] = 4 # change data ID to SD ratio
@@ -9352,7 +9367,8 @@ server <- function(input, output, session) {
   
   # Anomalies Statistics
   map_statistics = reactive({
-    req(input$nav1 == "tab1") # Only run code if in the current tab
+    req(input$nav1 == "tab1")
+    
     my_stats = create_stat_highlights_data(
       data_input = data_output4_primary(),
       sd_data = SDratio_subset(),
@@ -9362,8 +9378,29 @@ server <- function(input, output, session) {
       subset_lon_IDs = subset_lons_primary(),
       subset_lat_IDs = subset_lats_primary()
     )
+    
+    # Check if transformation is needed and possible
+    if (input$projection != "UTM (default)" &&
+        nrow(my_stats) > 0 &&
+        all(c("x_vals", "y_vals") %in% colnames(my_stats))) {
+      
+      my_stats <- transform_points_df(
+        df = my_stats,
+        xcol = "x_vals",
+        ycol = "y_vals",
+        projection_from = "+proj=longlat +datum=WGS84",
+        projection_to = switch(
+          input$projection,
+          "Robinson"     = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat, input$center_lon),
+          "LAEA"         = laea_proj
+        )
+      )
+    }
+    
     return(my_stats)
   })
+  
   
   #Plotting the Data (Maps)
   map_data <- function() {
@@ -9767,44 +9804,7 @@ server <- function(input, output, session) {
     paging = TRUE,
     pagingType = "numbers"
   ))
-  
-  # timeseries_plot_anom<- function(){
-  #   
-  #   #Plot normal timeseries if year range is > 1 year
-  #   if (input$range_years[1] != input$range_years[2]){
-  #     # Generate NA or reference mean
-  #     ref_ts = signif(mean(data_output3_primary()),3)
-  #   } else {
-  #     ref_ts = NA
-  #   }
-  #   
-  #   # New 
-  #   p <- plot_timeseries(
-  #     type = "Anomaly",
-  #     data = timeseries_data(),
-  #     variable = input$variable_selected,
-  #     ref = ref_ts,
-  #     year_range = input$range_years,
-  #     month_range_1 = month_range_primary(),
-  #     titles = plot_titles(),
-  #     show_key = input$show_key_ts,
-  #     key_position = input$key_position_ts,
-  #     show_ref = input$show_ref_ts,
-  #     show_ticks = input$show_ticks_ts,
-  #     tick_interval = input$xaxis_numeric_interval_ts,
-  #     moving_ave = input$custom_average_ts,
-  #     moving_ave_year = input$year_moving_ts,
-  #     custom_percentile = input$custom_percentile_ts,
-  #     percentiles = input$percentile_ts,
-  #     highlights = ts_highlights_data(),
-  #     lines = ts_lines_data(),
-  #     points = ts_points_data(),
-  #     axis_range = input$axis_input_ts
-  #     )
-  #   
-  #   return(p)
-  # }
-  
+
   timeseries_plot_anom <- function() {
     
     if (input$range_years[1] != input$range_years[2]) {
@@ -10159,9 +10159,14 @@ server <- function(input, output, session) {
   
   # Update SD ratio data when required
   observe({
-    if((input$ref_map_mode2 == "SD ratio")|(input$custom_statistic2 == "SD ratio")){
+    if((input$ref_map_mode2 == "SD ratio") |
+       (input$custom_statistic2 == "SD ratio") |
+       (input$value_type_map_data2 == "SD ratio")){
+      
       if (input$nav1 == "tab2"){ # check current tab
+        
         if (!identical(SDratio_data_id()[3:4],data_id_primary()[3:4])){ # check to see if currently loaded variable & month range are the same
+          
           if (data_id_primary()[1] != 0) { # check for preprocessed SD ratio data
             new_data_id = data_id_primary()
             new_data_id[2] = 4 # change data ID to SD ratio
@@ -10183,9 +10188,9 @@ server <- function(input, output, session) {
     req(input$nav1 == "tab2") # Only run code if in the current tab
     
     req(((input$ref_map_mode2 == "SD ratio") |
-           (input$custom_statistic2 == "SD ratio")
-    ))
-    
+           (input$custom_statistic2 == "SD ratio") |
+           (input$value_type_map_data2 == "SD ratio")))
+
     create_sdratio_data(
       data_input = SDratio_data(),
       data_ID = data_id_primary(),
@@ -10264,9 +10269,8 @@ server <- function(input, output, session) {
   })
   
   # Composite statistics
-  
   map_statistics_2 = reactive({
-    req(input$nav1 == "tab2") # Only run code if in the current tab
+    req(input$nav1 == "tab2")  # Only run code if in the current tab
     
     my_stats = create_stat_highlights_data(
       data_input = data_output4_primary(),
@@ -10278,8 +10282,28 @@ server <- function(input, output, session) {
       subset_lat_IDs = subset_lats_primary()
     )
     
+    # Reproject if needed and valid columns exist
+    if (input$projection2 != "UTM (default)" &&
+        nrow(my_stats) > 0 &&
+        all(c("x_vals", "y_vals") %in% colnames(my_stats))) {
+      
+      my_stats <- transform_points_df(
+        df = my_stats,
+        xcol = "x_vals",
+        ycol = "y_vals",
+        projection_from = "+proj=longlat +datum=WGS84",
+        projection_to = switch(
+          input$projection2,
+          "Robinson"     = "+proj=robin",
+          "Orthographic" = ortho_proj(input$center_lat2, input$center_lon2),
+          "LAEA"         = laea_proj
+        )
+      )
+    }
+    
     return(my_stats)
   })
+  
   
   #Plotting the Data (Maps)
   map_data_2 <- function() {
@@ -10289,12 +10313,12 @@ server <- function(input, output, session) {
   }
   
   final_map_data_2 <- reactive({
-    req(input$value_type_map_data2)  # Ensure input is available
+    # req(input$value_type_map_data2)  # Ensure input is available
     
     option <- input$value_type_map_data2
     
     if (option == "Anomalies") {
-      map_data()
+      map_data_2()
     } else if (option == "Absolute") {
       create_map_datatable(data_input = data_output2_primary(),
                            subset_lon_IDs = subset_lons_primary(),
@@ -10524,6 +10548,7 @@ server <- function(input, output, session) {
                            subset_lon_IDs = subset_lons_primary(),
                            subset_lat_IDs = subset_lats_primary())
     } else if (input$ref_map_mode2 == "SD ratio") {
+      req(SDratio_subset_2())
       create_map_datatable(data_input = SDratio_subset_2(),
                            subset_lon_IDs = subset_lons_primary(),
                            subset_lat_IDs = subset_lats_primary())
@@ -13300,17 +13325,29 @@ server <- function(input, output, session) {
     return(rresd)
   })
   
-  reg_res_tiff = reactive({
-    req(input$nav1 == "tab4") # Only run code if in the current tab
-    create_geotiff(map_data = reg_res_table()) 
-  })
-  
   # Make sure plot only updates when year is valid
   reg_resi_year_val  = reactiveVal()
   observe({
     if(input$reg_resi_year >= input$range_years4[1] & input$reg_resi_year <= input$range_years4[2]){
       reg_resi_year_val(input$reg_resi_year)
     }
+  })
+  
+  reg_res_table = function() {
+    # Find ID of year selected
+    year_ID = (reg_resi_year_val() - input$range_years4[1]) + 1
+    rrd1 = regression_residuals_data()[year_ID, , ]
+    # Transform and add rownames to data
+    rrd2 = create_regression_map_datatable(
+      data_input = rrd1,
+      subset_lon_IDs = subset_lons_primary(),
+      subset_lat_IDs = subset_lats_primary()
+    )
+  }
+  
+  reg_res_tiff = reactive({
+    req(input$nav1 == "tab4") # Only run code if in the current tab
+    create_geotiff(map_data = reg_res_table()) 
   })
   
   reg_res_map = function() {
@@ -13454,20 +13491,6 @@ server <- function(input, output, session) {
       shinyjs::disable("white_land_reg_res")
     }
   }, ignoreNULL = TRUE, ignoreInit = FALSE)
-  
-  
-  reg_res_table = function() {
-    # Find ID of year selected
-    year_ID = (reg_resi_year_val() - input$range_years4[1]) + 1
-    rrd1 = regression_residuals_data()[year_ID, , ]
-    # Transform and add rownames to data
-    rrd2 = create_regression_map_datatable(
-      data_input = rrd1,
-      subset_lon_IDs = subset_lons_primary(),
-      subset_lat_IDs = subset_lats_primary()
-    )
-  }
-  
 
   output$data_reg_res = renderTable({reg_res_table()}, rownames = TRUE)
 
@@ -14216,7 +14239,7 @@ server <- function(input, output, session) {
   
   # Load in user data for SEA
   user_data_6 = reactive({
-    
+    req(input$nav1 == "tab6")       # Only run if in the correct tab
     req(input$user_file_6)
     
     if (input$source_sea_6 == "User data"){
@@ -14248,6 +14271,7 @@ server <- function(input, output, session) {
   
   #Creating a year set for sea
   year_set_sea <- reactive({
+    req(input$nav1 == "tab6")       # Only run if in the correct tab
     read_sea_data(
       data_input_manual = input$event_years_6,
       data_input_filepath = input$upload_file_6b$datapath,
@@ -14290,6 +14314,7 @@ server <- function(input, output, session) {
   
   # Extract years, title & y label based on selected data source
   years = reactive({
+    req(input$nav1 == "tab6")       # Only run if in the correct tab
     if (input$source_sea_6 == "User data") {
       return(unlist(user_subset_6()[,1]))  # Extract years from user-uploaded data
     } else {
@@ -14373,6 +14398,7 @@ server <- function(input, output, session) {
   
   # Cut event years based on the data
   event_years_cut <- reactive({
+    req(input$nav1 == "tab6")       # Only run if in the correct tab
     if (input$enter_upload_6 == "Manual") {
       v_years <- as.integer(unlist(strsplit(input$event_years_6, split = ",")))
     } else if (input$enter_upload_6 == "Upload") {
@@ -14702,6 +14728,8 @@ server <- function(input, output, session) {
   #List of chosen event years (upload or manual) to plot
   output$text_years6 <- renderText("Chosen event years:")
   output$years6 <- renderText({
+    req(input$nav1 == "tab6")       # Only run if in the correct tab
+    req(event_years_cut())
     sorted_years <- sort(as.numeric(event_years_cut()))
   })
   

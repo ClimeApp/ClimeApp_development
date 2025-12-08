@@ -3134,7 +3134,7 @@ ui <- navbarPage(
                  # Upload user data
                  shinyjs::hidden(
                    div(id = "upload_forcings_v1",   
-                       fileInput(inputId = "user_file_v1",
+                         fileInput(inputId = "user_file_v1",
                                  label = "Upload timeseries data in .csv or .xlsx format:",
                                  multiple = FALSE,
                                  accept = c(".csv", ".xlsx", ".xls"),
@@ -5689,20 +5689,20 @@ ui <- navbarPage(
                                                                               max = 180,
                                                                               updateOn = "blur"))),
                                                            
-                                                           radioButtons(inputId  = "axis_mode_reg_pval",
-                                                                        label    = "Axis customization:",
-                                                                        choices  = c("Automatic","Fixed"),
-                                                                        selected = "Automatic" , inline = TRUE),
-                                                           
-                                                           shinyjs::hidden(
-                                                             div(id = "hidden_custom_axis_reg_pvals",
-                                                                 
-                                                                 shinyWidgets::numericRangeInput(inputId    = "axis_input_reg_pval",
-                                                                                   label      = "Set your axis values:",
-                                                                                   value      = c(NULL, NULL),
-                                                                                   separator  = " to ",
-                                                                                   min        = -Inf,
-                                                                                   max        = Inf))),
+                                                           # radioButtons(inputId  = "axis_mode_reg_pval",
+                                                           #              label    = "Axis customization:",
+                                                           #              choices  = c("Automatic","Fixed"),
+                                                           #              selected = "Automatic" , inline = TRUE),
+                                                           # 
+                                                           # shinyjs::hidden(
+                                                           #   div(id = "hidden_custom_axis_reg_pval",
+                                                           #       
+                                                           #       shinyWidgets::numericRangeInput(inputId    = "axis_input_reg_pval",
+                                                           #                         label      = "Set your axis values:",
+                                                           #                         value      = c(NULL, NULL),
+                                                           #                         separator  = " to ",
+                                                           #                         min        = -Inf,
+                                                           #                         max        = Inf))),
                                                            
                                                            checkboxInput(inputId = "hide_axis_reg_pval",
                                                                          label   = "Hide colorbar",

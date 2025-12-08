@@ -273,10 +273,7 @@ lakes <- readRDS("data/geodata_custom_maps/lakes.rds")
 mountains <- readRDS("data/geodata_custom_maps/mountains.rds")
 rivers <- readRDS("data/geodata_custom_maps/rivers.rds")
 
-# =====================================================================
 # Pre-validate static sf layers (coast, countries, land, oceans, rivers)
-# =====================================================================
-
 fix_static_geom <- function(x) {
   if (is.null(x)) return(x)
   
