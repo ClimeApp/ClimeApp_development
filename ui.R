@@ -275,12 +275,12 @@ ui <- navbarPage(
                                         "Go to video tutorials"
                                       ),
                                       
-                                      actionButton(
-                                        "go_desktop", 
-                                        "Download ClimeApp desktop version",
-                                        class = "btn btn-primary",
-                                        style = "width:300px;"
-                                      )
+                                      # actionButton(
+                                      #   "go_desktop", 
+                                      #   "Download ClimeApp desktop version",
+                                      #   class = "btn btn-primary",
+                                      #   style = "width:300px;"
+                                      # )
                                     ),
                                     
                                     br(), br(), br(),
@@ -406,18 +406,18 @@ ui <- navbarPage(
                            ),
                            
                            #### Offline version ----
-                           tabPanel("ClimeApp desktop", value = "desktop_tab",
-                                    br(), br(),
-                                    h5(strong("An offline version ClimeApp for Windows - CLIMEAPP DESKTOP - is available to download here:", style = "color: #094030;")),
-                                    br(),
-                                    downloadButton("climeapp_desktop_download",
-                                                   label = "Download ClimeApp desktop"),
-                                    br(), br(), br(),
-                                    h5(strong("ClimeApp desktop user guide", style = "color: #094030;")),
-                                    br(),
-                                    htmltools::includeHTML("ClimeApp Desktop User Guide.html")
-
-                           ),
+                           # tabPanel("ClimeApp desktop", value = "desktop_tab",
+                           #          br(), br(),
+                           #          h5(strong("An offline version ClimeApp for Windows - CLIMEAPP DESKTOP - is available to download here:", style = "color: #094030;")),
+                           #          br(),
+                           #          downloadButton("climeapp_desktop_download",
+                           #                         label = "Download ClimeApp desktop"),
+                           #          br(), br(), br(),
+                           #          h5(strong("ClimeApp desktop user guide", style = "color: #094030;")),
+                           #          br(),
+                           #          htmltools::includeHTML("ClimeApp Desktop User Guide.html")
+                           # 
+                           # ),
                            
                            #### Tab Version History ----
                            tabPanel("Version history",
