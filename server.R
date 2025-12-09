@@ -11138,7 +11138,7 @@ server <- function(input, output, session) {
       lag        = input$lagyears_v1_cor       # <--- verschiebt die Year-Spalte
     )
     
-    usr_ss1
+    return(usr_ss1)
   })
   
   # Subset v2 data to year_range and chosen variable
@@ -11154,7 +11154,7 @@ server <- function(input, output, session) {
       lag        = input$lagyears_v2_cor
     )
     
-    usr_ss2
+    return(usr_ss2)
   })
   
   ####### Generate plot data ---- 
