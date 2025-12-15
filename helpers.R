@@ -1238,7 +1238,10 @@ plot_map <- function(data_input,
                      show_lakes = FALSE,
                      label_lakes = FALSE,
                      show_mountains = FALSE,
-                     label_mountains = FALSE) {
+                     label_mountains = FALSE,
+                     surface = c("contour", "grid")) {
+  
+  surface <- match.arg(surface)
   
   # --- sichere Defaults (verhindert 'v_col'/'v_unit' Fehler) ---
   v_col  <- viridis::viridis(11)
@@ -1384,13 +1387,23 @@ plot_map <- function(data_input,
     )
   }
   
-  p <- ggplot2::ggplot() +
-    tidyterra::geom_spatraster_contour_filled(
-      data = data_plot,
-      ggplot2::aes(fill = after_stat(level_mid)),
-      bins = 20
-    ) +
-    ggplot2::labs(fill = v_unit)
+  p <- ggplot2::ggplot()
+  
+  if (surface == "contour") {
+    p <- p +
+      tidyterra::geom_spatraster_contour_filled(
+        data = data_plot,
+        ggplot2::aes(fill = after_stat(level_mid)),
+        bins = 20
+      )
+  } else {
+    p <- p +
+      tidyterra::geom_spatraster(
+        data = data_plot
+        # no aes() needed; tidyterra maps fill to the layer values internally
+      )
+  }
+  p <- p + ggplot2::labs(fill = v_unit)
   
   # Hide Axis option
   if (isTRUE(hide_axis)) {
@@ -1417,11 +1430,16 @@ plot_map <- function(data_input,
     p <- p + ggplot2::scale_fill_gradientn(
       colors = v_col, trans = "log10", limits = axis_range,
       breaks = c(0.001, 0.01, 0.1, 1),
-      labels = scales::label_comma(accuracy = 0.001)
+      labels = scales::label_comma(accuracy = 0.001),
+      na.value = "transparent"
     )
   } else {
     p <- p + ggplot2::scale_fill_stepsn(
-      limits = axis_range, colors = v_col, n.breaks = 20, nice.breaks = TRUE,
+      limits = axis_range,
+      colors = v_col,
+      n.breaks = 20,
+      nice.breaks = TRUE,
+      na.value = "transparent",
       labels = function(breaks) {
         labels <- as.character(round(breaks, 2))
         labels[1] <- paste0("< ", labels[1])
@@ -1431,7 +1449,21 @@ plot_map <- function(data_input,
     )
   }
   
-  p <- p + if (projection == "UTM (default)") ggplot2::theme_bw() else ggplot2::theme_minimal()
+  p <- p + if (projection == "UTM (default)") {
+    ggplot2::theme_bw()
+  } else {
+    ggplot2::theme_minimal()
+  }
+  
+  # FIX: make outside-of-projection transparent
+  if (!identical(projection, "UTM (default)")) {
+    p <- p + ggplot2::theme(
+      panel.background  = ggplot2::element_rect(fill = "transparent", colour = NA),
+      plot.background   = ggplot2::element_rect(fill = "transparent", colour = NA),
+      legend.background = ggplot2::element_rect(fill = "transparent", colour = NA),
+      legend.key        = ggplot2::element_rect(fill = "transparent", colour = NA)
+    )
+  }
   
   # --- Static base layers (coastlines, land, borders, oceans) ---
   p <- p + ggplot2::geom_sf(data = crop_sf(coast), color = "#333333", size = 0.5, inherit.aes = FALSE)
@@ -2516,6 +2548,17 @@ plot_timeseries <- function(type,
   
   # Theme
   p <- p + theme_bw(base_size = 18)
+  
+  # Optional: transparent background for TS (good for PNG/PDF exports)
+  p <- p + ggplot2::theme(
+    panel.background = ggplot2::element_rect(fill = "transparent", colour = NA),
+    plot.background  = ggplot2::element_rect(fill = "transparent", colour = NA)
+  )
+  
+  p <- p + ggplot2::theme(
+    legend.background = ggplot2::element_rect(fill = "transparent", colour = NA),
+    legend.key        = ggplot2::element_rect(fill = "transparent", colour = NA)
+  )
   
   # Axes, titles, subtitles, secondary axis (Correlation)
   if (!is.null(titles)) {
@@ -6912,6 +6955,17 @@ plot_monthly_timeseries <- function(data = NA,
   
   # Add theme
   p <- p + theme_bw(base_size = 18)
+  
+  # Optional: transparent background for TS (good for PNG/PDF exports)
+  p <- p + ggplot2::theme(
+    panel.background = ggplot2::element_rect(fill = "transparent", colour = NA),
+    plot.background  = ggplot2::element_rect(fill = "transparent", colour = NA)
+  )
+  
+  p <- p + ggplot2::theme(
+    legend.background = ggplot2::element_rect(fill = "transparent", colour = NA),
+    legend.key        = ggplot2::element_rect(fill = "transparent", colour = NA)
+  )
   
   # Add title and subtitle if provided
   if (!is.null(titles)) {

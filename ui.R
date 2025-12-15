@@ -818,6 +818,8 @@ ui <- navbarPage(
                                                                               updateOn = "blur"
                                                                               ))),
                                                            
+                                                           checkboxInput("map_contour", "Use grid cells", value = FALSE),
+                                                           
                                                            radioButtons(inputId  = "axis_mode",
                                                                         label    = "Axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
@@ -1890,6 +1892,8 @@ ui <- navbarPage(
                                                                               min = -180,
                                                                               max = 180,
                                                                               updateOn = "blur"))),
+                                                           
+                                                           checkboxInput("map_contour2", "Use grid cells", value = FALSE),
                                                            
                                                            radioButtons(inputId  = "axis_mode2",
                                                                         label    = "Axis customization:",
@@ -4102,6 +4106,8 @@ ui <- navbarPage(
                                                                               max = 180,
                                                                               updateOn = "blur"))),
                                                            
+                                                           checkboxInput("map_contour3", "Use grid cells", value = FALSE),
+                                                           
                                                            radioButtons(inputId  = "axis_mode3",
                                                                         label    = "Axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
@@ -5351,6 +5357,8 @@ ui <- navbarPage(
                                                                               max = 180,
                                                                               updateOn = "blur"))),
                                                            
+                                                           checkboxInput("map_contour_reg_coeff", "Use grid cells", value = FALSE),
+                                                           
                                                            radioButtons(inputId  = "axis_mode_reg_coeff",
                                                                         label    = "Axis customization:",
                                                                         choices  = c("Automatic","Fixed"),
@@ -5688,6 +5696,8 @@ ui <- navbarPage(
                                                                               min = -180,
                                                                               max = 180,
                                                                               updateOn = "blur"))),
+                                                           
+                                                           checkboxInput("map_contour_reg_pval", "Use grid cells", value = FALSE),
                                                            
                                                            # radioButtons(inputId  = "axis_mode_reg_pval",
                                                            #              label    = "Axis customization:",
@@ -6047,6 +6057,8 @@ ui <- navbarPage(
                                                                               min = -180,
                                                                               max = 180,
                                                                               updateOn = "blur"))),
+                                                           
+                                                           checkboxInput("map_contour_reg_res", "Use grid cells", value = FALSE),
                                                            
                                                            radioButtons(inputId  = "axis_mode_reg_res",
                                                                         label    = "Axis customization:",

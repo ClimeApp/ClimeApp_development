@@ -9531,7 +9531,8 @@ server <- function(input, output, session) {
       show_lakes           = input$show_lakes,
       label_lakes          = input$label_lakes,
       show_mountains       = input$show_mountains,
-      label_mountains      = input$label_mountains
+      label_mountains      = input$label_mountains,
+      surface = if (isFALSE(input$map_contour)) "contour" else "grid"
     )
   }
   
@@ -9605,6 +9606,7 @@ server <- function(input, output, session) {
       subset_lats_primary(),
       input$axis_input,
       input$hide_axis,
+      input$map_contour,   # <-- ADD THIS
       points_key,
       highlights_key,
       stats_key,
@@ -9746,7 +9748,8 @@ server <- function(input, output, session) {
       show_lakes = input$show_lakes,
       label_lakes = input$label_lakes,
       show_mountains = input$show_mountains,
-      label_mountains = input$label_mountains
+      label_mountains = input$label_mountains,
+      surface = if (isFALSE(input$map_contour)) "contour" else "grid"
     )
   }
   
@@ -10429,7 +10432,8 @@ server <- function(input, output, session) {
       show_lakes           = input$show_lakes2,
       label_lakes          = input$label_lakes2,
       show_mountains       = input$show_mountains2,
-      label_mountains      = input$label_mountains2
+      label_mountains      = input$label_mountains2,
+      surface = if (isFALSE(input$map_contour2)) "contour" else "grid"
     )
   }
   
@@ -10500,6 +10504,7 @@ server <- function(input, output, session) {
       subset_lats_primary(),
       input$axis_input2,
       input$hide_axis2,
+      input$map_contour2,   # <-- ADD THIS
       points_key2,
       highlights_key2,
       stats_key2,
@@ -10647,7 +10652,8 @@ server <- function(input, output, session) {
              show_lakes = input$show_lakes2,
              label_lakes = input$label_lakes2,
              show_mountains = input$show_mountains2,
-             label_mountains = input$label_mountains2)
+             label_mountains = input$label_mountains2,
+             surface = if (isFALSE(input$map_contour2)) "contour" else "grid")
   }
   
   output$ref_map2 <- renderPlot({
@@ -11853,7 +11859,8 @@ server <- function(input, output, session) {
         show_lakes = input$show_lakes3,
         label_lakes = input$label_lakes3,
         show_mountains = input$show_mountains3,
-        label_mountains = input$label_mountains3
+        label_mountains = input$label_mountains3,
+        surface = if (isFALSE(input$map_contour3)) "contour" else "grid"
       )
       
       # Adapt title for Europe–Asia combination
@@ -11981,6 +11988,7 @@ server <- function(input, output, session) {
       lonlat_vals_v2()[1:4],
       axis_input_used,
       input$hide_axis3,
+      input$map_contour3,   # <-- ADD THIS
       points_key,
       highlights_key,
       shpfile_key,
@@ -13040,7 +13048,8 @@ server <- function(input, output, session) {
       show_lakes = input$show_lakes_reg_coeff,
       label_lakes = input$label_lakes_reg_coeff,
       show_mountains = input$show_mountains_reg_coeff,
-      label_mountains = input$label_mountains_reg_coeff
+      label_mountains = input$label_mountains_reg_coeff,
+      surface = if (isFALSE(input$map_contour_reg_coeff)) "contour" else "grid"
     )
   }
   
@@ -13096,6 +13105,7 @@ server <- function(input, output, session) {
       lonlat_vals_dv(),
       input$axis_input_reg_coeff,
       input$hide_axis_reg_coeff,
+      input$map_contour_reg_coeff,   # <-- ADD THIS
       points_key,
       highlights_key,
       shpfile_key,
@@ -13218,7 +13228,8 @@ server <- function(input, output, session) {
       show_lakes = input$show_lakes_reg_pval,
       label_lakes = input$label_lakes_reg_pval,
       show_mountains = input$show_mountains_reg_pval,
-      label_mountains = input$label_mountains_reg_pval
+      label_mountains = input$label_mountains_reg_pval,
+      surface = if (isFALSE(input$map_contour_reg_pval)) "contour" else "grid"
     )
   }
   
@@ -13274,6 +13285,7 @@ server <- function(input, output, session) {
       lonlat_vals_dv(),
       input$axis_input_reg_pval,
       input$hide_axis_reg_pval,
+      input$map_contour_reg_pval,   # <-- ADD THIS
       
       # Overlays
       points_key,
@@ -13419,7 +13431,8 @@ server <- function(input, output, session) {
       show_lakes = input$show_lakes_reg_res,
       label_lakes = input$label_lakes_reg_res,
       show_mountains = input$show_mountains_reg_res,
-      label_mountains = input$label_mountains_reg_res
+      label_mountains = input$label_mountains_reg_res,
+      surface = if (isFALSE(input$map_contour_reg_res)) "contour" else "grid"
     )
   }
   
@@ -13477,6 +13490,7 @@ server <- function(input, output, session) {
       input$reg_resi_year, 
       input$axis_input_reg_res,
       input$hide_axis_reg_res,
+      input$map_contour_reg_res,   # <-- ADD THIS
       points_key,
       highlights_key,
       shpfile_key,
