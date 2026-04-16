@@ -614,6 +614,13 @@ ui <- navbarPage(
                                        choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                        #Initially selected = 1 year (annual mean)
                                        selected = c("January", "December")),
+                       
+                       #Update Button for Range months
+                       actionButton(inputId = "update_months",
+                                    label = "Update custom month selection",
+                                    width = "300px"),
+                       
+                       br(), br(), 
                    )),      
                  
                  #Choose reference period
@@ -1673,6 +1680,13 @@ ui <- navbarPage(
                                        choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                        #Initially selected = 1 year (annual mean)
                                        selected = c("January", "December")),
+                       
+                       #Update Button for Range months
+                       actionButton(inputId = "update_months2",
+                                    label = "Update custom month selection",
+                                    width = "300px"),
+                       
+                       br(), br(),
                    )),      
                  
                  #Choose a Mode: Absolute, Fixed Anomaly or Anomalies compared to X years prior
@@ -2750,6 +2764,13 @@ ui <- navbarPage(
                                              choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                              #Initially selected = 1 year (annual mean)
                                              selected = c("January", "December")),
+                             
+                             #Update Button for Range months
+                             actionButton(inputId = "update_months_6",
+                                          label = "Update custom month selection",
+                                          width = "300px"),
+                             
+                             br(), br(),
                          )), 
                        
                        #Choose reference period      
@@ -3208,6 +3229,13 @@ ui <- navbarPage(
                                              choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                              #Initially selected = 1 year (annual mean)
                                              selected = c("January", "December")),
+                             
+                             #Update Button for Range months
+                             actionButton(inputId = "update_months_v1",
+                                          label = "Update custom month selection",
+                                          width = "300px"),
+                             
+                             br(), br(),
                          )), 
                        
                        #Choose reference period if Anomaly values are chosen (Hidden object)      
@@ -3459,6 +3487,13 @@ ui <- navbarPage(
                                              choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                              #Initially selected = 1 year (annual mean)
                                              selected = c("January", "December")),
+                             
+                             #Update Button for Range months
+                             actionButton(inputId = "update_months_v2",
+                                          label = "Update custom month selection",
+                                          width = "300px"),
+                             
+                             br(), br(),
                          )), 
                        
                        #Choose reference period if Anomaly values are chosen (Hidden object)      
@@ -4593,6 +4628,13 @@ ui <- navbarPage(
                                              choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                              #Initially selected = 1 year (annual mean)
                                              selected = c("January", "December")),
+                             
+                             #Update Button for Range months
+                             actionButton(inputId = "update_months_iv",
+                                          label = "Update custom month selection",
+                                          width = "300px"),
+                             
+                             br(), br(),
                          )), 
                        
                        #Choose reference period if Anomaly values are chosen (Hidden object)      
@@ -4817,6 +4859,13 @@ ui <- navbarPage(
                                              choices = c("December (prev.)", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
                                              #Initially selected = 1 year (annual mean)
                                              selected = c("January", "December")),
+                             
+                             #Update Button for Range months
+                             actionButton(inputId = "update_months_dv",
+                                          label = "Update custom month selection",
+                                          width = "300px"),
+                             
+                             br(), br(),
                          )), 
                        
                        #Choose reference period if Anomaly values are chosen (Hidden object)      

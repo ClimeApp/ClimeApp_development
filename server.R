@@ -2195,54 +2195,26 @@ server <- function(input, output, session) {
   })
   
   #Month Range Updater
-  observe({
-    if (input$season_selected == "Annual"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months",
-        label = NULL,
-        selected = c("January", "December"))
-    }
+  
+  # Set iniital range_months values on startup
+  range_months_vals <- reactiveVal(c("January", "December"))
+  
+  observeEvent(input$season_selected, {
+    if (input$season_selected == "Custom") return()   # ← der entscheidende Guard
+    
+    new_vals <- switch(input$season_selected,
+                       "Annual" = c("January", "December"),
+                       "DJF"    = c("December (prev.)", "February"),
+                       "MAM"    = c("March", "May"),
+                       "JJA"    = c("June", "August"),
+                       "SON"    = c("September", "November")
+    )
+    range_months_vals(new_vals)
   })
   
-  observe({
-    if (input$season_selected == "DJF"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months",
-        label = NULL,
-        selected = c("December (prev.)", "February"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected == "MAM"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months",
-        label = NULL,
-        selected = c("March", "May"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected == "JJA"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months",
-        label = NULL,
-        selected = c("June", "August"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected == "SON"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months",
-        label = NULL,
-        selected = c("September", "November"))
-    }
+  #Update nach Knopfdruck
+  observeEvent(input$update_months, {
+    range_months_vals(input$range_months)
   })
 
   # Axis values updater MAP
@@ -2805,7 +2777,7 @@ server <- function(input, output, session) {
       dataset_selected    = input$dataset_selected,
       range_latitude      = input$range_latitude,
       range_longitude     = input$range_longitude,
-      range_months        = input$range_months,
+      range_months        = range_months_vals(),
       ref_period_sg       = input$ref_period_sg,
       ref_period          = input$ref_period,
       ref_single_year     = input$ref_single_year,
@@ -2944,7 +2916,7 @@ server <- function(input, output, session) {
       dataset_selected    = input$dataset_selected,
       range_latitude      = input$range_latitude,
       range_longitude     = input$range_longitude,
-      range_months        = input$range_months,
+      range_months        = range_months_vals(),
       ref_period_sg       = input$ref_period_sg,
       ref_period          = input$ref_period,
       ref_single_year     = input$ref_single_year,
@@ -3346,54 +3318,26 @@ server <- function(input, output, session) {
   })
   
   #Month Range Updater
-  observe({
-    if (input$season_selected2 == "Annual"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months2",
-        label = NULL,
-        selected = c("January", "December"))
-    }
+  
+  # Set iniital range_months values on startup
+  range_months_vals2 = reactiveVal(c("January", "December"))
+  
+  observeEvent(input$season_selected2, {
+    if (input$season_selected2 == "Custom") return()   # ← der entscheidende Guard
+    
+    new_vals2 <- switch(input$season_selected2,
+                        "Annual" = c("January", "December"),
+                        "DJF"    = c("December (prev.)", "February"),
+                        "MAM"    = c("March", "May"),
+                        "JJA"    = c("June", "August"),
+                        "SON"    = c("September", "November")
+    )
+    range_months_vals2(new_vals2)
   })
   
-  observe({
-    if (input$season_selected2 == "DJF"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months2",
-        label = NULL,
-        selected = c("December (prev.)", "February"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected2 == "MAM"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months2",
-        label = NULL,
-        selected = c("March", "May"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected2 == "JJA"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months2",
-        label = NULL,
-        selected = c("June", "August"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected2 == "SON"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months2",
-        label = NULL,
-        selected = c("September", "November"))
-    }
+  #Update nach Knopfdruck
+  observeEvent(input$update_months2, {
+    range_months_vals2(input$range_months2)
   })
   
   # Composite Axis values updater MAP
@@ -3838,7 +3782,7 @@ server <- function(input, output, session) {
       dataset_selected2    = input$dataset_selected2,
       range_latitude2      = input$range_latitude2,
       range_longitude2     = input$range_longitude2,
-      range_months2        = input$range_months2,
+      range_months2        = range_months_vals2(),
       ref_period_sg2       = input$ref_period_sg2,
       ref_period2          = input$ref_period2,
       ref_single_year2     = input$ref_single_year2,
@@ -3975,7 +3919,7 @@ server <- function(input, output, session) {
       dataset_selected2    = input$dataset_selected2,
       range_latitude2      = input$range_latitude2,
       range_longitude2     = input$range_longitude2,
-      range_months2        = input$range_months2,
+      range_months2        = range_months_vals2(),
       ref_period_sg2       = input$ref_period_sg2,
       ref_period2          = input$ref_period2,
       ref_single_year2     = input$ref_single_year2,
@@ -4284,104 +4228,45 @@ server <- function(input, output, session) {
   })
   
   #Month Range Updater
-  observe({
-    if (input$season_selected_v1 == "Annual"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_v1",
-        label = NULL,
-        selected = c("January", "December"))
-    }
+  
+  # Set iniital range_months values on startup
+  range_months_vals_v1 = reactiveVal(c("January", "December"))
+  range_months_vals_v2 = reactiveVal(c("January", "December"))
+  
+  observeEvent(input$season_selected_v1, {
+    if (input$season_selected_v1 == "Custom") return()   # ← der entscheidende Guard
+    
+    new_vals_v1 <- switch(input$season_selected_v1,
+                          "Annual" = c("January", "December"),
+                          "DJF"    = c("December (prev.)", "February"),
+                          "MAM"    = c("March", "May"),
+                          "JJA"    = c("June", "August"),
+                          "SON"    = c("September", "November")
+    )
+    range_months_vals_v1(new_vals_v1)
   })
   
-  observe({
-    if (input$season_selected_v1 == "DJF"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_v1",
-        label = NULL,
-        selected = c("December (prev.)", "February"))
-    }
+  #Update nach Knopfdruck
+  observeEvent(input$update_months_v1, {
+    range_months_vals_v1(input$range_months_v1)
   })
   
-  observe({
-    if (input$season_selected_v1 == "MAM"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_v1",
-        label = NULL,
-        selected = c("March", "May"))
-    }
+  observeEvent(input$season_selected_v2, {
+    if (input$season_selected_v2 == "Custom") return()   # ← der entscheidende Guard
+    
+    new_vals_v2 <- switch(input$season_selected_v2,
+                          "Annual" = c("January", "December"),
+                          "DJF"    = c("December (prev.)", "February"),
+                          "MAM"    = c("March", "May"),
+                          "JJA"    = c("June", "August"),
+                          "SON"    = c("September", "November")
+    )
+    range_months_vals_v2(new_vals_v2)
   })
   
-  observe({
-    if (input$season_selected_v1 == "JJA"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_v1",
-        label = NULL,
-        selected = c("June", "August"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_v1 == "SON"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_v1",
-        label = NULL,
-        selected = c("September", "November"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_v2 == "Annual"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_v2",
-        label = NULL,
-        selected = c("January", "December"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_v2 == "DJF"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_v2",
-        label = NULL,
-        selected = c("December (prev.)", "February"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_v2 == "MAM"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_v2",
-        label = NULL,
-        selected = c("March", "May"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_v2 == "JJA"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_v2",
-        label = NULL,
-        selected = c("June", "August"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_v2 == "SON"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_v2",
-        label = NULL,
-        selected = c("September", "November"))
-    }
+  #Update nach Knopfdruck
+  observeEvent(input$update_months_v2, {
+    range_months_vals_v2(input$range_months_v2)
   })
   
   # Update correlation year range and check lag is still within limits
@@ -5269,8 +5154,8 @@ server <- function(input, output, session) {
       mode_selected_v2     = input$mode_selected_v2,
       season_selected_v1   = input$season_selected_v1,
       season_selected_v2   = input$season_selected_v2,
-      range_months_v1      = input$range_months_v1,
-      range_months_v2      = input$range_months_v2,
+      range_months_v1      = range_months_vals_v1(),
+      range_months_v2      = range_months_vals_v2(),
       range_latitude_v1    = input$range_latitude_v1,
       range_latitude_v2    = input$range_latitude_v2,
       range_longitude_v1   = input$range_longitude_v1,
@@ -5425,8 +5310,8 @@ server <- function(input, output, session) {
       mode_selected_v2     = input$mode_selected_v2,
       season_selected_v1   = input$season_selected_v1,
       season_selected_v2   = input$season_selected_v2,
-      range_months_v1      = input$range_months_v1,
-      range_months_v2      = input$range_months_v2,
+      range_months_v1      = range_months_vals_v1(),
+      range_months_v2      = range_months_vals_v2(),
       range_latitude_v1    = input$range_latitude_v1,
       range_latitude_v2    = input$range_latitude_v2,
       range_longitude_v1   = input$range_longitude_v1,
@@ -5717,104 +5602,45 @@ server <- function(input, output, session) {
   })
   
   #Month Range Updater
-  observe({
-    if (input$season_selected_iv == "Annual"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_iv",
-        label = NULL,
-        selected = c("January", "December"))
-    }
+  
+  # Set iniital range_months values on startup
+  range_months_vals_iv = reactiveVal(c("January", "December"))
+  range_months_vals_dv = reactiveVal(c("January", "December"))
+  
+  observeEvent(input$season_selected_iv, {
+    if (input$season_selected_iv == "Custom") return()   # ← der entscheidende Guard
+    
+    new_vals_iv <- switch(input$season_selected_iv,
+                          "Annual" = c("January", "December"),
+                          "DJF"    = c("December (prev.)", "February"),
+                          "MAM"    = c("March", "May"),
+                          "JJA"    = c("June", "August"),
+                          "SON"    = c("September", "November")
+    )
+    range_months_vals_iv(new_vals_iv)
   })
   
-  observe({
-    if (input$season_selected_iv == "DJF"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_iv",
-        label = NULL,
-        selected = c("December (prev.)", "February"))
-    }
+  #Update nach Knopfdruck
+  observeEvent(input$update_months_iv, {
+    range_months_vals_iv(input$range_months_iv)
   })
   
-  observe({
-    if (input$season_selected_iv == "MAM"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_iv",
-        label = NULL,
-        selected = c("March", "May"))
-    }
+  observeEvent(input$season_selected_dv, {
+    if (input$season_selected_dv == "Custom") return()   # ← der entscheidende Guard
+    
+    new_vals_dv <- switch(input$season_selected_dv,
+                          "Annual" = c("January", "December"),
+                          "DJF"    = c("December (prev.)", "February"),
+                          "MAM"    = c("March", "May"),
+                          "JJA"    = c("June", "August"),
+                          "SON"    = c("September", "November")
+    )
+    range_months_vals_dv(new_vals_dv)
   })
   
-  observe({
-    if (input$season_selected_iv == "JJA"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_iv",
-        label = NULL,
-        selected = c("June", "August"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_iv == "SON"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_iv",
-        label = NULL,
-        selected = c("September", "November"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_dv == "Annual"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_dv",
-        label = NULL,
-        selected = c("January", "December"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_dv == "DJF"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_dv",
-        label = NULL,
-        selected = c("December (prev.)", "February"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_dv == "MAM"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_dv",
-        label = NULL,
-        selected = c("March", "May"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_dv == "JJA"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_dv",
-        label = NULL,
-        selected = c("June", "August"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_dv == "SON"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_dv",
-        label = NULL,
-        selected = c("September", "November"))
-    }
+  #Update nach Knopfdruck
+  observeEvent(input$update_months_dv, {
+    range_months_vals_dv(input$range_months_dv)
   })
   
   # Update year range
@@ -7126,8 +6952,8 @@ server <- function(input, output, session) {
       mode_selected_iv     = input$mode_selected_iv,
       season_selected_dv   = input$season_selected_dv,
       season_selected_iv   = input$season_selected_iv,
-      range_months_dv      = input$range_months_dv,
-      range_months_iv      = input$range_months_iv,
+      range_months_dv      = range_months_vals_dv(),
+      range_months_iv      = range_months_vals_iv(),
       range_latitude_dv    = input$range_latitude_dv,
       range_longitude_dv   = input$range_longitude_dv,
       range_latitude_iv    = input$range_latitude_iv,
@@ -7283,8 +7109,8 @@ server <- function(input, output, session) {
       mode_selected_iv     = input$mode_selected_iv,
       season_selected_dv   = input$season_selected_dv,
       season_selected_iv   = input$season_selected_iv,
-      range_months_dv      = input$range_months_dv,
-      range_months_iv      = input$range_months_iv,
+      range_months_dv      = range_months_vals_dv(),
+      range_months_iv      = range_months_vals_iv(),
       range_latitude_dv    = input$range_latitude_dv,
       range_longitude_dv   = input$range_longitude_dv,
       range_latitude_iv    = input$range_latitude_iv,
@@ -7420,8 +7246,8 @@ server <- function(input, output, session) {
       mode_selected_iv     = input$mode_selected_iv,
       season_selected_dv   = input$season_selected_dv,
       season_selected_iv   = input$season_selected_iv,
-      range_months_dv      = input$range_months_dv,
-      range_months_iv      = input$range_months_iv,
+      range_months_dv      = range_months_vals_dv(),
+      range_months_iv      = range_months_vals_iv(),
       range_latitude_dv    = input$range_latitude_dv,
       range_longitude_dv   = input$range_longitude_dv,
       range_latitude_iv    = input$range_latitude_iv,
@@ -7557,8 +7383,8 @@ server <- function(input, output, session) {
       mode_selected_iv     = input$mode_selected_iv,
       season_selected_dv   = input$season_selected_dv,
       season_selected_iv   = input$season_selected_iv,
-      range_months_dv      = input$range_months_dv,
-      range_months_iv      = input$range_months_iv,
+      range_months_dv      = range_months_vals_dv(),
+      range_months_iv      = range_months_vals_iv(),
       range_latitude_dv    = input$range_latitude_dv,
       range_longitude_dv   = input$range_longitude_dv,
       range_latitude_iv    = input$range_latitude_iv,
@@ -8648,54 +8474,26 @@ server <- function(input, output, session) {
   })
   
   #Month Range Updater
-  observe({
-    if (input$season_selected_6 == "Annual"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_6",
-        label = NULL,
-        selected = c("January", "December"))
-    }
+  
+  # Set iniital range_months values on startup
+  range_months_vals_6 = reactiveVal(c("January", "December"))
+  
+  observeEvent(input$season_selected_6, {
+    if (input$season_selected_6 == "Custom") return()   # ← der entscheidende Guard
+    
+    new_vals_6 <- switch(input$season_selected_6,
+                         "Annual" = c("January", "December"),
+                         "DJF"    = c("December (prev.)", "February"),
+                         "MAM"    = c("March", "May"),
+                         "JJA"    = c("June", "August"),
+                         "SON"    = c("September", "November")
+    )
+    range_months_vals_6(new_vals_6)
   })
   
-  observe({
-    if (input$season_selected_6 == "DJF"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_6",
-        label = NULL,
-        selected = c("December (prev.)", "February"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_6 == "MAM"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_6",
-        label = NULL,
-        selected = c("March", "May"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_6 == "JJA"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_6",
-        label = NULL,
-        selected = c("June", "August"))
-    }
-  })
-  
-  observe({
-    if (input$season_selected_6 == "SON"){
-      shinyWidgets::updateSliderTextInput(
-        session = getDefaultReactiveDomain(),
-        inputId = "range_months_6",
-        label = NULL,
-        selected = c("September", "November"))
-    }
+  #Update nach Knopfdruck
+  observeEvent(input$update_months_6, {
+    range_months_vals_6(input$range_months_6)
   })
   
   # Y-axis updater for SEA plot
@@ -8746,7 +8544,7 @@ server <- function(input, output, session) {
       ME_variable_6              = input$ME_variable_6,
       range_latitude_6           = input$range_latitude_6,
       range_longitude_6          = input$range_longitude_6,
-      range_months_6             = input$range_months_6,
+      range_months_6             = range_months_vals_6(),
       ref_period_6               = input$ref_period_6,
       ref_period_sg_6            = input$ref_period_sg_6,
       ref_single_year_6          = input$ref_single_year_6,
@@ -8821,19 +8619,19 @@ server <- function(input, output, session) {
     #Creating Numeric Vector for Month Range between 0 and 12
     if (input$nav1 == "tab1") {
       # Anomalies
-      create_month_range(month_names_vector = input$range_months)
+      create_month_range(month_names_vector = range_months_vals())
     } else if (input$nav1 == "tab2") {
       # Composites
-      create_month_range(month_names_vector = input$range_months2)
+      create_month_range(month_names_vector = range_months_vals2())
     } else if (input$nav1 == "tab3") {
       # Correlation
-      create_month_range(month_names_vector = input$range_months_v1)
+      create_month_range(month_names_vector = range_months_vals_v1())
     } else if (input$nav1 == "tab4") {
       # Regression
-      create_month_range(month_names_vector = input$range_months_dv)
+      create_month_range(month_names_vector = range_months_vals_dv())
     } else if (input$nav1 == "tab6") {
       # SEA
-      create_month_range(month_names_vector = input$range_months_6)
+      create_month_range(month_names_vector = range_months_vals_6())
     }
   })
   
@@ -8841,10 +8639,10 @@ server <- function(input, output, session) {
     #Creating Numeric Vector for Month Range between 0 and 12
     if (input$nav1 == "tab3") {
       # Correlation
-      create_month_range(month_names_vector = input$range_months_v2)
+      create_month_range(month_names_vector = range_months_vals_v2())
     } else if (input$nav1 == "tab4") {
       # Regression
-      create_month_range(month_names_vector = input$range_months_iv)
+      create_month_range(month_names_vector = range_months_vals_iv())
     }
   })
   
@@ -9585,7 +9383,7 @@ server <- function(input, output, session) {
     }
     
     months_key <- tryCatch({
-      paste(input$range_months %||% character(0), collapse = "->")
+      paste(range_months_vals() %||% character(0), collapse = "->")
     }, error = function(e) "no-months")
     
     titles_key <- tryCatch({
@@ -10477,7 +10275,7 @@ server <- function(input, output, session) {
     }
     
     months_key2 <- tryCatch({
-      paste(input$range_months2 %||% character(0), collapse = "->")
+      paste(range_months_vals2() %||% character(0), collapse = "->")
     }, error = function(e) "no-months")
     
     titles_key2 <- tryCatch({
