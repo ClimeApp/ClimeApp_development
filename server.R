@@ -9585,12 +9585,12 @@ server <- function(input, output, session) {
     }
     
     months_key <- tryCatch({
-      if (identical(input$season_selected, "Custom")) {
-        paste(input$range_months %||% character(0), collapse = "->")
-      } else {
-        input$season_selected %||% "Annual"
-      }
+      paste(input$range_months %||% character(0), collapse = "->")
     }, error = function(e) "no-months")
+    
+    titles_key <- tryCatch({
+      digest::digest(plot_titles())
+    }, error = function(e) "")
     
     dim_key <- paste0(map_dimensions()[1], "x", map_dimensions()[2])
     
@@ -9606,7 +9606,7 @@ server <- function(input, output, session) {
       subset_lats_primary(),
       input$axis_input,
       input$hide_axis,
-      input$map_contour,   # <-- ADD THIS
+      input$map_contour,
       points_key,
       highlights_key,
       stats_key,
@@ -9630,13 +9630,7 @@ server <- function(input, output, session) {
       input$label_mountains,
       plotOrder(),
       input$shapes_order[input$shapes_order %in% input$shapes],
-      input$title_mode,
-      input$title_mode_ts,
-      input$title1_input,
-      input$title2_input,
-      input$title1_input_ts,
-      input$title_size_input,
-      input$title_size_input_ts,
+      titles_key,
       input$custom_statistic,
       months_key,
       sd_ratio_key
@@ -10483,14 +10477,15 @@ server <- function(input, output, session) {
     }
     
     months_key2 <- tryCatch({
-      if (identical(input$season_selected2, "Custom")) {
-        paste(input$range_months2 %||% character(0), collapse = "->")
-      } else {
-        input$season_selected2 %||% "Annual"
-      }
+      paste(input$range_months2 %||% character(0), collapse = "->")
     }, error = function(e) "no-months")
     
-    dim_key2 <- paste0(map_dimensions_2()[1], "x", map_dimensions_2()[2])
+    titles_key2 <- tryCatch({
+      digest::digest(plot_titles_composites())
+    }, error = function(e) "")
+
+    
+    dim_key <- paste0(map_dimensions_2()[1], "x", map_dimensions_2()[2])
     
     list(
       input$nav1,
@@ -10504,7 +10499,7 @@ server <- function(input, output, session) {
       subset_lats_primary(),
       input$axis_input2,
       input$hide_axis2,
-      input$map_contour2,   # <-- ADD THIS
+      input$map_contour2,
       points_key2,
       highlights_key2,
       stats_key2,
@@ -10512,7 +10507,7 @@ server <- function(input, output, session) {
       plotorder_key2,
       shp_ids_key2,
       shp_style_key2,
-      dim_key2,
+      dim_key,
       input$hide_borders2,
       input$white_ocean2,
       input$white_land2,
@@ -10527,14 +10522,8 @@ server <- function(input, output, session) {
       input$label_mountains2,
       plotOrder2(),
       input$shapes2_order[input$shapes2_order %in% input$shapes2],
-      input$title_mode2,
-      input$title_mode_ts2,
-      input$title1_input2,
-      input$title2_input2,
-      input$title1_input_ts2,
-      input$title_size_input2,
-      input$title_size_input_ts2,
       input$custom_statistic2,
+      titles_key2,
       months_key2,
       sd_ratio_key2,
       input$upload_file2,
@@ -11976,6 +11965,10 @@ server <- function(input, output, session) {
       if (is.null(a) || any(is.na(a)) || length(a) != 2) "dynamic" else paste(a, collapse = "_")
     }, error = function(e) "axis-error")
     
+    titles_key3 <- tryCatch({
+      digest::digest(plot_titles_cor())
+    }, error = function(e) "")
+
     list(
       input$nav1,
       input$type_v1,
@@ -12011,7 +12004,7 @@ server <- function(input, output, session) {
       input$label_mountains3,
       plotOrder3(),
       input$shapes3_order[input$shapes3_order %in% input$shapes3],
-      plot_titles_cor(),
+      titles_key3,
       "Correlation_map"
     )
   },
@@ -13098,6 +13091,10 @@ server <- function(input, output, session) {
     
     dim_key <- paste0(plot_dimensions_reg()[1], "x", plot_dimensions_reg()[2])
     
+    titles_key4a <- tryCatch({
+      digest::digest(plot_titles_reg_coeff())
+    }, error = function(e) "")
+    
     list(
       input$nav1,
       variables_iv(), 
@@ -13128,7 +13125,7 @@ server <- function(input, output, session) {
       input$label_mountains_reg_coeff,
       plotOrder_reg_coeff(),
       input$shapes_reg_coeff_order[input$shapes_reg_coeff_order %in% input$shapes_reg_coeff],
-      plot_titles_reg_coeff(),
+      titles_key4a,
       "Regression_coefficients"
     )
   },
@@ -13278,6 +13275,10 @@ server <- function(input, output, session) {
     
     dim_key <- paste0(plot_dimensions_reg()[1], "x", plot_dimensions_reg()[2])
     
+    titles_key4b <- tryCatch({
+      digest::digest(plot_titles_reg_pval())
+    }, error = function(e) "")
+    
     list(
       input$nav1,
       variables_iv(),
@@ -13310,7 +13311,7 @@ server <- function(input, output, session) {
       input$label_mountains_reg_pval,
       plotOrder_reg_pval(),
       input$shapes_reg_pval_order[input$shapes_reg_pval_order %in% input$shapes_reg_pval],
-      plot_titles_reg_pval(),
+      titles_key4b,
       "Regression_p_values"
     )
   },
@@ -13481,6 +13482,10 @@ server <- function(input, output, session) {
     
     dim_key <- paste0(plot_dimensions_reg()[1], "x", plot_dimensions_reg()[2])
     
+    titles_key4c <- tryCatch({
+      digest::digest(plot_titles_reg_res())
+    }, error = function(e) "")
+    
     list(
       input$nav1,
       variables_iv(),    
@@ -13513,7 +13518,7 @@ server <- function(input, output, session) {
       input$label_mountains_reg_res,
       plotOrder_reg_res(),
       input$shapes_reg_res_order[input$shapes_reg_res_order %in% input$shapes_reg_res],
-      plot_titles_reg_res(),
+      titles_key4c,
       "Regression_residuals"
     )
   },
